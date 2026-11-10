@@ -203,7 +203,7 @@ function ongletDeck(): string {
     + idee('<b class="g-etoile">∗</b>', tr('Des jokers pour les suites'), tr('Une carte ∗ (Accord) prend toujours la Fréquence qui prolonge ta suite. En argent et en or, une carte porte 2 Fréquences, en nacre 3.'))
     + idee(ICO_TRIANGLE, tr('Pense au triangle'), tr`Augmenté bat Résonant, Résonant bat Géné, Géné bat Augmenté : +${Math.round((REGLES.bonusLignee - 1) * 100)} % de dégâts. Les ennemis en profitent aussi contre tes Porteurs. Le dessin est dans « Lire une carte ».`)
     + idee(ICO.repiocher, tr('Un deck court tourne plus vite'), tr`Un Porteur peut porter moins de ${DISTRICT.cartesMax} cartes : tes meilleures reviennent plus souvent en main, mais tu couvres moins de Fréquences.`)
-    + idee(ICO.monter, tr('Fais monter tes favorites'), tr`Doublons et cristaux : chaque niveau ajoute au moins +1 de force (une carte de 10 passe à 19 au niveau 10). Confie-les aux Porteurs que tu emmènes le plus souvent.`)
+    + idee(ICO.monter, tr('Fais monter tes favorites'), tr`Doublons et cristaux : 5 niveaux par carte, qui renforcent sa force puis son effet (une carte de 10 passe à 13 de force au niveau 4). Confie-les aux Porteurs que tu emmènes le plus souvent.`)
     + `</ul></section>`;
   return h;
 }
@@ -247,7 +247,6 @@ function ongletCarte(): string {
     [tr('Force'), (r) => pc(METAL_FORCE[r] / METAL_FORCE.fer)],
     [tr('Effet'), (r) => (METAL_RENFORT[r] === 0 ? 'non' : METAL_RENFORT[r] === 1 ? 'oui' : `+${Math.round((METAL_RENFORT[r] - 1) * 100)} %`)],
     [tr('Fréquences'), (r) => String(METAL_FREQ[r])],
-    [tr('Niveau de départ'), (r) => String(COLLECTION.niveauDepart[r])],
     [tr('Porteur requis'), (r) => (NIVEAU_METAL[r] > 1 ? `niv. ${NIVEAU_METAL[r]}` : '—')],
   ];
   h += `<section class="bloc">${titre(ICO.cristal, tr('Cinq métaux'))}<div class="g-metaux" role="table" aria-label="${tr`Ce que change le métal`}">`
@@ -257,7 +256,7 @@ function ongletCarte(): string {
     + `<li>${tr`En fer, une carte n’a pas d’effet. Il s’ouvre en cuivre ; en or et en nacre, ses chiffres montent.`}</li>`
     + `<li>${tr`Un métal rare demande un Porteur expérimenté : argent au niveau ${NIVEAU_METAL.argent}, or au niveau ${NIVEAU_METAL.or}, nacre au niveau ${NIVEAU_METAL.nacre}. Trouvée plus tôt, la carte t’attend dans ta collection.`}</li>`
     + `<li>${tr`Deux métaux d’une carte sont deux cartes à part, chacune avec ses doublons et son niveau.`}</li>`
-    + `<li>${tr`Doublons et cristaux font monter une carte : chaque niveau ajoute environ un dixième de sa force de départ, jamais moins de +1, jusqu’au niveau ${COLLECTION.niveauMax}. Au maximum, la carte est`} <b>${tr`maîtrisée`}</b> ${tr`: un liseré de lumière parcourt son cadre.`}</li></ul></section>`;
+    + `<li>${tr`Doublons et cristaux font monter une carte, de 1 à ${COLLECTION.niveauMax} quel que soit son métal. Niveaux 2 et 4 : environ +${Math.round(COLLECTION.bonusNiveau * 100)} % de sa force de départ ; niveaux 3 et 5 : son effet se renforce (une Fissure 25 % passe à 30 %, puis 35 %), ou sa force, si elle n’a pas d’effet à renforcer. Au maximum, la carte est`} <b>${tr`maîtrisée`}</b> ${tr`: un liseré de lumière parcourt son cadre.`}</li></ul></section>`;
 
   // les lignées
   const plages = plageFrequences;

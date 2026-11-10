@@ -1,9 +1,9 @@
 // La collection : les cartes qui tombent dans les Strates, leurs raretés, les doublons et les niveaux.
 // Tout le hasard passe par un état `rng` sauvegardé : aucun hasard n'est jamais payé.
 
-import { VOIES, carteId, gesteDeCarte, moduleDef, tirablesEn } from './donnees';
+import { VOIES, carteId, gesteDeCarte, moduleDef, renforcer, tirablesEn } from './donnees';
 import { tireur } from './rng';
-import type { GesteDef, Lignee, Rarete } from './types';
+import type { Effet, GesteDef, Lignee, ModuleDef, Rarete } from './types';
 import { t as tr } from './i18n';
 
 export const RARETES: Rarete[] = ['fer', 'cuivre', 'argent', 'or', 'nacre'];
@@ -15,19 +15,28 @@ export const COLLECTION = {
   /** une trouvaille d'expédition est, à cette fréquence, un doublon d'une carte qu'on possède déjà dans ce métal :
    *  plus on joue, plus les cartes montent (étude du 22/10/2026 : les doublons se diluaient sur 225 exemplaires) */
   affinite: 0.4,
-  /** Chaque niveau ajoute environ 10 % de la force de départ, arrondi à l'entier et jamais moins de +1 (29 octobre 2026,
-   *  Bryan : « +5 % ce n'est pas clair ». Avant, une montée sur trois ne changeait aucun chiffre à cause de l'arrondi). */
-  bonusNiveau: 0.1,
-  niveauMax: 10,
-  /** niveau de départ selon la rareté */
-  niveauDepart: { fer: 1, cuivre: 3, argent: 5, or: 7, nacre: 8 } as Record<Rarete, number>,
-  /** doublons pour passer au niveau suivant, depuis le niveau de départ */
+  /**
+   * Les niveaux (10 novembre 2026, remarque de Luc : « trop de niveaux ça tue, entre 3 et 5 c'est suffisant ») : 5 niveaux pour
+   * toutes les cartes, quel que soit le métal. Niveaux 2 et 4 : environ +15 % de la force de départ chacun (jamais moins
+   * de +1 ; parcours simulé : −10 au jour 35 à +10 %, 26 à +20 %, 29,5 à +15 % comme avant la refonte) ; niveaux 3 et 5 : un cran d'effet chacun (+20 % de la part de l'effet : une Fissure
+   * 25 % → 30 % → 35 %), ou, pour une carte sans part à renforcer (sans effet, Élan, Vague…), +5 % de force par cran.
+   * Avant, une carte de fer avait 9 niveaux et une d'or 3 : le Voile du murmure passait de 5 à 14 de force (+180 %), plus
+   * qu'une carte d'or. Le métal redevient la grande différence ; le niveau 5 garde le liseré de maîtrise.
+   */
+  bonusNiveau: 0.15,
+  /** un cran d'effet : +20 % de la part ; ou, sans part, +5 % de force */
+  cranEffet: 0.2,
+  cranForce: 0.05,
+  niveauMax: 5,
+  /** niveau de départ selon la rareté : 1 pour toutes depuis le 10 novembre 2026 */
+  niveauDepart: { fer: 1, cuivre: 1, argent: 1, or: 1, nacre: 1 } as Record<Rarete, number>,
+  /** doublons pour passer au niveau suivant (2, 3, 4, 5) : moins de doublons tombent dans les métaux rares */
   doublons: {
-    fer: [1, 2, 3, 4, 6, 8, 10, 13, 16],
-    cuivre: [1, 2, 3, 4, 5, 7, 9],
-    argent: [1, 2, 3, 4, 5],
-    or: [1, 2, 3],
-    nacre: [1, 1],
+    fer: [2, 4, 7, 12],
+    cuivre: [1, 3, 5, 8],
+    argent: [1, 2, 4, 6],
+    or: [1, 2, 3, 4],
+    nacre: [1, 1, 2, 3],
   } as Record<Rarete, number[]>,
   /** composants rendus par le recyclage d'un doublon */
   recyclage: { fer: 5, cuivre: 15, argent: 40, or: 100, nacre: 250 } as Record<Rarete, number>,
@@ -149,17 +158,37 @@ export function doublonsRequis(id: string, niveau: number): number | null {
 }
 
 /** Cristaux demandés pour monter au niveau suivant (le nom date d'avant le 9 novembre 2026) */
-export const composantsNiveau = (niveau: number) => 8 * niveau;
+export const composantsNiveau = (niveau: number) => 20 * niveau;
 
-/** Ce qu'un niveau ajoute à la force d'une carte : un entier, au moins +1 */
+/** Ce qu'un palier de force ajoute à une carte : un entier, au moins +1 */
 export function gainNiveau(id: string): number {
   return Math.max(1, Math.round(moduleDef(id).v * COLLECTION.bonusNiveau));
 }
 
-/** La force d'une carte à son niveau : sa force de départ, plus un gain entier par niveau gagné */
+const borneNiveau = (n: number) => Math.max(1, Math.min(COLLECTION.niveauMax, n));
+/** Paliers de force gagnés à ce niveau (niveaux 2 et 4) */
+export const paliersForce = (niveau: number) => (borneNiveau(niveau) >= 2 ? 1 : 0) + (borneNiveau(niveau) >= 4 ? 1 : 0);
+/** Crans d'effet gagnés à ce niveau (niveaux 3 et 5) */
+export const cransEffet = (niveau: number) => (borneNiveau(niveau) >= 3 ? 1 : 0) + (borneNiveau(niveau) >= 5 ? 1 : 0);
+/** Le niveau renforce-t-il cet effet, ou la force à sa place ? (la Décharge se règle carte par carte, l'Accord n'a rien à renforcer) */
+const effetMontant = (e: Effet | undefined): boolean => !!e && 'part' in e && e.type !== 'decharge';
+
+/** L'effet d'une carte à son niveau : ses crans d'effet appliqués (avec les mêmes plafonds que le métal) */
+export function effetNiveau(e: Effet | undefined, niveau: number): Effet | undefined {
+  const k = cransEffet(niveau);
+  return e && k && effetMontant(e) ? renforcer(e, 1 + COLLECTION.cranEffet * k) : e;
+}
+
+/** La carte telle qu'elle joue à son niveau : sa force et ses effets */
+export function carteNiveau(m: ModuleDef, niveau: number): ModuleDef {
+  return { ...m, v: forceNiveau(m.id, niveau), ...(m.effet ? { effet: effetNiveau(m.effet, niveau) } : {}), ...(m.effet2 ? { effet2: effetNiveau(m.effet2, niveau) } : {}) };
+}
+
+/** La force d'une carte à son niveau : sa force de départ, plus ses paliers de force (et ses crans, sans effet à renforcer) */
 export function forceNiveau(id: string, niveau: number): number {
   const m = moduleDef(id);
-  return m.v + gainNiveau(id) * Math.max(0, niveau - COLLECTION.niveauDepart[m.rarete]);
+  const crans = effetMontant(m.effet) ? 0 : cransEffet(niveau) * Math.max(1, Math.round(m.v * COLLECTION.cranForce));
+  return m.v + gainNiveau(id) * paliersForce(niveau) + crans;
 }
 
 /** Multiplicateur de force d'une carte selon son niveau (tombe pile sur `forceNiveau` une fois arrondi) */
@@ -194,7 +223,7 @@ export const niveauRequis = (cle: string): number => NIVEAU_METAL[moduleDef(cle)
 
 /** Les cartes qu'un Porteur apporte au deck de combat : celles qu'on lui a confiées, à leur niveau */
 export function cartesEnJeu(porteurId: string, cartes: { id: string; niveau: number }[]): GesteDef[] {
-  return cartes.map(({ id, niveau }) => gesteDeCarte(id, porteurId, multNiveau(id, niveau)));
+  return cartes.map(({ id, niveau }) => gesteDeCarte(id, porteurId, multNiveau(id, niveau), cransEffet(niveau)));
 }
 
 /**

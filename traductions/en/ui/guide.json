@@ -266,8 +266,8 @@
    "en": "Level up your favorites"
   },
   {
-   "fr": "Doublons et cristaux : chaque niveau ajoute au moins +1 de force (une carte de 10 passe à 19 au niveau 10). Confie-les aux Porteurs que tu emmènes le plus souvent.",
-   "en": "Duplicates and crystals: each level adds at least +1 power (a 10 card reaches 19 at level 10). Give them to the Bearers you take down most often."
+   "fr": "Doublons et cristaux : 5 niveaux par carte, qui renforcent sa force puis son effet (une carte de 10 passe à 13 de force au niveau 4). Confie-les aux Porteurs que tu emmènes le plus souvent.",
+   "en": "Duplicates and crystals: 5 levels per card, raising its power, then its effect (a 10-power card reaches 13 at level 4). Give them to the Bearers you take down most often."
   },
   {
    "fr": "La carte",
@@ -410,10 +410,6 @@
    "en": "Stronger, but it takes two slots in the chain."
   },
   {
-   "fr": "Niveau de départ",
-   "en": "Starting level"
-  },
-  {
    "fr": "Porteur requis",
    "en": "Bearer required"
   },
@@ -442,8 +438,8 @@
    "en": "Two metals of one card are two separate cards, each with its own duplicates and level."
   },
   {
-   "fr": "Doublons et cristaux font monter une carte : chaque niveau ajoute environ un dixième de sa force de départ, jamais moins de +1, jusqu’au niveau {0}. Au maximum, la carte est",
-   "en": "Duplicates and crystals level a card up: each level adds about a tenth of its starting power, never less than +1, up to level {0}. At max, the card is"
+   "fr": "Doublons et cristaux font monter une carte, de 1 à {0} quel que soit son métal. Niveaux 2 et 4 : environ +{1} % de sa force de départ ; niveaux 3 et 5 : son effet se renforce (une Fissure 25 % passe à 30 %, puis 35 %), ou sa force, si elle n’a pas d’effet à renforcer. Au maximum, la carte est",
+   "en": "Duplicates and crystals level a card up, from 1 to {0} whatever its metal. Levels 2 and 4: about +{1}% of its starting power; levels 3 and 5: its effect grows (a 25% Fissure becomes 30%, then 35%), or its power, if it has no effect to grow. At the maximum, the card is"
   },
   {
    "fr": "maîtrisée",

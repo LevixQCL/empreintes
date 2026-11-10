@@ -8,7 +8,7 @@ import { htmlBestiaire } from './bestiaire';
 import { visageGarde } from './acces';
 import { pillagesOuverts, portOuvert } from './acces';
 import { epitheteAffiche, epithetesDe, journalCarte, NOMS_PALIER, palierDe, vecuDe, versPalierSuivant, PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons, chanceQuai, etatFleche, FLECHE, gardiensQuai, pas } from '../core/jeu';
-import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
+import { NOMS_EFFET, effetsDe, formuleEffet, texteEffet } from '../core/effets';
 import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe, deNom, ilElle } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
@@ -16,7 +16,7 @@ import {
   COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, plafondEntrainement, raffinageParHeure, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
-import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, forceNiveau, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
+import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, carteNiveau, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
 import { DIFFICULTES_FOUILLE, type DifficulteFouille } from '../core/jeu';
@@ -1206,7 +1206,7 @@ export function feuilleCarte(e: EcranDistrict): string {
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:${COULEUR_RARETE[m.rarete]}">${tr`${NOMS_RARETE[m.rarete].toUpperCase()} · ${NOM_LIGNEE[m.lignee].toUpperCase()} · NIVEAU ${c.niveau}`}</span><h2>${echap(m.nom)}</h2>${epitheteAffiche(cle, vecuDe(j, cle)) ? `<span class="fc-epithete">${echap(epitheteAffiche(cle, vecuDe(j, cle))!)}</span>` : ''}</div>`
     + `<button type="button" class="btn-icone" data-action="guide" data-id="effets" aria-label="${tr`Les cartes et leurs effets`}">${ICO.aide}</button>`
     + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="${tr`Fermer`}">${ICO.fermer}</button></header><div class="feuille-corps">`
-    + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</div><div class="detail-infos">${effetsCarte(m)}</div></div>`
+    + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</div><div class="detail-infos">${effetsCarte(carteNiveau(m, c.niveau))}</div></div>`
     + (loreCarte(cle) ? `<blockquote class="lore-carte">${echap(loreCarte(cle)!)}</blockquote>` : '')
     + `<p class="rang-carte"><b style="color:${COULEUR_RARETE[m.rarete]}">${RANG_METAL[m.rarete].rang}</b> · ${echap(RANG_METAL[m.rarete].texte)}</p>`;
   // à qui la confier : la décision la plus fréquente, donc juste sous la carte
@@ -1236,7 +1236,7 @@ export function feuilleCarte(e: EcranDistrict): string {
     const etat = !pret ? `${tr`Encore`} <b>${tr`${manqueD} doublon${manqueD > 1 ? 's' : ''}`}</b> ${tr`pour le niveau ${c.niveau + 1}. On en trouve en expédition, en mission, dans les colis du ravitaillement, au Comptoir et à la Forge.`}`
       : manqueC ? `${tr`Doublons réunis. Il manque`} <b>${tr`${manqueC} cristal${manqueC > 1 ? 'x' : ''}`}</b>.` : tr`Prête : elle peut passer au niveau ${c.niveau + 1}.`;
     h += `<div class="progression"><div class="jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></div><span class="chiffre">${tr`${c.doublons} / ${requis} doublons`}</span></div>`
-      + `<p class="fc-etat${pret && !manqueC ? ' or' : ''}">${etat} <span>${tr`Niveau ${c.niveau + 1} : force ${forceNiveau(cle, c.niveau)} →`} <b>${forceNiveau(cle, c.niveau + 1)}</b>${c.niveau + 1 >= COLLECTION.niveauMax ? tr(', et la carte est maîtrisée') : ''}.</span></p>`
+      + `<p class="fc-etat${pret && !manqueC ? ' or' : ''}">${etat} <span>${gainSuivant(m, c.niveau)}${c.niveau + 1 >= COLLECTION.niveauMax ? tr(', et la carte est maîtrisée') : ''}.</span></p>`
       + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="monter" data-module="${cle}"${pret && j.energie >= cout ? '' : ' disabled'}>${ICO.monter}${tr`Passer au niveau ${c.niveau + 1} · ${prix('energie', cout, j.energie >= cout)}`}</button>`;
     if (c.doublons > 0) h += `<button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}${tr`Recycler 1 · +${COLLECTION.recyclage[m.rarete]} minerai`}</button>`;
     h += `</div>`;
@@ -1636,6 +1636,14 @@ export function htmlCartes(e: EcranDistrict): string {
   else h += feuilleCarte(e) + feuilleDeck(e);
   if (j.choix.length) h += fenetreChoix(j);
   return coquille(e, h, 'ecran-cartes cl');
+}
+
+/** Ce que le prochain niveau change : la force (niveaux 2 et 4) ou l'effet (niveaux 3 et 5), en clair (10 novembre 2026) */
+function gainSuivant(m: ModuleDef, niveau: number): string {
+  const avant = carteNiveau(m, niveau), apres = carteNiveau(m, niveau + 1);
+  const e1 = avant.effet, e2 = apres.effet;
+  if (e1 && e2 && JSON.stringify(e1) !== JSON.stringify(e2)) return `${tr`Niveau ${niveau + 1} : ${NOMS_EFFET[e1.type]} ${formuleEffet(e1)} →`} <b>${formuleEffet(e2)}</b>`;
+  return `${tr`Niveau ${niveau + 1} : force ${avant.v} →`} <b>${apres.v}</b>`;
 }
 
 /**

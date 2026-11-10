@@ -293,7 +293,7 @@ export const METAL_FREQ: Record<Rarete, number> = { fer: 1, cuivre: 1, argent: 2
 /** 0 : pas d'effet ; 1 : l'effet de la carte ; au-delà : l'effet renforcé (parts ×1,25 en or, ×1,5 en nacre, Surcharge +1 en nacre) */
 export const METAL_RENFORT: Record<Rarete, number> = { fer: 0, cuivre: 1, argent: 1, or: 1.25, nacre: 1.5 };
 
-function renforcer(e: Effet, k: number): Effet {
+export function renforcer(e: Effet, k: number): Effet {
   // la Décharge ne se renforce pas : en or et en nacre, les Fréquences en plus font déjà plus de Résonances, donc plus de Flux à vider
   if (k <= 1 || e.type === 'decharge') return e;
   if (e.type === 'flux') return { ...e, v: e.v + (k >= 1.5 ? 1 : 0) };
@@ -369,7 +369,7 @@ export const communeDef = (id: string) => CARTES_COMMUNES.find((c) => c.geste.id
 /**
  * La Clé de l’Héritage (27 octobre 2026) : la dixième vierge, pour le directeur qui répond « tout le monde à la fois » à la lettre.
  * Elle rejoint le paquetage (jouée par personne, elle reste quand un Porteur tombe) dès qu'un Porteur de l'escouade a le niveau
- * de la nacre, et grandit avec le plus avancé d'entre eux (comme une carte de l’Héritage : niveaux 8, 9 et 10, +5 % par niveau).
+ * de la nacre, et grandit avec le plus avancé d'entre eux (comme une carte de l’Héritage : niveaux 1, 3 et 5 ; +10 % de force aux niveaux 3 et 5).
  */
 export const CLE_LEGS: GesteDef = special('cle-legs', tr('Clé de l’Héritage'), 1, 'bouclier', 18, { type: 'accord' });
 CLE_LEGS.effet2 = { type: 'rempart', part: 0.75 };
@@ -809,11 +809,13 @@ export const moduleDef = (cle: string): ModuleDef => {
 };
 
 /** Une carte en jeu, telle que le moteur de combat la manipule : `porteur` est celui qui la joue, `mult` vient de son niveau */
-export function gesteDeCarte(cle: string, porteur: string, mult = 1): GesteDef {
+/** @param crans crans d'effet gagnés par le niveau de la carte (collection.ts : niveaux 3 et 5, +20 % de la part chacun) */
+export function gesteDeCarte(cle: string, porteur: string, mult = 1, crans = 0): GesteDef {
   const m = moduleDef(cle);
+  const monte = (e: Effet) => (crans && 'part' in e && e.type !== 'decharge' ? renforcer(e, 1 + 0.2 * crans) : e);
   return {
     id: cle, carte: cle, porteur, nom: m.nom, f: m.f[0]!, ...(m.f.length > 1 ? { fs: m.f.slice() } : {}), type: m.type, v: Math.round(m.v * mult),
-    ...(m.lourd ? { lourd: true } : {}), ...(m.effet ? { effet: m.effet } : {}), ...(m.effet2 ? { effet2: m.effet2 } : {}),
+    ...(m.lourd ? { lourd: true } : {}), ...(m.effet ? { effet: monte(m.effet) } : {}), ...(m.effet2 ? { effet2: monte(m.effet2) } : {}),
   };
 }
 

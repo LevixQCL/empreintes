@@ -55,13 +55,13 @@ describe('L’Héritage du district', () => {
     j.strate = 2;
     expect(legsEnAttente(j)).toBe(true);
     expect(choisirLegs(j, 'carapace-fondations').ok).toBe(true);
-    expect(j.collection['carapace-fondations@nacre']).toEqual({ niveau: 8, doublons: 0 });
+    expect(j.collection['carapace-fondations@nacre']).toEqual({ niveau: 1, doublons: 0 });
     expect(legsEnAttente(j)).toBe(false);
     expect(choisirLegs(j, 'voix-quartier').ok).toBe(false);
     expect(j.collection['voix-quartier@nacre']).toBeUndefined();
   });
 
-  it('scellée jusqu’à un Porteur de niveau 10, puis elle s’éveille avec lui (niveaux 13 et 16)', () => {
+  it('scellée jusqu’à un Porteur de niveau 10, puis elle s’éveille avec lui (Porteur 13 : niveau 3 ; Porteur 16 : niveau 5)', () => {
     const j = nouveauJeu(0);
     j.chambre = true;
     choisirLegs(j, 'carapace-fondations');
@@ -71,10 +71,10 @@ describe('L’Héritage du district', () => {
     expect(greffer(j, 'carapace-fondations@nacre', 'doran').ok).toBe(true);
     j.porteurs.doran!.xp = xpPour(13);
     eveillerLegs(j);
-    expect(j.collection['carapace-fondations@nacre']!.niveau).toBe(9);
+    expect(j.collection['carapace-fondations@nacre']!.niveau).toBe(3);
     j.porteurs.doran!.xp = xpPour(16);
     eveillerLegs(j);
-    expect(j.collection['carapace-fondations@nacre']!.niveau).toBe(10);
+    expect(j.collection['carapace-fondations@nacre']!.niveau).toBe(5);
   });
 
   it('les deux effets jouent : Carapace des Fondations garde son bouclier et riposte', () => {

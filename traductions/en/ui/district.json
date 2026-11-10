@@ -1214,10 +1214,6 @@
    "en": "{0} / {1} duplicates"
   },
   {
-   "fr": "Niveau {0} : force {1} →",
-   "en": "Level {0}: power {1} →"
-  },
-  {
    "fr": ", et la carte est maîtrisée",
    "en": ", and the card is mastered"
   },
@@ -1744,6 +1740,14 @@
   {
    "fr": ", au Râtelier de l’escouade {0}",
    "en": ", in squad {0}’s Rack"
+  },
+  {
+   "fr": "Niveau {0} : {1} {2} →",
+   "en": "Level {0}: {1} {2} →"
+  },
+  {
+   "fr": "Niveau {0} : force {1} →",
+   "en": "Level {0}: power {1} →"
   },
   {
    "fr": "Ton Héritage : dans chaque escouade qui compte un Porteur de niveau {0}.",

@@ -15,8 +15,8 @@ describe('Le Registre', () => {
   it('un métal rare vaut plus, un niveau monté ajoute 10 %, chaque carte découverte compte', () => {
     expect(valeurExemplaire('ruee@fer', 1)).toBe(VALEUR_METAL.fer);
     expect(valeurExemplaire('ruee@fer', 3)).toBe(12);
-    expect(valeurExemplaire('ruee@or', 7)).toBe(VALEUR_METAL.or);
-    const v = valeurRegistre({ 'ruee@fer': { niveau: 1 }, 'ruee@cuivre': { niveau: 3 }, 'bond@fer': { niveau: 1 } });
+    expect(valeurExemplaire('ruee@or', 1)).toBe(VALEUR_METAL.or);
+    const v = valeurRegistre({ 'ruee@fer': { niveau: 1 }, 'ruee@cuivre': { niveau: 1 }, 'bond@fer': { niveau: 1 } });
     expect(v.decouvertes).toBe(2);
     expect(v.points).toBe(10 + 25 + 10 + 2 * VALEUR_DECOUVERTE);
   });

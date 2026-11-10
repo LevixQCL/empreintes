@@ -11,7 +11,7 @@
 import { NOMS_EFFET, effetsDe, formuleEffet, nomsEffets } from '../core/effets';
 import { DEPART_PORTEURS, NOMS_LIGNEE, PORTEUR_EXCLUSIVES, PORTEUR_LEGS, voieDe } from '../core/donnees';
 import { frequenceLibre, signeLibre } from '../core/regles';
-import { COLLECTION, NOMS_RARETE } from '../core/collection';
+import { COLLECTION, NOMS_RARETE, effetNiveau } from '../core/collection';
 import type { Effet, ModuleDef, Rarete, TypeEffet } from '../core/types';
 import { filigrane, illustrationModule, portrait, textureMetal } from './art';
 import { COULEUR } from './vue';
@@ -185,7 +185,7 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?:
   const v = Math.round(m.v * mult);
   const accord = frequenceLibre(m.effet);
   const d: Face = {
-    carte: m.id, repli: qui ? portrait(qui) : null, metal: m.rarete, type: m.type, v, fs: m.f, nom: m.nom, effet: m.effet, ...(m.effet2 ? { effet2: m.effet2 } : {}), ...(m.seul ? { seul: true } : {}), lourd: m.lourd,
+    carte: m.id, repli: qui ? portrait(qui) : null, metal: m.rarete, type: m.type, v, fs: m.f, nom: m.nom, effet: o.origine ? m.effet : effetNiveau(m.effet, niveau), ...(m.effet2 ? { effet2: o.origine ? m.effet2 : effetNiveau(m.effet2, niveau) } : {}), ...(m.seul ? { seul: true } : {}), lourd: m.lourd,
     // une carte du paquetage n'a ni niveau ni lignée : le bâtiment qui la fournit est écrit sous elle
     niveau: o.origine ? undefined : niveau, lignee: o.origine ? '#CDEFFF' : COULEUR[m.lignee], fx: true,
   };

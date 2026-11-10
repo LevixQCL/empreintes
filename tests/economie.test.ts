@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { COLLECTION, ajouterCarte, doublonsRequis, multNiveau, tableRarete, tirerCarte, type EtatCollection } from '../src/core/collection';
+import { nouveauNiveau } from '../src/core/partie/nouvelle';
+import { COLLECTION, ajouterCarte, doublonsRequis, effetNiveau, multNiveau, tableRarete, tirerCarte, type EtatCollection } from '../src/core/collection';
 import { moduleDef } from '../src/core/donnees';
 import {
   ARCHIVE, OBJECTIFS, VERSION_JEU, ameliorer, estJeuValide, greffer, jourDe, monter, nouveauJeu, ouvrirArchive, prendre, quotidienFait,
@@ -59,10 +60,11 @@ describe('Collection', () => {
     expect(max).toBeLessThan(COLLECTION.garanties.argent);
   });
 
-  it('un doublon fait monter une carte, +5 % par niveau', () => {
+  it('un doublon fait monter une carte : 5 niveaux, force aux niveaux 2 et 4, effet aux niveaux 3 et 5', () => {
     const j = avance();
     expect(ajouterCarte(j, 'jambes-ressort@fer')).toBe(false);
-    expect(doublonsRequis('jambes-ressort@fer', 1)).toBe(1);
+    expect(ajouterCarte(j, 'jambes-ressort@fer')).toBe(false);
+    expect(doublonsRequis('jambes-ressort@fer', 1)).toBe(2);
     expect(monter(j, 'jambes-ressort@fer').ok).toBe(true);
     expect(j.collection['jambes-ressort@fer']).toEqual({ niveau: 2, doublons: 0 });
     const v = Math.round(10 * multNiveau('jambes-ressort@fer', 1)) / 10;
@@ -71,13 +73,28 @@ describe('Collection', () => {
     for (const cle of ['jambes-ressort@fer', 'jambes-ressort@cuivre']) {
       const base = Math.round(moduleDef(cle).v * multNiveau(cle, 1));
       let avant = 0;
-      for (let n = 1; n <= 10; n++) { const f = Math.round(moduleDef(cle).v * multNiveau(cle, n)); expect(f).toBeGreaterThanOrEqual(avant); if (n > 3) expect(f).toBeGreaterThan(avant); avant = f; }
+      for (let n = 1; n <= 5; n++) { const f = Math.round(moduleDef(cle).v * multNiveau(cle, n)); expect(f).toBeGreaterThanOrEqual(avant); avant = f; }
       expect(base).toBeGreaterThan(0);
     }
-    expect(multNiveau('jambes-ressort@fer', 10)).toBeGreaterThan(1.8);
-    // une carte en or démarre au niveau 7
+    // au maximum : bien moins qu'avant (+90 % pour le fer), le métal reste la grande différence
+    expect(multNiveau('jambes-ressort@fer', 5)).toBeLessThan(1.6);
+    expect(multNiveau('jambes-ressort@fer', 9)).toBe(multNiveau('jambes-ressort@fer', 5));
+    // l'effet monte aux niveaux 3 et 5 (Fissure 25 % → 30 % → 35 %), avec les plafonds du métal
+    expect(effetNiveau({ type: 'fissure', part: 0.25 }, 3)).toEqual({ type: 'fissure', part: 0.3 });
+    expect(effetNiveau({ type: 'fissure', part: 0.25 }, 5)).toEqual({ type: 'fissure', part: 0.35 });
+    expect(effetNiveau({ type: 'rempart', part: 0.9 }, 5)).toEqual({ type: 'rempart', part: 0.9 });
+    // une carte en or démarre au niveau 1, comme toutes
     expect(ajouterCarte(j, 'lames-orbitales@or')).toBe(true);
-    expect(j.collection['lames-orbitales@or']!.niveau).toBe(7);
+    expect(j.collection['lames-orbitales@or']!.niveau).toBe(1);
+  });
+
+  it('version 11 : les anciens niveaux sur 10 passent sur 5, le chemin parcouru gardé', () => {
+    expect(nouveauNiveau(1, 'fer')).toBe(1);
+    expect(nouveauNiveau(5, 'fer')).toBe(3);
+    expect(nouveauNiveau(10, 'fer')).toBe(5);
+    expect(nouveauNiveau(7, 'or')).toBe(1);
+    expect(nouveauNiveau(9, 'or')).toBe(4);
+    expect(nouveauNiveau(10, 'nacre')).toBe(5);
   });
 
   it('recycler un doublon rend des composants', () => {
@@ -94,7 +111,7 @@ describe('Une carte, cinq métaux', () => {
   it('une même carte existe dans chaque métal, chaque exemplaire à part', () => {
     const j = avance();
     expect(ajouterCarte(j, 'jambes-ressort@or')).toBe(true); // nouvelle carte, pas un doublon du fer
-    expect(j.collection['jambes-ressort@or']!.niveau).toBe(7);
+    expect(j.collection['jambes-ressort@or']!.niveau).toBe(1);
     expect(j.collection['jambes-ressort@fer']!.doublons).toBe(0);
     expect(moduleDef('jambes-ressort@or').base).toBe('jambes-ressort');
     expect(moduleDef('jambes-ressort@or').nom).toBe('Jambes à ressort');
@@ -209,8 +226,9 @@ describe('Migration', () => {
     v3.choix = [{ source: 'boss', options: ['bras-grue', 'crocs-fossiles', 'disparu'] }];
     expect(estJeuValide(v3)).toBe(true);
     expect(v3.version).toBe(VERSION_JEU);
-    expect(v3.collection['jambes-ressort@fer']).toEqual({ niveau: 2, doublons: 1 });
-    expect(v3.collection['lames-orbitales@or']).toEqual({ niveau: 7, doublons: 0 });
+    // (puis les niveaux sur 5, version 11 : un pas sur neuf reste au niveau 1)
+    expect(v3.collection['jambes-ressort@fer']).toEqual({ niveau: 1, doublons: 1 });
+    expect(v3.collection['lames-orbitales@or']).toEqual({ niveau: 1, doublons: 0 });
     expect(Object.keys(v3.collection)).toHaveLength(17); // + les 15 cartes de base (version 6)
     // la carte en or retourne à la collection : Ilka, niveau 1, ne peut pas encore la porter (NIVEAU_METAL)
     expect(v3.porteurs.ilka!.modules).toEqual(['ruee@fer', 'bond@fer', 'esquive@fer', 'tir@fer', 'tir-vif@fer']);
@@ -233,7 +251,7 @@ describe('Migration', () => {
     expect(v5.porteurs.doran!.modules).toHaveLength(6); // sa Glande d'ambre, libre, lui revient
     expect(v5.porteurs.doran!.modules[0]).toBe('glande-ambre@fer');
     expect(v5.collection['ruee@fer']).toEqual({ niveau: 1, doublons: 0 });
-    expect(v5.collection['jambes-ressort@fer']!.niveau).toBe(3);
+    expect(v5.collection['jambes-ressort@fer']!.niveau).toBe(2); // 3 sur 10 → 2 sur 5 (version 11)
     expect(v5.collection['oeil-relais@fer']).toBeDefined(); // pour l'objectif « Construire ton deck »
     // même si le premier objectif n'est pas encore réclamé
     const w = nouveauJeu(0);

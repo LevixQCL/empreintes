@@ -7,7 +7,7 @@ import { FOND, RECIT_CARTE, estFond, halteDef, queteDef, type HalteDef } from '.
 import { ETOILES, EXPLORER, PALIERS_ETOILES, RODEURS, metalEveille, rodeurDeZone, type EtoileId, vestigesDe } from '../explorer';
 import { ZONES, sequenceStrate, gesteDeCarte, GESTES_SPECIAUX, carteId } from '../donnees';
 import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
-import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
+import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, paliersForce, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
@@ -127,7 +127,7 @@ export function cleDuLegs(j: Jeu, escouade: string[]): GesteDef | null {
   if (j.legs !== 'cle' || !escouade.length) return null;
   const n = Math.max(...escouade.map((id) => niveauPorteur(j, id).niveau));
   if (n < NIVEAU_METAL.nacre) return null;
-  return { ...CLE_LEGS, v: CLE_LEGS.v + Math.max(1, Math.round(CLE_LEGS.v * COLLECTION.bonusNiveau)) * Math.max(0, niveauLegsPour(n) - COLLECTION.niveauDepart.nacre) };
+  return { ...CLE_LEGS, v: CLE_LEGS.v + Math.max(1, Math.round(CLE_LEGS.v * COLLECTION.bonusNiveau)) * paliersForce(niveauLegsPour(n)) };
 }
 
 /** Les Porteurs de l'histoire qui rejoignent le district quand leur moment arrive ; renvoie les annonces */

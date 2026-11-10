@@ -264,8 +264,9 @@ export function choisirLegs(j: Jeu, id: string): Resultat {
   return { ok: true };
 }
 
-/** L'éveil : la carte de l’Héritage passe au niveau 9 avec un Porteur de niveau 13, au niveau 10 avec un Porteur de niveau 16 */
-export const EVEIL_LEGS: { porteur: number; niveau: number }[] = [{ porteur: 13, niveau: 9 }, { porteur: 16, niveau: 10 }];
+/** L'éveil : la carte de l’Héritage passe au niveau 3 avec un Porteur de niveau 13, au niveau 5 avec un Porteur de niveau 16 */
+// (10 novembre 2026 : niveaux 3 et 5 sur 5, au lieu de 9 et 10 sur 10)
+export const EVEIL_LEGS: { porteur: number; niveau: number }[] = [{ porteur: 13, niveau: 3 }, { porteur: 16, niveau: 5 }];
 export const niveauLegsPour = (niveauDuPorteur: number) =>
   EVEIL_LEGS.reduce((n, e) => (niveauDuPorteur >= e.porteur ? Math.max(n, e.niveau) : n), COLLECTION.niveauDepart.nacre);
 

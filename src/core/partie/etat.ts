@@ -9,7 +9,7 @@ import type { BatimentId, GesteDef, BonusMarques, Rarete } from '../types';
 import { FAMILLES_QUARTIER, familleDef } from '../familles';
 import { t as tr } from '../i18n';
 
-export const VERSION_JEU = 10;
+export const VERSION_JEU = 11;
 
 /** Réglages du district, au même endroit pour l'équilibrage */
 export const DISTRICT = {

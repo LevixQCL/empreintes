@@ -2,7 +2,7 @@
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
 import { PORTEURS, CARTE_CHAMBRE, MODULES, estCarteConnue, moduleDe, moduleDef, porteurDef, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, carteId } from '../donnees';
-import { niveauRequis, poidsCarte } from '../collection';
+import { COLLECTION, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
 import { graine } from '../rng';
 import { nbFoyers, DISTRICT, VERSION_JEU, XP, xpPourNiveau, chargeMax, chargePortee, enExpedition, confier, niveauConfiance, strateVaincue, jourDe, log, niveauPorteur, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
 import { SCENES, sceneEnAttente, type ContexteCampagne } from '../campagne';
@@ -314,7 +314,31 @@ function migrer(j: Jeu) {
     delete ancien.conversion;
     delete ancien.cristallisation;
   }
+  if (j.version === 10) {
+    // version 11 (10 novembre 2026) : 5 niveaux par carte au lieu de 10 (départ 1 pour tous les métaux, collection.ts).
+    // Le chemin parcouru se garde : une carte à mi-chemin de son ancien maximum arrive à mi-chemin du nouveau, une carte au
+    // maximum reste maîtrisée. Les doublons déjà réunis restent, sans dépasser ce que demande le niveau suivant.
+    j.version = 11;
+    convertirNiveaux(j);
+  }
   allegerSelonCharge(j);
+}
+
+/** Les anciens niveaux de départ (avant le 10 novembre 2026, sur 10 niveaux) */
+const ANCIEN_DEPART: Record<string, number> = { fer: 1, cuivre: 3, argent: 5, or: 7, nacre: 8 };
+/** Un ancien niveau (départ selon le métal, maximum 10) sur l'échelle de 1 à 5 */
+export function nouveauNiveau(ancien: number, metal: string): number {
+  const d = ANCIEN_DEPART[metal] ?? 1;
+  if (ancien <= d) return 1;
+  return Math.min(COLLECTION.niveauMax, 1 + Math.round(((ancien - d) / (10 - d)) * (COLLECTION.niveauMax - 1)));
+}
+function convertirNiveaux(j: Jeu) {
+  for (const [cle, c] of Object.entries(j.collection)) {
+    const metal = cle.split('@')[1] ?? 'fer';
+    c.niveau = nouveauNiveau(c.niveau, metal);
+    const requis = doublonsRequis(cle, c.niveau);
+    c.doublons = requis === null ? c.doublons : Math.min(c.doublons, requis);
+  }
 }
 
 /** Le palier d'une ancienne sauvegarde, comptée en habitants (75 par palier, 600 au plus) */
