@@ -400,7 +400,11 @@ export function destinationsDuJour(now: number): Destination[] {
   const choix: Destination[] = [];
   melange.slice(debut, debut + comptes[idx]!).forEach((sl, i) => {
     const pris = new Set(choix.map((d) => d.lieu.id));
-    const libres = LIEUX.filter((l) => l.lignee === sl.lignee && !pris.has(l.id));
+    // 10 novembre 2026 (bug) : une lignée pouvait demander plus de destinations qu'elle n'a de lieux (le 11 février 2027,
+    // 5 destinations dont une sans lieu : l'envoi en mer plantait) ; on prend alors un lieu libre d'une autre lignée
+    const memeLignee = LIEUX.filter((l) => l.lignee === sl.lignee && !pris.has(l.id));
+    const libres = memeLignee.length ? memeLignee : LIEUX.filter((l) => !pris.has(l.id));
+    if (!libres.length) return;
     const tend = libres.filter((l) => l.specialite === TENDANCE[sl.butin]);
     const liste = tend.length ? tend : libres;
     // le lieu suit le jour : la même destination ne revient pas tous les jours

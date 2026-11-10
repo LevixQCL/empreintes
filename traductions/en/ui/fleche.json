@@ -354,8 +354,8 @@
    "en": "By as many quays, but never below the last engraved quay you reached."
   },
   {
-   "fr": "{0} : chacun donne des cristaux et des Éclats, une seule fois. Ton record compte au Grand Tableau.",
-   "en": "{0}: each gives crystals and Shards, once only. Your record counts on the Great Board."
+   "fr": "{0} : chacun donne des cristaux, des Éclats et une carte au choix parmi trois du même métal (argent, puis or, puis nacre à partir du quai 75), une seule fois. Ton record compte au Grand Tableau.",
+   "en": "{0}: each gives crystals, Shards and a card of your choice among three of the same metal (silver, then gold, then nacre from quay 75), once only. Your record counts on the Great Board."
   },
   {
    "fr": "La garde des quais · compétition",

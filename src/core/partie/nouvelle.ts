@@ -13,6 +13,7 @@ import { ORDRE_FAMILLES } from '../fragments';
 import { FAMILLES_DEPART, FAMILLES_DISTRICT, familleDuFragment } from '../familles';
 import { SECTEURS } from '../digue';
 import { donnerKitRecrues, recompenserLecture } from './recompenses';
+import { rattraperCartesFleche } from './fleche';
 import { t } from '../i18n';
 
 const DECISION_CHAMBRE: { titre: string; texte: string; options: { id: GardeChambre; nom: string; phrase: string; effet: string }[] } = {
@@ -322,6 +323,8 @@ function migrer(j: Jeu) {
     convertirNiveaux(j);
   }
   allegerSelonCharge(j);
+  // 10 novembre 2026 : les quais gravés déjà passés donnent leur carte au choix (une seule fois, notée dans fleche.cartes)
+  rattraperCartesFleche(j);
 }
 
 /** Les anciens niveaux de départ (avant le 10 novembre 2026, sur 10 niveaux) */

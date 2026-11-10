@@ -38,8 +38,12 @@
    "en": ": new record"
   },
   {
-   "fr": " Quai gravé {0} : +{1} cristaux, +{2} Éclats.",
-   "en": " Engraved quay {0}: +{1} crystals, +{2} Shards."
+   "fr": " Quai gravé {0} : +{1} cristaux, +{2} Éclats{3}.",
+   "en": " Engraved quay {0}: +{1} crystals, +{2} Shards{3}."
+  },
+  {
+   "fr": ", une carte {0} au choix",
+   "en": ", a {0} card of your choice"
   },
   {
    "fr": "Repoussés au quai {0} : l’escouade redescend au quai {1}.",

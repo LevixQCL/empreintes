@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { ASCENSION, FLECHE, etatFleche, flecheOuverte, forceEscouade, forceQuai, gardiensQuai, monterFleche, nouveauJeu, pas, plancher, remonter, remonterFleche } from '../src/core/jeu';
 import { defierGardien, gageEnCaisse, gageJour, peutDefier, peutTenir, quitterQuai, recevoirGage, subirAssauts, tenirQuai } from '../src/core/jeu';
 import { jouerTourMoyen } from '../src/core/robot';
+import { moduleDef } from '../src/core/donnees';
+import { rattraperCartesFleche } from '../src/core/partie/fleche';
 
 const ESC = ['ilka', 'doran', 'vela'];
 const pret = () => { const j = nouveauJeu(0, 1); j.chambre = true; j.recrues = true; j.frontVaincu = true; j.scenes = ['convocation']; return j; };
@@ -48,7 +50,12 @@ describe('La Flèche', () => {
     const avant = { c: j.energie, e: j.eclats };
     const r = remonterFleche(j, 1000)!;
     expect(r).toMatchObject({ victoire: true, de: 17, a: 21, record: true });
-    expect(r.paliers).toEqual([{ quai: 20, ...ASCENSION.recompenses[20] }]);
+    expect(r.paliers).toEqual([{ quai: 20, ...ASCENSION.recompenses[20], metal: 'argent' }]);
+    // 10 novembre 2026 : une carte au choix parmi trois, toutes au moins en argent
+    const c = j.choix.at(-1)!;
+    expect(c.source).toBe('fleche');
+    expect(c.options).toHaveLength(3);
+    for (const id of c.options) expect(['argent', 'or', 'nacre']).toContain(moduleDef(id).rarete);
     expect(j.energie - avant.c).toBe(ASCENSION.recompenses[20]!.composants);
     expect(j.eclats - avant.e).toBe(ASCENSION.recompenses[20]!.eclats);
     // redescendre puis remonter ne redonne rien
@@ -57,6 +64,24 @@ describe('La Flèche', () => {
     monterFleche(j, ESC);
     j.expedition!.combat.issue = 'victoire';
     expect(remonterFleche(j, 2000)!.paliers).toEqual([]);
+    expect(j.choix.filter((x) => x.source === 'fleche')).toHaveLength(1);
+  });
+
+  it('les quais gravés au-dessus de 75 donnent de la nacre, et les parties déjà montées rattrapent leurs cartes', () => {
+    const j = pret();
+    const f = etatFleche(j);
+    f.quai = 90; f.record = 90; f.recus = [20, 40, 50, 60, 70, 80, 90];
+    const n = j.choix.length;
+    rattraperCartesFleche(j);
+    const recues = j.choix.slice(n);
+    expect(recues).toHaveLength(7);
+    for (const id of recues.at(-1)!.options) expect(moduleDef(id).rarete).toBe('nacre');
+    rattraperCartesFleche(j);
+    expect(j.choix.length - n).toBe(7);
+    // les nouveaux quais gravés (75, 85) déjà dépassés se donnent à la prochaine victoire
+    monterFleche(j, ESC);
+    j.expedition!.combat.issue = 'victoire';
+    expect(remonterFleche(j, 3000)!.paliers.map((p) => p.quai)).toEqual([75, 85]);
   });
 
   it('une défaite fait redescendre, mais pas sous le quai gravé', () => {

@@ -355,8 +355,10 @@ export const FLECHE = {
   quais: 101,
   /** quais gagnés par victoire selon la hauteur : vite en bas, lentement en haut (56 victoires sans défaite pour le sommet) */
   montee: [{ jusqua: 40, quais: 4 }, { jusqua: 70, quais: 2 }, { jusqua: 101, quais: 1 }],
-  /** quais gravés : une défaite n'en fait jamais redescendre, et chacun donne une récompense une fois */
-  paliers: [20, 40, 50, 60, 70, 80, 90, 101],
+  /** quais gravés : une défaite n'en fait jamais redescendre, et chacun donne une récompense une fois.
+   *  10 novembre 2026 (simulation jusqu'au sommet) : 75, 85 et 95 ajoutés. Au-dessus de 70, on monte d'un quai par victoire
+   *  et on en perd un par défaite, à 50-70 % de victoires : la fin était une marche au hasard (jusqu'à 70 jours entre 90 et 101). */
+  paliers: [20, 40, 50, 60, 70, 75, 80, 85, 90, 95, 101],
   /** au-delà du dernier quai : les Sièges, tenus par des joueurs, qu'on défie */
   sieges: 5,
   /** au sommet, pendant un passage d'île : défaites qui éliminent, victoires qui ouvrent un défi de Siège */

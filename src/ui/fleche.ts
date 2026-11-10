@@ -12,6 +12,7 @@ import { artFleche, fondFleche, miniature } from './art';
 /** Les chefs de quai : ils mènent le trio au combat qui passe un quai gravé */
 const CHEFS = new Set(GARDES_FLC.filter((g) => g.hauteur === 'chef').map((g) => g.id));
 import { echap } from './outils';
+import { NOMS_RARETE } from '../core/collection';
 import { visageGarde } from './acces';
 import { COULEUR } from './vue';
 import { t } from '../core/i18n';
@@ -83,7 +84,8 @@ function fleche(j: Jeu, f: EtatFleche, top: GardienQuai[]): string {
 
 const recompense = (q: number) => {
   const r = ASCENSION.recompenses[q];
-  return r ? `${ICO.energie}${ent(r.composants)} ${ICO.eclats}${r.eclats}` : '';
+  const m = ASCENSION.cartes[q];
+  return r ? `${ICO.energie}${ent(r.composants)} ${ICO.eclats}${r.eclats}${m ? ` ${ICO.cartes}${NOMS_RARETE[m]}` : ''}` : '';
 };
 
 /** Les gardiens du prochain quai, les chances, et l'enjeu */
@@ -239,7 +241,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', recit = false): stri
       + etape(ICO.atk, t('Un combat par quai'), t('Ton escouade affronte les trois gardiens du quai. Pas de jeton : tu montes autant que tu veux, seule l’Usure te freine.'))
       + etape(ICO.monter, t('Vite en bas, lentement en haut'), t`Une victoire fait monter de ${FLECHE.montee[0]!.quais} quais jusqu’au ${FLECHE.montee[0]!.jusqua}, de ${FLECHE.montee[1]!.quais} jusqu’au ${FLECHE.montee[1]!.jusqua}, puis d’un seul.`)
       + etape(ICO.descendre, t('Une défaite fait redescendre'), t('D’autant de quais, mais jamais sous le dernier quai gravé que tu as atteint.'))
-      + etape(ICO.cristal, t('Les quais gravés'), t`${FLECHE.paliers.join(', ')} : chacun donne des cristaux et des Éclats, une seule fois. Ton record compte au Grand Tableau.`)
+      + etape(ICO.cristal, t('Les quais gravés'), t`${FLECHE.paliers.join(', ')} : chacun donne des cristaux, des Éclats et une carte au choix parmi trois du même métal (argent, puis or, puis nacre à partir du quai 75), une seule fois. Ton record compte au Grand Tableau.`)
       + `</ul>`, ICO.aide)
 
     + replie(t('La garde des quais · compétition'), `<p>${t`Les Hauts préfèrent payer un directeur qui tient bon plutôt qu’un gardien de location. Les meilleurs directeurs se disputent les quais : le but, tenir le plus haut.`}</p><ul class="fl-pr-etapes">`

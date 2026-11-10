@@ -4,6 +4,7 @@ import { envoyerPillages } from '../pillages';
 import { envoyerAssauts, synchroGarde } from '../fleche';
 import * as C from '../../core/combat';
 import * as J from '../../core/jeu';
+import { NOMS_RARETE } from '../../core/collection';
 import { composerTourMoyen } from '../../core/robot';
 import { suitePorte } from '../../core/expedition';
 import { comparer, montrer, relever } from '../../ui/gains';
@@ -171,7 +172,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
         if (f.defi) synchroGarde();
         D.message = f.defi ? (f.victoire ? t`${f.defi.nom} est battu : ton escouade tient désormais le quai ${f.defi.quai}.` : t`${f.defi.nom} garde le quai ${f.defi.quai}. Ta montée ne bouge pas.`)
           : f.victoire
-          ? t`Quai ${f.a} atteint${f.record ? t(' : nouveau record') : ''}.${f.paliers.map((p) => t` Quai gravé ${p.quai} : +${p.composants} cristaux, +${p.eclats} Éclats.`).join('')}`
+          ? t`Quai ${f.a} atteint${f.record ? t(' : nouveau record') : ''}.${f.paliers.map((p) => t` Quai gravé ${p.quai} : +${p.composants} cristaux, +${p.eclats} Éclats${p.metal ? t`, une carte ${NOMS_RARETE[p.metal].toLowerCase()} au choix` : ''}.`).join('')}`
           : f.a < f.de ? t`Repoussés au quai ${f.de} : l’escouade redescend au quai ${f.a}.` : t`Repoussés au quai ${f.de} : l’escouade garde son quai.`;
       } else if (r.pillage) {
         const p = r.pillage;

@@ -20,7 +20,9 @@ import { creerCombat } from '../combat';
 import { FLECHE } from '../classements';
 import { nouvelleExpedition } from '../expedition';
 import { graine, tireur } from '../rng';
-import { CONFIANCE, XP, bonusPv, strateVaincue, confier, gagnerXp, log, niveauPorteur, non, pvNiveau, usureAuRetour, type Jeu, type Resultat } from './etat';
+import { tirerChoix } from '../collection';
+import type { Rarete } from '../types';
+import { CONFIANCE, XP, bonusPv, porteursPresents, strateVaincue, confier, gagnerXp, log, niveauPorteur, non, pvNiveau, usureAuRetour, type Jeu, type Resultat } from './etat';
 import { escouadePrete, payerRatelier, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 import { PILLAGE, remonter as remonterPillage, type Garnison } from './pillages';
@@ -43,10 +45,17 @@ export const ASCENSION = {
     50: { composants: 400, eclats: 6 },
     60: { composants: 500, eclats: 7 },
     70: { composants: 650, eclats: 8 },
+    75: { composants: 700, eclats: 9 },
     80: { composants: 800, eclats: 10 },
+    85: { composants: 900, eclats: 11 },
     90: { composants: 1000, eclats: 12 },
+    95: { composants: 1200, eclats: 15 },
     101: { composants: 1500, eclats: 20 },
   } as Record<number, { composants: number; eclats: number }>,
+  /** 10 novembre 2026 (Bryan : « vu le peu de nacre qu'on reçoit, le bon endroit pour en donner ») : chaque quai gravé donne
+   *  aussi une carte au choix parmi trois, toutes de ce métal. Avant, la Flèche ne donnait aucune carte, et un joueur moyen
+   *  trouvait une seule nacre en 100 jours (0,2 % des tirages, et seulement sous −10). Au sommet : 2 argent, 3 or, 6 nacre. */
+  cartes: { 20: 'argent', 40: 'argent', 50: 'or', 60: 'or', 70: 'or', 75: 'nacre', 80: 'nacre', 85: 'nacre', 90: 'nacre', 95: 'nacre', 101: 'nacre' } as Record<number, Rarete>,
   /** tenir un quai : le gage par jour (composants = base + parQuai × quai ; Éclats à partir de certains quais) */
   // un Éclat par jour dès le quai 10 (audit du 7 novembre 2026 : avant le quai 40, la garde ne payait qu'en composants, sans valeur)
   gage: { base: 30, parQuai: 3, eclats: [{ des: 10, n: 1 }, { des: 40, n: 2 }, { des: 80, n: 3 }] },
@@ -65,6 +74,8 @@ export interface EtatFleche {
   recordLe: number;
   /** les quais gravés dont la récompense a été reçue */
   recus: number[];
+  /** les quais gravés dont la carte au choix a été donnée (10 novembre 2026) */
+  cartes?: number[];
   victoires: number;
   defaites: number;
   /** le quai tenu par l'escouade (absent si elle ne tient rien) */
@@ -103,7 +114,7 @@ export interface RetourFleche {
   /** le quai d'avant et celui d'après */
   de: number; a: number;
   /** les quais gravés passés pour la première fois, et ce qu'ils ont donné */
-  paliers: { quai: number; composants: number; eclats: number }[];
+  paliers: { quai: number; composants: number; eclats: number; /** la carte au choix offerte (son métal) */ metal?: Rarete }[];
   record: boolean;
   /** un défi contre un directeur gardien : son nom, et le quai pris (victoire) ou visé */
   defi?: { nom: string; quai: number };
@@ -126,6 +137,22 @@ export function forceQuai(quai: number): number {
 
 /** Les quais gagnés (ou perdus) par un combat depuis ce quai */
 export const pas = (quai: number) => FLECHE.montee.find((m) => quai <= m.jusqua)?.quais ?? 1;
+
+/** La carte au choix d'un quai gravé (une seule fois par quai, notée dans `cartes`) ; renvoie son métal */
+export function carteDuQuai(j: Jeu, q: number): Rarete | null {
+  const metal = ASCENSION.cartes[q];
+  const f = etatFleche(j);
+  if (!metal || (f.cartes ??= []).includes(q)) return null;
+  f.cartes.push(q);
+  j.choix.push({ source: 'fleche', options: tirerChoix(j, Math.max(10, j.strate), metal, undefined, porteursPresents(j), true) });
+  return metal;
+}
+
+/** Les parties qui avaient déjà passé des quais gravés avant le 10 novembre 2026 reçoivent leurs cartes (au chargement) */
+export function rattraperCartesFleche(j: Jeu): void {
+  if (!j.fleche) return;
+  for (const q of j.fleche.recus) carteDuQuai(j, q);
+}
 
 /** Le dernier quai gravé atteint : une défaite n'en fait jamais redescendre */
 export const plancher = (record: number) => [...FLECHE.paliers].filter((p) => p <= record).pop() ?? 1;
@@ -248,7 +275,8 @@ export function remonterFleche(j: Jeu, now: number): RetourFleche | null {
       j.eclats += r.eclats;
       // un quai gravé, c'est de la place gagnée sur les îles (30 octobre 2026)
       confier(j, CONFIANCE.quaiGrave, 'fleche', now);
-      paliers.push({ quai: q, ...r });
+      const metal = carteDuQuai(j, q);
+      paliers.push({ quai: q, ...r, ...(metal ? { metal } : {}) });
     }
   } else {
     f.defaites++;
