@@ -7,7 +7,7 @@ Une image par Strate, plus le gros plan sur la cheville d'Ilka. Elles accompagne
 - Laisser le tiers bas calme et simple : le texte s'y pose.
 - Aucune écriture dans les images (Midjourney la rate) : la croix « À signaler », les noms du mur et le chiffre de l'écran
   sont dits par le texte, ou dessinés par le jeu par-dessus l'image (le chiffre de la cheville).
-- Prothèse d'Ilka (10 nov.) : décrite pareil dans chaque prompt où elle apparaît (jambes fines gris acier sombre, cristal bleu au genou et à la cheville), d'après son portrait ; les premiers rendus bronze et massifs sont refusés.
+- Prothèse d'Ilka (10 nov.) : référence validée `public/art/references/ilka-jambe.webp` (à passer en --oref / --sref) ; décrite pareil dans chaque prompt où elle apparaît (jambes fines gris acier sombre, cristal bleu au genou et à la cheville), d'après son portrait ; les premiers rendus bronze et massifs sont refusés.
 - Images retenues le 10 nov. : 2 à 8 et 10 (déjà dans le jeu, pas encore affichées). À refaire : 1 (les traces ne sortaient pas de l'eau), 9 et cheville (prothèse).
 - Style : même référence que les scènes de la campagne (`docs/prompts-campagne.md`) ; avec Ilka, son portrait s'ajoute.
 
