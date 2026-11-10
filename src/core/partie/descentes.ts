@@ -13,7 +13,7 @@ import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
 import { REGLES } from '../regles';
 import { nbFoyers, ACCORD_OUVERT, chanceCreuseurDuJour, fouilleursDuJour, facteurXp, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
-import { barquesMax, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
+import { barquesMax, gardienPourTour, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { KIT_RECRUES, donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
 import { noterOrigine, noterVecu } from './vecu';
@@ -1090,7 +1090,7 @@ export function resumeAbsence(avant: Jeu, apres: Jeu, nouvelles: string[]): stri
   const soignes = Object.keys(apres.porteurs).filter((id) => !remis.includes(id) && avant.porteurs[id]!.usure - apres.porteurs[id]!.usure >= 1);
   if (soignes.length) l.push(tr`La Clinique a soigné ${soignes.map((id) => porteurDef(id).nom).join(', ')}`);
   if (!l.length) return l;
-  const amelio = apres.chantiers.length >= chantiersMax(apres) ? undefined : BATIMENTS.find((b) => { const c = coutAmelioration(apres, b.id); return !!c && !chantierDe(apres, b.id) && apres.energie >= c.energie && apres.composants >= c.composants && apres.eclats >= (c.eclats ?? 0) && (b.id === 'noyau' || apres.batiments[b.id] < apres.batiments.noyau); });
+  const amelio = apres.chantiers.length >= chantiersMax(apres) ? undefined : BATIMENTS.find((b) => { const c = coutAmelioration(apres, b.id); return !!c && !(b.id === 'noyau' && gardienPourTour(apres)) && !chantierDe(apres, b.id) && apres.energie >= c.energie && apres.composants >= c.composants && apres.eclats >= (c.eclats ?? 0) && (b.id === 'noyau' || apres.batiments[b.id] < apres.batiments.noyau); });
   if (amelio) l.push(tr`Tu peux améliorer : ${amelio.nom}`);
   else if (!apres.expedition && apres.chambre) l.push(tr`La Strate −${apres.strate} t’attend`);
   return l;

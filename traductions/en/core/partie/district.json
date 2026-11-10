@@ -218,6 +218,10 @@
    "en": "Upgrade the Core Tower first."
   },
   {
+   "fr": "Les nouvelles fondations de la Tour s’ancrent dans la roche de la Strate −{0} : il faut d’abord vaincre son gardien.",
+   "en": "The Tower’s new foundations anchor into the rock of Stratum −{0}: its guardian must be defeated first."
+  },
+  {
    "fr": "Termine d’abord les chantiers en cours avant d’agrandir la Tour du Noyau.",
    "en": "Finish the current projects before expanding the Core Tower."
   },

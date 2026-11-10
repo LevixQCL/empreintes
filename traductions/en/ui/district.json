@@ -842,6 +842,10 @@
    "en": "Defeat the guardian of Stratum −{0} to build it."
   },
   {
+   "fr": "Les nouvelles fondations s’ancrent dans la roche de la Strate −{0} : vaincs d’abord son gardien.",
+   "en": "The new foundations anchor into the rock of Stratum −{0}: defeat its guardian first."
+  },
+  {
    "fr": "Il faut d’abord monter la Tour du Noyau au niveau {0}.",
    "en": "The Core Tower must reach level {0} first."
   },

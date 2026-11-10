@@ -13,7 +13,7 @@ import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
   OBJECTIFS, EPREUVES_STRATE, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, chanceCreuseurFouille, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
-  COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, plafondEntrainement, raffinageParHeure, apercuSeance, debutJour,
+  COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, gardienPourTour, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, plafondEntrainement, raffinageParHeure, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, carteNiveau, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
@@ -961,10 +961,13 @@ function amelioration(j: Jeu, b: BatimentId) {
   // les ressources manquantes se lisent déjà en rouge dans le coût : la phrase ne sert que pour les autres blocages
   // le Cercle avant la Strate −2 (3 novembre 2026) : fermé, quelle que soit la Tour
   const ferme = b === 'cercle' && !cercleOuvert(j);
+  // la Tour retenue par un gardien (10 novembre 2026) : ses fondations s'ancrent dans la roche de la Strate
+  const gardien = b === 'noyau' ? gardienPourTour(j) : 0;
   const raison = ferme ? tr`Vaincs le gardien de la Strate −${CERCLE_OUVERTURE} pour le construire.`
+    : gardien ? tr`Les nouvelles fondations s’ancrent dans la roche de la Strate −${gardien} : vaincs d’abord son gardien.`
     : bloque ? tr`Il faut d’abord monter la Tour du Noyau au niveau ${niv + 1}.`
     : plein ? (b === 'noyau' && j.chantiers.length ? tr('Attends la fin des chantiers en cours.') : chantiersMax(j) === 1 ? tr('Un seul chantier à la fois (deux au Noyau niveau 4).') : tr('Deux chantiers sont déjà en cours.')) : '';
-  return { ch, cout, bloque, raison, pret: !ch && assez && !bloque && !plein && !ferme };
+  return { ch, cout, bloque, raison, pret: !ch && assez && !bloque && !plein && !ferme && !gardien };
 }
 
 /** Le coût et le bouton d'amélioration sur une ligne ; `pied` : la version du pied fixe (étiquette courte) */

@@ -34,11 +34,19 @@ describe('Chantiers', () => {
 
   it('les niveaux 4 et 5 demandent des Éclats', () => {
     const j = nouveauJeu(0);
-    j.energie = 5000; j.composants = 500; j.batiments.noyau = 3;
+    j.energie = 5000; j.composants = 500; j.batiments.noyau = 3; j.strate = 4;
     expect(ameliorer(j, 'noyau', 0).ok).toBe(false);
     j.eclats = 3;
     expect(ameliorer(j, 'noyau', 0).ok).toBe(true);
     expect(j.eclats).toBe(0);
+  });
+
+  it('la Tour ne passe au niveau 4 qu’une fois le gardien de la Strate −3 vaincu', () => {
+    const j = nouveauJeu(0);
+    j.energie = 5000; j.eclats = 10; j.batiments.noyau = 3; j.strate = 3;
+    expect(ameliorer(j, 'noyau', 0).ok).toBe(false);
+    j.frontVaincu = true;
+    expect(ameliorer(j, 'noyau', 0).ok).toBe(true);
   });
 });
 

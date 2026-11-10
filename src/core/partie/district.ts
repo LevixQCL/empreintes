@@ -189,12 +189,19 @@ export function batimentConseille(j: Jeu): BatimentId {
   return [...ids].sort((a, b) => cout(a) - cout(b))[0] ?? 'noyau';
 }
 
+/** Le gardien qu'il faut encore vaincre avant le prochain niveau de la Tour (0 : rien ne la retient) */
+export function gardienPourTour(j: Jeu): number {
+  const strate = DISTRICT.tourApresGardien[j.batiments.noyau + 1] ?? 0;
+  return strate > strateVaincue(j) ? strate : 0;
+}
+
 export function ameliorer(j: Jeu, b: BatimentId, now = j.dernierTick): Resultat {
   const cout = coutAmelioration(j, b);
   if (!cout) return non(tr('Niveau maximum atteint.'));
   if (chantierDe(j, b)) return non(tr('Un chantier est déjà en cours sur ce bâtiment.'));
   if (b === 'cercle' && strateVaincue(j) < CERCLE_OUVERTURE) return non(tr`Aucun directeur n’accoste avant que la Strate −${CERCLE_OUVERTURE} soit vaincue.`);
   if (b !== 'noyau' && j.batiments[b] >= j.batiments.noyau) return non(tr('Améliore d’abord la Tour du Noyau.'));
+  if (b === 'noyau' && gardienPourTour(j)) return non(tr`Les nouvelles fondations de la Tour s’ancrent dans la roche de la Strate −${gardienPourTour(j)} : il faut d’abord vaincre son gardien.`);
   if (b === 'noyau' && j.chantiers.length) return non(tr('Termine d’abord les chantiers en cours avant d’agrandir la Tour du Noyau.'));
   if (j.chantiers.length >= chantiersMax(j)) return non(chantiersMax(j) === 1 ? tr('Un seul chantier à la fois pour l’instant (deux au Noyau niveau 4).') : tr('Deux chantiers sont déjà en cours.'));
   if (j.energie < cout.energie || j.composants < cout.composants || j.eclats < (cout.eclats ?? 0)) return non(tr('Pas assez de ressources.'));

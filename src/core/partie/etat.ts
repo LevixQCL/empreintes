@@ -28,6 +28,10 @@ export const DISTRICT = {
   soinParHeure: [0, 6, 10, 16, 22, 30, 36, 42, 48, 55, 62],
   /** la Forge refabrique 25 % plus vite par niveau */
   forgeParNiveau: 0.25,
+  /** La Tour ne monte à certains niveaux qu'une fois un gardien vaincu (niveau visé → Strate). 10 novembre 2026 (compte rendu de partie,
+   *  validé par Bryan) : l'âge 2 du district arrivait le premier jour, après quelques heures. Niveau 4 après le gardien de −3 : jour 3 ou 4.
+   *  Raison dans l'histoire : une contrainte technique, les nouvelles fondations s'ancrent dans la roche de cette Strate. */
+  tourApresGardien: { 4: 3 } as Record<number, number>,
   /** durée du chantier pour atteindre un niveau, en minutes (index = niveau visé) */
   chantierMinutes: [0, 0, 0, 5, 30, 120, 240, 720, 1440, 2160, 2880],
   /** chantiers en même temps : 1, puis 2 à partir du Noyau niveau 4 */
