@@ -230,7 +230,7 @@ for (let s = 1; s <= 10; s++) {
   }
   const gardien = SCENES.find((x) => x.id === `gardien-${s}`);
   if (gardien) corps += scene(gardien, ctx(s));
-  if (s === 1) corps += `<article class="decision"><h3>${e(LETTRE_LEGS.titre)}</h3>${recitSeul(LETTRE_LEGS.texte)}<blockquote>${e(LETTRE_LEGS.lettre)}</blockquote></article>`;
+  if (s === 2) corps += `<article class="decision"><h3>${e(LETTRE_LEGS.titre)}</h3>${recitSeul(LETTRE_LEGS.texte)}<blockquote>${e(LETTRE_LEGS.lettre)}</blockquote></article>`;
   corps += finStrate(s);
   if (s === 3) corps += decision(DECISIONS.chambre, { orseve: 'hald', district: 'ilka', commission: 'tobin' }, ACTES.chambre, 'Tu as tranché : {choix}. La chambre ne serait ni aux Hauts ni au district seul. Tobin a remonté ses manches.');
   if (s === 6) corps += decision(DECISIONS.lecture, { autoriser: 'vela', refuser: 'doran' }, ACTES.lecture, 'Tu as dit non. Véla a baissé les yeux, puis elle a souri. « On n’entre pas deux fois chez quelqu’un sans y être invité. Tu as raison. Pour cette fois. »');

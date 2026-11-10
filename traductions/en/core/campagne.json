@@ -138,8 +138,12 @@
    "en": "Name’s Brac. I didn’t steal them, director. They asked me. All night they kept asking me to take them deeper. How deep, I don’t know. Deeper than I’ve ever dug."
   },
   {
-   "fr": "Il dit vrai. Les empreintes de la chambre veulent descendre. Je ne sais pas pourquoi. Je sais qu’elles ont peur de rester en haut.",
-   "en": "He’s telling the truth. The chamber’s imprints want to go down. I don’t know why. I know they’re afraid to stay up here."
+   "fr": "Elles répétaient un mot. « Ossyra. » J’ai cru que c’était un endroit, quelque part en dessous. Je voulais seulement les y conduire.",
+   "en": "They kept saying one word. “Ossyra.” I thought it was a place, somewhere further down. All I wanted was to get them there."
+  },
+  {
+   "fr": "Il dit vrai. Les empreintes de la chambre veulent descendre. Je ne sais pas pourquoi. Ce mot, je l’entends aussi, et je ne le comprends pas mieux que lui. Je sais seulement qu’elles ont peur de rester en haut.",
+   "en": "He’s telling the truth. The chamber’s imprints want to go down. I don’t know why. I hear that word too, and I understand it no better than he does. All I know is they’re afraid to stay up here."
   },
   {
    "fr": "Le petit cristal qu’on a laissé rouler dans l’abri de 2060. Il est là, avec les autres. Il est arrivé avant nous.",
@@ -730,8 +734,8 @@
    "en": "Ysé writes like she talks. Kindly. And she leaves you the hard part."
   },
   {
-   "fr": "Nous, on remonte. Il y a des pompes qui nous attendent.",
-   "en": "We’re heading up. There are pumps waiting on us."
+   "fr": "Nous, on remonte toujours. Il y a des pompes qui nous attendent.",
+   "en": "We always come back up. There are pumps waiting on us."
   },
   {
    "fr": "Depuis qu’on est entrés, mon écran n’affiche plus rien. Elle se tait. Je crois qu’elle a peur de ce qui coud, en bas.",
@@ -810,8 +814,20 @@
    "en": "He said it the way you recite a lesson. They’ve been telling us the same thing since −3."
   },
   {
-   "fr": "Tu lui as dit qui tu étais. Il a répondu en posant la main sur la table. C’était sa façon de dire son nom.",
-   "en": "You told him who you were. He answered by putting his hand on the table. That was his way of telling you his name."
+   "fr": "Ossyra.",
+   "en": "Ossyra."
+  },
+  {
+   "fr": "Le mot des empreintes, celui qu’on prenait pour un endroit. Il ne nous montre rien : il se présente. Ossyra, c’est leur nom à tous. Ceux qui portent.",
+   "en": "The imprints’ word, the one we took for a place. He isn’t pointing us anywhere: he’s introducing himself. Ossyra is the name for all of them. Those who bear."
+  },
+  {
+   "fr": "Tu lui as dit qui tu étais. Il vient de te répondre de la même façon : la main sur sa table, et le nom des siens.",
+   "en": "You told him who you were. He has just answered you in kind: his hand on his table, and the name of his people."
+  },
+  {
+   "fr": "Ceux qui portent. On appelle les nôtres des Porteurs depuis cinquante ans. Personne ne s’est demandé à qui on avait pris le mot, ni où il les avait menés.",
+   "en": "Those who bear. We’ve been calling ours Bearers for fifty years. Nobody ever asked who we took the word from, or where it got them."
   },
   {
    "fr": "Tu nous as fait compter nos voix, tout à l’heure. J’en porte deux. Je sais encore laquelle est la mienne.",
@@ -900,6 +916,10 @@
   {
    "fr": "Le Noyé est passé me voir, ce vieux saboteur rescapé du Levage et de la Grève des pompes, avec un papier plié en huit. Il dit que la Clause de la Flèche parle de ton district, pas seulement de ton escouade. Je t’ai recopié tout ça dans les Chroniques.",
    "en": "The Drowned Man paid me a visit, that old saboteur who lived through the Lifting and the Pump Strike, with a paper folded into eighths. He says the Spire Clause is about your district, not just your squad. I have copied it all out for you in the Chronicles."
+  },
+  {
+   "fr": "Sous la salle du Premier Porteur, l’escalier continue. Je l’ai vu en remontant. Il descend encore, et ça sentait l’eau. Pas la nôtre.",
+   "en": "Below the First Bearer’s chamber, the staircase goes on. I saw it on the way up. It keeps going down, and it smelled of water. Not ours."
   },
   {
    "fr": "Regarde la mer, directeur. Elle n’a pas oublié de monter. Mais toi, tu as regardé. Je ferme mon cahier : la suite est à toi.",

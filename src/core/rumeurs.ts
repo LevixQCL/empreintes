@@ -24,6 +24,7 @@ export const RUMEURS: Rumeur[] = [
   { texte: t('Quelqu’un a vu une Résonante marcher sur un câble sans harnais, une lanterne à la main. Tout le monde sait de qui il s’agit.'), strate: 1 },
   { texte: t('Une fissure de plus sur un pilier de l’est. Quelqu’un l’a rebouchée pendant la nuit. Le Présage n’a rien dit.'), strate: 2 },
   { texte: t('Une île des Hauts passait au-dessus du marché. Un vieux Géné a craché par terre. « On ne demande pas qui les a montées », a dit sa voisine, et elle a changé de sujet.'), strate: 3 },
+  { texte: t('Depuis l’ouverture de la chambre, les gamins du quai jouent à « partir pour Ossyra ». Aucun ne sait où c’est. Le mot est remonté des Strates avec les fouilleurs, et il plaît.'), strate: 3 },
   { texte: t('Les Brigades sont passées à l’école demander combien d’enfants « ont des yeux qui brillent ». Les parents ont répondu : aucun.'), strate: 4 },
   { texte: t('Le Réseau des Reprises colle des affiches la nuit : « Vos implants, vos mains. » Ce matin, quelqu’un avait ajouté au crayon : « Et qui écrit les mises à jour ? »'), strate: 6 },
   { texte: t('Des ouvriers de l’ouest disent qu’un vieux mur d’acier, sous un pilier, est tiède au toucher en plein hiver. Le chef d’équipe leur a interdit d’y poser l’oreille.'), strate: 8 },

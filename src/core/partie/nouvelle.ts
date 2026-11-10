@@ -42,7 +42,7 @@ const DECISION_LECTURE: { titre: string; texte: string; options: { id: LectureVe
 
 const DECISION_FIN: { titre: string; texte: string; options: { id: FinCampagne; nom: string; phrase: string; effet: string }[] } = {
   titre: t('La vérité'),
-  texte: t('Le Premier Porteur est tombé, et son registre parle enfin : une autre civilisation s’est perdue en se gravant des empreintes, et ses premiers porteurs l’avaient écrit dès le début. Ces mêmes empreintes ont pourtant sauvé l’humanité après la Fonte. Le système qui les tient stables s’use. Il faut décider de ce qu’on en fait.'),
+  texte: t('Le Premier Porteur s’est rassis, et son registre parle enfin. En haut, la mise en garde de ceux d’avant : à force de se graver leurs anciens, ils n’ont plus su quelle voix était la leur. Dessous, sa réponse : les voix ne les ont pas pris, elles les ont gardés. Ces mêmes empreintes ont sauvé des villes après la Fonte, et les Berceaux qui les gardent endormies s’usent. Il faut décider de ce que Vertiga en fait.'),
   options: [
     { id: 'scellement', nom: t('Le Grand Scellement'), phrase: t('Certaines vérités doivent rester enfouies.'),
       effet: t('Les empreintes anciennes sont scellées à nouveau. Moins de risques : les ennemis perdent 10 % de leur force. Du savoir perdu : plus aucune carte en nacre ne tombe.') },

@@ -183,7 +183,7 @@ export const HALTES: HalteDef[] = [
     t('Les portes rondes n’enferment rien. Quelqu’un s’est enfermé dedans, de son plein gré, au milieu de ses pierres.')),
   H(4, 2, t('La table des voix'),
     t('Une porte ronde s’est effondrée. Dedans, une table gravée en deux colonnes, et sous la table, des cristaux étiquetés.'), [
-      d(t('Les colonnes'), v('vela', t('Un nom, puis un chiffre : 12, 19, 27, 31. Ce ne sont pas des âges. C’est le nombre de voix que chacun portait.')), v('', t('Deux colonnes : des noms, et des chiffres qui montent. 12, 19, 27, 31.'))),
+      d(t('Les colonnes'), v('vela', t('En tête, un signe plus grand que les autres. Les empreintes le murmurent quand on les éveille : « Ossyra ». Dessous, un nom, puis un chiffre : 12, 19, 27, 31. Ce ne sont pas des âges. C’est le nombre de voix que chacun portait.')), v('', t('En tête, un signe gravé plus grand que les autres. Dessous, deux colonnes : des noms, et des chiffres qui montent. 12, 19, 27, 31.'))),
       d(t('La dernière ligne'), v('ilka', t('Un nom, puis « 31 », barré. À côté, « 1 ». Il s’est ôté trente voix pour n’en garder qu’une. La sienne.')), v('', t('Sur la dernière ligne, « 31 » est barré. À côté, quelqu’un a gravé « 1 ».'))),
       d(t('Sous la table'), v('sasha', t('Vingt-trois cristaux, une couche, à la porte d’à côté. Ici, trente. Ils se les retiraient un par un, et ils les gardaient près d’eux.'), 'vingt-trois'), v('doran', t('Trente cristaux, avec chacun son étiquette. Il ne les a pas jetés. Il les a rangés, et il s’est enfermé avec eux.')), v('', t('Trente cristaux, chacun avec son étiquette, rangés sous la table.'))),
     ], [
@@ -475,7 +475,7 @@ export const HALTES: HalteDef[] = [
       { texte: t('Lire la ligne noyée'), effet: 'eclat', piste: 'avant', carte: 'archive', recit: t('Véla plonge le bras jusqu’à la ligne et suit les signes du doigt. Il y en a d’autres dessous, beaucoup d’autres.') },
     ],
     t('L’eau d’en bas monte bien plus vite que la mer, et la voûte au-dessus d’elle se fend comme nos Fondations.'), {
-      nous: rv(t('Les deux nuits'), t('La jauge l’a dit : l’eau d’en bas a gagné ses deux crans les deux nuits où une île des Hauts est passée au-dessus de Vertiga. Elle ne monte pas toute seule : elle monte quand on lève.'),
+      nous: rv(t('Les deux nuits'), t('La jauge l’a dit : l’eau d’en bas a gagné ses deux crans les deux nuits où une île des Hauts est passée au-dessus de Vertiga. Elle ne monte pas toute seule : elle monte quand une île passe, comme si ce qui la tient en l’air pesait encore ici.'),
         v('sasha', t('Deux crans sur ma jauge. J’ai les heures. Les deux nuits où une île est passée au-dessus de la ville. Ce n’est pas une coïncidence, directeur, c’est une mesure.')),
         v('', t('Deux crans sur la jauge, et deux dates : les deux nuits où une île des Hauts est passée au-dessus de Vertiga.'))),
       avant: rv(t('Mille lignes'), t('Sous la ligne noyée, ceux d’avant en ont gravé des centaines, de plus en plus bas : pendant des millénaires, leur eau a baissé. Elle ne remonte que depuis peu, et c’est la première fois qu’elle passe au-dessus de leur dernière ligne.'),
@@ -497,7 +497,7 @@ export const HALTES: HalteDef[] = [
   H(12, 2, t('Le sigle'),
     t('Près des colonnes éteintes, un campement de chantier abandonné : des caisses, une lampe à huile, des pinces rangées par taille.'), [
       d(t('Une pince'), v('sasha', t('Numéro de série, et une date : 2091. Trente ans, directeur. Le temps qu’il faut à une voûte pour descendre d’une marche.')), v('', t('Une pince gravée d’un numéro et d’une date : 2091.'))),
-      d(t('La lampe'), v('kessa', t('Ils ont dormi ici. Plusieurs nuits. Ceux-là savaient où ils étaient.')), v('', t('Une lampe à huile, vidée jusqu’à la mèche.'))),
+      d(t('La lampe'), v('kessa', t('Ils ont dormi ici. Plusieurs nuits. Ceux-là savaient où ils étaient. Et ils ne sont pas descendus par chez nous : au-dessus, toutes les portes étaient encore fermées de l’intérieur.')), v('', t('Une lampe à huile, vidée jusqu’à la mèche.'))),
     ], [
       { texte: t('Fouiller les caisses'), effet: 'composants', piste: 'nous', carte: 'cache', recit: t('Les caisses sont presque vides. Dans la dernière, sous la paille, des papiers de chantier, et assez de matériel pour remonter sans manquer de rien.') },
       { texte: t('Examiner la gravure d’une colonne'), effet: 'eclat', piste: 'avant', carte: 'archive', recit: t('Sur une colonne allumée, à hauteur d’yeux, une gravure que tu n’avais pas vue.') },
@@ -514,14 +514,14 @@ export const HALTES: HalteDef[] = [
   // ---------- −13 · Ceux qui portent ----------
   H(13, 1, t('Le registre des colonnes'),
     t('Le long du mur, une table immense, couverte de signes en colonnes. Véla ne la lit pas : elle la reconnaît.'), [
-      d(t('Les signes'), v('vela', t('« Ceux qui portent. » Le mot des tables de −7, celui qu’ils employaient pour dire « nous ». Il ne voulait pas dire qu’ils portaient des voix. Il voulait dire ça.')), v('', t('Une table couverte de signes, rangés comme un registre.'))),
+      d(t('Les signes'), v('vela', t('« Ossyra. » Ceux qui portent. Le mot des tables, celui que le Premier Porteur nous a dit, la main sur la sienne. Il ne voulait pas dire qu’ils portaient des voix. Il voulait dire ça.')), v('', t('Une table couverte de signes, rangés comme un registre.'))),
       d(t('Une colonne fendue'), v('kessa', t('Celle-là souffre. Je ne sais pas comment je le sais. Comme un dos qu’on a trop chargé, et qui ne dit rien.')), v('', t('Une colonne allumée, fendue sur toute sa hauteur, qui luit par saccades.'))),
       d(t('Les cases vides'), v('doran', t('Cent douze cases barrées d’un trait neuf. Pas leur écriture : la nôtre. Quelqu’un les a rayées en partant, comme on raye une ligne d’inventaire.')), v('', t('Dans le registre, des cases rayées d’un trait récent, d’une écriture humaine.'))),
     ], [
       { texte: t('Recopier le registre'), effet: 'composants', piste: 'nous', carte: 'archive', recit: t('Tu fais recopier le registre, case par case, rayures comprises. Pour Ysé, et pour ceux qui voudront savoir. Sous la table, une réserve de fouilleur, intacte.') },
       { texte: t('Poser la main sur la fendue'), effet: 'eclat', piste: 'avant', carte: 'scellee', recit: t('Tu poses la main sur la colonne fendue. Elle cesse de clignoter, une seconde, comme quelqu’un qui reprend son souffle quand on l’aide à porter.') },
     ],
-    t('Les colonnes du Fond sont inscrites dans un registre : « ceux qui portent », le mot de −7 pour dire « nous ». Cent douze cases y sont rayées d’une écriture humaine.')),
+    t('Les colonnes du Fond sont inscrites dans un registre : Ossyra, « ceux qui portent », le mot de −7 pour dire « nous ». Cent douze cases y sont rayées d’une écriture humaine.')),
   H(13, 2, t('Ce qui tient'),
     t('Au bout du registre, une dernière table, plus grande que les autres, posée face aux colonnes comme une stèle de chantier.'), [
       d(t('La table'), v('vela', t('C’est un compte. Ce que chaque colonne porte, et ce qu’il en reste. Ils ont tout mesuré, jusqu’au dernier grain.')), v('sasha', t('Des chiffres. Des charges, en face de chaque nom. Ce sont des calculs de structure, directeur. Les mêmes que les miens, en mieux.')), v('', t('Une table de comptes, une ligne par colonne.'))),
@@ -909,7 +909,7 @@ export const BESTIAIRE: Record<string, FicheBestiaire> = {
     secret: t('Elle a donné son propre nom à quelqu’un, il y a très longtemps, pour qu’il se souvienne d’elle. Elle croit qu’il l’a oubliée.'),
   },
   'premier-porteur': {
-    origine: t('Le premier d’entre ceux d’avant à avoir porté une empreinte. Le seul à n’avoir jamais mêlé sa voix à une autre.'),
+    origine: t('Bien après les autres, un seul est redescendu jusqu’au premier puits. Il n’y porte qu’une voix : celle du premier d’entre eux, l’auteur de la mise en garde.'),
     conseil: t('Fêlures cachées, et il rappelle son double à mi-vie : la suite est la seule façon de le toucher pleinement.'),
     secret: t('Sous la mise en garde, il a gravé une ligne plus récente : « Les voix ne nous ont pas pris, elles nous ont gardés. »'),
   },

@@ -170,7 +170,7 @@ export const FRAGMENTS: Fragment[] = [
     id: 'porteurs', titre: t('Leur premier mot'), support: t('Une page de déchiffrement des Veilleurs'),
     lignes: [
       t('Le signe revient sur toutes les tables, en tête de chaque liste, au-dessus de chaque porte.'),
-      t('Après onze ans de travail, nous pouvons le traduire avec certitude. Il signifie : « ceux qui portent ».'),
+      t('Les empreintes le murmurent : « Ossyra ». Après onze ans de travail, c’est le premier signe que nous sachions traduire avec certitude : « ceux qui portent ».'),
       t('C’est ainsi qu’ils s’appelaient. C’est le mot que nous employons, depuis 2071, pour nos greffés.'),
     ],
   },

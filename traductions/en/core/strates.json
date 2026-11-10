@@ -582,12 +582,12 @@
    "en": "The columns"
   },
   {
-   "fr": "Un nom, puis un chiffre : 12, 19, 27, 31. Ce ne sont pas des âges. C’est le nombre de voix que chacun portait.",
-   "en": "A name, then a number. 12, 19, 27, 31. They’re not ages. It’s how many voices each of them carried."
+   "fr": "En tête, un signe plus grand que les autres. Les empreintes le murmurent quand on les éveille : « Ossyra ». Dessous, un nom, puis un chiffre : 12, 19, 27, 31. Ce ne sont pas des âges. C’est le nombre de voix que chacun portait.",
+   "en": "At the top, one sign bigger than the rest. The imprints murmur it when you wake them: “Ossyra.” Under it, a name, then a number. 12, 19, 27, 31. They’re not ages. It’s how many voices each of them carried."
   },
   {
-   "fr": "Deux colonnes : des noms, et des chiffres qui montent. 12, 19, 27, 31.",
-   "en": "Two columns: names, and numbers that keep rising. 12, 19, 27, 31."
+   "fr": "En tête, un signe gravé plus grand que les autres. Dessous, deux colonnes : des noms, et des chiffres qui montent. 12, 19, 27, 31.",
+   "en": "At the top, one sign carved larger than the others. Below it, two columns: names, and numbers that keep rising. 12, 19, 27, 31."
   },
   {
    "fr": "La dernière ligne",
@@ -2326,8 +2326,8 @@
    "en": "The Two Nights"
   },
   {
-   "fr": "La jauge l’a dit : l’eau d’en bas a gagné ses deux crans les deux nuits où une île des Hauts est passée au-dessus de Vertiga. Elle ne monte pas toute seule : elle monte quand on lève.",
-   "en": "The gauge told you: the water below gained its two notches on the two nights an island of the Heights passed over Vertiga. It doesn’t rise on its own. It rises when something is lifted."
+   "fr": "La jauge l’a dit : l’eau d’en bas a gagné ses deux crans les deux nuits où une île des Hauts est passée au-dessus de Vertiga. Elle ne monte pas toute seule : elle monte quand une île passe, comme si ce qui la tient en l’air pesait encore ici.",
+   "en": "The gauge told you: the water below gained its two notches on the two nights an island of the Heights passed over Vertiga. It doesn’t rise on its own. It rises when an island passes, as if whatever holds it in the air still weighed down here."
   },
   {
    "fr": "Deux crans sur ma jauge. J’ai les heures. Les deux nuits où une île est passée au-dessus de la ville. Ce n’est pas une coïncidence, directeur, c’est une mesure.",
@@ -2446,8 +2446,8 @@
    "en": "The lamp"
   },
   {
-   "fr": "Ils ont dormi ici. Plusieurs nuits. Ceux-là savaient où ils étaient.",
-   "en": "They slept here. Several nights. These people knew exactly where they were."
+   "fr": "Ils ont dormi ici. Plusieurs nuits. Ceux-là savaient où ils étaient. Et ils ne sont pas descendus par chez nous : au-dessus, toutes les portes étaient encore fermées de l’intérieur.",
+   "en": "They slept here. Several nights. These people knew exactly where they were. And they didn’t come down our way: above us, every door was still locked from the inside."
   },
   {
    "fr": "Une lampe à huile, vidée jusqu’à la mèche.",
@@ -2518,8 +2518,8 @@
    "en": "The signs"
   },
   {
-   "fr": "« Ceux qui portent. » Le mot des tables de −7, celui qu’ils employaient pour dire « nous ». Il ne voulait pas dire qu’ils portaient des voix. Il voulait dire ça.",
-   "en": "“Those who bear.” The word from the tables on −7, the one they used for “we.” It never meant that they carried voices. It meant this."
+   "fr": "« Ossyra. » Ceux qui portent. Le mot des tables, celui que le Premier Porteur nous a dit, la main sur la sienne. Il ne voulait pas dire qu’ils portaient des voix. Il voulait dire ça.",
+   "en": "“Ossyra.” Those who bear. The word from the tables, the one the First Bearer gave us with his hand on his own. It never meant that they carried voices. It meant this."
   },
   {
    "fr": "Une table couverte de signes, rangés comme un registre.",
@@ -2566,8 +2566,8 @@
    "en": "You lay your hand on the cracked column. For a second it stops flickering, like someone catching their breath when you take one end of the load."
   },
   {
-   "fr": "Les colonnes du Fond sont inscrites dans un registre : « ceux qui portent », le mot de −7 pour dire « nous ». Cent douze cases y sont rayées d’une écriture humaine.",
-   "en": "The columns of the Deep are listed in a register: “those who bear,” the word from −7 for “we.” A hundred and twelve boxes have been struck through by a human hand."
+   "fr": "Les colonnes du Fond sont inscrites dans un registre : Ossyra, « ceux qui portent », le mot de −7 pour dire « nous ». Cent douze cases y sont rayées d’une écriture humaine.",
+   "en": "The columns of the Deep are listed in a register: Ossyra, “those who bear,” the word from −7 for “we.” A hundred and twelve boxes have been struck through by a human hand."
   },
   {
    "fr": "Ce qui tient",
@@ -3594,8 +3594,8 @@
    "en": "She gave her own name to someone, long, long ago, so that he would remember her. She believes he forgot her."
   },
   {
-   "fr": "Le premier d’entre ceux d’avant à avoir porté une empreinte. Le seul à n’avoir jamais mêlé sa voix à une autre.",
-   "en": "The first of those who came before to carry an imprint. The only one who never mingled his voice with another’s."
+   "fr": "Bien après les autres, un seul est redescendu jusqu’au premier puits. Il n’y porte qu’une voix : celle du premier d’entre eux, l’auteur de la mise en garde.",
+   "en": "Long after the others, one alone went back down to the first shaft. He carries a single voice there: that of the first among them, the one who wrote the warning."
   },
   {
    "fr": "Fêlures cachées, et il rappelle son double à mi-vie : la suite est la seule façon de le toucher pleinement.",

@@ -48,7 +48,7 @@ export const FILS: Record<string, FilDef> = {
       { titre: t('Quatre signatures'), quand: t('Le rapport « Pas de notre côté » retrouvé'), test: (c) => c.fragments.includes('pas-notre-cote'), xp: 40,
         recit: t('Quatre noms au bas du rapport de 2066. Le troisième est celui de son père. Doran plie la feuille en quatre et la range dans la poche de poitrine de sa veste, là où la chitine ne pousse pas. Il ne l’en ressortira plus.') },
       { titre: t('Une serrure'), quand: t('La Strate −6 ouverte'), test: (c) => c.strate >= 6 && c.fragments.includes('pas-notre-cote'), xp: 80, confiance: 3,
-        recit: t('Devant les portes des salles closes, fermées de l’intérieur, Doran pose sa main à plat sur la pierre. « Ils n’ont pas muré une porte, en 2066. Ils ont répondu à quelqu’un qui fermait la sienne. » Pour la première fois, il raconte son père aux autres, longtemps. Le district l’apprend le soir même.') },
+        recit: t('Devant les portes des salles closes, fermées de l’intérieur, Doran pose sa main à plat sur la pierre. « Mon père disait : pas de notre côté. Je commence à entendre ce qu’il voulait dire. » Pour la première fois, il raconte son père aux autres, longtemps. Le district l’apprend le soir même.') },
     ],
   },
   aurel: {
