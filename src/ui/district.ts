@@ -44,7 +44,7 @@ import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, etapeVoyage, avatar, coquille, cout
 
 import { decimal, echap, mouvementReduit, virgule, texteReplie } from './outils';
 import { brancherHoule } from './houle';
-import { t as tr, locale } from '../core/i18n';
+import { t as tr, locale, enumerer, minuscule } from '../core/i18n';
 
 export type { EcranDistrict, Vue } from './coquille';
 
@@ -633,7 +633,7 @@ function blocSoinsIntensifs(j: Jeu): string {
     const cout = prixSoins(u);
     const offert = !j.soinOffert;
     const peut = offert || j.energie >= 1;
-    return `<button type="button" class="fb-cand plus" style="--c:${COULEUR[p.lignee]}" data-action="soigner-vite" data-id="${p.id}"${peut ? '' : ' disabled'} aria-label="${tr`Soigner ${echap(p.nom)} : −${u} Usure ${offert ? 'offert' : tr`pour ${cout} cristaux`}`}">`
+    return `<button type="button" class="fb-cand plus" style="--c:${COULEUR[p.lignee]}" data-action="soigner-vite" data-id="${p.id}"${peut ? '' : ' disabled'} aria-label="${tr`Soigner ${echap(p.nom)} : −${u} Usure ${offert ? tr('offert') : tr`pour ${cout} cristaux`}`}">`
       + `<span class="fb-cand-portrait">${avatar(p.id, 56)}</span><strong>${echap(p.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">${tr`−${u} Usure`}</span>`
       + (offert ? `<span class="te-prix offert">${tr`Offert`}</span></button>`
         : `<span class="te-prix${j.energie < cout ? ' manque' : ''}">${ICO.energie}${ent(Math.min(cout, Math.floor(j.energie)))}</span></button>`);
@@ -761,7 +761,7 @@ function blocComptoir(e: EcranDistrict): string {
   h += `</div><div class="cp-renouveler">`
     + (c.renouvele ? `<small class="aide">${ICO.ok}${tr`Étals déjà renouvelés aujourd’hui : nouvel arrivage demain.`}</small>`
       : !places ? `<small class="aide">${tr`Tout est vendu : nouvel arrivage demain.`}</small>`
-      : `<small class="aide">${tr`Une fois par jour, les fouilleurs ressortent d’autres cartes du même métal à la place de ${places > 1 ? tr`celles encore en vente (${places})` : 'celle encore en vente'}.`}</small>`
+      : `<small class="aide">${tr`Une fois par jour, les fouilleurs ressortent d’autres cartes du même métal à la place de ${places > 1 ? tr`celles encore en vente (${places})` : tr('celle encore en vente')}.`}</small>`
         + `<button type="button" class="btn sec petit" data-action="comptoir-renouveler"${assezR ? '' : ' disabled'} aria-label="${tr`Renouveler les étals pour ${COMPTOIR.renouveler} cristaux`}">${ICO.chrono}${tr`Renouveler les étals ${couts(j, { composants: COMPTOIR.renouveler, eclats: 0 })}`}</button>`)
     + `</div>`;
   // des Éclats contre des cristaux (audit du 7 novembre 2026), en petite quantité chaque jour
@@ -1097,7 +1097,7 @@ function pourQui(id: string, j: Jeu): string {
   }
   const requis = niveauRequis(id);
   const prets = presents.filter((p) => niveauPorteur(j, p.id).niveau >= requis);
-  if (!prets.length) return tr`Porteur ${NOM_LIGNEE[m.lignee].toLowerCase()} niv. ${requis} requis`;
+  if (!prets.length) return tr`Porteur ${minuscule(NOM_LIGNEE[m.lignee])} niv. ${requis} requis`;
   // un seul nom (celui de l'escouade d'abord), et combien d'autres pourraient la porter
   const esc = j.escouade ?? [];
   const tri = prets.slice().sort((a, b) => Number(esc.includes(b.id)) - Number(esc.includes(a.id)));
@@ -1112,7 +1112,7 @@ function effetsCarte(m: ReturnType<typeof moduleDef>): string {
   if (m.effet) h += `<ul class="effets-carte">${effetsDe(m).map((x) => `<li><b>${echap(NOMS_EFFET[x.type])}</b> ${avecMots(texteEffet(x), [x.type])}</li>`).join('')}</ul>`;
   else if (origine?.effet) h += `<p class="aide">${tr`En fer, pas d’effet. À partir du cuivre :`} <b>${echap(NOMS_EFFET[origine.effet.type])}</b>, ${avecMots(texteEffet(origine.effet).replace(/^./, (c) => c.toLowerCase()), [origine.effet.type])}</p>`;
   if (origine?.seul) h += `<p class="aide"><b>${tr`Exclusive`}</b> ${tr`: cette empreinte refuse la copie. Elle n’existe qu’en ${echap(NOMS_RARETE[origine.rarete].toLowerCase())}, et son effet ne se trouve sur aucune autre carte.`}</p>`;
-  if (m.f.length > 1 && !frequenceLibre(m.effet)) h += `<p class="aide">${avecMots(tr('Fréquences au choix'))} : <b>${m.f.join(' ou ')}</b>. ${avecMots(tr('Posée, elle prend celle qui prolonge ta suite.'))}</p>`;
+  if (m.f.length > 1 && !frequenceLibre(m.effet)) h += `<p class="aide">${avecMots(tr('Fréquences au choix'))} : <b>${m.f.join(tr(' ou '))}</b>. ${avecMots(tr('Posée, elle prend celle qui prolonge ta suite.'))}</p>`;
   else if (origine && origine.f.length > m.f.length && !frequenceLibre(m.effet)) h += `<p class="aide">${avecMots(tr('Son métal ne lui ouvre qu’une Fréquence ; en argent et en or, elle en a 2, en nacre 3.'))}</p>`;
   return h;
 }
@@ -1132,11 +1132,11 @@ function fenetreLegs(e: EcranDistrict): string {
     const m: ModuleDef = cle
       ? { id: CLE_LEGS.id, nom: CLE_LEGS.nom, lignee: 'tech', rarete: 'nacre', type: CLE_LEGS.type, v: CLE_LEGS.v, f: [CLE_LEGS.f], effet: CLE_LEGS.effet!, effet2: CLE_LEGS.effet2!, legs: true }
       : moduleDef(carteId(j.legs, 'nacre'));
-    const qui = cle ? tr('un Porteur de ton escouade') : tr`un Porteur ${NOM_LIGNEE[m.lignee].toLowerCase()}`;
+    const qui = cle ? tr('un Porteur de ton escouade') : tr`un Porteur ${minuscule(NOM_LIGNEE[m.lignee])}`;
     corps = `<span class="surtitre">${tr`L’HÉRITAGE DU DISTRICT`}</span><h2 id="legs-titre">${echap(m.nom)}</h2>`
       + `<div class="legs-carte">${faceCarte(m, COLLECTION.niveauDepart.nacre, 1, cle ? { origine: ORIGINE_PAQUETAGE['cle-legs']!.batiment } : {})}</div>`
       + (loreCarte(m.id) ? `<blockquote class="lore-carte">${echap(loreCarte(m.id)!)}</blockquote>` : cle ? `<blockquote class="lore-carte">${echap(ORIGINE_PAQUETAGE['cle-legs']!.texte)}</blockquote>` : '')
-      + `<p class="legs-sceau">${ICO.cristal}<span>${tr`Scellée : elle se portera avec ${qui} de`} <b>${tr`niveau ${NIVEAU_METAL.nacre}`}</b>${tr`${cle ? tr(', et rejoindra alors le paquetage de chaque escouade') : ''}. Elle s’éveillera ensuite avec lui, aux niveaux ${EVEIL_LEGS.map((x) => x.porteur).join(' et ')}.`}</span></p>`
+      + `<p class="legs-sceau">${ICO.cristal}<span>${tr`Scellée : elle se portera avec ${qui} de`} <b>${tr`niveau ${NIVEAU_METAL.nacre}`}</b>${tr`${cle ? tr(', et rejoindra alors le paquetage de chaque escouade') : ''}. Elle s’éveillera ensuite avec lui, aux niveaux ${enumerer(EVEIL_LEGS.map((x) => String(x.porteur)))}.`}</span></p>`
       + `<button type="button" class="btn prim large" data-action="legs-ok">${tr`Je la garde`}</button>`;
   } else if (e.legsLignee) {
     const v = L.voies[e.legsLignee];
@@ -1180,9 +1180,9 @@ export function loupeCarte(id: string, j: Jeu): string | null {
     : `<li>${tr`Pas d’effet : sa force seule.`}</li>`;
   if (g) return `<div class="loupe" aria-hidden="true"><div class="loupe-face">${faceCarte(m, 1, 1, { origine: ORIGINE_PAQUETAGE[g.id]!.batiment })}</div>`
     + `<ul class="loupe-effets"><li class="lc-nom"><b>${echap(m.nom)}</b> ${tr`· paquetage`}</li>${lignes}</ul><p class="loupe-qui">${echap(ORIGINE_PAQUETAGE[g.id]!.texte)}</p></div>`;
-  const freq = m.f.length > 1 && !frequenceLibre(m.effet) ? `<li>${tr`Fréquences au choix :`} <b>${m.f.join(' ou ')}</b></li>` : '';
+  const freq = m.f.length > 1 && !frequenceLibre(m.effet) ? `<li>${tr`Fréquences au choix :`} <b>${m.f.join(tr(' ou '))}</b></li>` : '';
   return `<div class="loupe" aria-hidden="true"><div class="loupe-face">${faceCarte(m, niveau, multNiveau(m.id, niveau))}</div>`
-    + `<ul class="loupe-effets"><li class="lc-nom"><b>${echap(m.nom)}</b> · ${NOMS_RARETE[m.rarete].toLowerCase()} · ${NOM_LIGNEE[m.lignee].toLowerCase()}</li>${lignes}${freq}</ul>`
+    + `<ul class="loupe-effets"><li class="lc-nom"><b>${echap(m.nom)}</b> · ${NOMS_RARETE[m.rarete].toLowerCase()} · ${minuscule(NOM_LIGNEE[m.lignee])}</li>${lignes}${freq}</ul>`
     + `<p class="loupe-qui">${pourQui(id, j)}</p></div>`;
 }
 
@@ -1592,7 +1592,7 @@ export function htmlCartes(e: EcranDistrict): string {
     const requis = doublonsRequis(m.id, c.niveau);
     const porte = greffesDe(j, m.id)[0];
     const pret = peutMonter(cle);
-    return `<button type="button" class="carte-tuile cl-carte${pret ? ' pret' : ''}" data-action="carte" data-id="${cle}" data-carte="${cle}" aria-label="${tr`${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}${porte ? tr`, portée par ${echap(porteurDef(porte).nom)}` : ', libre'}${pret ? tr(', peut monter') : ''}`}">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}`
+    return `<button type="button" class="carte-tuile cl-carte${pret ? ' pret' : ''}" data-action="carte" data-id="${cle}" data-carte="${cle}" aria-label="${tr`${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}${porte ? tr`, portée par ${echap(porteurDef(porte).nom)}` : tr(', libre')}${pret ? tr(', peut monter') : ''}`}">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}`
       + `<span class="cl-bas"><span class="cl-porteur">${porte ? `${avatar(porte, 20)}<span>${echap(porteurDef(porte).nom)}</span>` : `<span class="cl-libre">${tr`Libre`}</span>`}</span>`
       + `<span class="cl-niv" title="${tr`Niveau ${c.niveau}`}">${tr`Niv. ${c.niveau}`}</span>`
       + (m.legs ? `<span class="cl-max cl-legs">${tr`Héritage`}</span>` : requis === null ? `<span class="cl-max">${tr`Max`}</span>` : `<span class="cl-doublons" title="${tr`Doublons pour le niveau ${c.niveau + 1}`}"><span class="mini-jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></span><span>${c.doublons}/${requis}</span></span>`)
@@ -1892,7 +1892,7 @@ export function htmlCoupe(e: EcranDistrict): string {
     etape = `<strong>${tr`La roche cède : la Strate −${cible} va s’ouvrir`}</strong><small>${tr`Tout est prêt. Descends pour découvrir le nouvel étage.`}</small>`
       + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.descendre}${tr`Descendre`}</button></div>`;
   }
-  if (j.expedition) h += `<button type="button" class="appel tr-reprendre" data-action="reprendre">${ICO.descendre}<span><strong>${tr`Expédition en cours`}</strong><small>${tr`Strate −${j.expedition.strate} : ${j.expedition.carte && j.expedition.phase === 'carte' ? tr('reprendre là où tu t’es arrêté') : 'reprendre le combat'}`}</small></span></button>`;
+  if (j.expedition) h += `<button type="button" class="appel tr-reprendre" data-action="reprendre">${ICO.descendre}<span><strong>${tr`Expédition en cours`}</strong><small>${tr`Strate −${j.expedition.strate} : ${j.expedition.carte && j.expedition.phase === 'carte' ? tr('reprendre là où tu t’es arrêté') : tr('reprendre le combat')}`}</small></span></button>`;
   // une seule carte en tête (refonte du 25 octobre 2026) : le chapitre en cours (pourquoi on descend), puis ce qu'il faut faire
   const chap = j.chambre ? chapitreCampagne(contexteCampagne(j)) : null;
   const derniere = j.scenes?.at(-1);
@@ -2030,7 +2030,7 @@ function formatEpreuve(ep: EpreuveDef, strate: number): string {
 /** Le palier de l'Épreuve : normale, ou Fêlée */
 function tuilePalier(j: Jeu, ep: EpreuveDef, felee: boolean, choisi: boolean, strate: number): string {
   const fait = epreuveReussie(j, ep.id, felee);
-  const bref = fait ? tr('déjà réussie cette semaine') : felee ? tr`+${hausseFelee(ep)} % de force · 1 carte${strate >= FELEE.orDes ? ' en or' : ''} et ${FELEE.eclats} Éclats` : tr('1 carte au choix, argent au moins');
+  const bref = fait ? tr('déjà réussie cette semaine') : felee ? tr`+${hausseFelee(ep)} % de force · 1 carte${strate >= FELEE.orDes ? tr(' en or') : ''} et ${FELEE.eclats} Éclats` : tr('1 carte au choix, argent au moins');
   return `<button type="button" role="radio" class="es-tuile${choisi ? ' actif' : ''}" style="--c:${felee ? 'var(--gold)' : '#8FB8DA'}" data-action="palier" data-id="${felee ? 'felee' : 'normale'}" aria-checked="${choisi}">`
     + `${felee ? ICO.cristal : ICO.boost}<strong>${felee ? tr('Fêlée') : tr('Épreuve')}</strong><small>${bref}</small></button>`;
 }
@@ -2086,12 +2086,12 @@ function gainMission(j: Jeu, id: string, d: Destination, duree: DureeMission, mu
   const nbCartes = (d.butin === 'pierre' ? 1 : 0) + (coeur ? 1 : 0);
   const carte = nbCartes ? `<i class="ds-g-carte m-${metal}">${ICO.cartes}+${nbCartes}</i>` : '';
   const compo = `<i>${ICO.composants}${c}</i>`;
-  const tCartes = nbCartes ? tr`${nbCartes > 1 ? `deux cartes en ${metal}` : `une carte en ${metal}`} (${Math.round(chanceNouvelleMission(mult, duree) * 100)} % de chances qu’elle soit nouvelle, sinon un doublon)` : '';
+  const tCartes = nbCartes ? tr`${nbCartes > 1 ? tr`deux cartes en ${metal}` : tr`une carte en ${metal}`} (${Math.round(chanceNouvelleMission(mult, duree) * 100)} % de chances qu’elle soit nouvelle, sinon un doublon)` : '';
   let extra = '';
   let tExtra = '';
   if (d.butin === 'naufrages' && secours) { const k = MISSIONS.butins.naufrages.creuseurs[duree]; extra = `<i>${ICO.ouvrier}${k > 1 ? '1+' : '1'}</i>`; tExtra = k > 1 ? tr('un creuseur, parfois deux') : tr('un creuseur'); }
   if (d.butin === 'eclats') { const k = virgule(Math.round(MISSIONS.butins.eclats.eclats[duree] * mult * rd * 10) / 10); extra = `<i>${ICO.eclats}${k}</i>`; tExtra = tr`environ ${k} Éclats`; }
-  const texte = [tExtra, tCartes, `${c} minerai`].filter(Boolean).join(', ');
+  const texte = [tExtra, tCartes, tr`${c} minerai`].filter(Boolean).join(', ');
   return { html: extra + carte + compo, texte };
 }
 
@@ -2218,7 +2218,7 @@ function tuileCible(c: CibleFouille, choisie: CibleFouille): string {
 function tuileNiveau(n: DifficulteFouille, choisi: DifficulteFouille, cible: CibleFouille): string {
   const d = DIFFICULTES_FOUILLE[n];
   const lignee = cible === 'tech' || cible === 'bio' || cible === 'reso';
-  const force = d.force === 1 ? 'ennemis normaux' : tr`ennemis ${d.force < 1 ? '−' : '+'}${Math.round(Math.abs(d.force - 1) * 100)} %`;
+  const force = d.force === 1 ? tr('ennemis normaux') : tr`ennemis ${d.force < 1 ? '−' : '+'}${Math.round(Math.abs(d.force - 1) * 100)} %`;
   const filon = lignee
     ? (d.carte < 1 ? tr`${Math.round(d.carte * 100)} % de chances d’une carte` : d.choix > 1 ? tr`${d.choix} cartes au choix, ${d.metal} au moins` : tr('1 carte assurée'))
     : tr`filon ×${decimal(d.gain)}`;
@@ -2385,8 +2385,8 @@ export function htmlEscouade(e: EcranDistrict): string {
     const heures = Math.max(...blesses.map((id) => (pvMinDepart(j, id) - pvMaxCombat(j, id)) / soin));
     const attente = heures < 1 ? `${Math.max(1, Math.ceil(heures * 60))} min` : `${Math.floor(heures)} h ${String(Math.ceil((heures % 1) * 60) % 60).padStart(2, '0')}`;
     const noms = blesses.map((id) => `<b>${echap(porteurDef(id).nom)}</b>`);
-    h += `<div class="es-alerte es-blesses">${ICO.soin}<span><strong>${tr`${blesses.length > 1 ? tr`${noms.slice(0, -1).join(', ')} et ${noms[noms.length - 1]} se remettent` : `${noms[0]} se remet`} à la Clinique`}</strong>`
-      + `${tr`Il faut au moins un quart de ${blesses.length > 1 ? 'leurs' : 'ses'} PV pour redescendre : encore ${attente} environ au rythme actuel. Poste une recrue Géné à la Clinique pour aller plus vite, ou ${j.soinOffert ? 'paie des soins intensifs' : `<b>${tr`profite des premiers soins intensifs, offerts`}</b>`}.`}</span>`
+    h += `<div class="es-alerte es-blesses">${ICO.soin}<span><strong>${tr`${blesses.length > 1 ? tr`${noms.slice(0, -1).join(', ')} et ${noms[noms.length - 1]} se remettent` : tr`${noms[0]} se remet`} à la Clinique`}</strong>`
+      + `${tr`Il faut au moins un quart de ${blesses.length > 1 ? tr('§pv§leurs') : tr('§pv§ses')} PV pour redescendre : encore ${attente} environ au rythme actuel. Poste une recrue Géné à la Clinique pour aller plus vite, ou ${j.soinOffert ? tr('paie des soins intensifs') : `<b>${tr`profite des premiers soins intensifs, offerts`}</b>`}.`}</span>`
       + `<button type="button" class="btn sec" data-action="depart-clinique">${tr`Clinique`}</button></div>`;
   }
   h += `<p class="es-note">${ICO.soin}${tr`Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.`}</p></main>`;

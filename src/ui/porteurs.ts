@@ -19,7 +19,7 @@ import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } fr
 import { ICO, sigle } from './icones';
 import { COULEUR } from './vue';
 import { echap, virgule, texteReplie } from './outils';
-import { t as tr, locale, enumerer } from '../core/i18n';
+import { t as tr, locale, enumerer, minuscule } from '../core/i18n';
 
 const LIGNEES: Lignee[] = ['tech', 'bio', 'reso'];
 /** pour accorder « Pourquoi il / elle est là » */
@@ -102,7 +102,7 @@ function aFaire(j: Jeu, p: PorteurDef): string {
 
 /** Un Porteur qui n'est pas encore là : une ligne, pas une tuile vide */
 function silhouette(p: PorteurDef): string {
-  return `<p class="pt-avenir" style="--c:${COULEUR[p.lignee]}"><span class="pt-ombre" aria-hidden="true">?</span><span><strong>${tr`Un Porteur ${NOM_LIGNEE[p.lignee].toLowerCase()} arrivera`}</strong> ${echap(arrivee(p).replace(/^Arrive /, '').replace(/\.$/, ''))}.</span></p>`;
+  return `<p class="pt-avenir" style="--c:${COULEUR[p.lignee]}"><span class="pt-ombre" aria-hidden="true">?</span><span><strong>${tr`Un Porteur ${minuscule(NOM_LIGNEE[p.lignee])} arrivera`}</strong> ${echap(arriveeFuture(p))}.</span></p>`;
 }
 
 // « Mon escouade » (décision du 23 octobre 2026). Bryan : « Quand on ouvre l’écran Porteurs, on a tous les persos.
@@ -242,7 +242,7 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
   const alerte = trop && !j.expedition
     ? `<p class="eq-alerte">${ICO.cristal}<span>${tr`Trop lourd : ${chargePortee(j, id)} de Charge sur ${chargeMax(j, id)}. Reprends-lui une carte pour qu’il descende.`}</span></p>`
     : raison && !j.expedition
-    ? `<p class="eq-alerte">${ICO.verrou}<span>${tr`${echap(raison.replace(/\.$/, ''))} : ${IL.has(id) ? 'il' : 'elle'} ne pourra pas descendre.`}</span></p>`
+    ? `<p class="eq-alerte">${ICO.verrou}<span>${tr`${echap(raison.replace(/\.$/, ''))} : ${IL.has(id) ? tr('il') : tr('elle')} ne pourra pas descendre.`}</span></p>`
     : textePosteQuitte(j, id) && !j.expedition ? `<p class="eq-alerte doux">${ICO.ouvrier}<span>${tr`Au départ, ${echap(textePosteQuitte(j, id)!)}`}</span></p>`
     : tropBlesse(j, id) && !j.expedition ? `<p class="eq-alerte">${ICO.soin}<span>${tr`${echap(tropBlesse(j, id)!.replace(/\.$/, ''))} : soins intensifs possibles à la Clinique.`}</span></p>`
     : d.usure >= usureMax(j, id) * 0.5 ? `<p class="eq-alerte">${ICO.soin}<span>${tr`Usure élevée : −${Math.floor(d.usure)} PV en combat. La Clinique la soigne au district.`}</span></p>`
@@ -489,7 +489,7 @@ export function feuillePorteur(e: EcranDistrict): string {
     + (pres ? `<span class="fp-role">${echap(pres.titre)}</span>` : '') + `</div></header>`;
 
   if (pres) h += `<div class="fp-bio"><p>${echap(pres.texte)}</p>${pres.replique ? `<p class="fp-replique">« ${echap(pres.replique)} »</p>` : ''}</div>`;
-  if (pres?.pourquoi) h += `<section class="fp-bloc fp-pourquoi"><h3 class="fp-h3">${ICO.porte}${tr`Pourquoi ${IL.has(id) ? 'il' : 'elle'} est là`}</h3><p class="fp-texte">${echap(pres.pourquoi)}</p></section>`;
+  if (pres?.pourquoi) h += `<section class="fp-bloc fp-pourquoi"><h3 class="fp-h3">${ICO.porte}${tr`Pourquoi ${IL.has(id) ? tr('il') : tr('elle')} est là`}</h3><p class="fp-texte">${echap(pres.pourquoi)}</p></section>`;
   if (pres?.aParte) h += `<aside class="fp-aparte"><strong>${echap(pres.aParte.titre)}</strong><p>${echap(pres.aParte.texte)}</p></aside>`;
 
   // ---------- son histoire : d'où vient son don, un palier de plus tous les quelques niveaux ----------
@@ -536,7 +536,7 @@ export function feuillePorteur(e: EcranDistrict): string {
   const places = DISTRICT.cartesMax - cartes.length;
   const dispo = parti ? '' : ` data-action="deck" data-id="${id}"`;
   h += `<section class="fp-bloc"><h3 class="fp-h3">${ICO.cartes}${tr`Ses cartes`} <span class="fp-compte${places ? '' : ' plein'}">${cartes.length} / ${DISTRICT.cartesMax}</span></h3>`
-    + jaugeCharge(chargePortee(j, id), chargeMax(j, id), tr`Ce que pèsent ses cartes sur ce qu’${IL.has(id) ? 'il' : 'elle'} peut porter : +${CHARGE.parNiveau} à chaque niveau.`, j.porteurs[id]!.modules)
+    + jaugeCharge(chargePortee(j, id), chargeMax(j, id), tr`Ce que pèsent ses cartes sur ce qu’${IL.has(id) ? tr('il') : tr('elle')} peut porter : +${CHARGE.parNiveau} à chaque niveau.`, j.porteurs[id]!.modules)
     + `<div class="fp-cartes">${cartes.map((k) => { const cc = j.collection[k]!; const m = moduleDef(k);
       return `<button type="button" class="fp-carte" data-carte="${k}"${dispo}${parti ? ' disabled' : ''} aria-label="${tr`${echap(m.nom)}, niveau ${cc.niveau}. Changer ses cartes`}">${faceCarte(m, cc.niveau, multNiveau(k, cc.niveau))}</button>`; }).join('')}`
     + Array.from({ length: places }, () => `<button type="button" class="fp-place"${dispo}${parti ? ' disabled' : ''} aria-label="${tr`Place libre : lui confier une carte`}">${ICO.place}<span>${tr`Place libre`}</span></button>`).join('')
@@ -556,7 +556,7 @@ export function feuillePorteur(e: EcranDistrict): string {
       + (m.acquise ? '' : `<i class="fp-jauge"><i style="width:${Math.min(100, (100 * m.n) / m.seuil)}%"></i></i>`
           + `<p class="fp-note"><b>${tr`Comment la gagner :`}</b> ${tr`${m.fait === 'missions' ? tr`envoie ${echap(p.nom)} en mission en mer depuis le Port` : tr`emmène ${echap(p.nom)} dans l’escouade`}. Encore`} <b class="or">${fr(m.seuil - fait)} ${echap(m.quoi)}</b> ${tr`et elle lui est acquise pour toujours.`}</p>`)
       // les paliers (1er novembre 2026) : la Marque grandit avec le niveau du Porteur, une fois gagnée
-      + `<ol class="fp-mpaliers">` + [{ nom: NOMS_PALIER_MARQUE[0], quand: tr('par l’exploit'), texte: m.texte }, ...m.paliers.map((x, k) => ({ nom: NOMS_PALIER_MARQUE[k + 1], quand: `niveau ${PALIERS_MARQUE[k]}`, texte: x.texte }))].map((x, k) => {
+      + `<ol class="fp-mpaliers">` + [{ nom: NOMS_PALIER_MARQUE[0], quand: tr('par l’exploit'), texte: m.texte }, ...m.paliers.map((x, k) => ({ nom: NOMS_PALIER_MARQUE[k + 1], quand: tr`niveau ${PALIERS_MARQUE[k]}`, texte: x.texte }))].map((x, k) => {
         const atteint = m.acquise && m.palier >= k;
         const etat = atteint ? 'atteint' : k && m.niveau >= PALIERS_MARQUE[k - 1]! ? 'pret' : '';
         return `<li class="fp-palier${etat ? ' ' + etat : ''}"><span class="fp-palier-tete"><b>${x.nom}</b><small>${atteint ? `${ICO.ok}${tr('Active')}` : etat === 'pret' ? tr('Niveau atteint · Marque à gagner') : x.quand}</small></span><span class="fp-palier-txt">${echap(x.texte)}</span></li>`;

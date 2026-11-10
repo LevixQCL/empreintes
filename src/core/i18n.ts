@@ -70,6 +70,12 @@ export function t(texte: string | TemplateStringsArray, ...valeurs: unknown[]): 
   return remplir(catalogue.get(cle) || cle, valeurs);
 }
 
+/** Un nom du jeu au milieu d’une phrase : minuscule en français (« un Porteur augmenté »), majuscule gardée en anglais (« an Augmented Bearer ») */
+export const minuscule = (nom: string): string => (langueActive === 'fr' ? nom.toLowerCase() : nom);
+
+/** Un pourcentage : « 40 % » en français, « 40% » en anglais */
+export const pourCent = (n: number | string): string => (langueActive === 'fr' ? `${n} %` : `${n}%`);
+
 /** Une liste lue à voix haute : « Ilka, Doran et Véla » (en anglais « Ilka, Doran and Véla ») */
 export const enumerer = (l: readonly string[]): string =>
   l.length > 1 ? `${l.slice(0, -1).join(', ')}${t(' et ')}${l[l.length - 1]}` : l[0] ?? '';

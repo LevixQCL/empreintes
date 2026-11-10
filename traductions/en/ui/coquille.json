@@ -63,7 +63,7 @@
   },
   {
    "fr": "Des choix justes en bas",
-   "en": "Fair choices down below"
+   "en": "The right choices down below"
   },
   {
    "fr": "Des pillages repoussés",
@@ -347,7 +347,7 @@
   },
   {
    "fr": "Les choix justes en bas",
-   "en": "Fair choices down below"
+   "en": "The right choices down below"
   },
   {
    "fr": "Aider ceux qu’on croise se sait au quartier.",
@@ -374,12 +374,12 @@
    "en": "{0} families{1}"
   },
   {
-   "fr": "{0} creuseur volontaire et un souvenir pour les Archives.",
-   "en": "{0} volunteer digger and a keepsake for the Archives."
+   "fr": "{0} Avec un creuseur volontaire et un souvenir pour les Archives.",
+   "en": "{0} Comes with a volunteer digger and a keepsake for the Archives."
   },
   {
-   "fr": "{0} Avec un",
-   "en": "{0} With a"
+   "fr": "Un creuseur volontaire et un souvenir pour les Archives.",
+   "en": "A volunteer digger and a keepsake for the Archives."
   },
   {
    "fr": "CHAQUE SEMAINE",
@@ -795,7 +795,7 @@
   },
   {
    "fr": "Cherche des suites de Fréquences et quelques boucliers pour les grosses attaques annoncées.",
-   "en": "Look for Frequency chains and a few shields for the big announced attacks."
+   "en": "Look for Frequency runs and a few shields for the big announced attacks."
   },
   {
    "fr": "Se protéger.",
@@ -839,7 +839,7 @@
   },
   {
    "fr": "Ton code de parrainage : vous êtes récompensés tous les deux quand ton ami joue",
-   "en": "Your referral code: you’re both rewarded when your friend plays"
+   "en": "Your sponsorship code: you’re both rewarded when your friend plays"
   },
   {
    "fr": "Compte",

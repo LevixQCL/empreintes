@@ -6,6 +6,10 @@
    "en": "just now"
   },
   {
+   "fr": "il y a {0}",
+   "en": "{0} ago"
+  },
+  {
    "fr": "{0} sur {1} en profondeur",
    "en": "{0} of {1} by depth"
   },
@@ -175,11 +179,11 @@
   },
   {
    "fr": "Encore",
-   "en": "Still"
+   "en": "You need"
   },
   {
    "fr": "pour passer devant",
-   "en": "to move ahead"
+   "en": "more to pass"
   },
   {
    "fr": "Tu mènes le Tableau. {0} te suit.",

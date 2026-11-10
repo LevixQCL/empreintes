@@ -66,6 +66,10 @@
    "en": "downed: {0}"
   },
   {
+   "fr": "1 trophée",
+   "en": "1 trophy"
+  },
+  {
    "fr": "PV",
    "en": "HP"
   },
@@ -84,6 +88,10 @@
   {
    "fr": "{0} minerai · {1}",
    "en": "{0} ore · {1}"
+  },
+  {
+   "fr": "1 carte",
+   "en": "1 card"
   },
   {
    "fr": "Combat · {0} ennemis",
@@ -507,7 +515,7 @@
   },
   {
    "fr": "Choisis {0} cartes dont les Fréquences se suivent, comme une suite en combat (par exemple {1}). Une carte à Accord ∗ prolonge toute suite.",
-   "en": "Pick {0} cards whose Frequencies follow each other, like a chain in combat (for example {1}). An Accord ∗ card extends any chain."
+   "en": "Pick {0} cards whose Frequencies follow each other, like a run in combat (for example {1}). An Accord ∗ card extends any run."
   },
   {
    "fr": "{0} carte{1} choisie{2} sur {3}",
@@ -515,7 +523,7 @@
   },
   {
    "fr": "Aucune suite de {0} dans cette main.{1}",
-   "en": "No chain of {0} in this hand.{1}"
+   "en": "No run of {0} in this hand.{1}"
   },
   {
    "fr": " La porte reste fermée pour cette fois.",

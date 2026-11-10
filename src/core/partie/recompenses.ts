@@ -8,7 +8,7 @@ import { tireur } from '../rng';
 import { CHAPITRES, chapitreOuvert } from '../chroniques';
 import { ARCHIVE, DISTRICT, log, niveauPorteur, non, porteursPresents, strateVaincue, type Jeu, type Resultat, typeDuJour } from './etat';
 import { interrompreSeance, progresser, quotidienFait } from './district';
-import { t } from '../i18n';
+import { t, minuscule } from '../i18n';
 
 // ---------- Kit de départ des recrues ----------
 
@@ -260,7 +260,7 @@ export function choisirLegs(j: Jeu, id: string): Resultat {
   if (!m) return non(t('Cette carte ne fait pas partie de l’Héritage.'));
   j.legs = id;
   ajouterCarte(j, carteId(id, 'nacre'));
-  log(j, t`L’Héritage du district : ${m.nom} est à toi. Elle se portera avec un Porteur ${NOMS_LIGNEE[m.lignee].nom.toLowerCase()} de niveau ${NIVEAU_METAL.nacre}.`);
+  log(j, t`L’Héritage du district : ${m.nom} est à toi. Elle se portera avec un Porteur ${minuscule(NOMS_LIGNEE[m.lignee].nom)} de niveau ${NIVEAU_METAL.nacre}.`);
   return { ok: true };
 }
 

@@ -454,6 +454,10 @@
    "en": "Heal {0}: −{1} Strain {2}"
   },
   {
+   "fr": "offert",
+   "en": "for free"
+  },
+  {
    "fr": "pour {0} cristaux",
    "en": "for {0} crystals"
   },
@@ -628,6 +632,10 @@
   {
    "fr": "celles encore en vente ({0})",
    "en": "the ones still for sale ({0})"
+  },
+  {
+   "fr": "celle encore en vente",
+   "en": "the one still for sale"
   },
   {
    "fr": "Renouveler les étals pour {0} cristaux",
@@ -851,7 +859,7 @@
   },
   {
    "fr": "Reste ",
-   "en": "Left: "
+   "en": "Time left: "
   },
   {
    "fr": " · avance même jeu fermé",
@@ -867,7 +875,7 @@
   },
   {
    "fr": "{0}Passer au niveau {1}",
-   "en": "{0}Go to level {1}"
+   "en": "{0}Upgrade to level {1}"
   },
   {
    "fr": "Voir la Tour",
@@ -879,7 +887,7 @@
   },
   {
    "fr": "Passer au niveau {0}",
-   "en": "Go to level {0}"
+   "en": "Upgrade to level {0}"
   },
   {
    "fr": "Remettre le Comptoir en état",
@@ -955,7 +963,7 @@
   },
   {
    "fr": "Replier",
-   "en": "Fold away"
+   "en": "Collapse"
   },
   {
    "fr": "BON RETOUR, DIRECTEUR",
@@ -979,7 +987,7 @@
   },
   {
    "fr": "Porteur {0} niv. {1} requis",
-   "en": "Requires Bearer {0} lvl {1}"
+   "en": "Needs a lvl {1} {0} Bearer"
   },
   {
    "fr": "Pour {0}",
@@ -999,7 +1007,7 @@
   },
   {
    "fr": "Posée, elle prend celle qui prolonge ta suite.",
-   "en": "When played, it takes the one that extends your chain."
+   "en": "When played, it takes the one that extends your run."
   },
   {
    "fr": "Son métal ne lui ouvre qu’une Fréquence ; en argent et en or, elle en a 2, en nacre 3.",
@@ -1011,7 +1019,7 @@
   },
   {
    "fr": "un Porteur {0}",
-   "en": "a {0} Bearer"
+   "en": "any {0} Bearer"
   },
   {
    "fr": "L’HÉRITAGE DU DISTRICT",
@@ -1223,7 +1231,7 @@
   },
   {
    "fr": "Passer au niveau {0} · {1}",
-   "en": "Go to level {0} · {1}"
+   "en": "Upgrade to level {0} · {1}"
   },
   {
    "fr": "Recycler 1 · +{0} minerai",
@@ -1351,7 +1359,7 @@
   },
   {
    "fr": "Sous les salles closes, {0} a lu jusqu’au bout ce que cachaient les cristaux. Elle en est revenue plus fragile, mais elle sait désormais entendre n’importe quelle suite et s’y glisser.",
-   "en": "Beneath the closed chambers, {0} read to the very end what the crystals were hiding. She came back more fragile, but now she can hear any chain and slip into it."
+   "en": "Beneath the closed chambers, {0} read to the very end what the crystals were hiding. She came back more fragile, but now she can hear any run and slip into it."
   },
   {
    "fr": "NACRE · HÉRITAGE DU DISTRICT",
@@ -1428,10 +1436,6 @@
   {
    "fr": "Toutes ensemble, elles coûtent",
    "en": "All together, they cost"
-  },
-  {
-   "fr": "{0} cristaux",
-   "en": "{0} crystals"
   },
   {
    "fr": "à ce départ{0} (tu en as {1}).",
@@ -1543,7 +1547,7 @@
   },
   {
    "fr": "Les cartes {0}",
-   "en": "{0}’s cards"
+   "en": "Cards {0}"
   },
   {
    "fr": "{0} · {1} / {2} CARTES",
@@ -1615,7 +1619,7 @@
   },
   {
    "fr": "chez {0}",
-   "en": "with {0}"
+   "en": "carried by {0}"
   },
   {
    "fr": "Confier",
@@ -1680,6 +1684,10 @@
   {
    "fr": ", portée par {0}",
    "en": ", carried by {0}"
+  },
+  {
+   "fr": ", libre",
+   "en": ", free"
   },
   {
    "fr": ", peut monter",
@@ -2066,6 +2074,10 @@
    "en": "pick up where you left off"
   },
   {
+   "fr": "reprendre le combat",
+   "en": "back to the fight"
+  },
+  {
    "fr": "Revoir la dernière scène",
    "en": "Replay the last scene"
   },
@@ -2263,7 +2275,11 @@
   },
   {
    "fr": "+{0} % de force · 1 carte{1} et {2} Éclats",
-   "en": "+{0}% strength · 1 card{1} and {2} Shards"
+   "en": "+{0}% strength · 1{1} card and {2} Shards"
+  },
+  {
+   "fr": " en or",
+   "en": " gold"
   },
   {
    "fr": "1 carte au choix, argent au moins",
@@ -2312,6 +2328,14 @@
   {
    "fr": "{0} ({1} % de chances qu’elle soit nouvelle, sinon un doublon)",
    "en": "{0} ({1}% chance it’s new, otherwise a duplicate)"
+  },
+  {
+   "fr": "deux cartes en {0}",
+   "en": "two {0} cards"
+  },
+  {
+   "fr": "une carte en {0}",
+   "en": "one {0} card"
   },
   {
    "fr": "un creuseur, parfois deux",
@@ -2472,6 +2496,10 @@
   {
    "fr": "selon les combats gagnés",
    "en": "depending on fights won"
+  },
+  {
+   "fr": "ennemis normaux",
+   "en": "normal enemies"
   },
   {
    "fr": "ennemis {0}{1} %",
@@ -2647,7 +2675,7 @@
   },
   {
    "fr": "Fiche {0}",
-   "en": "{0}’s profile"
+   "en": "Profile {0}"
   },
   {
    "fr": "PV {0} → {1}",
@@ -2675,11 +2703,11 @@
   },
   {
    "fr": "Des chiffres qui se suivent font des Résonances{0}. Un chiffre absent coupe la suite{1}.",
-   "en": "Consecutive numbers make Resonances{0}. A missing number breaks the chain{1}."
+   "en": "Consecutive numbers make Resonances{0}. A missing number breaks the run{1}."
   },
   {
    "fr": ": ta plus longue suite va de",
-   "en": ": your longest chain runs from"
+   "en": ": your longest run goes from"
   },
   {
    "fr": "{0} à {1}",
@@ -2738,8 +2766,24 @@
    "en": "{0} and {1} are recovering"
   },
   {
+   "fr": "{0} se remet",
+   "en": "{0} is recovering"
+  },
+  {
    "fr": "Il faut au moins un quart de {0} PV pour redescendre : encore {1} environ au rythme actuel. Poste une recrue Géné à la Clinique pour aller plus vite, ou {2}.",
-   "en": "It takes at least a quarter of {0}’s HP to go back down: about {1} more at the current pace. Assign a Spliced recruit to the Clinic to speed it up, or {2}."
+   "en": "It takes at least a quarter of {0} HP to go back down: about {1} more at the current pace. Assign a Spliced recruit to the Clinic to speed it up, or {2}."
+  },
+  {
+   "fr": "§pv§leurs",
+   "en": "their"
+  },
+  {
+   "fr": "§pv§ses",
+   "en": "their"
+  },
+  {
+   "fr": "paie des soins intensifs",
+   "en": "pay for intensive care"
   },
   {
    "fr": "profite des premiers soins intensifs, offerts",

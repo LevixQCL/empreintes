@@ -116,7 +116,7 @@ export function basculerSouhait(j: Jeu, id: string): Resultat {
   const c = etatCercle(j);
   if (c.souhaits.includes(id)) { c.souhaits = c.souhaits.filter((x) => x !== id); return { ok: true, message: t('Retirée de tes souhaits.') }; }
   const r = raisonNonEchangeable(j, id);
-  if (r && !r.startsWith('L’or')) return non(r);
+  if (r && r !== t`L’or s’échange à partir du niveau ${CERCLE.orAuNiveau} du Cercle.`) return non(r);
   if (c.souhaits.length >= CERCLE.souhaitsMax) return non(t`${CERCLE.souhaitsMax} souhaits au plus : retires-en un d’abord.`);
   c.souhaits.push(id);
   return { ok: true, message: t('Ajoutée à tes souhaits : tes amis la verront.') };

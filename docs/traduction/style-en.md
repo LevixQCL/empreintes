@@ -48,7 +48,9 @@ Beyond `traductions/glossaire.json`, keep these consistent across the UI:
 
 | French | English | | French | English |
 |---|---|---|---|---|
-| chaîne / suite | chain | | place (de la chaîne) | slot |
+| chaîne (the cards laid this turn) | chain | | place (de la chaîne) | slot |
+| suite (Frequencies that follow) | run | | salle (gameplay) / chambre scellée | room / sealed chamber |
+| écluse (du district) | sluice | | parrain / parrainage | sponsor / sponsorship |
 | Charge (poids) | Load | | Râtelier | Rack |
 | colis / Ravitaillement | parcel / supplies | | Butin de la semaine | weekly loot |
 | palier | tier | | cran (du Butin) | notch |
@@ -63,4 +65,7 @@ Card effects: Piercing, Siphon, Overcharge, Unsettle (Unsettled), Fissure (fissu
 Rampart, Riposte, Discharge, Tuning Fork, Unison, Pounce, Reading, Rift, Flurry, Overflow, Seize, Recall, Plan, Breach,
 Rescue, Overvolt, Imprint, Second Wind, Dampen, Primer, Servo, Counterpoint, Finisher, Tenacity.
 Masterstrokes: Unleashed (Augmented), Rally (Spliced), Active Shadow (Resonants).
+Two words that must stay apart (proofread of 10 November 2026): Exécution = Finisher (the effect that fells a weakened
+enemy), Finisseur = Closer (the Augmented bonus for ending a run). “Chain full: run of 2” only reads right if chain and
+run never swap. Hints never write “a” before a Frequency number (“a 8”): use “one 8”.
 UI register: second person, short imperative labels (“Go down”, “Claim”), sentence case, contractions allowed.

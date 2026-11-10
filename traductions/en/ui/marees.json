@@ -99,7 +99,7 @@
   },
   {
    "fr": "Aux fortes marées, la mer découvre des ruines qu’aucune barque n’atteint seule. Le passeur affrète sa gabare pour une équipe : un Porteur par tâche, et le bon rôle au bon endroit (frapper, tenir, orchestrer). Plus la marée est haute, plus c’est dur, et plus ça rapporte. Un échec n’est jamais perdu : l’équipe rapporte de quoi faire mieux la fois suivante.",
-   "en": "At the big tides, the sea uncovers ruins no boat can reach alone. The ferryman charters his barge for a team: one Bearer per task, and the right role in the right place (strike, hold, orchestrate). The higher the tide, the harder it is, and the more it pays. A failure is never wasted: the team brings back what it needs to do better next time."
+   "en": "At the great tides, the sea uncovers ruins no boat can reach alone. The ferryman charters his barge for a team: one Bearer per task, and the right role in the right place (strike, hold, orchestrate). The higher the tide, the harder it is, and the more it pays. A failure is never wasted: the team brings back what it needs to do better next time."
   },
   {
    "fr": "Les trois marées",
@@ -135,7 +135,7 @@
   },
   {
    "fr": "Pour un {0} : {1}",
-   "en": "For a {0}: {1}"
+   "en": "Suits the {0}: {1}"
   },
   {
    "fr": "{0} sur cette tâche : changer",

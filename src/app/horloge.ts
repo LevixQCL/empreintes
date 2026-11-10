@@ -42,7 +42,7 @@ function majDecomptes(now: number): boolean {
  */
 export function annoncer(nouvelles: string[]) {
   if (!nouvelles.length) return;
-  const autres = nouvelles.filter((t) => !t.includes(' rentre de mission'));
+  const autres = nouvelles.filter((t) => !t.includes(' rentre de mission') && !t.includes(' is back from a mission'));
   if (autres.length) D.message = autres.join(' ');
   sauver();
 }

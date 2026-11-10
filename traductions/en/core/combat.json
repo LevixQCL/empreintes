@@ -175,7 +175,7 @@
   },
   {
    "fr": "Résonance ! Suite de {0} : effets +{1} %.",
-   "en": "Resonance! Chain of {0}: effects +{1}%."
+   "en": "Resonance! Run of {0}: effects +{1}%."
   },
   {
    "fr": "{0} ! {1} Fréquences identiques : ces cartes {2}.",
@@ -439,7 +439,7 @@
   },
   {
    "fr": "Résonance (suite de {0})",
-   "en": "Resonance (chain of {0})"
+   "en": "Resonance (run of {0})"
   },
   {
    "fr": "{0} ({1} Fréquences identiques)",
@@ -459,7 +459,7 @@
   },
   {
    "fr": "Finisseur (termine la suite)",
-   "en": "Finisher (ends the chain)"
+   "en": "Closer (ends the run)"
   },
   {
    "fr": "Trois lignées",
@@ -487,7 +487,7 @@
   },
   {
    "fr": "Contrepoint ({0} autre{1} lignée{2} dans la suite)",
-   "en": "Counterpoint ({0} other lineage{2|s}{1|} in the chain)"
+   "en": "Counterpoint ({0} other lineage{2|s}{1|} in the run)"
   },
   {
    "fr": "Contrepoint : pas les trois lignées",
@@ -527,7 +527,7 @@
   },
   {
    "fr": "Curée (ennemi fissuré et affaibli)",
-   "en": "Quarry (enemy fissured and weakened)"
+   "en": "Pounce (enemy fissured and weakened)"
   },
   {
    "fr": "Curée (ennemi fissuré)",
@@ -539,7 +539,7 @@
   },
   {
    "fr": "Curée à l’aveugle",
-   "en": "Blind Quarry"
+   "en": "Blind Pounce"
   },
   {
    "fr": "Faille (Fêlure brisée)",

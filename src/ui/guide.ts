@@ -20,7 +20,7 @@ import { ICO, baseIcones } from './icones';
 import { COULEUR, geste } from './vue';
 import { echap } from './outils';
 import { avecMots, ongletGlossaire } from './lexique';
-import { t as tr } from '../core/i18n';
+import { t as tr, pourCent } from '../core/i18n';
 
 export type OngletGuide = 'deck' | 'carte' | 'effets' | 'glossaire';
 
@@ -33,7 +33,7 @@ const ONGLETS: { id: OngletGuide; nom: string }[] = [
 ];
 
 const LIGNEES: Lignee[] = ['tech', 'bio', 'reso'];
-const pc = (x: number) => `${Math.round(x * 100)} %`;
+const pc = (x: number) => pourCent(Math.round(x * 100));
 /** Combien de Porteurs descendent ensemble */
 const ESCOUADE = 3;
 
@@ -192,7 +192,7 @@ function ongletDeck(): string {
   // les conseils
   const barre = (['atk', 'bouclier', 'soin'] as TypeGeste[]).map((t) =>
     `<span class="g-part ${t}" style="flex:${depart[t]}">${symbole(t, 22)}<b>${depart[t]}</b></span>`).join('');
-  const suite = Object.entries(REGLES.multSuite).map(([n, m]) => `${n} = +${Math.round((m - 1) * 100)} %`).join(', ');
+  const suite = Object.entries(REGLES.multSuite).map(([n, m]) => `${n} = +${pourCent(Math.round((m - 1) * 100))}`).join(', ');
   h += `<section class="bloc">${titre(ICO.boost, tr('Bien construire'))}<ul class="g-idees">`
     + idee(ICO.flux, tr('Couvre les Fréquences de 1 à 9'), tr`Des Fréquences qui se suivent font une Résonance (suite de ${suite}). Chaque lignée a sa zone : une escouade des trois lignées couvre l’échelle, et un chiffre absent coupe tes suites.`, echelleFrequences())
     + idee(ICO.cartes, tr('Double les Fréquences utiles'), tr`Deux ou trois cartes sur la même Fréquence, et tu l’as plus souvent en main. Trois identiques dans une chaîne font un Écho : ces cartes +${Math.round((REGLES.echo - 1) * 100)} % et +1 Flux (quatre : ${pctEcho(4)}, cinq : ${pctEcho(5)}). Mais une Fréquence empilée, ce sont moins de suites.`)
@@ -245,7 +245,7 @@ function ongletCarte(): string {
   // les métaux
   const lignes: [string, (r: typeof RARETES[number]) => string][] = [
     [tr('Force'), (r) => pc(METAL_FORCE[r] / METAL_FORCE.fer)],
-    [tr('Effet'), (r) => (METAL_RENFORT[r] === 0 ? 'non' : METAL_RENFORT[r] === 1 ? 'oui' : `+${Math.round((METAL_RENFORT[r] - 1) * 100)} %`)],
+    [tr('Effet'), (r) => (METAL_RENFORT[r] === 0 ? tr('non') : METAL_RENFORT[r] === 1 ? tr('oui') : `+${pourCent(Math.round((METAL_RENFORT[r] - 1) * 100))}`)],
     [tr('Fréquences'), (r) => String(METAL_FREQ[r])],
     [tr('Porteur requis'), (r) => (NIVEAU_METAL[r] > 1 ? `niv. ${NIVEAU_METAL[r]}` : '—')],
   ];

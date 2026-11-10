@@ -122,6 +122,14 @@
    "en": " The quarter saw it: {0}."
   },
   {
+   "fr": "{0} familles te rejoignent",
+   "en": "{0} families are joining you"
+  },
+  {
+   "fr": "une famille te rejoint",
+   "en": "one more family is joining you"
+  },
+  {
    "fr": " Le quartier l’a vu.",
    "en": " The quarter saw it."
   }

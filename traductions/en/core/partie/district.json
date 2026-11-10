@@ -10,6 +10,10 @@
    "en": "The whole district follows you."
   },
   {
+   "fr": "{0} familles te suivent",
+   "en": "{0} families follow you"
+  },
+  {
    "fr": "{0} les creuseurs",
    "en": "{0} the diggers"
   },
@@ -294,6 +298,14 @@
    "en": "You need a Bearer at work in the Forge."
   },
   {
+   "fr": "{0} cristaux",
+   "en": "{0} crystals"
+  },
+  {
+   "fr": "{0} minerai",
+   "en": "{0} ore"
+  },
+  {
    "fr": "{0} Éclat{1}",
    "en": "{0} Shard{1}"
   },
@@ -343,7 +355,7 @@
   },
   {
    "fr": "{0} ({1}) remplace celle en {2} chez {3}.",
-   "en": "{0} ({1}) replaces the {2} one with {3}."
+   "en": "{0} ({1}) replaces the {2} one {3} carries."
   },
   {
    "fr": "{0} confiée à {1}.",
@@ -363,7 +375,7 @@
   },
   {
    "fr": "{0} remplace {1} chez {2}.",
-   "en": "{0} replaces {1} with {2}."
+   "en": "{0} replaces {1} in {2}’s cards."
   },
   {
    "fr": "+{0} creuseur{1} : {2}.",

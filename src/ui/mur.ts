@@ -17,7 +17,7 @@ import { t as tr } from '../core/i18n';
 
 const majuscule = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
 /** « les Orlan » → « Orlan » ; « les Anciens du conseil » → « Anciens du conseil » */
-const court = (f: FamilleDef) => (f.nom.startsWith('les ') ? f.nom.slice(4) : f.nom);
+const court = (f: FamilleDef) => f.nom.replace(/^(?:les|the) /, '');
 
 /** D'où vient une famille, en quelques mots */
 function provenance(f: FamilleDef): string {

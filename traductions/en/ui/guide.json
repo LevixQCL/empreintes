@@ -79,7 +79,7 @@
   },
   {
    "fr": ", l’échelle des Fréquences montre ce que donnent les cartes de ton escouade, et où ta suite se coupe.",
-   "en": " tab, the Frequency ladder shows what your squad’s cards give you, and where your chain breaks."
+   "en": " tab, the Frequency ladder shows what your squad’s cards give you, and where your run breaks."
   },
   {
    "fr": "Les règles du deck",
@@ -179,7 +179,7 @@
   },
   {
    "fr": "s’éteignent : elles restent dans le deck un peu moins fortes (−15 %) et sans effet, et leur Fréquence compte toujours pour les suites. Il se relève à un campement.",
-   "en": "go dark: they stay in the deck a little weaker (−15%) and without effects, and their Frequency still counts for chains. The Bearer gets back up at a camp."
+   "en": "go dark: they stay in the deck a little weaker (−15%) and without effects, and their Frequency still counts for runs. The Bearer gets back up at a camp."
   },
   {
    "fr": "Bien construire",
@@ -191,7 +191,7 @@
   },
   {
    "fr": "Des Fréquences qui se suivent font une Résonance (suite de {0}). Chaque lignée a sa zone : une escouade des trois lignées couvre l’échelle, et un chiffre absent coupe tes suites.",
-   "en": "Consecutive Frequencies make a Resonance (a chain of {0}). Each lineage has its range: a squad of all three lineages covers the ladder, and a missing number breaks your chains."
+   "en": "Consecutive Frequencies make a Resonance (a run of {0}). Each lineage has its range: a squad of all three lineages covers the ladder, and a missing number breaks your runs."
   },
   {
    "fr": "Double les Fréquences utiles",
@@ -199,7 +199,7 @@
   },
   {
    "fr": "Deux ou trois cartes sur la même Fréquence, et tu l’as plus souvent en main. Trois identiques dans une chaîne font un Écho : ces cartes +{0} % et +1 Flux (quatre : {1}, cinq : {2}). Mais une Fréquence empilée, ce sont moins de suites.",
-   "en": "Two or three cards on the same Frequency and you’ll hold it more often. Three of a kind in a chain make an Echo: those cards +{0}% and +1 Flux (four: {1}, five: {2}). But a stacked Frequency means fewer chains."
+   "en": "Two or three cards on the same Frequency and you’ll hold it more often. Three of a kind in a chain make an Echo: those cards +{0}% and +1 Flux (four: {1}, five: {2}). But a stacked Frequency means fewer runs."
   },
   {
    "fr": "Mélange les actions",
@@ -235,15 +235,15 @@
   },
   {
    "fr": "Deux lames (deux places) : la carte est forte mais prend deux places. Avec une autre carte, elle remplit une chaîne de {0} places : pas de suite de 3 sans Flux ni Élan.",
-   "en": "Two blades (two slots): the card is strong but takes two slots. With one other card, it fills a chain of {0} slots: no chain of 3 without Flux or Momentum."
+   "en": "Two blades (two slots): the card is strong but takes two slots. With one other card, it fills a chain of {0} slots: no run of 3 without Flux or Momentum."
   },
   {
    "fr": "Des jokers pour les suites",
-   "en": "Wildcards for chains"
+   "en": "Wildcards for runs"
   },
   {
    "fr": "Une carte ∗ (Accord) prend toujours la Fréquence qui prolonge ta suite. En argent et en or, une carte porte 2 Fréquences, en nacre 3.",
-   "en": "A ∗ card (Accord) always takes the Frequency that extends your chain. In silver and gold a card carries 2 Frequencies, in nacre 3."
+   "en": "A ∗ card (Accord) always takes the Frequency that extends your run. In silver and gold a card carries 2 Frequencies, in nacre 3."
   },
   {
    "fr": "Pense au triangle",
@@ -319,7 +319,7 @@
   },
   {
    "fr": ". Une carte à plusieurs Fréquences (argent et plus) prend seule celle qui prolonge ta suite ; en combat, le bouton sous la carte permet d’en changer.",
-   "en": ". A card with several Frequencies (silver and up) picks the one that extends your chain by itself; in combat, the button under the card lets you switch."
+   "en": ". A card with several Frequencies (silver and up) picks the one that extends your run by itself; in combat, the button under the card lets you switch."
   },
   {
    "fr": "Dans la Collection (onglet Escouade), la jauge sous la carte compte les",
@@ -383,7 +383,7 @@
   },
   {
    "fr": "La carte qui prolonge ta suite se soulève et sa capsule de Fréquence s’allume en or.",
-   "en": "The card that extends your chain lifts up and its Frequency capsule lights up gold."
+   "en": "The card that extends your run lifts up and its Frequency capsule lights up gold."
   },
   {
    "fr": "Trois actions",
@@ -408,6 +408,14 @@
   {
    "fr": "Plus forte, mais elle prend deux places dans la chaîne.",
    "en": "Stronger, but it takes two slots in the chain."
+  },
+  {
+   "fr": "non",
+   "en": "no"
+  },
+  {
+   "fr": "oui",
+   "en": "yes"
   },
   {
    "fr": "Porteur requis",
@@ -467,7 +475,7 @@
   },
   {
    "fr": "Le Porteur qui la joue récupère {0} des dégâts infligés (sans effet si son Porteur est à terre).",
-   "en": "The Bearer who plays it recovers {0} of the damage dealt (no effect if their Bearer is down)."
+   "en": "The Bearer who plays it recovers {0} of the damage dealt (no effect if that Bearer is down)."
   },
   {
    "fr": "Le soin touche toute l’escouade au lieu d’un seul Porteur.",
@@ -487,7 +495,7 @@
   },
   {
    "fr": "Fréquence libre, notée ∗ : la carte prend toujours celle qui prolonge ta suite.",
-   "en": "Free Frequency, marked ∗: the card always takes the one that extends your chain."
+   "en": "Free Frequency, marked ∗: the card always takes the one that extends your run."
   },
   {
    "fr": "+{0} de force pour chaque carte posée avant elle dans la chaîne.",
@@ -543,7 +551,7 @@
   },
   {
    "fr": "Au tour suivant, tu pioches une carte de plus : plus de choix pour trouver ta suite.",
-   "en": "Next turn, you draw one more card: more choice to find your chain."
+   "en": "Next turn, you draw one more card: more choice to find your run."
   },
   {
    "fr": "Avant d’agir, la carte brise tout le bouclier de l’ennemi visé.",
@@ -571,7 +579,7 @@
   },
   {
    "fr": "Si la carte est dans une suite qui résonne, elle gagne +{0} de force pour chaque autre lignée présente dans cette suite (deux au plus).",
-   "en": "If the card is in a resonating chain, it gains +{0} power for each other lineage in that chain (two at most)."
+   "en": "If the card is in a resonating run, it gains +{0} power for each other lineage in that run (two at most)."
   },
   {
    "fr": "Après le coup, si l’ennemi visé n’a plus que {0} de ses PV ou moins, il tombe. Un gardien n’est jamais achevé ainsi.",
@@ -587,11 +595,11 @@
   },
   {
    "fr": "Une chaîne n’a que {0} places : le Flux ouvre les suites de 4 et de 5.",
-   "en": "A chain has only {0} slots: Flux opens chains of 4 and 5."
+   "en": "A chain has only {0} slots: Flux opens runs of 4 and 5."
   },
   {
    "fr": "Joue-la quand ta main n’a pas de belle suite : au tour suivant, vise une suite de 4.",
-   "en": "Play it when your hand has no good chain: next turn, aim for a chain of 4."
+   "en": "Play it when your hand has no good run: next turn, aim for a run of 4."
   },
   {
    "fr": "Plus elle frappe fort, plus elle soigne : place-la dans une Résonance, chez un Porteur blessé.",
@@ -615,7 +623,7 @@
   },
   {
    "fr": "Elle bouche le trou d’une suite. En tête de chaîne, elle se cale juste avant la carte qui la suit.",
-   "en": "It plugs the gap in a chain. At the head of the chain, it slots in right before the card that follows."
+   "en": "It plugs the gap in a run. At the head of the chain, it slots in right before the card that follows."
   },
   {
    "fr": "Pose-la en dernier : elle profite de tout le bouclier déjà monté dans la chaîne, et de celui gardé par un Rempart ou la Marque de Doran.",
@@ -631,7 +639,7 @@
   },
   {
    "fr": "Trois cartes de même Fréquence : chacune compte les deux autres. La Dissonance coupe les suites et l’Écho, mais pas l’Unisson.",
-   "en": "Three cards of the same Frequency: each one counts the other two. Dissonance breaks chains and Echo, but not Unison."
+   "en": "Three cards of the same Frequency: each one counts the other two. Dissonance breaks runs and Echo, but not Unison."
   },
   {
    "fr": "Fissure d’abord, Curée ensuite : la Fissure dure deux tours. Et quand l’ennemi passe sous la moitié de ses PV, toutes tes Curées mordent.",
@@ -675,7 +683,7 @@
   },
   {
    "fr": "Pose-la quand ta main ne fait pas de suite : la prochaine aura plus de chances.",
-   "en": "Play it when your hand won’t make a chain: the next one will have better odds."
+   "en": "Play it when your hand won’t make a run: the next one will have better odds."
   },
   {
    "fr": "Garde-la pour le tour où l’ennemi vient de se protéger.",
@@ -695,11 +703,11 @@
   },
   {
    "fr": "Avec une carte lourde en main, elle rend sa place : un gros coup et une suite de 3 dans la même chaîne.",
-   "en": "With a heavy card in hand, it gives back its slot: a big hit and a chain of 3 in the same chain."
+   "en": "With a heavy card in hand, it gives back its slot: a big hit and a run of 3 in the same chain."
   },
   {
    "fr": "Une suite qui passe par les trois lignées (Génés, Augmentés, Résonants) lui donne tout son bonus.",
-   "en": "A chain running through all three lineages (Spliced, Augmented, Resonants) gives it the full bonus."
+   "en": "A run through all three lineages (Spliced, Augmented, Resonants) gives it the full bonus."
   },
   {
    "fr": "Termine la chaîne par elle : les cartes d’avant font descendre l’ennemi, elle l’achève.",
@@ -711,7 +719,7 @@
   },
   {
    "fr": "En dernière place d’une longue chaîne : cinquième, elle gagne +{0} à {1} %.",
-   "en": "In the last slot of a long chain: fifth, it gains +{0} to {1}%."
+   "en": "In the last slot of a long chain: played fifth, it gains +{0} to {1}%."
   },
   {
    "fr": "En",

@@ -31,7 +31,7 @@
   },
   {
    "fr": "Au moins trois Fréquences qui se suivent dans l’ordre dans la chaîne (3, 4, 5…) ; deux ne suffisent pas. Suite de {0} : toutes les cartes de la chaîne sont renforcées d’autant, et le Flux monte de 1.",
-   "en": "At least three Frequencies that follow each other in order in the chain (3, 4, 5…); two aren’t enough. Chain of {0}: every card in the chain is boosted by that much, and Flux goes up by 1."
+   "en": "At least three Frequencies that follow each other in order in the chain (3, 4, 5…); two aren’t enough. Run of {0}: every card in the chain is boosted by that much, and Flux goes up by 1."
   },
   {
    "fr": "Écho",
@@ -47,7 +47,7 @@
   },
   {
    "fr": "La réserve sous la chaîne ({0} au plus). Elle se remplit par une Résonance, un Écho ou une Fêlure brisée dans une suite ; on la dépense pour une place de plus, une nouvelle main, ou un Coup d’éclat quand elle est pleine.",
-   "en": "The reserve under the chain ({0} at most). It fills with a Resonance, an Echo or a Flaw broken in a chain; you spend it on an extra slot, a new hand, or a Masterstroke when it’s full."
+   "en": "The reserve under the chain ({0} at most). It fills with a Resonance, an Echo or a Flaw broken in a run; you spend it on an extra slot, a new hand, or a Masterstroke when it’s full."
   },
   {
    "fr": "Bouclier d’escouade",
@@ -75,7 +75,7 @@
   },
   {
    "fr": "Chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne affaiblit son attaque, son bouclier ou son soin (pas une Concentration ni une Dissonance) ; dans une suite qui résonne, elle donne aussi du Flux.",
-   "en": "Each enemy shows a flawed Frequency. A card of that Frequency in the chain weakens its attack, shield or heal (not a Focus or a Dissonance); in a resonating chain, it also gives Flux."
+   "en": "Each enemy shows a flawed Frequency. A card of that Frequency in the chain weakens its attack, shield or heal (not a Focus or a Dissonance); in a resonating run, it also gives Flux."
   },
   {
    "fr": "Un ennemi touché par une carte à effet Fissure devient fissuré : il prend plus de dégâts de toutes les cartes posées après elle, ce tour-ci et le suivant. Certaines cartes (Curée) frappent encore plus fort un ennemi fissuré.",
@@ -99,7 +99,7 @@
   },
   {
    "fr": "L’ennemi brouille tes Fréquences : au tour suivant, ni suite ni Écho ne résonne.",
-   "en": "The enemy scrambles your Frequencies: next turn, neither chain nor Echo resonates."
+   "en": "The enemy scrambles your Frequencies: next turn, neither run nor Echo resonates."
   },
   {
    "fr": "Le Porteur qui joue la carte récupère une part des dégâts qu’elle inflige.",
@@ -139,7 +139,7 @@
   },
   {
    "fr": "Un Porteur à 0 PV ne meurt pas : ses cartes restent dans le deck mais s’éteignent (−{0} de force, sans effet). Elles comptent toujours pour les suites.",
-   "en": "A Bearer at 0 HP doesn’t die: their cards stay in the deck but go dark (−{0} power, no effect). They still count for chains."
+   "en": "A Bearer at 0 HP doesn’t die: their cards stay in the deck but go dark (−{0} power, no effect). They still count for runs."
   },
   {
    "fr": "Seconde chance",
@@ -251,7 +251,7 @@
   },
   {
    "fr": "Hors Résonance, cet ennemi ne prend qu’une part des coups : fais des suites.",
-   "en": "Outside a Resonance, this enemy only takes part of each blow: build chains."
+   "en": "Outside a Resonance, this enemy only takes part of each blow: build runs."
   },
   {
    "fr": "Combat qui s’éternise",
@@ -327,7 +327,7 @@
   },
   {
    "fr": "La lignée qui frappe : de grosses attaques. Une carte Augmentée qui termine une suite de 3 ou plus frappe encore plus fort (Finisseur). Ils battent les Résonants.",
-   "en": "The lineage that strikes: big attacks. An Augmented card that ends a chain of 3 or more hits even harder (Finisher). They beat the Resonants."
+   "en": "The lineage that strikes: big attacks. An Augmented card that ends a run of 3 or more hits even harder (Closer). They beat the Resonants."
   },
   {
    "fr": "Génés",
@@ -343,7 +343,7 @@
   },
   {
    "fr": "La lignée qui orchestre : Fréquences, suites, Échos et affaiblissement de l’ennemi. Ils battent les Génés.",
-   "en": "The lineage that orchestrates: Frequencies, chains, Echoes, and weakening the enemy. They beat the Spliced."
+   "en": "The lineage that orchestrates: Frequencies, runs, Echoes, and weakening the enemy. They beat the Spliced."
   },
   {
    "fr": "Chaîne",
@@ -355,7 +355,7 @@
   },
   {
    "fr": "Défausse",
-   "en": "Discard"
+   "en": "Discard pile"
   },
   {
    "fr": "Les cartes déjà jouées ou rejetées depuis le dernier mélange. Quand la pioche est vide, la défausse est mélangée et devient la nouvelle pioche.",
@@ -363,7 +363,7 @@
   },
   {
    "fr": "Pioche",
-   "en": "Draw"
+   "en": "Draw pile"
   },
   {
    "fr": "Les cartes qui restent à piocher avant le prochain mélange. Tu sais lesquelles, pas dans quel ordre elles viendront.",

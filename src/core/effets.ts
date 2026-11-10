@@ -3,9 +3,9 @@
 
 import type { Effet, TypeEffet } from './types';
 import { REGLES } from './regles';
-import { t } from './i18n';
+import { t, pourCent } from './i18n';
 
-const pc = (x: number) => `${Math.round(x * 100)} %`;
+const pc = (x: number) => pourCent(Math.round(x * 100));
 
 export const NOMS_EFFET: Record<TypeEffet, string> = {
   percant: t('Perçant'),

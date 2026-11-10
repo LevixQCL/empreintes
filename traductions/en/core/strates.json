@@ -159,7 +159,7 @@
   },
   {
    "fr": "La galerie effondrée de 2104. Six enfants mués pour les fouilles de nuit y ont guidé vingt adultes dans le noir, trois jours durant. L’éboulis est dégagé depuis longtemps. Les mains peintes sont restées.",
-   "en": "The tunnel that caved in in 2104. Here, six children put through the Molt for the night digs led twenty adults through the dark for three days. The rubble was cleared long ago. The painted hands are still there."
+   "en": "The tunnel that collapsed in 2104. Here, six children put through the Molt for the night digs led twenty adults through the dark for three days. The rubble was cleared long ago. The painted hands are still there."
   },
   {
    "fr": "Les mains peintes",
@@ -307,7 +307,7 @@
   },
   {
    "fr": "Tu rallumes la lanterne avec une poignée d’algues. Sa lumière perce le brouillard des deux salles suivantes.",
-   "en": "You relight the lantern with a handful of seaweed. Its light cuts through the fog over the next two chambers."
+   "en": "You relight the lantern with a handful of seaweed. Its light cuts through the fog over the next two rooms."
   },
   {
    "fr": "Laisser le clou au noir",
@@ -911,7 +911,7 @@
   },
   {
    "fr": "Deux cires, l’une sur l’autre. Celle du dessus est datée de 2108, l’année où ma tante a pris la tête de la Maison. Qu’est-ce qu’elle avait peur de voir ?",
-   "en": "Two layers of wax, one over the other. The top one is dated 2108: the year my aunt took the head of the House. What was she so afraid of seeing?"
+   "en": "Two layers of wax, one over the other. The top one is dated 2108: the year my aunt became head of the House. What was she so afraid of seeing?"
   },
   {
    "fr": "2108. L’année où ma mère a pris la Maison. Un an avant de m’effacer.",
@@ -2931,15 +2931,15 @@
   },
   {
    "fr": "Sur ton plan, une salle juste après la Halte s’éclaire : une réserve, sans combat.",
-   "en": "On your map, a chamber just past the Waystation lights up: a stash, no fight."
+   "en": "On your map, a room just past the Waystation lights up: a stash, no fight."
   },
   {
    "fr": "Sur ton plan, une salle juste après la Halte s’éclaire : des papiers d’époque y attendent.",
-   "en": "On your map, a chamber just past the Waystation lights up: old papers are waiting there."
+   "en": "On your map, a room just past the Waystation lights up: old papers are waiting there."
   },
   {
    "fr": "Sur ton plan, une salle juste après la Halte s’éclaire : une salle scellée, gardée, avec une carte au bout.",
-   "en": "On your map, a chamber just past the Waystation lights up: a sealed chamber, guarded, with a card at the end."
+   "en": "On your map, a room just past the Waystation lights up: a sealed room, guarded, with a card at the end."
   },
   {
    "fr": "Caches murées",
@@ -2955,7 +2955,7 @@
   },
   {
    "fr": "Même un Résonant ne sent rien au-delà des salles voisines. Une lanterne attend à la Halte.",
-   "en": "Even a Resonant can’t sense past the neighboring chambers. A lantern is waiting at the Waystation."
+   "en": "Even a Resonant can’t sense past the neighboring rooms. A lantern is waiting at the Waystation."
   },
   {
    "fr": "Portes rondes",
@@ -2963,7 +2963,7 @@
   },
   {
    "fr": "Toutes closes : deux fois plus de salles scellées.",
-   "en": "All shut: twice as many sealed chambers."
+   "en": "All shut: twice as many sealed rooms."
   },
   {
    "fr": "Les niches",
@@ -2991,7 +2991,7 @@
   },
   {
    "fr": "Un fil relie deux salles côte à côte : on peut le suivre une fois.",
-   "en": "A thread links two neighboring chambers: you can follow it once."
+   "en": "A thread links two neighboring rooms: you can follow it once."
   },
   {
    "fr": "Le dernier verrou",
@@ -2999,7 +2999,7 @@
   },
   {
    "fr": "Les portes à Fréquence demandent une suite de 4.",
-   "en": "Frequency doors demand a chain of 4."
+   "en": "Frequency doors demand a run of 4."
   },
   {
    "fr": "Les noms du mur",
@@ -3407,7 +3407,7 @@
   },
   {
    "fr": "Hors Résonance, tes coups glissent sur lui : enchaîne des suites. Il brouille tes Fréquences un tour sur quatre.",
-   "en": "Outside a Resonance, your blows glance off it: keep your chains going. It jams your Frequencies one turn in four."
+   "en": "Outside a Resonance, your blows glance off it: keep your runs coming. It jams your Frequencies one turn in four."
   },
   {
    "fr": "Il ne lit jamais deux fois le même nom. Ceux qu’il a lus, la Tisseuse les avait déjà oubliés.",
@@ -3431,7 +3431,7 @@
   },
   {
    "fr": "Ses Fêlures sont cachées : sans suite de Fréquences, tes coups glissent sur lui. Enchaîne 3, 4, 5.",
-   "en": "Its Flaws are hidden: without a chain of Frequencies, your blows glance off. Chain 3, 4, 5."
+   "en": "Its Flaws are hidden: without a run of Frequencies, your blows glance off. Line up 3, 4, 5."
   },
   {
    "fr": "Certains Rémanents répètent la même phrase en boucle. Ysé en a noté une : « Ne fermez pas, il reste quelqu’un. »",
@@ -3599,7 +3599,7 @@
   },
   {
    "fr": "Fêlures cachées, et il rappelle son double à mi-vie : la suite est la seule façon de le toucher pleinement.",
-   "en": "Hidden Flaws, and he calls back his double at half health: a chain is the only way to hit him fully."
+   "en": "Hidden Flaws, and he calls back his double at half health: a run is the only way to hit him fully."
   },
   {
    "fr": "Sous la mise en garde, il a gravé une ligne plus récente : « Les voix ne nous ont pas pris, elles nous ont gardés. »",

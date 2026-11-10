@@ -6,7 +6,7 @@
 import { CHARGE } from './collection';
 import { CONDITIONS, METAL_FREQ } from './donnees';
 import { REGLES, pctEcho } from './regles';
-import { langue, t } from './i18n';
+import { langue, t, pourCent } from './i18n';
 
 export type ThemeTerme = 'cartes' | 'combat' | 'ennemi' | 'district' | 'marque' | 'effet';
 
@@ -31,7 +31,7 @@ export const NOMS_THEMES: Record<ThemeTerme, string> = {
 
 /** Un mot entier (les lettres accentuées comptent comme des lettres) */
 const mot = (s: string, drapeaux = '') => new RegExp(`(?<!\\p{L})(?:${s})(?!\\p{L})`, `u${drapeaux}`);
-const pc = (x: number) => `${Math.round(x * 100)} %`;
+const pc = (x: number) => pourCent(Math.round(x * 100));
 const suites = Object.entries(REGLES.multSuite).map(([n, m]) => `${n} = +${pc(m - 1)}`).join(', ');
 
 /** Chaque terme : son nom, ce qu'il fait en une ou deux phrases, et comment le reconnaître */

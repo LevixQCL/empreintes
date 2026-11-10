@@ -43,7 +43,7 @@
   },
   {
    "fr": "{0} L’escouade se replie d’une salle. {1} garde la sienne : prends un autre chemin, ou reviens l’affronter.",
-   "en": "{0} The squad falls back one room. {1} keeps its own: take another path, or come back to face it."
+   "en": "{0} The squad falls back one room. {1} holds its ground: take another path, or come back to face it."
   },
   {
    "fr": "On ne fuit que pendant un combat.",
@@ -199,7 +199,7 @@
   },
   {
    "fr": "Ces Fréquences ne se suivent pas : il faut une suite de {0} (par exemple {1}).",
-   "en": "These Frequencies don’t follow each other: you need a chain of {0} (for example {1})."
+   "en": "These Frequencies don’t follow each other: you need a run of {0} (for example {1})."
   },
   {
    "fr": "Les Fréquences s’accordent. La porte tourne sur elle-même sans un bruit : derrière, {0} et {1} minerai, rangés là depuis toujours.",
@@ -215,7 +215,7 @@
   },
   {
    "fr": "La porte ne se laisse essayer qu’une seconde fois.",
-   "en": "The door only lets itself be tried a second time."
+   "en": "The door allows a second try, and no more."
   },
   {
    "fr": "La porte reste fermée. Elle a attendu des siècles ; elle attendra bien encore.",

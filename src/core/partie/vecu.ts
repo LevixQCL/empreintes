@@ -5,7 +5,7 @@
 // Pur prestige : AUCUN effet en combat (une carte vétérane ne frappe pas plus fort, un nouveau joueur n'est pas désavantagé).
 // Tout se lit dans le journal du combat (CombatEtat.historique) : rien à brancher dans le moteur.
 
-import { ennemiDef, estCarteConnue, moduleDef, porteurDef } from '../donnees';
+import { deNom, ennemiDef, estCarteConnue, moduleDef, porteurDef } from '../donnees';
 import type { CombatEtat } from '../types';
 import { rodeurDef } from '../explorer';
 import { familleDef } from '../familles';
@@ -124,7 +124,7 @@ export const EPITHETES: EpitheteDef[] = [
   { id: 'mille', texte: () => tr('aux mille coups'), ok: (x, t) => t === 'atk' && x.d >= 6000, aide: tr('Une carte d’attaque : infliger 6 000 dégâts.') },
   { id: 'veteran', texte: () => tr('de toutes les descentes'), ok: (x) => x.v >= 300, aide: tr('Gagner 300 combats.') },
   // les Rôdeurs (31 octobre 2026) : un exploit rare, une seule carte par Rôdeur
-  { id: 'rodeur', texte: (x) => `qui a abattu ${rodeurDef(x.ro![x.ro!.length - 1]!)?.dans ?? ennemiDef(x.ro![x.ro!.length - 1]!).nom}`, ok: (x) => !!x.ro?.length, aide: tr('Porter le dernier coup à un Rôdeur.') },
+  { id: 'rodeur', texte: (x) => tr`qui a abattu ${rodeurDef(x.ro![x.ro!.length - 1]!)?.dans ?? ennemiDef(x.ro![x.ro!.length - 1]!).nom}`, ok: (x) => !!x.ro?.length, aide: tr('Porter le dernier coup à un Rôdeur.') },
 ];
 
 /** Les épithètes débloqués, dans l'ordre de la liste */
@@ -160,7 +160,7 @@ export function journalCarte(x: VecuCarte | undefined): string[] {
   else if (x.g.length) l.push(tr`Était là contre le Gardien de −${max(x.g)}.`);
   if (x.z) l.push(tr`Profondeur atteinte : −${x.z}.`);
   const fam = x.m ? familleDef(x.m) : null;
-  if (fam) l.push(tr`Porte le souvenir ${fam.nom.startsWith('les ') ? `des ${fam.nom.slice(4)}` : `de ${fam.nom}`} : ${fam.souvenir}`);
+  if (fam) l.push(tr`Porte le souvenir ${fam.nom.startsWith('les ') ? `des ${fam.nom.slice(4)}` : deNom(fam.nom)} : ${fam.souvenir}`);
   return l;
 }
 

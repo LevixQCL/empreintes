@@ -15,7 +15,7 @@ import { filigrane, illustrationModule, portrait } from './art';
 import { icone } from './icones';
 import { vibrer } from './toucher';
 import { centreDe, echap, mouvementReduit as reduit } from './outils';
-import { t as tr, locale } from '../core/i18n';
+import { t as tr, locale, minuscule } from '../core/i18n';
 
 type Res = 'energie' | 'composants' | 'eclats';
 
@@ -318,7 +318,7 @@ function contenu(g: Exclude<Gain, { kind: 'res' }>): { html: string; onglet: str
   }
   if (g.kind === 'doublons') {
     const uniques = [...new Set(g.cles)];
-    const titre = uniques.length === 1 ? `${moduleDef(uniques[0]!).nom}${g.cles.length > 1 ? ` ×${g.cles.length}` : ''}` : `${g.cles.length} cartes`;
+    const titre = uniques.length === 1 ? `${moduleDef(uniques[0]!).nom}${g.cles.length > 1 ? ` ×${g.cles.length}` : ''}` : tr`${g.cles.length} cartes`;
     return {
       classe: 'doublons', onglet: 'porteurs',
       html: `<span class="gv-pile">${uniques.slice(0, 4).map((c) => vignetteCarte(c, true)).join('')}</span><span class="gv-texte"><small>${tr`+${g.cles.length} doublon${g.cles.length > 1 ? 's' : ''}`}</small><strong>${echap(titre)}</strong><em>${tr`vers le niveau suivant`}</em></span>`,
@@ -336,7 +336,7 @@ function contenu(g: Exclude<Gain, { kind: 'res' }>): { html: string; onglet: str
   if (g.kind === 'marque') {
     return {
       classe: `marque p${g.palier}`, onglet: 'porteurs',
-      html: `${vignettePorteur(g.id)}<span class="gv-texte"><small>${g.palier ? `Marque ${NOMS_PALIER_MARQUE[g.palier]!.toLowerCase()}` : tr('Marque gagnée')}</small><strong>${echap(g.nom)} · ${echap(porteurDef(g.id).nom)}</strong><em>${echap(g.court)}</em></span>`,
+      html: `${vignettePorteur(g.id)}<span class="gv-texte"><small>${g.palier ? tr`Marque ${minuscule(NOMS_PALIER_MARQUE[g.palier]!)}` : tr('Marque gagnée')}</small><strong>${echap(g.nom)} · ${echap(porteurDef(g.id).nom)}</strong><em>${echap(g.court)}</em></span>`,
     };
   }
   if (g.kind === 'porteur') {

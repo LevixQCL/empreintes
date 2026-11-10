@@ -15,7 +15,7 @@
   },
   {
    "fr": "Sans suite, tes coups glissent sur lui : enchaîne des Fréquences qui se suivent (3, 4, 5) pour le toucher pleinement.",
-   "en": "Without a chain, your blows glance off it: line up consecutive Frequencies (3, 4, 5) to hit it fully."
+   "en": "Without a run, your blows glance off it: line up consecutive Frequencies (3, 4, 5) to hit it fully."
   },
   {
    "fr": "Il revient plus petit quand il tombe : garde de quoi finir le rejeton.",
@@ -51,7 +51,7 @@
   },
   {
    "fr": "Une suite de 4 suffit pour le bonus maximal : vise 3-4-5-6.",
-   "en": "A chain of 4 is enough for the maximum bonus: aim for 3-4-5-6."
+   "en": "A run of 4 is enough for the maximum bonus: aim for 3-4-5-6."
   },
   {
    "fr": "Les soins rendent plus : un bon endroit pour remettre l’escouade sur pied.",
@@ -95,7 +95,7 @@
   },
   {
    "fr": "Une Fêlure brisée vaut souvent mieux qu’une suite de plus : elle protège l’escouade. Glisse-la dans une suite : elle remplit aussi le Flux pour ton Coup d’éclat.",
-   "en": "A broken Flaw is often worth more than one more chain: it protects the squad. Slip it into a chain: it also fills the Flux for your Masterstroke."
+   "en": "A broken Flaw is often worth more than one more run: it protects the squad. Slip it into a run: it also fills the Flux for your Masterstroke."
   },
   {
    "fr": "FLUX PLEIN",
@@ -139,11 +139,11 @@
   },
   {
    "fr": "Avance salle par salle jusqu’à la Halte : la lanterne qui t’y attend rallume le plan.",
-   "en": "Move chamber by chamber to the Waystation: the lantern waiting there relights the map."
+   "en": "Move room by room to the Waystation: the lantern waiting there relights the map."
   },
   {
    "fr": "Une salle scellée est plus dure, mais rend une carte de cuivre : entres-y quand l’escouade est en forme.",
-   "en": "A sealed chamber is harder, but gives a copper card: go in when the squad is in good shape."
+   "en": "A sealed room is harder, but gives a copper card: go in when the squad is in good shape."
   },
   {
    "fr": "Ne néglige pas les caches : une niche peut rendre une carte au lieu de minerai.",
@@ -163,7 +163,7 @@
   },
   {
    "fr": "Le fil ne sert qu’une fois : garde-le pour éviter une salle trop dure ou rejoindre un meilleur chemin.",
-   "en": "The thread only works once: keep it to avoid a chamber that’s too hard or to reach a better path."
+   "en": "The thread only works once: keep it to avoid a room that’s too hard or to reach a better path."
   },
   {
    "fr": "Garde dans le deck des cartes aux Fréquences variées : il faudra quatre Fréquences qui se suivent.",
@@ -203,7 +203,7 @@
   },
   {
    "fr": "Chaque Strate cache une quête en plusieurs étapes. Ici : « {0} ». À chaque descente, une salle porte la marque ✦, visible même dans le brouillard. Passes-y, et gagne le combat s’il y en a un : l’étape est relevée. Elle compte au retour au district, même si la descente finit mal.",
-   "en": "Each Stratum hides a quest in several steps. Here: “{0}”. On each descent, one chamber bears the ✦ mark, visible even in the fog. Go through it, and win the fight if there is one: the step is recorded. It counts when you return to the district, even if the descent ends badly."
+   "en": "Each Stratum hides a quest in several steps. Here: “{0}”. On each descent, one room bears the ✦ mark, visible even in the fog. Go through it, and win the fight if there is one: the step is recorded. It counts when you return to the district, even if the descent ends badly."
   },
   {
    "fr": "Les points sous le nom de la Strate (●○○) montrent où tu en es. Au bout de la quête : une carte, de l’XP et un morceau de l’histoire.",
@@ -215,7 +215,7 @@
   },
   {
    "fr": "Chaque Strate cache 5 Vestiges, des objets d’autrefois. Ils ne se trouvent qu’en explorant, jamais en fouille : quelques-uns par descente, marqués d’un losange turquoise sur le plan, même dans le brouillard. Entre dans la salle (et gagne son combat s’il y en a un) pour le ramasser.",
-   "en": "Each Stratum hides 5 Relics, objects from long ago. They can only be found by exploring, never on a dig: a few per descent, marked with a turquoise diamond on the map, even in the fog. Enter the chamber (and win its fight if there is one) to pick it up."
+   "en": "Each Stratum hides 5 Relics, objects from long ago. They can only be found by exploring, never on a dig: a few per descent, marked with a turquoise diamond on the map, even in the fog. Enter the room (and win its fight if there is one) to pick it up."
   },
   {
    "fr": "Les cinq réunis, la Strate est complète : une carte au choix, et tes fouilles y verront tout le plan. La Tour montre où tu en es.",
@@ -255,7 +255,7 @@
   },
   {
    "fr": "Il n’y a pas de mauvais choix : chaque piste rapporte un peu (Éclat, minerai ou lampe) et dévoile une salle plus loin. Touche d’abord les détails : avec une autre escouade, ils racontent autre chose. Ton carnet, dans la Bibliothèque, garde tout.",
-   "en": "There are no wrong choices: each trail gives a little (Shard, ore or lamp) and reveals a chamber further on. Touch the details first: with a different squad, they tell something else. Your notebook, in the Library, keeps everything."
+   "en": "There are no wrong choices: each trail gives a little (Shard, ore or lamp) and reveals a room further on. Touch the details first: with a different squad, they tell something else. Your notebook, in the Library, keeps everything."
   },
   {
    "fr": "Un passage secret",
@@ -263,7 +263,7 @@
   },
   {
    "fr": "Un de tes Porteurs repère une fissure que les autres ne voient pas (marque sur le plan). Entre dans cette salle et suis-le : une salle cachée hors du chemin, quelques mots de lui, du minerai et une archive.",
-   "en": "One of your Bearers spots a crack the others can’t see (marked on the map). Enter that chamber and follow them: a hidden chamber off the path, a few words from them, ore and an archive."
+   "en": "One of your Bearers spots a crack the others can’t see (marked on the map). Enter that room and follow them: a hidden room off the path, a few words from them, ore and an archive."
   },
   {
    "fr": "Chaque passage n’est repéré que par certains Porteurs : change d’escouade de temps en temps pour en découvrir d’autres.",
@@ -275,11 +275,11 @@
   },
   {
    "fr": "Une porte ancienne, gravée de Fréquences. Cinq cartes de ton deck sont tirées : choisis-en {0} dont les Fréquences se suivent, comme une suite en combat (l’Accord ∗ prolonge toute suite). Derrière : un Éclat et du minerai.",
-   "en": "An ancient door, engraved with Frequencies. Five cards from your deck are drawn: choose {0} whose Frequencies follow one another, like a chain in combat (the Accord ∗ extends any chain). Behind it: a Shard and ore."
+   "en": "An ancient door, engraved with Frequencies. Five cards from your deck are drawn: choose {0} whose Frequencies follow one another, like a run in combat (the Accord ∗ extends any run). Behind it: a Shard and ore."
   },
   {
    "fr": "Aucun risque : tu peux retirer la main une fois, ou passer ton chemin si la suite n’y est pas.",
-   "en": "No risk: you can redraw the hand once, or move on if the chain isn’t there."
+   "en": "No risk: you can redraw the hand once, or move on if the run isn’t there."
   },
   {
    "fr": "PREMIÈRE VICTOIRE",

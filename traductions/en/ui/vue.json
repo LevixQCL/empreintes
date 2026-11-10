@@ -18,8 +18,12 @@
    "en": "boosted"
   },
   {
+   "fr": "affaiblie",
+   "en": "weakened"
+  },
+  {
    "fr": ", prolonge ta suite",
-   "en": ", extends your chain"
+   "en": ", extends your run"
   },
   {
    "fr": ", brise la Fêlure de l’ennemi",
@@ -483,7 +487,7 @@
   },
   {
    "fr": "une carte en argent, en or ou en nacre en porte 2 ou 3. Posée, elle prend celle qui prolonge ta suite ; touche les chiffres sous elle pour en changer. Rien n’est tiré au sort.",
-   "en": "a silver, gold or nacre card carries 2 or 3. Once placed, it takes the one that extends your chain; tap the numbers under it to switch. Nothing is left to chance."
+   "en": "a silver, gold or nacre card carries 2 or 3. Once placed, it takes the one that extends your run; tap the numbers under it to switch. Nothing is left to chance."
   },
   {
    "fr": "L’Écho :",
@@ -491,15 +495,15 @@
   },
   {
    "fr": "trois Fréquences identiques dans la chaîne renforcent ces cartes de +{0} %, quelle que soit leur action (dégâts, protection ou soin), et donnent 1 Flux. Plus rare qu’une suite, il paie davantage. Quatre identiques : {1} ; cinq : {2} et 1 Flux de plus.",
-   "en": "three identical Frequencies in the chain boost those cards by +{0}%, whatever their action (damage, protection or healing), and give 1 Flux. Rarer than a chain, it pays more. Four of a kind: {1}; five: {2} and 1 more Flux."
+   "en": "three identical Frequencies in the chain boost those cards by +{0}%, whatever their action (damage, protection or healing), and give 1 Flux. Rarer than a run, it pays more. Four of a kind: {1}; five: {2} and 1 more Flux."
   },
   {
    "fr": "Le Finisseur :",
-   "en": "The Finisher:"
+   "en": "The Closer:"
   },
   {
    "fr": "une carte d’attaque Augmentée qui termine une suite de 3 ou plus frappe +{0} %.",
-   "en": "an Augmented attack card that ends a chain of 3 or more hits +{0}%."
+   "en": "an Augmented attack card that ends a run of 3 or more hits +{0}%."
   },
   {
    "fr": "Le Flux",
@@ -507,19 +511,15 @@
   },
   {
    "fr": "se remplit à chaque Résonance, et encore plus si la suite brise aussi une Fêlure. Dépense-le pour ajouter une place à ta chaîne ou repiocher ta main, ou garde-le pour un Coup d’éclat.",
-   "en": "fills with each Resonance, and more if the chain also breaks a Flaw. Spend it to add a slot to your chain or redraw your hand, or save it for a Masterstroke."
+   "en": "fills with each Resonance, and more if the run also breaks a Flaw. Spend it to add a slot to your chain or redraw your hand, or save it for a Masterstroke."
   },
   {
    "fr": ": chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne brise son intention (moitié moins forte, un quart chez un gardien ou un blindé) ; dans un groupe, elle brise aussi la Fêlure d’un ennemi non visé, deux fois moins fort. Une carte ne brise qu’une Fêlure, celle de l’ennemi visé d’abord : en main, ces cartes portent l’icône de la Fêlure dans leur capsule de Fréquence (« Brise » sur grand écran). Dans une suite (3, 4, 5), elle donne aussi 1 Flux. Les évanescents la cachent.",
-   "en": ": each enemy shows a flawed Frequency. A card of that Frequency in the chain breaks its intent (half as strong, a quarter for a guardian or an armored foe); in a group, it also breaks the Flaw of an untargeted enemy, at half strength. A card breaks only one Flaw, the targeted enemy’s first: in hand, those cards carry the Flaw icon in their Frequency capsule (“Breaks” on large screens). In a chain (3, 4, 5), it also gives 1 Flux. Evanescent enemies hide it."
+   "en": ": each enemy shows a flawed Frequency. A card of that Frequency in the chain breaks its intent (half as strong, a quarter for a guardian or an armored foe); in a group, it also breaks the Flaw of an untargeted enemy, at half strength. A card breaks only one Flaw, the targeted enemy’s first: in hand, those cards carry the Flaw icon in their Frequency capsule (“Breaks” on large screens). In a run (3, 4, 5), it also gives 1 Flux. Evanescent enemies hide it."
   },
   {
    "fr": ": Flux plein, un seul par combat, au choix selon les lignées de l’escouade. {0} Le Porteur qui le déclenche prend {1} d’Usure.",
    "en": ": full Flux, only one per fight, chosen by your squad’s lineages. {0} The Bearer who triggers it takes {1} Strain."
-  },
-  {
-   "fr": "Deux places",
-   "en": "Two slots"
   },
   {
    "fr": ": cette carte est puissante mais occupe deux places.",
@@ -547,7 +547,7 @@
   },
   {
    "fr": "(Perçant, Siphon, Accord…) sont écrits en or. Pose la carte dans la chaîne pour lire ce qu’elle fait. « ∗ » : Fréquence libre, elle prolonge toujours la suite.",
-   "en": "(Piercing, Siphon, Accord…) are written in gold. Place the card in the chain to read what it does. “∗”: free Frequency, it always extends the chain."
+   "en": "(Piercing, Siphon, Accord…) are written in gold. Place the card in the chain to read what it does. “∗”: free Frequency, it always extends the run."
   },
   {
    "fr": "Le triangle des lignées :",
@@ -611,7 +611,7 @@
   },
   {
    "fr": "certains ennemis brouillent tes Fréquences. Au tour suivant, ni suite ni Écho ne résonne : mise sur la force brute ou la protection.",
-   "en": "some enemies scramble your Frequencies. Next turn, neither chain nor Echo resonates: rely on raw power or protection."
+   "en": "some enemies scramble your Frequencies. Next turn, neither run nor Echo resonates: rely on raw power or protection."
   },
   {
    "fr": "Cible inconnue",
@@ -619,7 +619,7 @@
   },
   {
    "fr": "Ni suite ni Écho au tour suivant",
-   "en": "No chain or Echo next turn"
+   "en": "No run or Echo next turn"
   },
   {
    "fr": "Brouillard : {0}, force et cible cachées.",
@@ -703,7 +703,7 @@
   },
   {
    "fr": "Pose un",
-   "en": "Place a"
+   "en": "Place one"
   },
   {
    "fr": "Flux : {0} sur {1}",
@@ -724,6 +724,14 @@
   {
    "fr": "soin +{0} PV",
    "en": "heal +{0} HP"
+  },
+  {
+   "fr": "{0} ennemis vaincus",
+   "en": "{0} enemies defeated"
+  },
+  {
+   "fr": "ennemi vaincu",
+   "en": "enemy defeated"
   },
   {
    "fr": "Si tu lances : {0}",
@@ -764,6 +772,10 @@
   {
    "fr": "{0}{1}{2}, {3} PV sur {4}. {5}",
    "en": "{0}{1}{2}, {3} of {4} HP. {5}"
+  },
+  {
+   "fr": "Visé : ",
+   "en": "Targeted: "
   },
   {
    "fr": "Viser ",
@@ -859,11 +871,11 @@
   },
   {
    "fr": ": suite de {0}, effets",
-   "en": ": chain of {0}, effects"
+   "en": ": run of {0}, effects"
   },
   {
    "fr": "· un",
-   "en": "· a"
+   "en": "· one"
   },
   {
    "fr": "pour aller plus loin",
@@ -871,7 +883,7 @@
   },
   {
    "fr": "· chaîne pleine : un",
-   "en": "· chain full: a"
+   "en": "· chain full: one"
   },
   {
    "fr": "avec une place de Flux",
@@ -879,7 +891,7 @@
   },
   {
    "fr": "Chaîne pleine : suite de 2, pas de Résonance",
-   "en": "Chain full: chain of 2, no Resonance"
+   "en": "Chain full: run of 2, no Resonance"
   },
   {
    "fr": "Chaîne pleine : lance-la, ou dépense 1 Flux pour une place de plus",
@@ -891,11 +903,11 @@
   },
   {
    "fr": "Suite en cours",
-   "en": "Chain in progress"
+   "en": "Run in progress"
   },
   {
    "fr": "Suite {0} → {1} : 1 Flux t’ouvre une place pour un",
-   "en": "Chain {0} → {1}: 1 Flux opens a slot for a"
+   "en": "Run {0} → {1}: 1 Flux opens a slot for one"
   },
   {
    "fr": "Chaîne pleine :",
@@ -903,7 +915,7 @@
   },
   {
    "fr": "suite de 2 seulement",
-   "en": "chain of 2 only"
+   "en": "run of 2 only"
   },
   {
    "fr": ", pas de Résonance (il en faut 3)",
@@ -915,15 +927,15 @@
   },
   {
    "fr": "pour un",
-   "en": "for a"
+   "en": "for an"
   },
   {
    "fr": "{0} : pas de suite au-delà · deux autres {1} pour un",
-   "en": "{0}: no chain beyond · two more {1} for an"
+   "en": "{0}: no run beyond · two more {1} for an"
   },
   {
    "fr": "Suite {0} → {1} : ajoute un",
-   "en": "Chain {0} → {1}: add a"
+   "en": "Run {0} → {1}: add one"
   },
   {
    "fr": "pour +40 %",
@@ -931,15 +943,23 @@
   },
   {
    "fr": "Ajoute un",
-   "en": "Add a"
+   "en": "Add one"
   },
   {
    "fr": "pour commencer une suite",
-   "en": "to start a chain"
+   "en": "to start a run"
   },
   {
    "fr": ": les {0} {1}",
-   "en": ": the {0} {1}"
+   "en": ": all {0} {1}s"
+  },
+  {
+   "fr": "cinq",
+   "en": "five"
+  },
+  {
+   "fr": "quatre",
+   "en": "four"
   },
   {
    "fr": " et +1 Flux",
@@ -963,7 +983,7 @@
   },
   {
    "fr": "défi du ",
-   "en": "challenge of "
+   "en": "challenge for "
   },
   {
    "fr": "Flèche · quai",
@@ -1127,7 +1147,7 @@
   },
   {
    "fr": "SUITE EN COURS",
-   "en": "CHAIN IN PROGRESS"
+   "en": "RUN IN PROGRESS"
   },
   {
    "fr": "DÉBRIDAGE ×{0}",
@@ -1135,7 +1155,7 @@
   },
   {
    "fr": "2 pl.",
-   "en": "2 sl."
+   "en": "2 slots"
   },
   {
    "fr": "COMBAT GUIDÉ",

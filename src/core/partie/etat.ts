@@ -7,7 +7,7 @@ import type { Expedition } from '../expedition';
 import type { Palmares } from '../classements';
 import type { BatimentId, GesteDef, BonusMarques, Rarete } from '../types';
 import { FAMILLES_QUARTIER, familleDef } from '../familles';
-import { t as tr } from '../i18n';
+import { t as tr, minuscule } from '../i18n';
 
 export const VERSION_JEU = 11;
 
@@ -137,8 +137,8 @@ export function gagnerXp(j: Jeu, id: string, xp: number): number | null {
     const pal = palierAuNiveau(apres);
     if (m && pal > palierAuNiveau(avant)) {
       log(j, progresMarque(j, id)?.acquise
-        ? tr`Marque ${NOMS_PALIER_MARQUE[pal].toLowerCase()} : ${m.nom} ${deNom(porteurDef(id).nom)} — ${m.paliers[pal - 1]!.court}.`
-        : tr`Marque ${NOMS_PALIER_MARQUE[pal].toLowerCase()} en vue pour ${porteurDef(id).nom} : il lui reste à gagner ${m.nom}.`);
+        ? tr`Marque ${minuscule(NOMS_PALIER_MARQUE[pal])} : ${m.nom} ${deNom(porteurDef(id).nom)} — ${m.paliers[pal - 1]!.court}.`
+        : tr`Marque ${minuscule(NOMS_PALIER_MARQUE[pal])} en vue pour ${porteurDef(id).nom} : il lui reste à gagner ${m.nom}.`);
     }
     return apres;
   }
@@ -712,7 +712,7 @@ export function nuitDesLignes(j: Jeu, now: number): string | null {
   j.lignes.familles = [];
   j.lignes.derniere = { semaine: l.semaine, sources, gagnes: venues.length, bonus: deLaNuit.length, total: nbFoyers(j), familles: [...venues, ...deLaNuit] };
   const n = venues.length + deLaNuit.length;
-  const t = tr`La Nuit des lignes : la ligne bleue est repeinte plus haut. ${n ? tr`${n} famille${n > 1 ? 's t’ont' : ' t’a'} rejoint cette semaine${deLaNuit.length ? tr`, dont ${deLaNuit.length} cette nuit` : ''}.` : tr('Le quartier parle de toi.')}`;
+  const t = tr`La Nuit des lignes : la ligne bleue est repeinte plus haut. ${n ? `${n > 1 ? tr`${n} familles t’ont rejoint cette semaine` : tr('1 famille t’a rejoint cette semaine')}${deLaNuit.length ? tr`, dont ${deLaNuit.length} cette nuit` : ''}.` : tr('Le quartier parle de toi.')}`;
   log(j, t);
   return t;
 }

@@ -122,6 +122,14 @@
    "en": "{0} min ago"
   },
   {
+   "fr": "il y a {0} h",
+   "en": "{0} h ago"
+  },
+  {
+   "fr": "il y a {0} j",
+   "en": "{0} d ago"
+  },
+  {
    "fr": "Tu as pillé {0}",
    "en": "You raided {0}"
   },

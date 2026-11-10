@@ -91,7 +91,7 @@
   },
   {
    "fr": "Un Porteur {0} arrivera",
-   "en": "A {0} Bearer will arrive"
+   "en": "Another {0} Bearer will arrive"
   },
   {
    "fr": "· un Porteur niv. {0}",
@@ -151,7 +151,7 @@
   },
   {
    "fr": "Ta plus longue suite va de",
-   "en": "Your longest chain runs from"
+   "en": "Your longest run goes from"
   },
   {
    "fr": ". Rien en",
@@ -191,7 +191,7 @@
   },
   {
    "fr": "Marque {0} : {1} Voir la fiche {2}",
-   "en": "{0} Mark: {1} See {2}’s profile"
+   "en": "{0} Mark: {1} See the profile {2}"
   },
   {
    "fr": "Place libre",
@@ -212,6 +212,14 @@
   {
    "fr": "{0} : {1} ne pourra pas descendre.",
    "en": "{0}: {1} won’t be able to go down."
+  },
+  {
+   "fr": "il",
+   "en": "he"
+  },
+  {
+   "fr": "elle",
+   "en": "she"
   },
   {
    "fr": "Au départ, {0}",
@@ -459,15 +467,15 @@
   },
   {
    "fr": "augmentées",
-   "en": "augmented"
+   "en": "Augmented"
   },
   {
    "fr": "génées",
-   "en": "spliced"
+   "en": "Spliced"
   },
   {
    "fr": "résonantes",
-   "en": "resonant"
+   "en": "Resonant"
   },
   {
    "fr": "{0} · Niveau {1}",
@@ -475,7 +483,7 @@
   },
   {
    "fr": "Pourquoi {0} est là",
-   "en": "Why {0} is here"
+   "en": "Why {0}’s here"
   },
   {
    "fr": "Son histoire",
@@ -535,7 +543,7 @@
   },
   {
    "fr": "Ce que pèsent ses cartes sur ce qu’{0} peut porter : +{1} à chaque niveau.",
-   "en": "How much their cards weigh against what {0} can carry: +{1} per level."
+   "en": "What the cards weigh against what {0} can carry: +{1} per level."
   },
   {
    "fr": "{0}, niveau {1}. Changer ses cartes",
@@ -551,7 +559,7 @@
   },
   {
    "fr": "{0} carte{1} {2} libre{3} dans ta collection : encore {4} place{5} à remplir.",
-   "en": "{0} card{1} {2} free{3|} in your collection: {4} slot{5} still to fill."
+   "en": "{0} free {2} card{1}{3|} in your collection: {4} slot{5} still to fill."
   },
   {
    "fr": "Aucune carte : rien à jouer en combat.",
@@ -575,7 +583,7 @@
   },
   {
    "fr": "{0}. Encore",
-   "en": "{0}. Still"
+   "en": "{0}."
   },
   {
    "fr": "envoie {0} en mission en mer depuis le Port",
@@ -583,11 +591,11 @@
   },
   {
    "fr": "emmène {0} dans l’escouade",
-   "en": "take {0} in the squad"
+   "en": "bring {0} along in the squad"
   },
   {
    "fr": "et elle lui est acquise pour toujours.",
-   "en": "and it’s theirs forever."
+   "en": "more and it’s theirs forever."
   },
   {
    "fr": "par l’exploit",

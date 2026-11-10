@@ -94,6 +94,10 @@
    "en": "Win 300 fights."
   },
   {
+   "fr": "qui a abattu {0}",
+   "en": "that felled {0}"
+  },
+  {
    "fr": "Porter le dernier coup à un Rôdeur.",
    "en": "Land the final blow on a Prowler."
   },

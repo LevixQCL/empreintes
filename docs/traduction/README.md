@@ -36,6 +36,13 @@ Une entrée dont `en` est vide s'affiche en français : le jeu ne casse jamais p
 - **Un même mot, deux sens** : `t('§poids§Charge')` s'affiche « Charge » en français mais a sa propre clé (« Load »),
   distincte du geste ennemi `t('Charge')`.
 - **Les noms et pronoms** : `deNom(nom)` (« de Doran », « d’Ilka », « of Doran ») et `ilElle(p)` suivent la langue.
+- **Minuscules, pourcentages, ponctuation** : `minuscule(nom)` met un nom du jeu en minuscule en français seulement
+  (« un Porteur augmenté », « any Augmented Bearer ») ; `pourCent(n)` écrit « 40 % » ou « 40% » ; à l'affichage, l'anglais
+  retire l'espace avant « : » et « % » (`typoEn`). En anglais, jamais « a/an » devant une valeur `{0}` (« a iron card ») :
+  écrire « one {0} card », « any {0} Bearer ».
+- **Relecture du 10 novembre 2026** : tout l'anglais relu ; une quarantaine de petits textes restés hors de `t()` (mots
+  seuls, « ou », « il y a 2 h », « oui / non »…) ont été entourés. `i18n-oublis` ne voit que les textes à accent :
+  pour les autres, relire `.visuel/*-texte.txt` après `VISUEL_LANGUE=en npm run visuel`.
 
 ## Ce qui se passe quand on modifie un texte
 

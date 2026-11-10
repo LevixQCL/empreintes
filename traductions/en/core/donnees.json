@@ -1227,7 +1227,7 @@
   },
   {
    "fr": "Hors Résonance, tes coups ne lui font que {0} % de leurs dégâts : fais des suites. Sa Fêlure reste cachée.",
-   "en": "Outside a Resonance, your blows deal only {0}% of their damage to it: build chains. Its Flaw stays hidden."
+   "en": "Outside a Resonance, your blows deal only {0}% of their damage to it: build runs. Its Flaw stays hidden."
   },
   {
    "fr": "Essaim",
@@ -1291,7 +1291,7 @@
   },
   {
    "fr": "Une suite de 4 résonne comme une suite de 5.",
-   "en": "A chain of 4 resonates like a chain of 5."
+   "en": "A run of 4 resonates like a run of 5."
   },
   {
    "fr": "Source tiède",

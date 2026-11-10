@@ -7,7 +7,7 @@
   },
   {
    "fr": "Marque {0} : {1} {2} — {3}.",
-   "en": "Mark {0}: {1} {2} — {3}."
+   "en": "{0} Mark: {1} {2} — {3}."
   },
   {
    "fr": "Marque {0} en vue pour {1} : il lui reste à gagner {2}.",
@@ -347,7 +347,7 @@
   },
   {
    "fr": "Le quartier entier l’a veillé, il veille à son tour : à la fin de chaque tour ennemi, le Porteur le plus blessé récupère 6 % de ses PV.",
-   "en": "The whole quarter sat up with him, now he keeps watch in turn: at the end of every enemy turn, the most wounded Bearer recovers 6% of their HP."
+   "en": "The whole quarter sat up with him; now he keeps watch in turn: at the end of every enemy turn, the most wounded Bearer recovers 6% of their HP."
   },
   {
    "fr": "soigne le plus blessé de 8 %",
@@ -410,8 +410,12 @@
    "en": "The Night of Lines: the blue line is repainted higher. {0}"
   },
   {
-   "fr": "{0} famille{1} rejoint cette semaine{2}.",
-   "en": "{0} famil{1|ies have|y has} joined you this week{2}."
+   "fr": "{0} familles t’ont rejoint cette semaine",
+   "en": "{0} families joined you this week"
+  },
+  {
+   "fr": "1 famille t’a rejoint cette semaine",
+   "en": "1 family joined you this week"
   },
   {
    "fr": ", dont {0} cette nuit",

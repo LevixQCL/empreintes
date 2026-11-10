@@ -107,7 +107,7 @@ function garde(j: Jeu): string {
 function journal(h: EntreeHistorique[], now: number): string {
   const ilYa = (le: number) => {
     const m = Math.floor((now - le) / 60_000);
-    return m < 1 ? t('à l’instant') : m < 60 ? t`il y a ${m} min` : m < 1440 ? `il y a ${Math.floor(m / 60)} h` : `il y a ${Math.floor(m / 1440)} j`;
+    return m < 1 ? t('à l’instant') : m < 60 ? t`il y a ${m} min` : m < 1440 ? t`il y a ${Math.floor(m / 60)} h` : t`il y a ${Math.floor(m / 1440)} j`;
   };
   const texte = (x: EntreeHistorique) => {
     const nom = `<b>${echap(x.nom)}</b>`;

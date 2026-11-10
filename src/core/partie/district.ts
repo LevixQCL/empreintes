@@ -28,7 +28,7 @@ export function recompenserConfiance(j: Jeu): string[] {
   while ((j.confianceRecue ?? 0) < niveauConfiance(nbFoyers(j)).niveau) {
     j.confianceRecue = (j.confianceRecue ?? 0) + 1;
     const palier = j.confianceRecue;
-    const venus = gagnerCreuseurs(j, CREUSEURS.confiance, `${palier * CONFIANCE.palier} familles te suivent`);
+    const venus = gagnerCreuseurs(j, CREUSEURS.confiance, tr`${palier * CONFIANCE.palier} familles te suivent`);
     const fragment = ORDRE_FAMILLES.find((f) => !j.fragments.includes(f));
     let porteuse = '';
     if (fragment) {
@@ -258,8 +258,8 @@ export function fabriquer(j: Jeu, moduleId: string, now: number): Resultat {
   if (!posteDe(j, 'forge')) return non(tr('Il faut un Porteur au travail à la Forge.'));
   const c = coutRefabrication(moduleId);
   const manque = [
-    j.energie < c.energie ? `${c.energie - Math.floor(j.energie)} cristaux` : '',
-    j.composants < c.composants ? `${c.composants - j.composants} minerai` : '',
+    j.energie < c.energie ? tr`${c.energie - Math.floor(j.energie)} cristaux` : '',
+    j.composants < c.composants ? tr`${c.composants - j.composants} minerai` : '',
     j.eclats < c.eclats ? tr`${c.eclats - j.eclats} Éclat${c.eclats - j.eclats > 1 ? 's' : ''}` : '',
   ].filter(Boolean);
   if (manque.length) return non(tr`Pour refabriquer ${moduleDef(moduleId).nom}, il manque ${enumerer(manque)}.`);

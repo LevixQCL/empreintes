@@ -115,7 +115,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       // un Porteur déjà plein : on ouvre ses cartes pour qu'il en rende une
       const r = J.greffer(app.jeu, b.dataset.module ?? '', id);
       resultat(r);
-      const plein = !r.ok && !!r.message?.includes(`${J.DISTRICT.cartesMax} cartes`);
+      const plein = !r.ok && !!(r.message?.includes(`${J.DISTRICT.cartesMax} cartes`) || r.message?.includes(`${J.DISTRICT.cartesMax} cards`));
       if (plein) { D.carte = null; D.deck = id; D.echange = b.dataset.module ?? null; D.message = t`${porteurDef(id).nom} porte déjà ${J.DISTRICT.cartesMax} cartes : touche celle que ${moduleDef(b.dataset.module ?? '').nom} remplacera.`; }
       break;
     }

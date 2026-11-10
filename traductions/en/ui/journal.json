@@ -3,7 +3,7 @@
  "entrees": [
   {
    "fr": "Qu’est-ce que : {0} ?",
-   "en": "What is: {0}?"
+   "en": "What is {0}?"
   },
   {
    "fr": "{0}{1} ({2}), Fréquence {3}, force {4}{5}",
@@ -15,7 +15,7 @@
   },
   {
    "fr": "annulé",
-   "en": "cancelled"
+   "en": "canceled"
   },
   {
    "fr": "{0} : {1}. Toucher pour l’explication",

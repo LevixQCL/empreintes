@@ -45,7 +45,7 @@ export interface GrandTableau {
 export const tableauVide = (): GrandTableau => ({ tableau: 'profondeur', periode: 'total', etat: 'repos', entrees: [], lu: 0, erreur: '', edition: false, regles: false, retrait: false });
 
 const connuPorteur = (id: string) => PORTEURS.some((p) => p.id === id) ? id : 'ilka';
-const ilYa = (ms: number) => ms < 60_000 ? tr('à l’instant') : `il y a ${duree(ms)}`;
+const ilYa = (ms: number) => ms < 60_000 ? tr('à l’instant') : tr`il y a ${duree(ms)}`;
 const dateCourte = (ms: number) => ms ? new Date(ms).toLocaleDateString(locale(), { day: 'numeric', month: 'short' }) : '';
 
 /** Le rang de ce joueur dans un tableau (pour la Tour du Noyau et la fiche de la Strate), ou null */

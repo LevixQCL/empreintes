@@ -21,7 +21,7 @@ import { t as tr } from '../core/i18n';
 
 /** une couleur par Fréquence, du 1 (chaud) au 9 (froid) : des Fréquences qui se suivent ont des couleurs voisines */
 /** le signe d'une carte lourde (30 octobre 2026) : deux lames de lumière, deux places dans la chaîne, plutôt que « 2 PL. » */
-export const SIGNE_LOURD = '<b class="nf-lourd" title="Prend deux places dans la chaîne" aria-label="Deux places"><i></i><i></i></b>';
+export const SIGNE_LOURD = `<b class="nf-lourd" title="${tr('Prend deux places dans la chaîne')}" aria-label="${tr('Deux places')}"><i></i><i></i></b>`;
 
 export const couleurFrequence = (f: number) => `hsl(${8 + (f - 1) * 34} 52% 38%)`;
 
@@ -189,7 +189,7 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?:
     // une carte du paquetage n'a ni niveau ni lignée : le bâtiment qui la fournit est écrit sous elle
     niveau: o.origine ? undefined : niveau, lignee: o.origine ? '#CDEFFF' : COULEUR[m.lignee], fx: true,
   };
-  const label = tr`${m.nom}, ${o.origine ? tr`fournie par le district (${o.origine})` : tr`${NOMS_RARETE[m.rarete]}, niveau ${niveau} sur ${COLLECTION.niveauMax}, ${NOMS_LIGNEE[m.lignee].nom}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + nomsEffets(m) : ''}${m.lourd ? tr(', prend 2 places') : ''}${m.seul ? tr`, exclusive : n’existe qu’en ${NOMS_RARETE[m.rarete].toLowerCase()}` : ''}`;
+  const label = tr`${m.nom}, ${o.origine ? tr`fournie par le district (${o.origine})` : tr`${NOMS_RARETE[m.rarete]}, niveau ${niveau} sur ${COLLECTION.niveauMax}, ${NOMS_LIGNEE[m.lignee].nom}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? tr('libre') : m.f.join(tr(' ou '))}${m.effet ? ', ' + nomsEffets(m) : ''}${m.lourd ? tr(', prend 2 places') : ''}${m.seul ? tr`, exclusive : n’existe qu’en ${NOMS_RARETE[m.rarete].toLowerCase()}` : ''}`;
   // au niveau maximum, un fin liseré de lumière parcourt le cadre : la maîtrise, sans force en plus (29 octobre 2026)
   const maitre = !o.origine && !m.legs && niveau >= COLLECTION.niveauMax;
   return `<div class="fc-ombre fo-${m.rarete}${m.legs ? ' fo-legs' : ''}${maitre ? ' fo-maitre' : ''}"><div class="fc-carte nf nf-${m.rarete}" style="${styleFace(d)}" role="img" aria-label="${echap(label + (maitre ? tr(', maîtrisée') : ''))}">`

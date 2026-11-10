@@ -17,7 +17,7 @@ import { LIEUX, affinite, lieuDef, type Affinite, type LieuDef } from '../lieux'
 import type { Lignee, Rarete } from '../types';
 import { XP, facteurXp, enExpedition, gagnerXp, jourDe, debutJour, log, niveauPorteur, non, porteursPresents, progresMarque, strateVaincue, tropBlesse, usureMax, type Jeu, type RapportMission, type Resultat } from './etat';
 import { MISSIONS, rangerRapport } from './descentes';
-import { t as tr } from '../i18n';
+import { t as tr, enumerer } from '../i18n';
 
 export type RangMaree = 'montante' | 'vive' | 'grande';
 export const RANGS_MAREE: readonly RangMaree[] = ['montante', 'vive', 'grande'];
@@ -304,7 +304,7 @@ export function retourDeContrat(j: Jeu): string {
     if (mq?.acquise && !avantMarque) { log(j, tr`${porteurDef(id).nom} gagne la Marque ${mq.nom} : ${mq.texte}`); marque ??= mq.nom; }
   }
   const noms = c.porteurs.map((p) => porteurDef(p).nom);
-  const equipe = noms.length > 1 ? `${noms.slice(0, -1).join(', ')} et ${noms[noms.length - 1]}` : noms[0]!;
+  const equipe = enumerer(noms);
   const recit: string[] = [lieu.arrivee.replaceAll('{nom}', equipe), def.ambiance];
   if (reussi) {
     recit.push(tr`${forces.map(({ ep, k }) => `${porteurDef(c.porteurs[k]!).nom} : ${ep.nom.charAt(0).toLowerCase()}${ep.nom.slice(1)}`).join(' ; ')}. Tout a tenu.`);

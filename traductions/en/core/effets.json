@@ -107,7 +107,7 @@
   },
   {
    "fr": "Fréquence libre : prolonge toujours la suite.",
-   "en": "Free Frequency: always extends the chain."
+   "en": "Free Frequency: always extends the run."
   },
   {
    "fr": "Soigne toute l’escouade.",
@@ -207,7 +207,7 @@
   },
   {
    "fr": "Dans une suite qui résonne : +{0} de force pour chaque autre lignée de la suite.",
-   "en": "In a resonating chain: +{0} power for each other lineage in the chain."
+   "en": "In a resonating run: +{0} power for each other lineage in the run."
   },
   {
    "fr": "Après le coup, l’ennemi visé tombe s’il lui reste moins de {0} de ses PV (jamais un gardien).",
@@ -467,7 +467,7 @@
   },
   {
    "fr": "Dans une suite qui passe par les trois lignées : +{0} de force par autre lignée. Sinon, frappe à moitié.",
-   "en": "In a chain spanning all three lineages: +{0} power per other lineage. Otherwise, it strikes at half power."
+   "en": "In a run spanning all three lineages: +{0} power per other lineage. Otherwise, it strikes at half power."
   },
   {
    "fr": "{0} à tous",

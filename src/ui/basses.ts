@@ -81,7 +81,7 @@ function secteur(e: EcranDistrict, s: SecteurBasses): string {
   if (!sec) {
     const { raison, cout } = peutDresser(j, s.id, e.now);
     if (reste) {
-      h += `<button type="button" class="btn sec" data-action="basses-batardeau" data-id="${s.id}"${raison ? ' disabled' : ''}>${ICO.mur}${tr`Dresser le batardeau ici${cout ? prix('energie', cout, j.energie >= cout) : ' · gratuit'}`}</button>`
+      h += `<button type="button" class="btn sec" data-action="basses-batardeau" data-id="${s.id}"${raison ? ' disabled' : ''}>${ICO.mur}${tr`Dresser le batardeau ici${cout ? prix('energie', cout, j.energie >= cout) : tr(' · gratuit')}`}</button>`
         + (raison ? `<small class="fb-note">${echap(raison)}</small>` : `<small class="fb-note">${tr`Le secteur à sec change une fois par semaine. Celui qu’on quitte se remplit, mais ses familles attendent.`}</small>`);
     }
     return h + `</li>`;

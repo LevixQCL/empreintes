@@ -19,7 +19,7 @@ import { feuilleGuide, lienGuide, type OngletGuide } from './guide';
 import { decimal, echap } from './outils';
 import { queteDef } from '../core/strates';
 import { feuilleJournal, type OngletJournal } from './journal';
-import { t as tr, locale, enumerer } from '../core/i18n';
+import { t as tr, locale, enumerer, pourCent } from '../core/i18n';
 
 interface Pop {
   id: number;
@@ -156,8 +156,8 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
     felure: o.felure ? ICO.fele : undefined,
   };
   const cls = ['geste', taille, eteinte ? 'eteinte' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', o.felure ? 'brise-felure' : ''].filter(Boolean).join(' ');
-  const freqs = g.fs && g.fs.length > 1 && !accord ? tr`, Fréquences possibles ${g.fs.join(' ou ')}` : '';
-  const label = tr`${g.nom} (${nomP}), Fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${vReel}${tendance ? tr` (${tendance === 'hausse' ? tr('renforcée') : 'affaiblie'}, ${g.v} de base)` : ''}${g.lourd ? tr(', prend 2 places') : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? tr(', prolonge ta suite') : ''}${o.felure ? tr(', brise la Fêlure de l’ennemi') : ''}${eteinte ? tr(', éteinte : son Porteur est à terre') : ''}`;
+  const freqs = g.fs && g.fs.length > 1 && !accord ? tr`, Fréquences possibles ${g.fs.join(tr(' ou '))}` : '';
+  const label = tr`${g.nom} (${nomP}), Fréquence ${accord ? tr('libre') : g.f}${freqs}, ${LIBELLE[g.type]} ${vReel}${tendance ? tr` (${tendance === 'hausse' ? tr('renforcée') : tr('affaiblie')}, ${g.v} de base)` : ''}${g.lourd ? tr(', prend 2 places') : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? tr(', prolonge ta suite') : ''}${o.felure ? tr(', brise la Fêlure de l’ennemi') : ''}${eteinte ? tr(', éteinte : son Porteur est à terre') : ''}`;
   AFFICHES.set(g.uid, { g, d, nomP, eteinte, detail });
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]}" data-action="${action}" data-uid="${g.uid}" data-porteur="${g.porteur ?? ''}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
     + `<span class="nf nf-${metal}${o.halo ? ' nf-suite' : ''}" style="${styleFace(d)}" aria-hidden="true">${corpsFace(d).replace(/ loading="lazy"/g, '')}</span>`
@@ -186,7 +186,7 @@ export function loupe(uid: string): string | null {
 const QUOI = { atk: tr('dégâts'), bouclier: tr('de bouclier'), soin: tr('PV soignés') };
 const pourcent = (m: number) => {
   const p = Math.round((m - 1) * 100);
-  return `${p > 0 ? '+' : '−'}${Math.abs(p)} %`;
+  return `${p > 0 ? '+' : '−'}${pourCent(Math.abs(p))}`;
 };
 
 /** Le calcul de la carte dans la loupe : la base, chaque bonus (vert) et malus (rouge), puis le total */
@@ -555,7 +555,7 @@ function bilanChaine(s: CombatEtat): string {
   if (a.soin) { morceaux.push(`<span class="bl-soin">${ICO.soin}<b>+${a.soin}</b></span>`); dire.push(tr`soin +${a.soin} PV`); }
   if (!morceaux.length) return '';
   const fatal = a.vaincus > 0;
-  if (fatal) dire.push(a.vaincus > 1 ? `${a.vaincus} ennemis vaincus` : 'ennemi vaincu');
+  if (fatal) dire.push(a.vaincus > 1 ? tr`${a.vaincus} ennemis vaincus` : tr('ennemi vaincu'));
   return `<span class="bilan${fatal ? ' fatal' : ''}" role="status" aria-label="${echap(tr`Si tu lances : ${dire.join(', ')}`)}"><small aria-hidden="true">${fatal ? 'FATAL' : 'TOTAL'}</small>${morceaux.join('')}</span>`;
 }
 
@@ -641,7 +641,7 @@ function vignettesGroupe(e: Ecran): string {
     const ico = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
     const traits = traitsEnJeu(en).map((t) => texteTrait(t).nom);
     const nom = nomEnnemi(en);
-    const label = tombe ? tr`${nom}, hors de combat` : tr`${vise ? 'Visé : ' : tr('Viser ')}${nom}${traits.length ? ` (${traits.join(', ')})` : ''}, ${en.pv} PV sur ${en.pvMax}. ${cache ? tr`${GENRE_INTENTION[it.type]}, force et cible cachées par le brouillard.` : texteIntention(s, en)}`;
+    const label = tombe ? tr`${nom}, hors de combat` : tr`${vise ? tr('Visé : ') : tr('Viser ')}${nom}${traits.length ? ` (${traits.join(', ')})` : ''}, ${en.pv} PV sur ${en.pvMax}. ${cache ? tr`${GENRE_INTENTION[it.type]}, force et cible cachées par le brouillard.` : texteIntention(s, en)}`;
     return `<button type="button" class="vignette-ennemi l-${ligneeEnnemi(en)}${estGardien(en.id) ? ' gardien' : ''}${vise ? ' visee' : ''}${tombe ? ' tombe' : ''}" data-action="viser" data-id="${en.rang ?? 0}" aria-label="${echap(label)}" title="${echap(label)}" aria-pressed="${vise}"${verrou || tombe || vise ? ' disabled' : ''}>`
       + (ill ? `<img src="${ill}" alt="" decoding="async">` : '<span class="vg-sans"></span>')
       + (tombe ? '' : `<span class="vg-int ${cls}${cache ? ' brume' : ''}">${ico}${val ? `<b>${val}</b>` : ''}</span>`)
@@ -755,7 +755,7 @@ function htmlEcranCombat(e: Ecran): string {
     }
     else if (fin === 2) conseil = `${tr`Suite ${f - 1} → ${f} : ajoute un`} <b>${f + 1}</b> ${tr`pour +40 %`}`;
     else conseil = `${tr`Ajoute un`} <b>${f + 1}</b> ${tr`pour commencer une suite`}`;
-    if (a.echo) { const n = a.echoN ?? 3; conseil = (conseil ? `${conseil} · ` : '') + `<b>${nomEcho(n)}</b> ${tr`: les ${n === 5 ? 'cinq' : n === 4 ? 'quatre' : 'trois'} ${a.echoF}`} <b>${pctEcho(n)}</b>` + (n === 5 ? tr(' et +1 Flux') : ''); }
+    if (a.echo) { const n = a.echoN ?? 3; conseil = (conseil ? `${conseil} · ` : '') + `<b>${nomEcho(n)}</b> ${tr`: les ${n === 5 ? tr('cinq') : n === 4 ? tr('quatre') : tr('trois')} ${a.echoF}`} <b>${pctEcho(n)}</b>` + (n === 5 ? tr(' et +1 Flux') : ''); }
     if (dernier?.effet) conseil += `<span class="effet-texte">${echap(libelleEffet(dernier.effet))}</span>`;
   }
 

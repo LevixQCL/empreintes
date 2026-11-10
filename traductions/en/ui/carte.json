@@ -2,6 +2,14 @@
  "source": "src/ui/carte.ts",
  "entrees": [
   {
+   "fr": "Prend deux places dans la chaîne",
+   "en": "Takes two slots in the chain"
+  },
+  {
+   "fr": "Deux places",
+   "en": "Two slots"
+  },
+  {
    "fr": "Attaque",
    "en": "Attack"
   },
@@ -36,6 +44,14 @@
   {
    "fr": "{0}, niveau {1} sur {2}, {3}",
    "en": "{0}, level {1} of {2}, {3}"
+  },
+  {
+   "fr": "libre",
+   "en": "free"
+  },
+  {
+   "fr": " ou ",
+   "en": " or "
   },
   {
    "fr": ", prend 2 places",
