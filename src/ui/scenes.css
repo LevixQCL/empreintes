@@ -230,13 +230,13 @@
 @keyframes titre-cam{from{transform:translateX(-28%) scale(1.02)}to{transform:translateX(-28%) scale(1.07)}}
 .titre-image img{width:100%;height:100%;display:block;animation:none!important}
 .titre-image span,.rencontre-image span{position:absolute;pointer-events:none;border-radius:50%}
-/* la flamme violette de la lanterne de Véla (≈ 24,5 %, 12,7 % de l'image, 10 novembre 2026) */
-.t-flamme{left:24.5%;top:12.7%;width:10%;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(240,225,255,.95) 0%,rgba(185,120,255,.55) 35%,rgba(150,80,255,0) 70%);mix-blend-mode:screen;animation:flamme 1.8s steps(1,end) infinite}
-.t-halo{left:24.5%;top:12.7%;width:46%;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(190,130,255,.28) 0%,rgba(160,90,255,0) 65%);mix-blend-mode:screen;animation:halo 3.1s ease-in-out infinite}
+/* la flamme violette de la lanterne de Véla (≈ 55 %, 39 % de l’image, trio de face, 10 novembre 2026 au soir) */
+.t-flamme{left:55.5%;top:38.8%;width:10%;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(240,225,255,.95) 0%,rgba(185,120,255,.55) 35%,rgba(150,80,255,0) 70%);mix-blend-mode:screen;animation:flamme 1.8s steps(1,end) infinite}
+.t-halo{left:55.5%;top:38.8%;width:46%;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(190,130,255,.28) 0%,rgba(160,90,255,0) 65%);mix-blend-mode:screen;animation:halo 3.1s ease-in-out infinite}
 @keyframes flamme{0%{opacity:.85}13%{opacity:1}27%{opacity:.7}41%{opacity:.95}55%{opacity:.78}70%{opacity:1}84%{opacity:.82}}
 @keyframes halo{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(.96)}45%{opacity:1;transform:translate(-50%,-50%) scale(1.04)}70%{opacity:.8}}
 /* la lueur violette des joints de la porte */
-.t-porte{left:57%;top:39%;width:92%;aspect-ratio:1;transform:translate(-50%,-50%);box-shadow:0 0 22px 6px rgba(190,110,255,.55),inset 0 0 26px 4px rgba(190,110,255,.45);mix-blend-mode:screen;opacity:.25;animation:porte 4.5s ease-in-out infinite}
+.t-porte{left:49%;top:34.7%;width:89%;aspect-ratio:1;transform:translate(-50%,-50%);box-shadow:0 0 22px 6px rgba(190,110,255,.55),inset 0 0 26px 4px rgba(190,110,255,.45);mix-blend-mode:screen;opacity:.25;animation:porte 4.5s ease-in-out infinite}
 @keyframes porte{0%,100%{opacity:.15}50%{opacity:.6}}
 @media (prefers-reduced-motion: reduce){ .titre-image,.titre-image span{animation:none!important} }
 
@@ -244,7 +244,7 @@
 #app[data-vue="rencontre"]{min-height:100dvh}
 .scene-rencontre{position:relative;isolation:isolate;overflow:hidden;min-height:calc(100dvh - 36px);border-radius:18px;background:#0C1218;color:#F6F1E6;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
 .rencontre-fond{position:absolute;inset:0;z-index:-2;overflow:hidden}
-.rencontre-image{position:absolute;top:0;height:100%;aspect-ratio:816/1456;left:28%;transform:translateX(-28%)}
+.rencontre-image{position:absolute;top:0;height:100%;aspect-ratio:816/1456;left:50%;transform:translateX(-50%)}
 .rencontre-image img{width:100%;height:100%;display:block;animation:fondu-in 1s ease-out}
 .rencontre-image span{position:absolute;pointer-events:none;border-radius:50%}
 .scene-rencontre::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(8,10,14,.75) 0%,rgba(8,10,14,.1) 22%,rgba(8,10,14,0) 60%,rgba(8,10,14,.7) 88%,rgba(8,10,14,.9) 100%)}
@@ -259,15 +259,17 @@
 .bulle::after{content:"";position:absolute;width:16px;height:16px;background:#FBF7EE;box-shadow:2px 2px 0 0 #1E1A14;transform:rotate(45deg)}
 .bulle.neuve{animation:bulle .45s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes bulle{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
-/* Ilka à gauche : bulle à sa droite, pointe vers la gauche */
-.b-ilka{top:19%;left:28%;border-bottom-left-radius:6px}
-.b-ilka::after{left:-7px;bottom:12px;transform:rotate(135deg)}
-/* Doran à droite : bulle au-dessus de lui, pointe vers le bas à droite */
-.b-doran{top:33%;right:4%;transform-origin:85% 100%}
-.b-doran::after{right:26px;bottom:-8px}
-/* Véla au centre : bulle sous son visage, pointe vers le haut */
-.b-vela{top:60%;left:50%;translate:-50% 0;transform-origin:50% 0}
-.b-vela::after{left:calc(50% - 8px);top:-8px;transform:rotate(225deg)}
+/* Trio de face (10 novembre 2026) : Ilka en haut à gauche, Doran en haut à droite, Véla au centre plus bas.
+   Les bulles laissent libres les trois visages et la lanterne. */
+/* Ilka : bulle à droite de son visage, étroite pour ne pas couvrir Doran, pointe vers la gauche */
+.b-ilka{top:17%;left:30%;max-width:min(43%,172px);border-bottom-left-radius:6px}
+.b-ilka::after{left:-7px;bottom:14px;transform:rotate(135deg)}
+/* Doran : bulle en bas à droite, pointe vers le haut, vers lui */
+.b-doran{top:60%;right:3%;max-width:min(47%,190px);transform-origin:80% 0}
+.b-doran::after{right:30px;top:-8px;transform:rotate(225deg)}
+/* Véla : bulle sous son visage, à gauche, pointe vers le haut */
+.b-vela{top:62%;left:3%;max-width:min(47%,190px);transform-origin:60% 0}
+.b-vela::after{right:36px;top:-8px;transform:rotate(225deg)}
 .rencontre-bas{position:absolute;left:16px;right:16px;bottom:16px;display:grid;gap:10px;justify-items:center}
 .indice-bulle{font-family:var(--mono);font-size:var(--t-min);letter-spacing:.06em;opacity:.8;animation:indice 2.4s ease-in-out 1.5s infinite}
 .appel-porte.discrete{opacity:.55}
