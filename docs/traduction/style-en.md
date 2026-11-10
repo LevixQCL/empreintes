@@ -32,7 +32,7 @@ Same meaning, same intention, same effect on the reader — not the same words.
 | **Joss** | the dyer | Cheerful, warm, neighbourhood gossip. |
 | **Hald** | Brigades captain | Military clipped register, formal, then human in spite of herself. |
 | **Isaure** | head of House Orsève | Cold, courteous, faintly wrong (her copies are drifting): repetitions, too-perfect politeness. |
-| **The Icehouse** | AI from 2029 | Polite, careful, slightly old-fashioned assistant speech; sad without saying so. |
+| **The Icehouse** | AI from 2033 | Polite, careful, slightly old-fashioned assistant speech; sad without saying so. |
 | **The ancient tables** | those who came before | Spare, liturgical, timeless. No contractions. |
 
 ## Inspirations (tone, not text)

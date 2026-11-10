@@ -153,7 +153,7 @@ export const SCENES: Scene[] = [
       { qui: 'hald', texte: t('Le district a choisi de garder la chambre. Les salles closes, ce sera nous. Ne vous trouvez pas sur notre chemin.'), si: garde('district') },
       { qui: 'tobin', texte: t('Les Veilleurs descendent avec vous. On note tout. Même ce qui nous fait peur. Surtout ça.'), si: garde('commission') },
       { qui: 'kessa', texte: t('Kessa, plongeuse aux pompes. Mes parents ont mué pour ces couloirs-là. Moi, je suis née comme ça. Je n’en ai jamais vu le bout. Ce sera le bon jour.'), si: present('kessa') },
-      { qui: 'sasha', texte: t('J’ai regardé tes jambes cette nuit, Ilka. Il y a le verrou de ta compagnie, ça, je connais. Et il y a autre chose : une ligne que personne n’a écrite chez nous, signée d’une date. 2029. Elle ne coupe rien. Elle écoute.') },
+      { qui: 'sasha', texte: t('J’ai regardé tes jambes cette nuit, Ilka. Il y a le verrou de ta compagnie, ça, je connais. Et il y a autre chose : une ligne que personne n’a écrite chez nous, signée d’une date. 2033. Elle ne coupe rien. Elle écoute.') },
       { qui: 'vela', texte: t('Derrière ces portes, quelqu’un a rangé les cristaux avec soin. Comme on range une chambre avant de partir pour de bon.') },
     ], (c) => !!c.actes.chambre),
   apresGardien(4, 'gardien-registres', t('L’appel'),

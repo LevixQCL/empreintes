@@ -14,7 +14,7 @@ describe('Chroniques', () => {
     expect(CHAPITRES.filter((c) => chapitreOuvert(c, 1)).length).toBeGreaterThan(10);
   });
 
-  it('racontent 2026 à 2030 dès le départ, avec leurs papiers d’époque, et gardent la Glacière pour la Strate −8', () => {
+  it('racontent 2030 à 2034 dès le départ, avec leurs papiers d’époque, et gardent la Glacière pour la Strate −8', () => {
     for (const id of ['caves', 'detroit', 'pieds-mouilles', 'noir', 'sans-glace']) {
       const c = CHAPITRES.find((x) => x.id === id)!;
       expect(c.livre).toBe(1);

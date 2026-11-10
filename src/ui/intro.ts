@@ -129,7 +129,7 @@ export const PLANS: Plan[] = [
     tr('La colère cherche des visages. Aux deux extrêmes, chaque camp crie plus fort que l’autre.'),
     tr('Des guerres reviennent remplir les écrans. Le climat glisse en fin de journal, vingt secondes entre la météo et le sport.'),
     tr('Entre les deux foules, un enfant. Personne ne le regarde : c’est lui qui vivra la suite.')] },
-  { epoque: tr('Un quart de siècle'), titre: tr('La Fonte'), annees: [2030, 2055], ambiance: 'maree', camera: 'gauche', fonds: [f('03-tempetes')], scene: (k) => nature(Math.min(k, 2)), court: [tr("Puis la mer monte pour de bon. Les côtes se vident, des centaines de millions de gens prennent la route. Les querelles d’avant paraissent soudain minuscules.")], lignes: [
+  { epoque: tr('Un quart de siècle'), titre: tr('La Fonte'), annees: [2034, 2055], ambiance: 'maree', camera: 'gauche', fonds: [f('03-tempetes')], scene: (k) => nature(Math.min(k, 2)), court: [tr("Puis la mer monte pour de bon. Les côtes se vident, des centaines de millions de gens prennent la route. Les querelles d’avant paraissent soudain minuscules.")], lignes: [
     tr('La mer ne monte que de trente centimètres. Mais un soir de tempête, c’est une digue qui cède, une rue qui devient rivière.'),
     tr('Les côtes se vident, rue après rue. Des centaines de millions de gens prennent la route avec ce qu’ils peuvent porter.'),
     tr('Il y aura des morts par millions. Les querelles qui remplissaient les écrans paraissent soudain minuscules. Elles l’étaient.')] },

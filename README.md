@@ -272,7 +272,8 @@ Le robot de parcours s'en sert aussi : ce sont les creuseurs, la Tour et le fron
   la *rumeur du jour* au marché (`src/core/rumeurs.ts`), deux chapitres des Chroniques (« Les yeux d'or », « Le Registre des Vierges »)
   et deux fragments d'archives (« Non prioritaire », « Pas de notre côté »).
 
-**Les années de Nell et la Glacière** (26 octobre 2026, décidé avec Bryan ; `docs/lore-2026-2030.md`). Cinq chapitres du Livre I racontent 2026 à 2030
+**Les années de Nell et la Glacière** (26 octobre 2026, décidé avec Bryan ; `docs/lore-2026-2030.md`). Cinq chapitres du Livre I racontent 2030 à 2034
+(dates décalées de quatre ans le 10 novembre 2026, pour ne pas être dépassées à la sortie ; elles s'appelaient 2026 à 2030)
 (canicules, détroit bloqué, crise des « pieds mouillés », centres de données frappés par les guerres, été sans glace), chacun suivi
 de deux papiers d'époque (`documents`). L'IA de ce temps-là est à l'origine des Augmentés : un centre de données enterré, la Glacière,
 a survécu et a dessiné les premiers implants (« La Réponse », et « Elle attend » à la Strate −8). Six rumeurs s'y rattachent.
