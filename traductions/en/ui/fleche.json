@@ -50,6 +50,10 @@
    "en": ", you hold quay {0}"
   },
   {
+   "fr": "{0} % de chances",
+   "en": "{0}% chance"
+  },
+  {
    "fr": "Le quai {0}",
    "en": "Quay {0}"
   },
@@ -60,10 +64,6 @@
   {
    "fr": "Quai {0}",
    "en": "Quay {0}"
-  },
-  {
-   "fr": "{0} % de chances",
-   "en": "{0}% chance"
   },
   {
    "fr": "Gardiens",

@@ -20,6 +20,7 @@ import { choisirDos } from '../ui/gains';
 import { R } from './parrainage';
 import { brancherTableau, htmlArchipel, htmlCartes, htmlCodex, htmlCoupe, htmlEscouade, htmlRencontre } from '../ui/district';
 import { htmlExploration } from '../ui/exploration';
+import { enAttente as enAttenteExpedition } from '../core/expedition';
 import { trouveesDe } from '../ui/guide';
 import { htmlIntro } from '../ui/intro';
 import { animerCompteur, majIntro, precharger } from '../ui/intro-lecteur';
@@ -208,12 +209,18 @@ function centrerPlan() {
   const x = app.jeu.expedition;
   const ici = racine.querySelector<HTMLElement>('.ex-salle.ici');
   if (!x?.carte || !ici) return;
-  const cle = `${x.strate}:${x.carte.rng}:${x.carte.position}`;
+  // la réponse donnée, on revient au plan : l'attente fait partie de la clé
+  const cle = `${x.strate}:${x.carte.rng}:${x.carte.position}:${enAttenteExpedition(x) ? 'panneau' : 'plan'}`;
   if (cle === planCentre) return;
   planCentre = cle;
   // l'entrée est déjà en haut de l'écran : on ne bouge que plus bas dans la Strate
   if (x.carte.salles[x.carte.position]?.type === 'entree') return;
-  requestAnimationFrame(() => ici.scrollIntoView({ block: 'center', behavior: reduit ? 'auto' : 'smooth' }));
+  // un panneau attend une réponse (Halte, porte à Fréquence, rencontre) : sur téléphone il est au-dessus du plan,
+  // c'est lui qu'on montre, pas le plan (10 novembre 2026 : le texte et le choix obligatoire restaient hors de l'écran)
+  const panneau = enAttenteExpedition(x) ? racine.querySelector<HTMLElement>('.ex-panneau') : null;
+  requestAnimationFrame(() => panneau
+    ? panneau.scrollIntoView({ block: 'start', behavior: reduit ? 'auto' : 'smooth' })
+    : ici.scrollIntoView({ block: 'center', behavior: reduit ? 'auto' : 'smooth' }));
 }
 
 /** L'entrée d'un gardien (27 octobre 2026) : un bandeau, une fois, quand l'escouade entre dans sa salle */

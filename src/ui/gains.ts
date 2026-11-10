@@ -195,7 +195,7 @@ export function montrer(gains: Gain[], depart?: { x: number; y: number }) {
   liste = liste.sort((a, b) => palier(a) - palier(b));
   for (const g of liste) {
     const p = palier(g);
-    file = file.then(attendreCalme).then(() => ((g.kind === 'carte' || g.kind === 'porteur') && p >= 3 ? grandeRevelation(g, p) : devoiler(g)));
+    file = file.then(attendreCalme).then(() => ((g.kind === 'carte' || g.kind === 'porteur') && p >= 4 ? grandeRevelation(g, p) : devoiler(g)));
   }
 }
 
@@ -393,7 +393,8 @@ function devoiler(g: Exclude<Gain, { kind: 'res' }>): Promise<void> {
   });
 }
 
-// ---------- La grande révélation : carte d'argent, d'or, de nacre, nouveau Porteur ----------
+// ---------- La grande révélation : carte d'or, de nacre, nouveau Porteur ----------
+// (10 novembre 2026 : l'argent tombait trop souvent pour un plein écran, 126 fois sur 166 dans une partie complète ; il a désormais le reçu ordinaire)
 // Le voile tombe, la carte arrive face cachée, tremble de plus en plus longtemps selon sa rareté, puis un éclair :
 // elle se retourne dans une gerbe d'éclats, des ondes de choc (or, nacre) et une secousse de l'écran.
 // On la range d'un toucher (ou toute seule après quelques secondes).

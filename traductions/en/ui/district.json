@@ -2022,8 +2022,24 @@
    "en": "To open Stratum −{0}"
   },
   {
+   "fr": "Naufragés, au Port",
+   "en": "Castaways, at the Port"
+  },
+  {
+   "fr": "(1re barque du jour)",
+   "en": "(first boat of the day)"
+  },
+  {
+   "fr": "assuré",
+   "en": "guaranteed"
+  },
+  {
    "fr": "Fouille ciblée",
    "en": "Targeted dig"
+  },
+  {
+   "fr": "Autre mission en mer",
+   "en": "Other sea mission"
   },
   {
    "fr": "Mission",
@@ -2038,8 +2054,8 @@
    "en": "(1st win of the week)"
   },
   {
-   "fr": "assuré",
-   "en": "guaranteed"
+   "fr": "Aller au Port",
+   "en": "Go to the Port"
   },
   {
    "fr": "Fouiller la Strate −{0}",

@@ -1879,14 +1879,18 @@ export function htmlCoupe(e: EcranDistrict): string {
       + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.descendre}${tr`Descendre à −${j.strate}`}</button></div>`;
   } else if (manque) {
     const morceaux: string[] = [];
+    const auPort = !!manque.creuseurs && portOuvert(j) && naufragesDeLaStrate(j).restants > 0;
     if (manque.creuseurs) morceaux.push(`${tr`trouve`} <b>${tr`${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}`}</b>`);
     if (manque.noyau) morceaux.push(`${tr`monte la Tour du Noyau au`} <b>${tr`niveau ${noyauRequis(cible)}`}</b> ${tr`pour les loger`}`);
     etape = `<strong>${tr`Pour ouvrir la Strate −${cible}`}</strong><small>${morceaux.join(', puis ').replace(/^./, (c) => c.toUpperCase())}.</small>`
-      + (manque.creuseurs ? `<ul class="tr-sources"><li>${ICO.cristal}<span>${tr`Fouille ciblée`}</span><b>${Math.round(chanceCreuseurFouille(j.strate) * 100)} %</b></li>`
-        + `<li>${ICO.porteurs}<span>${tr`Mission`}</span><b>${Math.round(CREUSEURS.missionCourte * 100)} à ${Math.round(CREUSEURS.missionLongue * 100)} %</b></li>`
+      + (manque.creuseurs ? `<ul class="tr-sources">`
+        // les naufragés du Port en ramènent un à coup sûr : la Tour le dit en premier (10 novembre 2026, compte rendu de partie : quatre fouilles pour un creuseur qu'une barque ramenait)
+        + (auPort ? `<li>${ICO.ouvrier}<span>${tr`Naufragés, au Port`} <em>${tr`(1re barque du jour)`}</em></span><b>${tr`assuré`}</b></li>` : '')
+        + `<li>${ICO.cristal}<span>${tr`Fouille ciblée`}</span><b>${Math.round(chanceCreuseurFouille(j.strate) * 100)} %</b></li>`
+        + `<li>${ICO.porteurs}<span>${auPort ? tr`Autre mission en mer` : tr`Mission`}</span><b>${Math.round(CREUSEURS.missionCourte * 100)} à ${Math.round(CREUSEURS.missionLongue * 100)} %</b></li>`
         // les Épreuves n'ouvrent qu'après la Strate −EPREUVES_STRATE : on ne les cite qu'à partir de là (test critique du 4 novembre 2026)
         + (j.chambre && strateVaincue(j) >= EPREUVES_STRATE ? `<li>${ICO.boost}<span>${tr`Épreuve`} <em>${tr`(1re victoire de la semaine)`}</em></span><b>${tr`assuré`}</b></li>` : '') + `</ul>` : '')
-      + `<div class="tr-boutons">${manque.creuseurs ? `<button type="button" class="btn prim" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.cristal}${tr`Fouiller la Strate −${j.strate}`}</button>` : ''}`
+      + `<div class="tr-boutons">${auPort ? `<button type="button" class="btn prim" data-action="batiment" data-id="port">${ICO.ouvrier}${tr`Aller au Port`}</button>` : ''}${manque.creuseurs ? `<button type="button" class="btn ${auPort ? 'sec' : 'prim'}" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.cristal}${tr`Fouiller la Strate −${j.strate}`}</button>` : ''}`
       + `${manque.noyau ? `<button type="button" class="btn ${manque.creuseurs ? 'sec' : 'prim'}" data-action="batiment" data-id="noyau" data-amelio>${ICO.tour}${tr`Améliorer la Tour`}</button>` : ''}</div>`;
   } else {
     etape = `<strong>${tr`La roche cède : la Strate −${cible} va s’ouvrir`}</strong><small>${tr`Tout est prêt. Descends pour découvrir le nouvel étage.`}</small>`

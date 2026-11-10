@@ -128,7 +128,7 @@
 
 /* ================= 4. Le panneau : où aller ================= */
 /* téléphone : la décision d'abord (juste sous l'escouade), le plan de la Strate ensuite */
-.ex-panneau{display:grid;gap:16px;order:1}
+.ex-panneau{display:grid;gap:16px;order:1;scroll-margin-top:12px}
 /* sous le plan (audit du 7 novembre 2026) : la parole de l'escouade, le récit du lieu replié, la sortie */
 .ex-bas{display:grid;gap:14px;order:3}
 .ex-recit{margin:0;font-size:15px;line-height:1.5;color:var(--ex-txt)}

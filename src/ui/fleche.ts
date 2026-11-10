@@ -88,6 +88,12 @@ const recompense = (q: number) => {
   return r ? `${ICO.energie}${ent(r.composants)} ${ICO.eclats}${r.eclats}${m ? ` ${ICO.cartes}${NOMS_RARETE[m]}` : ''}` : '';
 };
 
+/**
+ * Le pourcentage du pronostic : estimé sur l'écart de force, il sous-estime ce qu'un joueur attentif réussit quand l'écart est grand
+ * (10 novembre 2026 : « 2 % » affiché pour des quais pris quand même). Sous 10 %, on ne garde que le mot (« Redoutable »).
+ */
+const pourcent = (chance: number) => (chance < 10 ? '' : `<small>${t`${chance > 99 ? '> 99' : chance} % de chances`}</small>`);
+
 /** Les gardiens du prochain quai, les chances, et l'enjeu */
 function assaut(j: Jeu, quai: number, record: number): string {
   const escouade = escouadePourDepart(j);
@@ -103,7 +109,7 @@ function assaut(j: Jeu, quai: number, record: number): string {
   return `<section class="fl-assaut d${niveau}" aria-label="${t`Le quai ${quai}`}">`
     + `<div class="fl-passerelle" style="--decor:url(${artFleche('passerelle')})" aria-hidden="true"></div>`
     + `<header><div><span class="surtitre">${t`La montée · gardiens payés par les Hauts`}</span><h2>${t`Quai ${quai}`}</h2></div>`
-    + `<span class="fl-badge">${nomNiveau}<small>${t`${chance < 1 ? '< 1' : chance > 99 ? '> 99' : chance} % de chances`}</small></span></header>`
+    + `<span class="fl-badge">${nomNiveau}${pourcent(chance)}</span></header>`
     + `<ul class="fl-gardiens">${gardiens.map((id) => `<li style="--c:${COULEUR[ennemiDef(id).lignee]}"${CHEFS.has(id) ? ' class="chef"' : ''}>${visageGarde(id, 40)}<span><strong>${echap(ennemiDef(id).nom)}</strong><small>${NOM_LIGNEE[ennemiDef(id).lignee]}</small></span></li>`).join('')}</ul>`
     + `<div class="fl-forces"><span>${t`Gardiens`} <b>${Math.round(fq * 100)}</b></span><span class="fl-jauge" aria-hidden="true"><i style="width:${Math.min(100, Math.round((50 * fq) / Math.max(0.01, force)))}%"></i></span><span>${t`Escouade`} <b>${Math.round(force * 100)}</b></span></div>`
     + `<dl class="fl-enjeu"><div class="gain"><dt>${t`Si tu gagnes`}</dt><dd>${ICO.monter}<b>${t`Quai ${haut}`}</b><small>${t`+${haut - quai} quai${haut - quai > 1 ? 's' : ''}`}</small></dd></div>`
@@ -178,7 +184,7 @@ function defi(j: Jeu, g: GardienQuai): string {
   const chance = Math.round(chanceVictoire(g.force / Math.max(0.01, force)) * 100);
   const niveau = chance >= 85 ? 1 : chance >= 50 ? 2 : chance >= 15 ? 3 : 4;
   return `<div class="fl-defi d${niveau}"><header><div><span class="surtitre">${t`Le plus haut gardien à ta portée`}</span><h3>${t`${echap(g.nom)} · quai ${g.quai}`}</h3></div>`
-    + `<span class="fl-badge">${[t('Facile'), t('Équilibré'), t('Risqué'), t('Redoutable')][niveau - 1]}<small>${t`${chance < 1 ? '< 1' : chance > 99 ? '> 99' : chance} % de chances`}</small></span></header>`
+    + `<span class="fl-badge">${[t('Facile'), t('Équilibré'), t('Risqué'), t('Redoutable')][niveau - 1]}${pourcent(chance)}</span></header>`
     + `<p class="fl-defi-visages">${g.porteurs.map((id) => avatar(id, 34)).join('')}<small>${t`Gagné : le quai ${g.quai} est à toi. Perdu : seulement l’Usure.`}</small></p>`
     + `<button type="button" class="btn sec" data-action="fleche-defier"${j.expedition ? ' disabled' : ''}>${ICO.atk}${t`Défier ${echap(g.nom)}`}</button></div>`;
 }

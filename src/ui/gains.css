@@ -84,9 +84,9 @@
 .gain-etiquette.fort{padding:7px 16px 7px 8px;box-shadow:0 0 0 1px rgba(0,0,0,.5),0 10px 26px rgba(0,0,0,.6),0 0 40px 0 var(--teinte,var(--gold))}
 .gain-etiquette.fort b{font-size:25px}
 .gain-etiquette.fort .ico{width:34px;height:34px}
-.gain-revele.p2{border-color:var(--accent);box-shadow:0 0 0 1px rgba(0,0,0,.55),0 16px 40px rgba(0,0,0,.6),0 0 56px -6px var(--accent)}
-.gain-revele.p2 .gv-rayons{opacity:.7;animation-duration:4s}
-.gain-revele.p2::after{animation-iteration-count:2}
+.gain-revele.p2,.gain-revele.p3{border-color:var(--accent);box-shadow:0 0 0 1px rgba(0,0,0,.55),0 16px 40px rgba(0,0,0,.6),0 0 56px -6px var(--accent)}
+.gain-revele.p2 .gv-rayons,.gain-revele.p3 .gv-rayons{opacity:.7;animation-duration:4s}
+.gain-revele.p2::after,.gain-revele.p3::after{animation-iteration-count:2}
 
 /* ---------- la grande révélation : argent, or, nacre, nouveau Porteur ---------- */
 .gr{position:absolute;inset:0;pointer-events:auto;cursor:pointer;--accent:#DDE3EC;color:var(--ink)}
