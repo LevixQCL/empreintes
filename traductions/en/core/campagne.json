@@ -426,8 +426,8 @@
    "en": "What Was Crying"
   },
   {
-   "fr": "Le Gardien des registres tombe en refermant son livre. Derrière lui, une salle intacte : des dizaines de cristaux d’un même être, rangés en cercle. C’est d’eux que venaient les pleurs.",
-   "en": "The Guardian of the Registers falls as he closes his book. Behind him lies an untouched chamber: dozens of crystals from a single being, set in a circle. That’s where the crying came from."
+   "fr": "Le Gardien des registres s’efface en refermant son livre. Derrière lui, une salle intacte : des dizaines de cristaux d’un même être, rangés en cercle. C’est d’eux que venaient les pleurs.",
+   "en": "The Guardian of the Registers fades as he closes his book. Behind him lies an untouched chamber: dozens of crystals from a single being, set in a circle. That’s where the crying came from."
   },
   {
    "fr": "C’est le même, partout. Mais chaque cristal se souvient d’une autre vie. Il pleure parce qu’il ne sait plus laquelle est la sienne.",
@@ -450,8 +450,8 @@
    "en": "When you put your hand on the wall, they settled. They understood we’d come for them, not against them."
   },
   {
-   "fr": "Le cristal de mon père est à sa place, dans le cercle. Le Gardien l’a regardé avant de tomber. Il a fermé son livre comme on ferme une affaire.",
-   "en": "My father’s crystal is back where it belongs, in the circle. The Guardian looked at it before he fell. Then he shut his book, like a case that’s closed."
+   "fr": "Le cristal de mon père est à sa place, dans le cercle. Le Gardien l’a regardé avant de s’effacer. Il a fermé son livre comme on ferme une affaire.",
+   "en": "My father’s crystal is back where it belongs, in the circle. The Guardian looked at it before he faded. Then he shut his book, like a case that’s closed."
   },
   {
    "fr": "Le cristal de mon père est toujours dans ma poche. Il ne pleure pas. Il attend, comme mon père attendait.",
@@ -654,6 +654,62 @@
    "en": "Your survey of the Hive table, laid beside the one from −4… The same tables, and not a single name left on them. Hessa, our Dean, wants it locked away. Ysé wants it published."
   },
   {
+   "fr": "III · LA RUCHE D’AMBRE",
+   "en": "III · THE AMBER HIVE"
+  },
+  {
+   "fr": "Elle est descendue",
+   "en": "She Came Down"
+  },
+  {
+   "fr": "Au campement des Veilleurs, pendant qu’on réchauffe les rescapés, une nacelle blanche descend par le puits des Hauts. La capitaine Hald en sort la première. Derrière elle, une femme en manteau clair qui n’a jamais posé le pied sous la ligne bleue.",
+   "en": "At the Watchers’ camp, while the survivors are being warmed up, a white gondola comes down the Heights’ shaft. Captain Hald steps out first. Behind her comes a woman in a pale coat who has never set foot below the blue line."
+  },
+  {
+   "fr": "Dame Isaure Orsève. Elle a demandé à vous voir, ici. Je lui ai dit que c’était une mauvaise idée.",
+   "en": "Lady Isaure Orsève. She asked to see you. Here. I told her it was a bad idea."
+  },
+  {
+   "fr": "Je ne descends jamais, on vous l’a dit. Ce matin, j’ai signé une lettre de mon nom, puis de celui du fondateur, sans m’en apercevoir. Alors je suis venue voir ce que vous voyez.",
+   "en": "I never come down. You’ve been told. This morning I signed a letter with my name, then with the founder’s, and didn’t notice. So I came to see what you see."
+  },
+  {
+   "fr": "Vous me croyez avide. Une île porte tant de vies, directeur, pas une de plus. Ce que j’ai pris en bas tient trois mille personnes au-dessus des nuages. Dites-moi lesquelles je devais laisser tomber.",
+   "en": "You think I’m greedy. An island carries so many lives, director, and not one more. What I took from down here keeps three thousand people above the clouds. Tell me which of them I should have let fall."
+  },
+  {
+   "fr": "« Trente-deux prélevés. Aucun refus. » C’est votre écriture.",
+   "en": "“Thirty-two extracted. No refusals.” That’s your handwriting."
+  },
+  {
+   "fr": "Les Berceaux ne refusent jamais. Il faut bien que quelqu’un le fasse à leur place. Je ne l’ai pas fait.",
+   "en": "The Cradles never refuse. Someone has to do it for them. I didn’t."
+  },
+  {
+   "fr": "Bonjour, mère.",
+   "en": "Hello, Mother."
+  },
+  {
+   "fr": "Je ne vous connais pas.",
+   "en": "I don’t know you."
+  },
+  {
+   "fr": "Elle la connaît. Elle demande de ses nouvelles dans chacun de mes rapports.",
+   "en": "She knows her. She asks after her in every one of my reports."
+  },
+  {
+   "fr": "Elle porte trois voix. La sienne est la plus petite. Elle le sait, et elle tient quand même la barre.",
+   "en": "She carries three voices. Hers is the smallest. She knows it, and she keeps hold of the helm anyway."
+  },
+  {
+   "fr": "Montez à la Flèche, directeur. Une fois là-haut, regardez ce que je regarde chaque matin. Ensuite seulement, jugez-moi.",
+   "en": "Climb the Spire, director. Once you’re up there, look at what I look at every morning. Then, and only then, judge me."
+  },
+  {
+   "fr": "Je vous dois la flèche à la craie de −3, alors je vous dis ceci : elle n’est pas descendue pour vous menacer. Elle est descendue parce qu’elle a peur.",
+   "en": "I owe you for the chalk arrow on −3, so I’ll tell you this: she didn’t come down to threaten you. She came down because she’s afraid."
+  },
+  {
    "fr": "Le Ciel d’en bas",
    "en": "The Sky Below"
   },
@@ -664,6 +720,10 @@
   {
    "fr": "Je suis trop vieille pour te suivre, alors je t’écris. Regarde tout, écoute ceux qu’on ne fait que combattre, et reviens. Le reste, tu le liras quand il sera temps.",
    "en": "I am too old to follow you, so I am writing instead. Look at everything. Listen to the ones you have only ever fought. And come back. The rest you will read when the time comes."
+  },
+  {
+   "fr": "C’est moi qui te l’ai apportée. Ysé dit qu’un pilleur passe partout. Elle a raison. En passant, j’ai regravé mon nom au mur des fouilleurs. Une seule fois, cette fois-ci, et je compte bien le barrer.",
+   "en": "I’m the one who brought it. Ysé says a scavenger gets in anywhere. She’s right. On the way, I carved my name on the diggers’ wall again. Just once, this time, and I mean to cross it out."
   },
   {
    "fr": "Ysé écrit comme elle parle : gentiment, en te laissant le plus dur.",
@@ -682,8 +742,8 @@
    "en": "Her Name"
   },
   {
-   "fr": "La Tisseuse ne se relève pas. Ses fils se défont autour d’elle comme une écharpe qu’on dénoue. Quand tu lui demandes son nom, elle sourit.",
-   "en": "The Weaver does not rise again. Her threads loosen around her like a scarf coming untied. When you ask her name, she smiles."
+   "fr": "La Tisseuse baisse les mains. Elle ne cherchait pas à vous vaincre : elle voulait savoir si vous teniez debout sans ses fils. Ils se défont autour d’elle comme une écharpe qu’on dénoue. Quand tu lui demandes son nom, elle sourit.",
+   "en": "The Weaver lowers her hands. She was never trying to beat you: she wanted to know if you could stand without her threads. They loosen around her like a scarf coming untied. When you ask her name, she smiles."
   },
   {
    "fr": "Personne ne me l’avait demandé. Je l’ai donné à quelqu’un qui descendait, il y a très longtemps, pour qu’il se souvienne de moi. Il m’a oubliée quand même.",
@@ -698,8 +758,8 @@
    "en": "You’d already asked her, in her nest. She waited until the end to answer."
   },
   {
-   "fr": "Elle s’est éteinte. Doucement. Je crois qu’elle était contente qu’on lui pose la question.",
-   "en": "She went out. Gently. I think she was glad someone finally asked."
+   "fr": "Elle s’est endormie. Doucement. Pour la première fois depuis très longtemps, quelqu’un d’autre tient les noms à sa place : nous.",
+   "en": "She’s fallen asleep. Gently. For the first time in a very long while, someone else is holding the names for her: us."
   },
   {
    "fr": "Mon écran s’est rallumé. Un seul chiffre, énorme, qui défile sans s’arrêter. Elle essaie de compter ce que la Tisseuse tenait. Elle n’y arrive pas.",
@@ -734,8 +794,8 @@
    "en": "The First Register"
   },
   {
-   "fr": "Avant de tomber, le Premier Porteur pose la main sur une table gravée, comme pour vous la confier. En haut, une phrase plus ancienne que tout ce que vous avez vu. Dessous, une ligne plus récente, de la même écriture.",
-   "en": "Before he falls, the First Bearer lays his hand on an engraved table, as if handing it to you. At the top, a sentence older than anything you have seen. Beneath it, a newer line, in the same hand."
+   "fr": "Le Premier Porteur abaisse les mains et se rassoit. Il n’a jamais voulu vous abattre : il voulait voir si vous teniez face à une seule voix, nette, sans vous y perdre. Il pose la main sur une table gravée, comme pour vous la confier. En haut, une phrase plus ancienne que tout ce que vous avez vu. Dessous, une ligne plus récente, de la même écriture.",
+   "en": "The First Bearer lowers his hands and sits back down. He never meant to strike you down: he wanted to see if you could stand before a single clear voice without losing yourselves in it. He lays his hand on an engraved table, as if handing it to you. At the top, a sentence older than anything you have seen. Beneath it, a newer line, in the same hand."
   },
   {
    "fr": "Que celui qui lit ceci compte les voix qu’il porte.",
@@ -890,8 +950,8 @@
    "en": "An inventory signed “I. Orsève.” One more floor, and you reach the wall of 2066."
   },
   {
-   "fr": "Franchis le mur de 2066 et fais tomber le Gardien des registres.",
-   "en": "Break through the wall of 2066 and bring down the Guardian of the Registers."
+   "fr": "Franchis le mur de 2066 et fais reculer le Gardien des registres.",
+   "en": "Break through the wall of 2066 and drive back the Guardian of the Registers."
   },
   {
    "fr": "Derrière le mur, des cristaux qui pleuraient, et une lettre des Hauts sur ton bureau. Plus bas, les mémoires se contredisent.",
@@ -922,8 +982,8 @@
    "en": "Below the Weaver, the bottom. The first of them is waiting there."
   },
   {
-   "fr": "Affronte le Premier Porteur et lis son registre.",
-   "en": "Face the First Bearer, and read his register."
+   "fr": "Tiens bon face au Premier Porteur, et lis son registre.",
+   "en": "Stand your ground before the First Bearer, and read his register."
   },
   {
    "fr": "Le premier registre a parlé. Il ne reste qu’à choisir ce que Vertiga en saura.",
@@ -998,16 +1058,16 @@
    "en": "I weave faster than you can tear."
   },
   {
-   "fr": "Je suis fatiguée. Faites vite, ou laissez-moi.",
-   "en": "I’m tired. Be quick, or let me be."
+   "fr": "Je tiens ces noms depuis trop longtemps. Montrez-moi que vous tiendrez sans mes fils, et je les lâcherai.",
+   "en": "I have held these names too long. Show me you can stand without my threads, and I will let them go."
   },
   {
-   "fr": "Tous mes fils, une dernière fois.",
-   "en": "All my threads. One last time."
+   "fr": "Tous mes fils, une dernière fois. Après, ce sera à vous.",
+   "en": "All my threads. One last time. After that, they’re yours."
   },
   {
-   "fr": "Vous portez peu de voix. C’est bien. Combien, déjà ?",
-   "en": "You carry so few voices. Good. How many was it?"
+   "fr": "Vous portez peu de voix. C’est bien. Tenez debout face à la mienne, et je vous répondrai.",
+   "en": "You carry so few voices. Good. Stand before mine, and I will answer you."
   },
   {
    "fr": "Écoutez-les toutes, alors. Nous les avons écoutées.",

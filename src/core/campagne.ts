@@ -196,13 +196,13 @@ export const SCENES: Scene[] = [
       { qui: 'doran', texte: t('Ne t’excuse pas. Il aurait voulu qu’on sache.') },
     ]),
   apresGardien(6, 'gardien-registres', t('Ce qui pleurait'),
-    t('Le Gardien des registres tombe en refermant son livre. Derrière lui, une salle intacte : des dizaines de cristaux d’un même être, rangés en cercle. C’est d’eux que venaient les pleurs.'), [
+    t('Le Gardien des registres s’efface en refermant son livre. Derrière lui, une salle intacte : des dizaines de cristaux d’un même être, rangés en cercle. C’est d’eux que venaient les pleurs.'), [
       { qui: 'vela', texte: t('C’est le même, partout. Mais chaque cristal se souvient d’une autre vie. Il pleure parce qu’il ne sait plus laquelle est la sienne.') },
       { qui: 'doran', texte: t('En 2066, les ouvriers l’ont entendu, et ils ont eu peur. Pas d’un monstre : d’une question.') },
       { qui: 'vela', texte: t('Je peux le lire jusqu’au bout et savoir ce qu’ils ont caché, tous. Mais je ne sais pas ce qui restera de moi après.') },
       { qui: 'ilka', texte: t('Mon écran, maintenant. Une liste. Véla : 2. Aurel : 2. Liane : 1. Et une ligne en bas : « Dérive en hausse depuis l’ouverture de la chambre. » Quelque chose fait des comptes sur nous, directeur. Et ça s’inquiète.') },
       { qui: 'vela', texte: t('Quand tu as posé la main sur le mur, ils se sont calmés. Ils ont compris qu’on venait pour eux, pas contre eux.'), ...souv('main-posee') },
-      { qui: 'doran', texte: t('Le cristal de mon père est à sa place, dans le cercle. Le Gardien l’a regardé avant de tomber. Il a fermé son livre comme on ferme une affaire.'), ...souv('cristal-rendu') },
+      { qui: 'doran', texte: t('Le cristal de mon père est à sa place, dans le cercle. Le Gardien l’a regardé avant de s’effacer. Il a fermé son livre comme on ferme une affaire.'), ...souv('cristal-rendu') },
       { qui: 'doran', texte: t('Le cristal de mon père est toujours dans ma poche. Il ne pleure pas. Il attend, comme mon père attendait.'), ...souv('cristal-garde') },
       { qui: 'ilka', texte: t('Directeur. C’est toi qui décides. Et c’est elle qui paie.') },
     ]),
@@ -264,19 +264,38 @@ export const SCENES: Scene[] = [
       { qui: 'tobin', texte: t('Le prix du pain, au marché. C’est ça qui les a ramenés. Je n’y aurais jamais pensé.'), ...souv('vrai-detail') },
       { qui: 'tobin', texte: t('Votre relevé de la table de la Ruche, posé à côté de celui de −4… Les mêmes tables, et plus un seul nom. Notre Doyenne, Hessa, veut le mettre sous clé. Ysé veut le publier.'), ...souv('copistes') },
     ]),
+  {
+    id: 'isaure-descend', acte: 3, sur: t('III · LA RUCHE D’AMBRE'), titre: t('Elle est descendue'), image: { strate: 8 },
+    recit: t('Au campement des Veilleurs, pendant qu’on réchauffe les rescapés, une nacelle blanche descend par le puits des Hauts. La capitaine Hald en sort la première. Derrière elle, une femme en manteau clair qui n’a jamais posé le pied sous la ligne bleue.'),
+    quand: (c) => c.vaincue >= 8,
+    repliques: [
+      { qui: 'hald', texte: t('Dame Isaure Orsève. Elle a demandé à vous voir, ici. Je lui ai dit que c’était une mauvaise idée.') },
+      { qui: 'isaure', texte: t('Je ne descends jamais, on vous l’a dit. Ce matin, j’ai signé une lettre de mon nom, puis de celui du fondateur, sans m’en apercevoir. Alors je suis venue voir ce que vous voyez.') },
+      { qui: 'isaure', texte: t('Vous me croyez avide. Une île porte tant de vies, directeur, pas une de plus. Ce que j’ai pris en bas tient trois mille personnes au-dessus des nuages. Dites-moi lesquelles je devais laisser tomber.') },
+      { qui: 'ilka', texte: t('« Trente-deux prélevés. Aucun refus. » C’est votre écriture.'), ...souv('carnet-isaure') },
+      { qui: 'isaure', texte: t('Les Berceaux ne refusent jamais. Il faut bien que quelqu’un le fasse à leur place. Je ne l’ai pas fait.'), ...souv('carnet-isaure') },
+      { qui: 'liane', texte: t('Bonjour, mère.'), si: present('liane') },
+      { qui: 'isaure', texte: t('Je ne vous connais pas.'), si: present('liane') },
+      { qui: 'hald', texte: t('Elle la connaît. Elle demande de ses nouvelles dans chacun de mes rapports.'), si: present('liane') },
+      { qui: 'vela', texte: t('Elle porte trois voix. La sienne est la plus petite. Elle le sait, et elle tient quand même la barre.') },
+      { qui: 'isaure', texte: t('Montez à la Flèche, directeur. Une fois là-haut, regardez ce que je regarde chaque matin. Ensuite seulement, jugez-moi.') },
+      { qui: 'hald', texte: t('Je vous dois la flèche à la craie de −3, alors je vous dis ceci : elle n’est pas descendue pour vous menacer. Elle est descendue parce qu’elle a peur.'), ...souv('craie-hald') },
+    ],
+  },
   entree(9, t('Le Ciel d’en bas'),
     t('Aucun fouilleur n’a jamais dépassé la Strate −9. Avant le départ, Ysé t’a fait porter une lettre. Tu la lis à la lueur des cristaux.'), [
       { qui: 'yse', texte: t('Je suis trop vieille pour te suivre, alors je t’écris. Regarde tout, écoute ceux qu’on ne fait que combattre, et reviens. Le reste, tu le liras quand il sera temps.') },
+      { qui: 'brac', texte: t('C’est moi qui te l’ai apportée. Ysé dit qu’un pilleur passe partout. Elle a raison. En passant, j’ai regravé mon nom au mur des fouilleurs. Une seule fois, cette fois-ci, et je compte bien le barrer.') },
       { qui: 'ilka', texte: t('Ysé écrit comme elle parle : gentiment, en te laissant le plus dur.') },
       { qui: 'doran', texte: t('Nous, on remonte. Il y a des pompes qui nous attendent.') },
       { qui: 'ilka', texte: t('Depuis qu’on est entrés, mon écran n’affiche plus rien. Elle se tait. Je crois qu’elle a peur de ce qui coud, en bas.') },
     ]),
   apresGardien(9, 'tisseuse', t('Son nom'),
-    t('La Tisseuse ne se relève pas. Ses fils se défont autour d’elle comme une écharpe qu’on dénoue. Quand tu lui demandes son nom, elle sourit.'), [
+    t('La Tisseuse baisse les mains. Elle ne cherchait pas à vous vaincre : elle voulait savoir si vous teniez debout sans ses fils. Ils se défont autour d’elle comme une écharpe qu’on dénoue. Quand tu lui demandes son nom, elle sourit.'), [
       { qui: 'tisseuse', texte: t('Personne ne me l’avait demandé. Je l’ai donné à quelqu’un qui descendait, il y a très longtemps, pour qu’il se souvienne de moi. Il m’a oubliée quand même.') },
       { qui: 'tisseuse', texte: t('En dessous, c’est le fond. Le premier d’entre nous y attend. Lui sait encore qui il est. C’est bien ce qui fait peur.') },
       { qui: 'vela', texte: t('Tu le lui avais déjà demandé, dans son nid. Elle a attendu la fin pour répondre.'), ...souv('nom-demande') },
-      { qui: 'vela', texte: t('Elle s’est éteinte. Doucement. Je crois qu’elle était contente qu’on lui pose la question.') },
+      { qui: 'vela', texte: t('Elle s’est endormie. Doucement. Pour la première fois depuis très longtemps, quelqu’un d’autre tient les noms à sa place : nous.') },
       { qui: 'ilka', texte: t('Mon écran s’est rallumé. Un seul chiffre, énorme, qui défile sans s’arrêter. Elle essaie de compter ce que la Tisseuse tenait. Elle n’y arrive pas.') },
       { qui: 'doran', texte: t('Le fond. Ceux d’avant. On y est presque.') },
     ]),
@@ -287,7 +306,7 @@ export const SCENES: Scene[] = [
       { qui: 'ilka', texte: t('Dix étages. On cherchait l’Écluse, et on a trouvé des gens qui comptaient. J’espère que le fond a une meilleure réponse.') },
     ]),
   apresGardien(10, 'premier-porteur', t('Le premier registre'),
-    t('Avant de tomber, le Premier Porteur pose la main sur une table gravée, comme pour vous la confier. En haut, une phrase plus ancienne que tout ce que vous avez vu. Dessous, une ligne plus récente, de la même écriture.'), [
+    t('Le Premier Porteur abaisse les mains et se rassoit. Il n’a jamais voulu vous abattre : il voulait voir si vous teniez face à une seule voix, nette, sans vous y perdre. Il pose la main sur une table gravée, comme pour vous la confier. En haut, une phrase plus ancienne que tout ce que vous avez vu. Dessous, une ligne plus récente, de la même écriture.'), [
       { qui: 'premier-porteur', texte: t('Que celui qui lit ceci compte les voix qu’il porte.') },
       { qui: 'ilka', texte: t('Mon écran affiche la même phrase. Mot pour mot. Elle ne l’a pas lue ici : elle l’a calculée. Depuis 2085, elle compte nos voix, et elle arrive au même endroit qu’eux.') },
       { qui: 'vela', texte: t('Il l’a dite comme une leçon qu’on récite. Depuis −3, ils nous disaient la même chose.') },
@@ -342,11 +361,11 @@ const ENJEUX: Record<number, { titre: string; enjeu: string; ensuite: string }> 
   3: { titre: t('Dans le noir'), enjeu: t('Abats la Confluence pour de bon, et retrouve les patrouilles de la capitaine Hald.'), ensuite: t('La Confluence est tombée, et la chambre a trouvé sa garde. Sous les Seuils, les salles closes attendent.') },
   4: { titre: t('Fermées de l’intérieur'), enjeu: t('Trouve ce que les ouvriers de 2066 ont muré, plus bas, au niveau 7.'), ensuite: t('Le Gardien des registres a reculé derrière ses portes rondes. Il connaît le nom du père de Doran.') },
   5: { titre: t('Les Berceaux vides'), enjeu: t('Suis le Gardien des registres jusqu’aux Berceaux que les Hauts n’ont pas encore vidés.'), ensuite: t('Un inventaire signé « I. Orsève ». Plus qu’un étage avant le mur de 2066.') },
-  6: { titre: t('Le niveau 7'), enjeu: t('Franchis le mur de 2066 et fais tomber le Gardien des registres.'), ensuite: t('Derrière le mur, des cristaux qui pleuraient, et une lettre des Hauts sur ton bureau. Plus bas, les mémoires se contredisent.') },
+  6: { titre: t('Le niveau 7'), enjeu: t('Franchis le mur de 2066 et fais reculer le Gardien des registres.'), ensuite: t('Derrière le mur, des cristaux qui pleuraient, et une lettre des Hauts sur ton bureau. Plus bas, les mémoires se contredisent.') },
   7: { titre: t('Deux passerelles'), enjeu: t('Trouve ce qui tisse les souvenirs, avant qu’il ne touche à ceux de l’escouade.'), ensuite: t('La Tisseuse a fui vers le bas, et une équipe des Veilleurs n’est jamais remontée.') },
   8: { titre: t('Les Veilleurs perdus'), enjeu: t('Ramène l’équipe des Veilleurs, prisonnière d’un souvenir heureux.'), ensuite: t('Les Veilleurs sont sauvés. La Tisseuse s’est réfugiée à la Strate −9, que personne n’a jamais dépassée.') },
   9: { titre: t('Le Ciel d’en bas'), enjeu: t('Retrouve la Tisseuse au fond de sa toile, et demande-lui son nom.'), ensuite: t('Sous la Tisseuse, le fond. Le premier d’entre eux y attend.') },
-  10: { titre: t('Le fond'), enjeu: t('Affronte le Premier Porteur et lis son registre.'), ensuite: t('Le premier registre a parlé. Il ne reste qu’à choisir ce que Vertiga en saura.') },
+  10: { titre: t('Le fond'), enjeu: t('Tiens bon face au Premier Porteur, et lis son registre.'), ensuite: t('Le premier registre a parlé. Il ne reste qu’à choisir ce que Vertiga en saura.') },
 };
 
 /** Le chapitre de la campagne en cours (null une fois la campagne finie, au-delà de la Strate −10) */
@@ -370,8 +389,8 @@ const GARDIENS: Record<number, { avant: string; phase: string }> = {
   6: { avant: t('Derrière moi, il n’y a personne. Repartez.'), phase: t('Je garde ce qui pleure. Je le garderai.') },
   7: { avant: t('Oh. Des souvenirs neufs.'), phase: t('Regardez donc ce qui vous attend.') },
   8: { avant: t('Ils sont heureux, ici. Pas vous ?'), phase: t('Je tisse plus vite que vous ne cassez.') },
-  9: { avant: t('Je suis fatiguée. Faites vite, ou laissez-moi.'), phase: t('Tous mes fils, une dernière fois.') },
-  10: { avant: t('Vous portez peu de voix. C’est bien. Combien, déjà ?'), phase: t('Écoutez-les toutes, alors. Nous les avons écoutées.') },
+  9: { avant: t('Je tiens ces noms depuis trop longtemps. Montrez-moi que vous tiendrez sans mes fils, et je les lâcherai.'), phase: t('Tous mes fils, une dernière fois. Après, ce sera à vous.') },
+  10: { avant: t('Vous portez peu de voix. C’est bien. Tenez debout face à la mienne, et je vous répondrai.'), phase: t('Écoutez-les toutes, alors. Nous les avons écoutées.') },
 };
 /** au-delà de −10, le Premier Porteur revient, sans plus rien à révéler */
 const GARDIEN_FOND = { avant: t('Encore vous. Combien de voix, cette fois ?'), phase: t('Ceux d’avant ne se battent jamais seuls.') };
