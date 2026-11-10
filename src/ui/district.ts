@@ -13,7 +13,7 @@ import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
   OBJECTIFS, EPREUVES_STRATE, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, chanceCreuseurFouille, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
-  COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, raffinageParHeure, apercuSeance, debutJour,
+  COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, plafondEntrainement, raffinageParHeure, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, forceNiveau, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
@@ -533,7 +533,12 @@ function avecPorteur(j: Jeu, b: Poste, id: string | null): Jeu {
 /** Ce que rend le poste avec ce Porteur : une valeur comparable et sa forme lisible */
 function rendement(j: Jeu, b: Exclude<Poste, 'noyau'>, id: string | null): { v: number; court: string; long: string } {
   // le Générateur : plus il taille vite, moins il lui faut d'heures (on compare des vitesses : 1 / heures)
-  if (b === 'generateur') { const h = heuresDeTaille(avecPorteur(j, b, id)); const v = h ? Math.round(100 / h) / 100 : 0; return { v, court: `${virgule(Math.round(h * 10) / 10)} h`, long: tr`tout taillé en ${virgule(Math.round(h * 10) / 10)} h` }; }
+  if (b === 'generateur') {
+    // le temps réel pour tout tailler (10 novembre 2026, audit) : heuresDeTaille est la part taillée chaque heure, pas une durée
+    const jp = avecPorteur(j, b, id); const h = heuresDeTaille(jp); const v = h ? Math.round(100 / h) / 100 : 0;
+    const t = brutEnAttente(jp); const d = t.brut ? `${t.heures} h` : `${virgule(Math.round(h * 10) / 10)} h`;
+    return { v, court: d, long: tr`tout taillé en ${d}` };
+  }
   if (b === 'clinique') { const v = Math.round(soinParHeure(avecPorteur(j, b, id)) * 10) / 10; return { v, court: `${virgule(v)}/h`, long: tr`${virgule(v)} Usure soignée/h` }; }
   const d = batimentDef(b);
   const v = !id ? 1 : porteurDef(id).lignee === d.affinite ? DISTRICT.bonusAffinite : DISTRICT.bonusPoste;
@@ -657,7 +662,7 @@ function blocEntrainement(e: EcranDistrict): string {
   const eligibles = presents.filter((p) => apercuSeance(j, p.id)).sort((x, y) => niveau(x.id) - niveau(y.id));
   const relance = libresN && j.derniereSeance ? eligibles.find((p) => p.id === j.derniereSeance) : undefined;
 
-  let h = `<section class="fb-bloc te"><h3 class="titre-bloc">${ICO.monter}${tr`Entraînement`}<span class="te-regle">${places > 1 && seances.length ? tr`${seances.length}/${places} places · niv. ${plafond} max${ps.par === 'escouade' ? tr(' (titulaire)') : ''}` : tr`1 séance = 1 niveau · jusqu’au niv. ${plafond}${ps.par === 'escouade' ? tr(' (ton meilleur titulaire)') : ''}`}</span></h3>`;
+  let h = `<section class="fb-bloc te"><h3 class="titre-bloc">${ICO.monter}${tr`Entraînement`}<span class="te-regle">${places > 1 && seances.length ? tr`${seances.length}/${places} places · niv. ${plafond} max${ps.par === 'escouade' ? tr(' (titulaire)') : ''}` : tr`1 séance = 1 niveau · jusqu’au niv. ${plafond}${ps.par === 'escouade' ? tr` (ton meilleur titulaire ; la Tour irait jusqu’au ${plafondEntrainement(j)})` : ''}`}</span></h3>`;
   const fond = `<img class="te-fond" src="${salleEntrainement}" alt="" decoding="async">`;
   const lignes: string[] = [];
 
@@ -875,7 +880,7 @@ function feuilleBatiment(e: EcranDistrict): string {
   else h += `<p class="fb-role">${echap(d.role)}${pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span>${tr`Nouvelle apparence au niveau ${pv}.`}</span>` : ''}</p>`;
 
   // ce que le bâtiment rapporte
-  if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>${ent(j.energie)}</b><small>${tr`cristaux`}</small></div><div class="fb-chiffre">${ICO.chrono}<b>${virgule(Math.round(heuresDeTaille(j) * 10) / 10)} h</b><small>${tr`pour tailler ce qui attend`}</small></div></div>${taille(j)}`;
+  if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>${ent(j.energie)}</b><small>${tr`cristaux`}</small></div><div class="fb-chiffre">${ICO.chrono}<b>${brutEnAttente(j).brut ? `${brutEnAttente(j).heures} h` : '—'}</b><small>${tr`pour tailler ce qui attend`}</small></div></div>${taille(j)}`;
   if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>${tr`Usure soignée par heure`}</small></div>`
     + (partPvClinique(j) ? `<div class="fb-chiffre">${ICO.porteurs}<b>+${Math.round(partPvClinique(j) * 100)} %</b><small>${tr`PV max. des Porteurs`}</small></div>` : '') + `</div>`;
   if (b === 'noyau') {
@@ -1233,10 +1238,10 @@ export function feuilleCarte(e: EcranDistrict): string {
     h += `<div class="progression"><div class="jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></div><span class="chiffre">${tr`${c.doublons} / ${requis} doublons`}</span></div>`
       + `<p class="fc-etat${pret && !manqueC ? ' or' : ''}">${etat} <span>${tr`Niveau ${c.niveau + 1} : force ${forceNiveau(cle, c.niveau)} →`} <b>${forceNiveau(cle, c.niveau + 1)}</b>${c.niveau + 1 >= COLLECTION.niveauMax ? tr(', et la carte est maîtrisée') : ''}.</span></p>`
       + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="monter" data-module="${cle}"${pret && j.energie >= cout ? '' : ' disabled'}>${ICO.monter}${tr`Passer au niveau ${c.niveau + 1} · ${prix('energie', cout, j.energie >= cout)}`}</button>`;
-    if (c.doublons > 0) h += `<button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}${tr`Recycler 1 · +${COLLECTION.recyclage[m.rarete]}`}</button>`;
+    if (c.doublons > 0) h += `<button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}${tr`Recycler 1 · +${COLLECTION.recyclage[m.rarete]} minerai`}</button>`;
     h += `</div>`;
   }
-  if (requis === null && c.doublons > 0) h += `<div class="ligne-btn"><button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}${tr`Recycler 1 · +${COLLECTION.recyclage[m.rarete]}`}</button></div>`;
+  if (requis === null && c.doublons > 0) h += `<div class="ligne-btn"><button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}${tr`Recycler 1 · +${COLLECTION.recyclage[m.rarete]} minerai`}</button></div>`;
   h += `</section>`;
   h += blocEmpreinte(j, cle);
   return h + `</div></section>`;
@@ -1510,7 +1515,9 @@ export function feuilleDeck(e: EcranDistrict): string {
   h += `</section><section class="bloc"><h3 class="titre-bloc">${ICO.cartes}${tr`À lui confier`}</h3>`
     + `<p class="aide">${plein ? tr`${echap(p.nom)} porte déjà ${DISTRICT.cartesMax} cartes : touche une carte ici puis celle qu’elle remplace (ou l’inverse) pour les échanger.` : tr`Les cartes de sa lignée (${NOM_LIGNEES[p.lignee]}) dans ta collection. Une carte portée par un autre Porteur passe à ${echap(p.nom)}.`}</p>`;
   // les cartes libres d'abord, puis celles qu'un autre Porteur porte ; chaque groupe dans l'ordre du tri (sort est stable)
-  const triees = [...libres].sort((a, b) => Number(!!greffesDe(j, a)[0]) - Number(!!greffesDe(j, b)[0]));
+  // celles que son niveau ne permet pas encore de porter passent en dernier (10 novembre 2026, audit : le tri « Puissance » les mettait en tête)
+  const rang = (k: string) => (niveauRequis(k) > niveauPorteur(j, id).niveau ? 2 : 0) + Number(!!greffesDe(j, k)[0]);
+  const triees = [...libres].sort((a, b) => rang(a) - rang(b));
   h += libres.length ? `<div class="grille-cartes">${triees.map((k) => {
     const qui = greffesDe(j, k)[0];
     const r = remplace(k);
@@ -1953,8 +1960,8 @@ function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof m
   const j = e.j;
   const cible = j.strate + 1;
   let h = `<section class="tr-strates" aria-label="${tr`Les Strates`}">`
-    + `<ul class="tr-legende"><li>${ICO.cristal}<span><b>${tr`Fouiller`}</b> ${tr`: une descente courte, sans gardien, vers un filon (cartes, minerai ou Éclats).`}</span></li>`
-    + `<li>${ICO.descendre}<span><b>${tr`Explorer`}</b> ${tr`: toute la Strate jusqu’à son gardien, éveillé s’il est déjà vaincu (meilleures cartes). Seul endroit où trouver les Vestiges, les étoiles et les Rôdeurs.`}</span></li></ul>`
+    + `<ul class="tr-legende"><li>${ICO.cristal}<span><b>${tr`Fouiller`}</b>${tr` : une descente courte, sans gardien, vers un filon (cartes, minerai ou Éclats).`}</span></li>`
+    + `<li>${ICO.descendre}<span><b>${tr`Explorer`}</b>${tr` : toute la Strate jusqu’à son gardien, éveillé s’il est déjà vaincu (meilleures cartes). Seul endroit où trouver les Vestiges, les étoiles et les Rôdeurs.`}</span></li></ul>`
     + `<p class="tr-etoiles-total">${ICO.etoile}<b>${totalEtoiles(j)}</b> ${tr`étoile${totalEtoiles(j) > 1 ? 's' : ''}${prochainPalierEtoiles(j) ? tr` · prochaine récompense à ${prochainPalierEtoiles(j)!.etoiles} (une carte au choix, dont une en ${NOMS_RARETE[prochainPalierEtoiles(j)!.metal]})` : tr(' · toutes les récompenses sont prises')}`}</p><ol>`;
   for (let n = 1; n <= j.strate; n++) {
     const front = n === j.strate;
@@ -2091,7 +2098,8 @@ export function htmlMissions(e: EcranDistrict): string {
 
   // les destinations du jour : de 2 à 5, chacune avec son butin annoncé ; on y retourne autant qu'on veut (28 octobre 2026)
   const offre = destinationsDuJour(e.now);
-  const choisie = offre.find((d) => d.cle === e.destination) ?? offre[0] ?? null;
+  // sans choix, les naufragés d'abord tant qu'ils ramènent un creuseur (10 novembre 2026, audit : « Cargaison » était proposée par défaut)
+  const choisie = offre.find((d) => d.cle === e.destination) ?? offre.find((d) => d.butin === 'naufrages' && secoursPossible(j, d, e.now)) ?? offre[0] ?? null;
   // deux jauges claires : la fouille de la destination choisie (Surface, Cales, Cœur), et les naufragés de la Strate
   const nf = naufragesDeLaStrate(j);
   const pf = choisie ? profondeurMission(j, choisie.cle, e.now) : { niveau: 0, mult: 1 };
@@ -2189,9 +2197,10 @@ export function plusLongueSuite(n: number[], jokers: number): number[] {
 function tuileCible(c: CibleFouille, choisie: CibleFouille): string {
   const lignee = c === 'tech' || c === 'bio' || c === 'reso';
   const ico = lignee ? ICO.cartes : c === 'composants' ? ICO.composants : ICO.eclats;
-  const bref = lignee ? tr('une carte de lignée au filon') : c === 'composants' ? tr('selon les combats gagnés') : tr('selon les combats gagnés');
+  const bref = lignee ? tr('leurs cartes, et une au filon') : c === 'composants' ? tr('selon les combats gagnés') : tr('selon les combats gagnés');
   return `<button type="button" role="radio" class="es-tuile${choisie === c ? ' actif' : ''}${lignee ? ' carte' : ''}" style="--c:${lignee ? COULEUR[c] : c === 'eclats' ? 'var(--reso)' : '#8FB8DA'}" data-action="cible" data-id="${c}" aria-checked="${choisie === c}">`
-    + `${ico}<strong>${echap(CIBLES_FOUILLE[c].nom)}</strong><small>${bref}</small></button>`;
+    // le nom de la lignée seul sur les tuiles de cartes : « Cartes augmentées » était coupé sur téléphone (10 novembre 2026, audit)
+    + `${ico}<strong>${echap(lignee ? NOM_LIGNEES[c] : CIBLES_FOUILLE[c].nom)}</strong><small>${bref}</small></button>`;
 }
 
 /**
@@ -2224,7 +2233,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   const fl = !ep && !fouille && e.fleche ? etatFleche(j) : null;
   const pi = !ep && !fouille && !fl ? e.pillage ?? null : null;
   const df = fl ? e.defi ?? null : null;
-  const titre = df ? tr`FLÈCHE · DÉFI DU QUAI ${df.quai}` : fl ? tr`FLÈCHE · QUAI ${fl.quai}` : pi ? tr`PILLAGE · ${pi.nom.toUpperCase()}` : ep ? tr`ÉPREUVE · ${ep.nom.toUpperCase()}` : tr`${fouille ? tr('FOUILLE · ') : ''}STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, 3)]!.toUpperCase()}`;
+  const titre = df ? tr`FLÈCHE · DÉFI DU QUAI ${df.quai}` : fl ? tr`FLÈCHE · QUAI ${fl.quai}` : pi ? tr`PILLAGE · ${pi.nom.toUpperCase()}` : ep ? tr`ÉPREUVE · ${ep.nom.toUpperCase()}` : tr`${fouille ? tr('FOUILLE · ') : ''}STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, NOMS_ETAGES.length - 1)]!.toUpperCase()}`;
   let h = `<div class="ecran ecran-escouade es"><main class="contenu">`
     + entete(titre, tr('Escouade'), `<button type="button" class="btn-icone" data-action="${fl ? 'fleche' : pi ? 'pillages' : 'coupe'}" aria-label="${tr`Retour`}">${ICO.retour}</button>`);
 

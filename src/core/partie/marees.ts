@@ -270,7 +270,7 @@ export function retourDeContrat(j: Jeu): string {
     m.reussis = [...m.reussis.filter((x) => x !== c.id), c.id].slice(-12);
     delete m.indices[c.id];
     const metal: Rarete = c.rang === 'montante' ? 'cuivre' : 'argent';
-    if (c.rang === 'grande') { j.choix.push({ source: 'maree', options: tirerChoix(j, c.strate, minimumGrande(j, c.strate, lieu.lignee, prise), lieu.lignee) }); choix = true; }
+    if (c.rang === 'grande') { j.choix.push({ source: 'maree', options: tirerChoix(j, c.strate, minimumGrande(j, c.strate, lieu.lignee, prise), lieu.lignee, porteursPresents(j)) }); choix = true; }
     else if (prise === 'choix') { j.choix.push({ source: 'maree', options: LIGNEES.map((l) => carteFixe(j, metal, l)) }); choix = true; }
     else if (prise === 'lignee') { const id = carteFixe(j, metal, lieu.lignee); cartes.push({ id, nouvelle: ajouterCarte(j, id) }); }
   } else {

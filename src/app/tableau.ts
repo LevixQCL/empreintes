@@ -107,7 +107,8 @@ async function publierTableau() {
     if (app.mode === 'district' && D.vue === 'classements') afficher();
     // la profondeur ne monte que de deux Strates par publication : le reste suit à la prochaine
     // (et au plus une fois toutes les 5 minutes) : le reste suit à la prochaine
-    if (app.jeu.palmares && (e.profondeur < Math.max(2, app.jeu.palmares.profondeur) || e.fleche < (app.jeu.fleche?.record ?? 0))) {
+    if (app.jeu.palmares && (e.profondeur < Math.max(2, app.jeu.palmares.profondeur) || e.fleche < (app.jeu.fleche?.record ?? 0)
+      || e.registre < app.jeu.palmares.registre || (e.joutes ?? 0) < (app.jeu.cercle?.joutes ?? 0))) {
       planifierPublication(e.profondeur < app.jeu.palmares.profondeur ? Math.max(25_000, e.profondeurLe + PROFONDEUR_DELAI - Date.now() + 2000) : 25_000);
     }
   } catch {

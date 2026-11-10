@@ -33,8 +33,8 @@ function flanc(e: EcranDistrict): string {
   const reperes = SECTEURS.map((s) => {
     const ouvert = !!b && secteurOuvert(j, s);
     const sec = b?.batardeau === s.id;
-    const etat = !ouvert ? `${ICO.verrou}−${s.strate}` : sec ? tr`${ICO.ok}À sec` : `${s.lieux.length - restantsSecteur(j, s)}/${s.lieux.length}`;
-    return `<button type="button" class="bs-repere${sec ? ' sec' : ''}${ouvert ? '' : ' ferme'}" style="top:${HAUTEUR[s.id]}%" data-action="basses-voir" data-id="${s.id}" aria-label="${echap(s.nom)}${sec ? tr(', à sec') : ouvert ? '' : tr`, Strate −${s.strate}`}">`
+    const etat = !ouvert ? tr`${ICO.verrou}−${s.strate} vaincue` : sec ? tr`${ICO.ok}À sec` : `${s.lieux.length - restantsSecteur(j, s)}/${s.lieux.length}`;
+    return `<button type="button" class="bs-repere${sec ? ' sec' : ''}${ouvert ? '' : ' ferme'}" style="top:${HAUTEUR[s.id]}%" data-action="basses-voir" data-id="${s.id}" aria-label="${echap(s.nom)}${sec ? tr(', à sec') : ouvert ? '' : tr`, il faut avoir vaincu la Strate −${s.strate}`}">`
       + `<b>${echap(s.nom)}</b><em>${etat}</em></button>`;
   }).join('');
   return `<figure class="bs-flanc" style="--eau:${haut}%" aria-label="${tr`Le flanc de la digue : ${texte}`}">`
@@ -73,7 +73,7 @@ function secteur(e: EcranDistrict, s: SecteurBasses): string {
   const ouvert = secteurOuvert(j, s);
   const sec = b.batardeau === s.id;
   const reste = restantsSecteur(j, s);
-  const etat = !ouvert ? tr`${ICO.verrou}Strate −${s.strate}` : sec ? tr`${ICO.ok}À sec` : tr('Sous l’eau');
+  const etat = !ouvert ? tr`${ICO.verrou}Strate −${s.strate} à vaincre` : sec ? tr`${ICO.ok}À sec` : tr('Sous l’eau');
   let h = `<li class="bs-secteur${sec ? ' sec' : ''}${ouvert ? '' : ' ferme'}" id="bs-s-${s.id}"><header><span><strong>${echap(s.nom)}</strong>`
     + `<small>${ouvert ? tr`${s.lieux.length - reste} / ${s.lieux.length} familles ramenées` : tr('Trop bas sur le flanc pour l’instant')}</small></span><em>${etat}</em></header>`;
   if (!ouvert) return h + `</li>`;

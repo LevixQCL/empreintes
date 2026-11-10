@@ -142,7 +142,7 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
     g.push({ quoi: 'plafond', texte: tr('Niveau max. des autres bâtiments'), avant: niv, apres: niv + 1 });
     if (placesEntrainement(apres) > placesEntrainement(j)) g.push({ quoi: 'places', texte: tr('Places d’entraînement'), avant: placesEntrainement(j), apres: placesEntrainement(apres), detail: tr('des Porteurs en même temps à la Tour') });
     if (barquesMax(apres) > barquesMax(j)) g.push({ quoi: 'barques', texte: tr('Barques en mer'), avant: barquesMax(j), apres: barquesMax(apres), detail: tr('des missions en même temps') });
-    if (plafondEntrainement(apres) > plafondEntrainement(j)) g.push({ quoi: 'entrainement', texte: tr('Entraînement à la Tour jusqu’au niveau'), avant: plafondEntrainement(j), apres: plafondEntrainement(apres), detail: tr`séances ${Math.round(ENTRAINEMENT.vitesseParNoyau * 100)} % plus courtes` });
+    if (plafondEntrainement(apres) > plafondEntrainement(j)) g.push({ quoi: 'entrainement', texte: tr('Plafond d’entraînement de la Tour (sans dépasser ton meilleur titulaire)'), avant: plafondEntrainement(j), apres: plafondEntrainement(apres), detail: tr`séances ${Math.round(ENTRAINEMENT.vitesseParNoyau * 100)} % plus courtes` });
     if (niv + 1 === DISTRICT.chantiersNoyau2) g.push({ quoi: 'chantiers', texte: tr('Deux chantiers en même temps') });
   }
   // les cartes communes du Râtelier (31 octobre 2026, Luc : « savoir améliorer les cartes de district ») : on les améliore
@@ -207,6 +207,8 @@ export function ameliorer(j: Jeu, b: BatimentId, now = j.dernierTick): Resultat 
     j.batiments[b]++;
     log(j, tr`${batimentDef(b).nom} passe au niveau ${j.batiments[b]}.`);
     if (b === 'noyau') creuser(j);
+    // le Comptoir rouvert garnit ses étals tout de suite (10 novembre 2026, audit : il affichait « Tout est vendu » jusqu'au tour d'horloge suivant)
+    if (b === 'comptoir') garnirComptoir(j, now);
   } else {
     j.chantiers.push({ batiment: b, debut: now, fin: now + duree });
     log(j, tr`Chantier lancé : ${batimentDef(b).nom} vers le niveau ${j.batiments[b] + 1}.`);

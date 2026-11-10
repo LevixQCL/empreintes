@@ -1,7 +1,7 @@
 // La collection : les cartes qui tombent dans les Strates, leurs raretés, les doublons et les niveaux.
 // Tout le hasard passe par un état `rng` sauvegardé : aucun hasard n'est jamais payé.
 
-import { carteId, gesteDeCarte, moduleDef, tirablesEn } from './donnees';
+import { VOIES, carteId, gesteDeCarte, moduleDef, tirablesEn } from './donnees';
 import { tireur } from './rng';
 import type { GesteDef, Lignee, Rarete } from './types';
 import { t as tr } from './i18n';
@@ -113,12 +113,16 @@ export function tirerTrouvaille(e: EtatCollection, strate: number, minimum: Rare
   return carteId(pool[t.entier(pool.length)]!.id, r);
 }
 
-/** Trois cartes différentes au choix (boss, objectif du jour, Archive), toujours trois cartes de base différentes */
-export function tirerChoix(e: EtatCollection, strate: number, minimum: Rarete = 'fer', lignee?: Lignee): string[] {
+/** Trois cartes différentes au choix (boss, objectif du jour, Archive), toujours trois cartes de base différentes.
+ *  `presents` (10 novembre 2026, audit) : les Porteurs déjà au district ; une carte de voie dont le Porteur n'est pas encore arrivé
+ *  n'est proposée qu'en dernier recours (au premier gardien, les trois cartes proposées pouvaient être « à venir »). */
+export function tirerChoix(e: EtatCollection, strate: number, minimum: Rarete = 'fer', lignee?: Lignee, presents?: string[]): string[] {
+  const absente = (id: string) => !!presents && VOIES.some((v) => !presents.includes(v.porteur) && v.cartes.includes(moduleDef(id).base ?? moduleDef(id).id));
   const choix: string[] = [];
   let garde = 0;
   while (choix.length < 3 && garde++ < 30) {
     const id = tirerCarte(e, strate, choix.length === 0 ? minimum : 'fer', lignee);
+    if (absente(id) && garde < 24) continue;
     if (!choix.some((c) => moduleDef(c).base === moduleDef(id).base)) choix.push(id);
   }
   return choix;

@@ -855,7 +855,7 @@ export function remonter(j: Jeu): Retour {
     const metal = x.releve && ordre.indexOf(EXPLORER.releve.metal) > ordre.indexOf(d.metal) ? EXPLORER.releve.metal : d.metal;
     if (lignee && t.nombre() >= d.carte) { /* filon vide : la fouille facile ne trouve pas toujours sa carte */ }
     else if (lignee && d.choix <= 1) cartes.push(tirerTrouvaille(j, x.strate, metal, lignee));
-    else if (lignee) j.choix.push({ source: 'fouille', options: tirerChoix(j, x.strate, metal, lignee).slice(0, d.choix) });
+    else if (lignee) j.choix.push({ source: 'fouille', options: tirerChoix(j, x.strate, metal, lignee, porteursPresents(j)).slice(0, d.choix) });
     // le filon « composants » rapporte selon l'effort (24 octobre 2026) : une part par combat gagné dans la fouille,
     // au lieu de doubler le butin et d'ajouter une prime fixe (un chemin d'un seul combat rapportait ~3 fois plus par combat qu'une expédition)
     else if (x.fouille === 'composants') { const plus = Math.round(Math.max(1, victoires) * FILON_COMPOSANTS * (1 + 0.25 * (x.strate - 1)) * d.gain * (x.releve ? EXPLORER.releve.composants : 1)); j.composants += plus; butinFilon = plus; }
@@ -869,13 +869,13 @@ export function remonter(j: Jeu): Retour {
     if (!j.epreuves.faites.includes(x.epreuve)) {
       j.epreuves.faites.push(x.epreuve);
       gagnerCreuseurs(j, CREUSEURS.epreuve, tr('l’Épreuve réussie fait des émules'));
-      j.choix.push({ source: 'epreuve', options: tirerChoix(j, x.strate, 'argent') });
+      j.choix.push({ source: 'epreuve', options: tirerChoix(j, x.strate, 'argent', undefined, porteursPresents(j)) });
     }
     // le palier Fêlé, une fois par semaine : un second choix (en or à partir de FELEE.orDes) et des Éclats
     const cle = cleEpreuve(x.epreuve, true);
     if (x.felee && !j.epreuves.faites.includes(cle)) {
       j.epreuves.faites.push(cle);
-      j.choix.push({ source: 'epreuve', options: tirerChoix(j, x.strate, x.strate >= FELEE.orDes ? 'or' : 'argent') });
+      j.choix.push({ source: 'epreuve', options: tirerChoix(j, x.strate, x.strate >= FELEE.orDes ? 'or' : 'argent', undefined, porteursPresents(j)) });
       eclats += FELEE.eclats;
     }
     progresser(j, 'expedition');
@@ -885,7 +885,7 @@ export function remonter(j: Jeu): Retour {
     // le gardien éveillé d'une Strate déjà vaincue (explorer.ts) monte d'un cran : cuivre, argent dès −3, or à −9
     // le gardien d'une Strate du Fond (strates.ts, FOND) paie en Éclats et en cartes : un choix en argent au moins, et des Éclats
     const fond = estFond(x.strate);
-    j.choix.push({ source: 'boss', options: tirerChoix(j, x.strate, x.eveille ? metalEveille(x.strate) : fond ? 'argent' : x.strate >= 3 ? 'cuivre' : 'fer') });
+    j.choix.push({ source: 'boss', options: tirerChoix(j, x.strate, x.eveille ? metalEveille(x.strate) : fond ? 'argent' : x.strate >= 3 ? 'cuivre' : 'fer', undefined, porteursPresents(j)) });
     eclats += (x.strate >= 5 ? 2 : 1) + (j.actes.chambre === 'orseve' ? 1 : 0) + (x.eveille ? EXPLORER.eveille.eclats : 0) + (fond ? FOND.eclatsGardien : 0);
     progresser(j, 'expedition');
   }
@@ -994,7 +994,7 @@ function remonterExplorer(j: Jeu, x: Expedition, victoire: boolean, avant: Etoil
   xp += nouveaux.length * XP.combat;
   const releve = !releveAvant && strateRelevee(j, x.strate);
   if (releve) {
-    j.choix.push({ source: 'releve', options: tirerChoix(j, x.strate, x.strate >= 5 ? 'argent' : 'cuivre') });
+    j.choix.push({ source: 'releve', options: tirerChoix(j, x.strate, x.strate >= 5 ? 'argent' : 'cuivre', undefined, porteursPresents(j)) });
     xp += XP.gardien / 2;
     log(j, tr`La Strate −${x.strate} est complète : ses cinq Vestiges sont au district. Tes fouilles y verront tout le plan.`);
   }
@@ -1011,7 +1011,7 @@ function remonterExplorer(j: Jeu, x: Expedition, victoire: boolean, avant: Etoil
   // les paliers d'étoiles (versés au premier retour qui les atteint, anciennes sauvegardes comprises)
   let paliers = 0;
   for (let p = prochainPalierEtoiles(j); p && totalEtoiles(j) >= p.etoiles; p = prochainPalierEtoiles(j)) {
-    j.choix.push({ source: 'etoiles', options: tirerChoix(j, x.strate, p.metal) });
+    j.choix.push({ source: 'etoiles', options: tirerChoix(j, x.strate, p.metal, undefined, porteursPresents(j)) });
     j.paliersEtoiles = (j.paliersEtoiles ?? 0) + 1;
     paliers++;
   }
@@ -1024,7 +1024,7 @@ function remonterExplorer(j: Jeu, x: Expedition, victoire: boolean, avant: Etoil
     if (!r.part) {
       etat.abattu = true;
       const def = RODEURS.find((d) => d.id === r.id)!;
-      j.choix.push({ source: 'rodeur', options: tirerChoix(j, x.strate, def.trophee) });
+      j.choix.push({ source: 'rodeur', options: tirerChoix(j, x.strate, def.trophee, undefined, porteursPresents(j)) });
       log(j, tr`${ennemiDef(r.id).nom} tombe. ${def.chute}`);
     }
   }
@@ -1068,7 +1068,7 @@ export function ouvrirChambre(j: Jeu, rng = graine()): Resultat {
 /** La consigne du combat guidé, selon le tour */
 export function leconTutoriel(tour: number): string {
   if (tour === 1) return tr('Leçon 1 : touche 3 cartes de ta main, puis « Lancer la chaîne ».');
-  if (tour === 2) return tr('Leçon 2 : pose un 3, puis un 4, puis un 5, dans cet ordre. Des chiffres qui se suivent font une Résonance : +30 % sur toute la chaîne.');
+  if (tour === 2) return tr('Leçon 2 : pose un 3, puis un 4, puis un 5, dans cet ordre. Des chiffres qui se suivent font une Résonance : +40 % sur toute la chaîne.');
   if (tour === 3) return tr('Leçon 3 : le Rémanent annonce une Entaille sur Doran. Pose des cartes à bouclier : elles protègent toute l’escouade pendant son attaque.');
   return tr('Tu as l’essentiel : vise les suites, protège-toi des grosses attaques annoncées. Achève-le !');
 }

@@ -11,12 +11,12 @@
 //   PV rendus au campement), la sortie possible est chiffrée, le butin ne s'affiche qu'une fois.
 // 28 octobre 2026 : plus de liste « Où aller ? » ; on choisit sur le plan, la fiche s'ouvre en bas.
 
-import { INDICES, accessibles, modeleDe, butinArchive, butinCache, butinCombat, enAttente, forceStrate, indiceSalle, mainAccordable, peutRemonter, rangsDe, reperentPassage, salleCourante, suitePorte, visionSalle, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
+import { FORCE, INDICES, accessibles, modeleDe, butinArchive, butinCache, butinCombat, enAttente, forceStrate, indiceSalle, mainAccordable, peutRemonter, rangsDe, reperentPassage, salleCourante, suitePorte, visionSalle, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
 import { CONTENU, PISTES, halteDef, nombreHaltes, particularite, queteDef, revelationDe, secretDef, strateDuSouvenir, voixDetail, type Voix } from '../core/strates';
 import { EXPLORER, rodeurDef, vestigesDe } from '../core/explorer';
 import { couleurFrequence } from './carte';
 import { paroleDescente } from '../core/campagne';
-import { PV_GROUPE, pvProfondeur } from '../core/combat';
+import { PV_GROUPE, estGardien, pvProfondeur } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from '../core/donnees';
 import { BATTU_PAR } from '../core/regles';
 import { CIBLES_FOUILLE, RENCONTRES, XP, etapeQueteTrouvee, halteEnCours, type Jeu } from '../core/jeu';
@@ -97,7 +97,9 @@ const titreGroupe = (s: Salle) => {
 function pvEnnemis(s: Salle, x: Expedition): number[] {
   const groupe = [s.ennemi!, ...(s.escorte ?? [])];
   const base = forceStrate(x.strate) * (x.facteur ?? 1) * (s.type === 'elite' ? 1.15 : 1);
-  const force = base * (PV_GROUPE[groupe.length] ?? PV_GROUPE[3]!) * pvProfondeur(base);
+  // les premières Strates (FORCE.debut) : un ennemi seul qui n'est pas un gardien a plus de PV, comme dans le moteur (creerCombat)
+  const debut = groupe.length === 1 && !estGardien(s.ennemi!) ? FORCE.debut.pv[x.strate - 1] ?? 1 : 1;
+  const force = base * (PV_GROUPE[groupe.length] ?? PV_GROUPE[3]!) * pvProfondeur(base) * debut;
   return groupe.map((id) => Math.round(ennemiDef(id).pvMax * force));
 }
 

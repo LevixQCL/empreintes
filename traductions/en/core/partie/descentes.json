@@ -391,7 +391,7 @@
   },
   {
    "fr": "Passer",
-   "en": "Pass"
+   "en": "Skip"
   },
   {
    "fr": "Un Sauvage",
@@ -634,8 +634,8 @@
    "en": "Lesson 1: tap 3 cards in your hand, then “Cast the chain”."
   },
   {
-   "fr": "Leçon 2 : pose un 3, puis un 4, puis un 5, dans cet ordre. Des chiffres qui se suivent font une Résonance : +30 % sur toute la chaîne.",
-   "en": "Lesson 2: place a 3, then a 4, then a 5, in that order. Consecutive numbers make a Resonance: +30% on the whole chain."
+   "fr": "Leçon 2 : pose un 3, puis un 4, puis un 5, dans cet ordre. Des chiffres qui se suivent font une Résonance : +40 % sur toute la chaîne.",
+   "en": "Lesson 2: place a 3, then a 4, then a 5, in that order. Consecutive numbers make a Resonance: +40% on the whole chain."
   },
   {
    "fr": "Leçon 3 : le Rémanent annonce une Entaille sur Doran. Pose des cartes à bouclier : elles protègent toute l’escouade pendant son attaque.",

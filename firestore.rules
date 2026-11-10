@@ -28,7 +28,9 @@ service cloud.firestore {
         && request.resource.data.profondeur == 2 && maintenant(request.resource.data.profondeurLe)
         && request.resource.data.profondeurSemaine == 0
         && request.resource.data.get('fleche', 0) == 0 && request.resource.data.get('flecheSemaine', 0) == 0
-        && request.resource.data.get('joutes', 0) == 0 && request.resource.data.get('joutesSemaine', 0) == 0;
+        && request.resource.data.get('joutes', 0) == 0 && request.resource.data.get('joutesSemaine', 0) == 0
+        // le Registre aussi part de peu (10 novembre 2026) : 2 500 points au plus à la création, le reste suit
+        && request.resource.data.registre <= 2500;
       // se retirer pour de bon (suppression du compte, 8 novembre 2026) : sans danger depuis que la création part du bas
       allow delete: if request.auth != null && request.auth.uid == uid;
       allow update: if request.auth != null && request.auth.uid == uid && entreeValide(request.resource.data)
@@ -54,6 +56,11 @@ service cloud.firestore {
         // les Joutes ne redescendent jamais et gagnent au plus 3 d'un coup
         && request.resource.data.get('joutes', 0) >= resource.data.get('joutes', 0)
         && request.resource.data.get('joutes', 0) <= resource.data.get('joutes', 0) + 3
+        // le Registre (10 novembre 2026, audit) : il ne redescend jamais, gagne au plus 2 500 points par publication,
+        // et ne monte que si la publication précédente date d'au moins 4 minutes (avant : 2 000 000 en un seul appel)
+        && request.resource.data.registre >= resource.data.registre
+        && request.resource.data.registre <= resource.data.registre + 2500
+        && (request.resource.data.registre == resource.data.registre || request.time.toMillis() >= resource.data.maj + 240000)
         && request.resource.data.maj >= resource.data.maj + 20000;
     }
 

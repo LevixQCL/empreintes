@@ -314,8 +314,8 @@
    "en": "card of your choice in {0} parcels"
   },
   {
-   "fr": "tout taillé en {0} h",
-   "en": "all cut in {0} h"
+   "fr": "tout taillé en {0}",
+   "en": "all cut in {0}"
   },
   {
    "fr": "{0} Usure soignée/h",
@@ -482,8 +482,8 @@
    "en": "1 session = 1 level · up to lvl {0}{1}"
   },
   {
-   "fr": " (ton meilleur titulaire)",
-   "en": " (your best regular)"
+   "fr": " (ton meilleur titulaire ; la Tour irait jusqu’au {0})",
+   "en": " (your best regular; the Tower would allow up to {0})"
   },
   {
    "fr": "Niv. {0}",
@@ -1226,8 +1226,8 @@
    "en": "Go to level {0} · {1}"
   },
   {
-   "fr": "Recycler 1 · +{0}",
-   "en": "Recycle 1 · +{0}"
+   "fr": "Recycler 1 · +{0} minerai",
+   "en": "Recycle 1 · +{0} ore"
   },
   {
    "fr": "CARTE COMMUNE · {0}{1}",
@@ -2142,7 +2142,7 @@
    "en": "Dig"
   },
   {
-   "fr": ": une descente courte, sans gardien, vers un filon (cartes, minerai ou Éclats).",
+   "fr": " : une descente courte, sans gardien, vers un filon (cartes, minerai ou Éclats).",
    "en": ": a short descent with no guardian, toward a seam (cards, ore or Shards)."
   },
   {
@@ -2150,7 +2150,7 @@
    "en": "Explore"
   },
   {
-   "fr": ": toute la Strate jusqu’à son gardien, éveillé s’il est déjà vaincu (meilleures cartes). Seul endroit où trouver les Vestiges, les étoiles et les Rôdeurs.",
+   "fr": " : toute la Strate jusqu’à son gardien, éveillé s’il est déjà vaincu (meilleures cartes). Seul endroit où trouver les Vestiges, les étoiles et les Rôdeurs.",
    "en": ": the whole Stratum up to its guardian, awakened if already beaten (better cards). The only place to find Relics, stars and Prowlers."
   },
   {
@@ -2458,8 +2458,8 @@
    "en": " · +{0} digger{1}"
   },
   {
-   "fr": "une carte de lignée au filon",
-   "en": "a lineage card at the seam"
+   "fr": "leurs cartes, et une au filon",
+   "en": "their cards, and one at the seam"
   },
   {
    "fr": "selon les combats gagnés",

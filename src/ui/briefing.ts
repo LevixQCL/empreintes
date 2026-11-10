@@ -26,7 +26,7 @@ const demoTrois = () => `<div class="demo-rang">${[['ruee', 'ilka'], ['morsure',
 const demoAnatomie = () => `<div class="demo-anatomie"><div class="demo-grande">${carteDemo(carte('ruee'))}<span class="repere r1">1</span><span class="repere r2">2</span><span class="repere r3">3</span></div>`
   + `<ol class="demo-legende"><li><i>1</i><span><b>${tr`La Fréquence`}</b>${tr`, de 1 à 9. C’est elle qui compte pour enchaîner.`}</span></li>`
   + `<li><i>2</i><span><b>${tr`La force`}</b> ${tr`et ce qu’elle fait :`}<span class="types"><span class="g-val atk">${ICO.atk}</span>${tr`frappe`} <span class="g-val bouclier">${ICO.bouclier}</span>${tr`protège`} <span class="g-val soin">${ICO.soin}</span>${tr`soigne`}</span></span></li>`
-  + `<li><i>3</i><span><b>${tr`Son nom`}</b>${tr`, et l’effet spécial quand elle en a un.`}</span></li></ol></div>`;
+  + `<li><i>3</i><span><b>${tr`Le nom de la carte`}</b>${tr`, et l’effet spécial quand elle en a un.`}</span></li></ol></div>`;
 
 /** les vrais chiffres de la démonstration : la force de chaque carte, puis la même chaîne en Résonance (suite de 3) */
 const demoChaine = () => {
@@ -35,7 +35,7 @@ const demoChaine = () => {
   const brut = cs.reduce((t, g) => t + g.v, 0);
   const reso = cs.reduce((t, g) => t + Math.round(g.v * mult), 0);
   return `<div class="demo-chaine"><div class="demo-rail">${cs.map((g, i) => (i ? '<span class="fleche" aria-hidden="true">›</span>' : '') + carteDemo(g, 'chaine')).join('')}</div>`
-    + `<p class="demo-suite"><b>${cs.map((g) => g.f).join('</b> → <b>')}</b> ${tr`: les chiffres se suivent.`}</p>`
+    + `<p class="demo-suite"><b>${cs.map((g) => g.f).join('</b> → <b>')}</b>${tr` : les chiffres se suivent.`}</p>`
     + `<dl class="demo-calcul"><div><dt>${tr`Sans suite`}</dt><dd>${cs.map((g) => g.v).join(' + ')} = <b>${brut}</b></dd></div>`
     + `<div class="reso"><dt>${tr`Résonance +${Math.round((mult - 1) * 100)} %`}</dt><dd><b>${reso}</b> ${tr`dégâts`}</dd></div></dl></div>`;
 };
@@ -61,7 +61,7 @@ export const ETAPES: Etape[] = [
   },
   {
     qui: 'ilka', titre: tr('La chaîne'),
-    texte: tr('À chaque tour, tu as cinq cartes en main. Tu en poses jusqu’à trois : c’est la chaîne. Tu la lances, et elles agissent l’une après l’autre. Si trois chiffres se suivent, la chaîne entre en Résonance : +30 % sur toute la chaîne. Deux ne suffisent pas.'),
+    texte: tr('À chaque tour, tu as cinq cartes en main. Tu en poses jusqu’à trois : c’est la chaîne. Tu la lances, et elles agissent l’une après l’autre. Si trois chiffres se suivent, la chaîne entre en Résonance : +40 % sur toute la chaîne. Deux ne suffisent pas.'),
     demo: demoChaine,
   },
   {

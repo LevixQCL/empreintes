@@ -474,8 +474,8 @@
    "en": "is in the middle: {0} damage, {1} squad protection, {2} healing (in the chain, tap the name under the card to choose who)."
   },
   {
-   "fr": "est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +30 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque la carte qui prolonge ta suite.",
-   "en": "is the number in the gem. Frequencies that follow in order make a Resonance: chain of 3 = +30%, of 4 = +60%, of 5 = +100%. A golden arrow marks the card that extends your chain."
+   "fr": "est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +40 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque la carte qui prolonge ta suite.",
+   "en": "is the number in the gem. Frequencies that follow in order make a Resonance: run of 3 = +40%, of 4 = +60%, of 5 = +100%. A golden arrow marks the card that extends your run."
   },
   {
    "fr": "Plusieurs Fréquences :",
@@ -926,8 +926,8 @@
    "en": "Chain {0} → {1}: add a"
   },
   {
-   "fr": "pour +30 %",
-   "en": "for +30%"
+   "fr": "pour +40 %",
+   "en": "for +40%"
   },
   {
    "fr": "Ajoute un",

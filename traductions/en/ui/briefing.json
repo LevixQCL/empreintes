@@ -30,16 +30,20 @@
    "en": "heals"
   },
   {
+   "fr": "Le nom de la carte",
+   "en": "The card’s name"
+  },
+  {
    "fr": ", et l’effet spécial quand elle en a un.",
    "en": ", plus the special effect when it has one."
   },
   {
-   "fr": ": les chiffres se suivent.",
+   "fr": " : les chiffres se suivent.",
    "en": ": the numbers follow each other."
   },
   {
    "fr": "Sans suite",
-   "en": "No chain"
+   "en": "No run"
   },
   {
    "fr": "Résonance +{0} %",
@@ -94,8 +98,8 @@
    "en": "The chain"
   },
   {
-   "fr": "À chaque tour, tu as cinq cartes en main. Tu en poses jusqu’à trois : c’est la chaîne. Tu la lances, et elles agissent l’une après l’autre. Si trois chiffres se suivent, la chaîne entre en Résonance : +30 % sur toute la chaîne. Deux ne suffisent pas.",
-   "en": "Each turn, you hold five cards. You lay down up to three: that’s the chain. You cast it, and they act one after the other. If three numbers follow each other, the chain goes into Resonance: +30% on the whole chain. Two aren’t enough."
+   "fr": "À chaque tour, tu as cinq cartes en main. Tu en poses jusqu’à trois : c’est la chaîne. Tu la lances, et elles agissent l’une après l’autre. Si trois chiffres se suivent, la chaîne entre en Résonance : +40 % sur toute la chaîne. Deux ne suffisent pas.",
+   "en": "Each turn, you hold five cards. You lay down up to three: that’s the chain. You cast it, and they act one after the other. If three numbers follow each other, the chain goes into Resonance: +40% on the whole chain. Two aren’t enough."
   },
   {
    "fr": "Écoute ce qu’il annonce",

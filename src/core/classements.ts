@@ -27,7 +27,7 @@ export const TABLEAUX: { id: TableauId; nom: string; court: string; ouvert: bool
     texte: tr('La valeur de ta collection : le métal et le niveau de chaque carte, et chaque carte découverte.') },
   { id: 'joutes', nom: tr('Joutes'), court: tr('Duels'), ouvert: true,
     texte: tr('Les duels gagnés au Cercle des quais contre des amis différents (trois par semaine au plus).') },
-  { id: 'fleche', nom: tr('La Flèche'), court: tr('Tour'), ouvert: true,
+  { id: 'fleche', nom: tr('La Flèche'), court: tr('Flèche'), ouvert: true,
     texte: tr('Le plus haut quai atteint sur la Flèche d’amarrage, la seule route légale vers les Hauts. À quai égal, le premier arrivé passe devant.') },
 ];
 
@@ -275,7 +275,11 @@ export function entreeAPublier(
   const pal = j.palmares;
   if (!pal) return null;
   const r = valeurRegistre(j.collection);
-  const registre = Math.round(Math.max(pal.registre, r.points));
+  let registre = Math.round(Math.max(pal.registre, r.points));
+  // le Registre suit firestore.rules (10 novembre 2026) : au plus REGISTRE_PAS_MAX à la création et par publication,
+  // et il ne monte que si la publication précédente date d'au moins REGISTRE_DELAI ; le reste suit aux suivantes
+  if (!enLigne) registre = Math.min(registre, REGISTRE_PAS_MAX);
+  else registre = Math.min(Math.max(registre, enLigne.registre), now >= enLigne.maj + REGISTRE_DELAI ? enLigne.registre + REGISTRE_PAS_MAX : enLigne.registre);
   let profondeur = Math.max(2, pal.profondeur);
   let profondeurLe = Math.round(pal.profondeurLe);
   if (!enLigne) {
@@ -320,6 +324,10 @@ export function entreeAPublier(
 
 /** Le temps minimal entre deux montées de profondeur publiées (ms) : la même borne que firestore.rules */
 export const PROFONDEUR_DELAI = 5 * 60_000;
+/** Les points de Registre qu'une publication peut ajouter (aussi le plafond d'une entrée neuve) : la même borne que firestore.rules */
+export const REGISTRE_PAS_MAX = 2500;
+/** le Registre ne monte que si la publication précédente date d'au moins 4 minutes (firestore.rules) */
+export const REGISTRE_DELAI = 4 * 60_000;
 /** Les Joutes qu'une publication peut ajouter : la même borne que firestore.rules */
 export const JOUTES_PAS_MAX = 3;
 /** Les quais de record qu'une publication peut ajouter (le reste suit à la suivante) : la même borne que firestore.rules */

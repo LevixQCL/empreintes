@@ -62,8 +62,12 @@
    "en": "Can’t reach {0} right now: try again in a moment."
   },
   {
-   "fr": "Ysé glisse une carte entre les pages : {0} (Fer) rejoint tes Cartes.",
-   "en": "Ysé slips a card between the pages: {0} (Iron) joins your Cards."
+   "fr": "Ysé glisse une carte entre les pages : un doublon {0} ({1}).",
+   "en": "Ysé slips a card between the pages: a duplicate of {0} ({1})."
+  },
+  {
+   "fr": "Ysé glisse une carte entre les pages : {0} ({1}) rejoint tes Cartes.",
+   "en": "Ysé slips a card between the pages: {0} ({1}) joins your Cards."
   }
  ]
 }

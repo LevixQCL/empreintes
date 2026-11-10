@@ -6,7 +6,7 @@ import { relireVitrines, suivreCercle } from '../cercle';
 import { afficher } from '../rendu';
 import { cibleDefi, lireGardiensEnLigne, recevoirAssauts, synchroGarde } from '../fleche';
 import { moduleDe, moduleDef, porteurDef, deNom } from '../../core/donnees';
-import { estTri, poidsCarte } from '../../core/collection';
+import { NOMS_RARETE, estTri, poidsCarte } from '../../core/collection';
 import * as J from '../../core/jeu';
 import type { BatimentId } from '../../core/types';
 import { visuel as ageDistrict } from '../../ui/art';
@@ -328,15 +328,22 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     }
     case 'scene-revoir': D.revoir = id; D.scene = 0; break;
     case 'chapitre':
-      D.onglet = 'chroniques'; D.chapitre = id;
+      // le message d'un chapitre ne reste plus affiché sur le suivant (10 novembre 2026, audit)
+      D.onglet = 'chroniques'; D.chapitre = id; D.message = '';
       if (!app.jeu.lus.includes(id) || !app.jeu.luesRecompensees.includes(id)) {
+        const avant = new Set(Object.keys(app.jeu.collection));
         const carte = J.lireChapitre(app.jeu, id);
-        if (carte) D.message = t`Ysé glisse une carte entre les pages : ${moduleDef(carte).nom} (Fer) rejoint tes Cartes.`;
+        if (carte) {
+          const m = moduleDef(carte);
+          D.message = avant.has(carte)
+            ? t`Ysé glisse une carte entre les pages : un doublon ${deNom(m.nom)} (${NOMS_RARETE[m.rarete]}).`
+            : t`Ysé glisse une carte entre les pages : ${m.nom} (${NOMS_RARETE[m.rarete]}) rejoint tes Cartes.`;
+        }
         sauver();
       }
       window.scrollTo(0, 0);
       break;
-    case 'chapitre-fermer': D.chapitre = null; window.scrollTo(0, 0); break;
+    case 'chapitre-fermer': D.chapitre = null; D.message = ''; window.scrollTo(0, 0); break;
     case 'biblio-retour':
       D.chapitre = null;
       // revenu à l'écran titre, « Reprendre » doit ramener au district, pas à la Bibliothèque

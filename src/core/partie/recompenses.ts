@@ -107,7 +107,7 @@ export function ouvrirColis(j: Jeu): Resultat & { colis?: Colis } {
   const doublon = enFer.length ? enFer[tireur(j).entier(enFer.length)]! : null;
   if (doublon) ajouterCarte(j, doublon);
   const choix = r.ouverts % RAVITAILLEMENT.cycle === 0;
-  if (choix) j.choix.push({ source: 'ravitaillement', options: tirerChoix(j, j.strate, RAVITAILLEMENT.minimumCycle) });
+  if (choix) j.choix.push({ source: 'ravitaillement', options: tirerChoix(j, j.strate, RAVITAILLEMENT.minimumCycle, undefined, porteursPresents(j)) });
   log(j, t`Ravitaillement : +${composants} cristaux${doublon ? t`, un doublon ${deNom(moduleDef(doublon).nom)}` : ''}${choix ? t(', et une carte au choix') : ''}.`);
   return { ok: true, colis: { composants, doublon, choix } };
 }
@@ -135,7 +135,7 @@ export const QUOTIDIEN_ECLATS = 2;
 /** Récupère l'objectif du jour : une carte au choix parmi 3, ou 2 Éclats */
 export function reclamerQuotidien(j: Jeu): Resultat {
   if (!quotidienFait(j)) return non(t('Objectif du jour pas encore rempli.'));
-  j.choix.push({ source: 'quotidien', options: tirerChoix(j, j.strate), eclats: QUOTIDIEN_ECLATS });
+  j.choix.push({ source: 'quotidien', options: tirerChoix(j, j.strate, undefined, undefined, porteursPresents(j)), eclats: QUOTIDIEN_ECLATS });
   progresser(j, 'quotidien');
   const q = j.quotidien;
   q.reserve--;
@@ -150,10 +150,10 @@ export function ouvrirArchive(j: Jeu): Resultat {
   const n = j.archive.aOuvrir;
   if (!n) return non(t('Le Butin de la semaine n’est pas encore prêt.'));
   j.energie += ARCHIVE.composants;
-  j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate) });
+  j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, undefined, undefined, porteursPresents(j)) });
   if (n >= 2) j.eclats += ARCHIVE.eclatsPalier2;
-  if (n >= 3) j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, 'argent') });
-  if (n >= 4) { j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, 'argent') }); j.eclats += ARCHIVE.eclatsPalier4; }
+  if (n >= 3) j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, 'argent', undefined, porteursPresents(j)) });
+  if (n >= 4) { j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, 'argent', undefined, porteursPresents(j)) }); j.eclats += ARCHIVE.eclatsPalier4; }
   // le Butin suivant, s'il y en a un qui attend
   j.archive.aOuvrir = j.archive.enAttente?.shift() ?? 0;
   if (j.archive.enAttente && !j.archive.enAttente.length) delete j.archive.enAttente;

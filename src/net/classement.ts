@@ -58,6 +58,8 @@ function entreeDe(uid: string, d: Partial<Publie>): Entree | null {
     profondeur: d.profondeur, profondeurLe: d.profondeurLe ?? 0, registre: d.registre, decouvertes: d.decouvertes ?? 0,
     semaine: d.semaine ?? 0, profondeurSemaine: d.profondeurSemaine ?? 0, registreSemaine: d.registreSemaine ?? 0, maj: d.maj ?? 0,
     fleche: d.fleche ?? 0, flecheLe: d.flecheLe ?? 0, flecheSemaine: d.flecheSemaine ?? 0,
+    // les Joutes (10 novembre 2026) : sans elles, le tableau restait vide et le total publié restait bloqué à JOUTES_PAS_MAX
+    ...(typeof d.joutes === 'number' ? { joutes: d.joutes, joutesSemaine: typeof d.joutesSemaine === 'number' ? d.joutesSemaine : 0 } : {}),
     ...(d.insigne === 'recruteur' ? { insigne: 'recruteur' as const } : {}),
   };
 }

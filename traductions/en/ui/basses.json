@@ -14,6 +14,10 @@
    "en": "Falling tide"
   },
   {
+   "fr": "{0}−{1} vaincue",
+   "en": "{0}−{1} beaten"
+  },
+  {
    "fr": "{0}À sec",
    "en": "{0}Dry"
   },
@@ -22,8 +26,8 @@
    "en": ", dry"
   },
   {
-   "fr": ", Strate −{0}",
-   "en": ", Stratum −{0}"
+   "fr": ", il faut avoir vaincu la Strate −{0}",
+   "en": ", you need to have beaten Stratum −{0}"
   },
   {
    "fr": "Le flanc de la digue : {0}",
@@ -74,8 +78,8 @@
    "en": "back in "
   },
   {
-   "fr": "{0}Strate −{1}",
-   "en": "{0}Stratum −{1}"
+   "fr": "{0}Strate −{1} à vaincre",
+   "en": "{0}Beat Stratum −{1}"
   },
   {
    "fr": "Sous l’eau",

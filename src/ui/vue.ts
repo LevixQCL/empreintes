@@ -391,7 +391,7 @@ function regles(): string {
     + `<li><b>${tr`Ton deck, ce sont tes cartes.`}</b> ${tr`Chaque Porteur de l’escouade apporte celles que tu lui as confiées au district (6 au plus), plus les cartes communes de son Râtelier. L’illustration est celle de la carte ; à défaut, le portrait du Porteur qui la joue.`}</li>`
     + `<li><b>${tr`Compose une chaîne.`}</b> ${tr`Touche les cartes de ta main (${REGLES.capaciteBase} places au départ), puis lance-la. Une carte posée se retire d’un toucher, ou se glisse de côté pour changer de place.`}</li>`
     + `<li><b>${tr`La force`}</b> ${tr`est au milieu : ${ICO.atk} dégâts, ${ICO.bouclier} protection de l’escouade, ${ICO.soin} soin (dans la chaîne, touche le nom sous la carte pour choisir qui).`}</li>`
-    + `<li><b>${tr`La Fréquence`}</b> ${tr`est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +30 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque la carte qui prolonge ta suite.`}</li>`
+    + `<li><b>${tr`La Fréquence`}</b> ${tr`est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +40 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque la carte qui prolonge ta suite.`}</li>`
     + `<li><b>${tr`Plusieurs Fréquences :`}</b> ${tr`une carte en argent, en or ou en nacre en porte 2 ou 3. Posée, elle prend celle qui prolonge ta suite ; touche les chiffres sous elle pour en changer. Rien n’est tiré au sort.`}</li>`
     + `<li><b>${tr`L’Écho :`}</b> ${tr`trois Fréquences identiques dans la chaîne renforcent ces cartes de +${Math.round((REGLES.echo - 1) * 100)} %, quelle que soit leur action (dégâts, protection ou soin), et donnent 1 Flux. Plus rare qu’une suite, il paie davantage. Quatre identiques : ${pctEcho(4)} ; cinq : ${pctEcho(5)} et 1 Flux de plus.`}</li>`
     + `<li><b>${tr`Le Finisseur :`}</b> ${tr`une carte d’attaque Augmentée qui termine une suite de 3 ou plus frappe +${Math.round((REGLES.finisseur - 1) * 100)} %.`}</li>`
@@ -753,7 +753,7 @@ function htmlEcranCombat(e: Ecran): string {
       const n = fs.filter((x) => x === f).length;
       conseil = a.echo ? '' : n >= 2 ? `${tr`Encore un`} <b>${f}</b> ${tr`pour un`} <b>${tr`Écho`}</b>` : `${tr`${f} : pas de suite au-delà · deux autres ${f} pour un`} <b>${tr`Écho`}</b>`;
     }
-    else if (fin === 2) conseil = `${tr`Suite ${f - 1} → ${f} : ajoute un`} <b>${f + 1}</b> ${tr`pour +30 %`}`;
+    else if (fin === 2) conseil = `${tr`Suite ${f - 1} → ${f} : ajoute un`} <b>${f + 1}</b> ${tr`pour +40 %`}`;
     else conseil = `${tr`Ajoute un`} <b>${f + 1}</b> ${tr`pour commencer une suite`}`;
     if (a.echo) { const n = a.echoN ?? 3; conseil = (conseil ? `${conseil} · ` : '') + `<b>${nomEcho(n)}</b> ${tr`: les ${n === 5 ? 'cinq' : n === 4 ? 'quatre' : 'trois'} ${a.echoF}`} <b>${pctEcho(n)}</b>` + (n === 5 ? tr(' et +1 Flux') : ''); }
     if (dernier?.effet) conseil += `<span class="effet-texte">${echap(libelleEffet(dernier.effet))}</span>`;
