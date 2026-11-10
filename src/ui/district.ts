@@ -1864,13 +1864,15 @@ export function htmlCoupe(e: EcranDistrict): string {
   let h = entete(tr`EN COUPE · ${j.strate} ÉTAGE${j.strate > 1 ? 'S' : ''} CREUSÉ${j.strate > 1 ? 'S' : ''}`, tr('Tour du Noyau'));
   const presents = PORTEURS.filter((p) => porteursPresents(j).includes(p.id));
   const libres = presents.filter((p) => disponibles(j).includes(p.id)).length;
-  h += `<section class="tr-heros"><img class="tr-coupe" src="${decor('coupe')}" alt="" decoding="async">`
+  // la coupe est une image en hauteur (720 × 1285) : sur PC elle tient une colonne entière à gauche, à sa vraie forme,
+  // au lieu d'un bandeau qui l'agrandissait et n'en gardait qu'une tranche floue (10 novembre 2026, capture de Bryan)
+  h += `<div class="tr-cadre"><section class="tr-heros"><img class="tr-coupe" src="${decor('coupe')}" alt="" decoding="async">`
     + `<button type="button" class="tr-habitants" data-action="porteurs" aria-label="${tr`Porteurs : ${presents.length} au district, ${libres} disponibles. Voir les Porteurs`}">`
     + `<span class="tr-hab-avatars">${presents.map((p) => {
       const d = j.porteurs[p.id]!;
       const etat = enExpedition(j, p.id) ? 'parti' : d.poste ? 'travail' : 'libre';
       return `<span class="tr-hab ${etat}">${avatar(p.id, 36)}<i></i></span>`;
-    }).join('')}</span><span class="tr-hab-txt"><b>${tr`${libres} disponible${libres > 1 ? 's' : ''}`}</b> ${tr`sur ${presents.length} · Voir les Porteurs`} ${ICO.retour}</span></button></section>`;
+    }).join('')}</span><span class="tr-hab-txt"><b>${tr`${libres} disponible${libres > 1 ? 's' : ''}`}</b> ${tr`sur ${presents.length} · Voir les Porteurs`} ${ICO.retour}</span></button></section><div class="tr-col">`;
 
   // la prochaine étape, avec de quoi la faire tout de suite
   const off = !!j.expedition || !j.chambre;
@@ -1927,7 +1929,7 @@ export function htmlCoupe(e: EcranDistrict): string {
   if (volet === 'epreuves') h += htmlEpreuves(e);
   else h += htmlStrates(e, off, manque);
   if (j.chambre && !ouvert) h += `<p class="tr-note">${ICO.verrou}${tr`Les Épreuves de la semaine s’ouvrent quand le gardien de la Strate −${EPREUVES_STRATE} est vaincu : les Veilleurs ne mettent à l’épreuve que ceux qui ont passé le couloir muré.`}</p>`;
-  h += feuilleBatiment(e) + feuilleVestiges(e);
+  h += `</div></div>` + feuilleBatiment(e) + feuilleVestiges(e);
   return coquille(e, h, 'ecran-coupe tr');
 }
 
