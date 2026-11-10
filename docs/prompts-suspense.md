@@ -9,6 +9,7 @@ Une image par Strate, plus le gros plan sur la cheville d'Ilka. Elles accompagne
   sont dits par le texte, ou dessinés par le jeu par-dessus l'image (le chiffre de la cheville).
 - Prothèse d'Ilka (10 nov.) : référence validée `public/art/references/ilka-jambe.webp` (à passer en --oref / --sref) ; décrite pareil dans chaque prompt où elle apparaît (jambes fines gris acier sombre, cristal bleu au genou et à la cheville), d'après son portrait ; les premiers rendus bronze et massifs sont refusés.
 - Images retenues le 10 nov. : 2 à 8 et 10 (déjà dans le jeu, pas encore affichées). Cheville retenue le 10 nov. (écran vide vertical sur le bas du tibia, ≈ x 515-615, y 665-860 sur 816 × 1456 : le jeu y dessine le chiffre). À refaire : 1 (les traces ne sortaient pas de l'eau), 9 (la ville doit être une vision, pas un lieu).
+- Midjourney 8.2 (10 nov.) : pas de --oref ni --ow ; les références de personnage (jambe d'Ilka, portraits) se joignent comme images dans l'interface (jusqu'à 4).
 - Style : même référence que les scènes de la campagne (`docs/prompts-campagne.md`) ; avec Ilka, son portrait s'ajoute.
 
 ## charniere-1 — −1 Les Pompes noyées : des traces qui montent
