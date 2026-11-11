@@ -34,6 +34,19 @@ const lireCopie = (uid: string): string[] | null => {
 };
 const garderCopie = (uid: string, droits: string[]) => { try { localStorage.setItem(CLE, JSON.stringify({ uid, droits })); } catch { /* stockage bloqué */ } };
 
+// Le compte de Bryan (11 novembre 2026) : il doit tout voir comme s'il avait payé, pour évaluer. Même empreinte SHA-256 de
+// l'adresse que dans firestore.rules (estAdmin) et src/analyse/main.ts : l'adresse n'apparaît pas en clair dans le code publié.
+const ADMIN = '1f844d89dfde78aa9740d9368a477833bf3954975d622b52a1b531672fca2ba9';
+async function estCompteAdmin(): Promise<boolean> {
+  const u = compteEtat.utilisateur;
+  if (!u || u.anonyme || !u.verifie || !u.email) return false;
+  try {
+    const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(u.email.trim().toLowerCase()));
+    return [...new Uint8Array(h)].map((b) => b.toString(16).padStart(2, '0')).join('') === ADMIN;
+  } catch { return false; }
+}
+const TOUS_LES_DROITS = [...new Set(Object.values(PRODUITS).flatMap((p) => p.droits))];
+
 /** de retour de la page de paiement : « ok » (payé, les droits arrivent) ou « annule » */
 let retour: 'ok' | 'annule' | null = null;
 /** À lancer une fois au démarrage : lit « ?achat=… » dans l'adresse, puis la nettoie */
@@ -56,6 +69,7 @@ export async function chargerAchats(uid: string | null): Promise<void> {
   if (essai || !boutique.ouverte) return;
   majCompteAchat();
   if (!uid) { boutique.achats = []; return; }
+  if (await estCompteAdmin()) { boutique.achats = [...TOUS_LES_DROITS]; retour = null; if (app.mode === 'district') afficher(); return; }
   const copie = lireCopie(uid);
   boutique.achats = copie ?? [];
   const attendus = retour === 'ok';

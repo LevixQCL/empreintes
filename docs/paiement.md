@@ -33,6 +33,11 @@ affiche) et `functions/produits.json` (ce que le serveur fait payer).
 7. **Essai** : mettre `VENTE_OUVERTE = true`, pousser, acheter un récit avec la carte de test de Stripe (4242 4242 4242 4242).
    Le récit doit s'ouvrir au retour. Puis passer Stripe en mode réel (clé `sk_live_…`, nouveau webhook réel).
 
+## Le compte de Bryan
+
+Connecté avec son adresse (la même que pour l'outil d'analyse, vérifiée), Bryan a tous les récits comme s'il les avait payés,
+vente ouverte ou non (`estCompteAdmin` dans `src/app/boutique.ts`). Pour essayer un vrai achat, utiliser un autre compte.
+
 ## Essayer sans payer (en développement)
 
 `npm run dev`, puis ouvrir le jeu avec `?vente` (vente ouverte, rien d'acquis) ou `?vente=ilka,doran` (ces récits acquis).
