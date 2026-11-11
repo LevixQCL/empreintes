@@ -14,6 +14,15 @@ service cloud.firestore {
         && request.resource.data.version is int;
     }
 
+    // Les achats (11 novembre 2026, src/net/achats.ts) : les Récits des origines acquis par ce compte, et un reçu par paiement.
+    // Seul le serveur de paiement les écrit (functions/index.js, qui passe au-dessus de ces règles) : le joueur lit les siens, rien de plus.
+    match /achats/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      match /recus/{id} {
+        allow read: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+
     // Le Grand Tableau (23 octobre 2026) : tout directeur connecté lit les classements, chacun n'écrit que sa propre entrée.
     // Elle ne s'efface plus (3 novembre 2026) : effacer puis recréer contournait « la profondeur ne redescend jamais
     // et monte de deux Strates au plus par publication ».

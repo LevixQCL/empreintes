@@ -24,3 +24,10 @@
 .fp-recit{position:relative;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;padding:12px 14px;border-radius:14px;background:rgba(216,180,101,.05);box-shadow:inset 0 0 0 1px rgba(216,180,101,.45)}
 .fp-sceau{width:34px;height:34px;margin-top:2px;border-radius:50%;background:radial-gradient(circle at 38% 35%,#FFE7A8,#D8B465 45%,#8A6A2E 80%);box-shadow:0 0 0 3px rgba(216,180,101,.2),0 2px 8px rgba(0,0,0,.5)}
 .fp-recit-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+/* le récit scellé (vente ouverte, 11 novembre 2026) : ce qu'on reçoit, puis le paiement */
+.fp-recit .btn .ico{width:14px;height:14px;margin-right:6px;vertical-align:-2px}
+.fp-offre{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:5px}
+.fp-offre li{position:relative;padding-left:16px;font-size:13px;line-height:1.4;color:var(--fp-txt)}
+.fp-offre li::before{content:"";position:absolute;left:2px;top:.5em;width:6px;height:6px;border-radius:50%;background:var(--fp-or)}
+.fp-legal{margin:8px 0 0;font-size:12px;line-height:1.45;color:var(--fp-doux)}
+.fp-legal.rouge{color:var(--fp-rouge)}

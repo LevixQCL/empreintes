@@ -486,24 +486,76 @@
    "en": "Why {0}’s here"
   },
   {
+   "fr": "D’où il vient, avant la porte : trois chapitres illustrés, et une carte d’origine à garder.",
+   "en": "Where he comes from, before the door: three illustrated chapters, and an origin card to keep."
+  },
+  {
+   "fr": "D’où elle vient, avant la porte : trois chapitres illustrés, et une carte d’origine à garder.",
+   "en": "Where she comes from, before the door: three illustrated chapters, and an origin card to keep."
+  },
+  {
    "fr": "Son récit d’origine",
-   "en": ""
+   "en": "Origin story"
   },
   {
    "fr": "Lu jusqu’au bout. Carte d’origine gardée : « {0} ».",
-   "en": ""
+   "en": "Read to the end. Origin card kept: “{0}”."
   },
   {
    "fr": "Relire son récit",
-   "en": ""
+   "en": "Reread the story"
   },
   {
    "fr": "Lire son récit",
-   "en": ""
+   "en": "Read the story"
   },
   {
    "fr": "Changer de carte",
-   "en": ""
+   "en": "Change card"
+  },
+  {
+   "fr": "Débloquer son récit · {0}",
+   "en": "Unlock the story · {0}"
+  },
+  {
+   "fr": "Trois chapitres illustrés, à relire quand tu veux",
+   "en": "Three illustrated chapters, to reread whenever you like"
+  },
+  {
+   "fr": "Une carte d’origine pour {0}, à choisir entre deux à la fin du récit",
+   "en": "An origin card for {0}, chosen from two at the end of the story"
+  },
+  {
+   "fr": "Acquis pour toujours sur ton compte, sur tous tes appareils",
+   "en": "Yours for good on your account, on all your devices"
+  },
+  {
+   "fr": "Ce récit · {0}",
+   "en": "This story · {0}"
+  },
+  {
+   "fr": "Les trois récits · {0}",
+   "en": "All three stories · {0}"
+  },
+  {
+   "fr": "Ouverture du paiement…",
+   "en": "Opening payment…"
+  },
+  {
+   "fr": "Paiement sécurisé par Stripe, en une fois, sans abonnement. Le récit s’ouvre tout de suite : en payant, tu demandes cet accès immédiat et tu renonces à ton droit de rétractation.",
+   "en": "Secure payment by Stripe, one-off, no subscription. The story unlocks straight away: by paying, you ask for this immediate access and waive your right of withdrawal."
+  },
+  {
+   "fr": "Relie d’abord ta partie à un compte Google ou à un e-mail : ton achat y restera attaché, même si tu changes d’appareil.",
+   "en": "First link your game to a Google account or an e-mail: your purchase will stay attached to it, even if you change device."
+  },
+  {
+   "fr": "Relier ma partie",
+   "en": "Link my game"
+  },
+  {
+   "fr": "L’achat demande une connexion et un compte en ligne. Reviens ici une fois connecté.",
+   "en": "Buying needs a connection and an online account. Come back here once you are signed in."
   },
   {
    "fr": "Son histoire",

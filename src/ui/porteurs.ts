@@ -4,7 +4,7 @@
 
 import { BATIMENTS, CLE_LEGS, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef, deNom } from '../core/donnees';
 import { CHARGE, NIVEAU_METAL, composantsNiveau, doublonsRequis } from '../core/collection';
-import { ACCORD_OUVERT, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, NOMS_PALIER_MARQUE, PALIERS_MARQUE, porteursPresents, progresMarque, RECITS_ORIGINES, carteDuRecit, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
+import { LOT_RECITS, PRODUITS, aRecit, droitRecit, lotProposable, prixEuros, ACCORD_OUVERT, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, NOMS_PALIER_MARQUE, PALIERS_MARQUE, porteursPresents, progresMarque, RECITS_ORIGINES, carteDuRecit, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
@@ -496,10 +496,36 @@ export function feuillePorteur(e: EcranDistrict): string {
   const recit = Object.keys(RECITS_ORIGINES).find((r) => RECITS_ORIGINES[r]!.porteur === id);
   if (recit) {
     const garde = carteDuRecit(j, recit);
-    h += `<section class="fp-bloc fp-recit"><span class="fp-sceau" aria-hidden="true"></span><div><h3 class="fp-h3">${ICO.journal}${tr`Son récit d’origine`}</h3>`
-      + `<p class="fp-texte">${garde ? tr`Lu jusqu’au bout. Carte d’origine gardée : « ${moduleDef(garde).nom} ».` : RECITS_TEXTES[recit]!.accroche}</p>`
-      + `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="recit-lire" data-id="${recit}">${garde ? tr('Relire son récit') : tr('Lire son récit')}</button>`
-      + (garde ? `<button type="button" class="btn sec petit" data-action="recit-fin" data-id="${recit}">${tr`Changer de carte`}</button>` : '') + `</div></div></section>`;
+    // vente ouverte (src/app/boutique.ts) : le récit ne se lit qu'une fois acquis sur le compte ; sinon il reste en aperçu
+    const bq = e.boutique?.ouverte ? e.boutique : null;
+    const acquis = !bq || aRecit(bq.achats, recit);
+    const prix = prixEuros(PRODUITS[droitRecit(recit)]!.prix);
+    const accroche = !bq ? RECITS_TEXTES[recit]!.accroche
+      : IL.has(id) ? tr('D’où il vient, avant la porte : trois chapitres illustrés, et une carte d’origine à garder.')
+      : tr('D’où elle vient, avant la porte : trois chapitres illustrés, et une carte d’origine à garder.');
+    h += `<section class="fp-bloc fp-recit${acquis ? '' : ' scelle'}"><span class="fp-sceau" aria-hidden="true"></span><div><h3 class="fp-h3">${ICO.journal}${tr`Son récit d’origine`}</h3>`
+      + `<p class="fp-texte">${garde ? tr`Lu jusqu’au bout. Carte d’origine gardée : « ${moduleDef(garde).nom} ».` : accroche}</p>`;
+    if (acquis) {
+      h += `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="recit-lire" data-id="${recit}">${garde ? tr('Relire son récit') : tr('Lire son récit')}</button>`
+        + (garde ? `<button type="button" class="btn sec petit" data-action="recit-fin" data-id="${recit}">${tr`Changer de carte`}</button>` : '') + `</div>`;
+    } else if (bq!.offre !== recit) {
+      h += `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="recit-acheter" data-id="${recit}" aria-expanded="false">${ICO.verrou}${tr`Débloquer son récit · ${prix}`}</button></div>`;
+    } else {
+      // l'offre dépliée : ce qu'on reçoit, puis le paiement (ou ce qui manque pour payer)
+      h += `<ul class="fp-offre"><li>${tr`Trois chapitres illustrés, à relire quand tu veux`}</li><li>${tr`Une carte d’origine pour ${echap(p.nom)}, à choisir entre deux à la fin du récit`}</li><li>${tr`Acquis pour toujours sur ton compte, sur tous tes appareils`}</li></ul>`;
+      if (bq!.compte === 'pret') {
+        h += `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="achat-payer" data-id="${droitRecit(recit)}"${bq!.occupe ? ' disabled' : ''}>${tr`Ce récit · ${prix}`}</button>`
+          + (lotProposable(bq!.achats) ? `<button type="button" class="btn sec petit" data-action="achat-payer" data-id="${LOT_RECITS}"${bq!.occupe ? ' disabled' : ''}>${tr`Les trois récits · ${prixEuros(PRODUITS[LOT_RECITS]!.prix)}`}</button>` : '') + `</div>`
+          + `<p class="fp-legal">${bq!.occupe ? tr('Ouverture du paiement…') : tr('Paiement sécurisé par Stripe, en une fois, sans abonnement. Le récit s’ouvre tout de suite : en payant, tu demandes cet accès immédiat et tu renonces à ton droit de rétractation.')}</p>`;
+      } else if (bq!.compte === 'a-relier') {
+        h += `<p class="fp-legal">${tr`Relie d’abord ta partie à un compte Google ou à un e-mail : ton achat y restera attaché, même si tu changes d’appareil.`}</p>`
+          + `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="compte">${tr`Relier ma partie`}</button></div>`;
+      } else {
+        h += `<p class="fp-legal">${tr`L’achat demande une connexion et un compte en ligne. Reviens ici une fois connecté.`}</p>`;
+      }
+      if (bq!.erreur) h += `<p class="fp-legal rouge" role="alert">${echap(bq!.erreur)}</p>`;
+    }
+    h += `</div></section>`;
   }
 
   // ---------- son histoire : d'où vient son don, un palier de plus tous les quelques niveaux ----------

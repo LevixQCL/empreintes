@@ -1,0 +1,33 @@
+{
+ "source": "src/app/boutique.ts",
+ "entrees": [
+  {
+   "fr": "Paiement annulé : rien n’a été débité.",
+   "en": "Payment cancelled: you have not been charged."
+  },
+  {
+   "fr": "Merci ! Ton achat est inscrit sur ton compte : le récit t’attend sur la fiche du Porteur.",
+   "en": "Thank you! Your purchase is saved to your account: the story is waiting on the Bearer’s sheet."
+  },
+  {
+   "fr": "Ton paiement est en cours de confirmation : le récit s’ouvrira dans quelques instants.",
+   "en": "Your payment is being confirmed: the story will unlock in a few moments."
+  },
+  {
+   "fr": "Mode essai : le paiement ne s’ouvre que sur le jeu publié.",
+   "en": "Trial mode: payment only opens on the published game."
+  },
+  {
+   "fr": "Ce récit est déjà acquis sur ton compte.",
+   "en": "This story is already unlocked on your account."
+  },
+  {
+   "fr": "Le paiement ne répond pas. Vérifie ta connexion et réessaie.",
+   "en": "Payment is not responding. Check your connection and try again."
+  },
+  {
+   "fr": "Le paiement n’a pas pu s’ouvrir. Réessaie dans un instant.{0}",
+   "en": "Payment could not open. Try again in a moment.{0}"
+  }
+ ]
+}

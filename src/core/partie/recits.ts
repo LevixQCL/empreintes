@@ -2,7 +2,8 @@
 // à la fin d'un récit, le joueur choisit ce que le personnage garde de cette histoire, et reçoit sa carte d'origine.
 // Le choix se change en relisant la dernière scène : l'ancienne carte devient la nouvelle, au même niveau et dans les mêmes decks.
 // Chaque carte d'origine a un équivalent gratuit aux chiffres identiques (donnees.ts, tests/recits.test.ts) : aucun avantage vendu.
-// Le récit lui-même (ses plans) est dans src/ui/recits.ts ; le paiement n'existe pas encore : tout est ouvert en aperçu.
+// Le récit lui-même (ses plans) est dans src/ui/recits.ts ; le paiement est dans ../produits.ts et src/net/achats.ts ;
+// tant que la vente n'est pas ouverte (src/net/vente.ts), tout reste ouvert en aperçu.
 
 import { carteId, moduleDef } from '../donnees';
 import { t } from '../i18n';

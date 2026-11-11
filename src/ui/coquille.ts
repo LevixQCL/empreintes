@@ -143,6 +143,22 @@ export interface EcranDistrict {
   /** le Grand Tableau (classements.ts) et l'identifiant du compte connecté */
   grand?: import('./classements').GrandTableau;
   uid?: string | null;
+  /** la vente des Récits des origines (11 novembre 2026, src/app/boutique.ts) ; absente ou fermée : les récits sont en aperçu */
+  boutique?: Boutique;
+}
+
+/** La vente des Récits des origines : ce que le compte a acquis, et l'offre ouverte sur une fiche */
+export interface Boutique {
+  /** la vente est ouverte : un récit ne se lit qu'une fois acquis */
+  ouverte: boolean;
+  /** les droits inscrits sur le compte (« recit-ilka »…) */
+  achats: string[];
+  /** le récit dont l'offre est dépliée sur la fiche du Porteur */
+  offre: string | null;
+  occupe: boolean;
+  erreur: string;
+  /** pret : compte relié, on peut payer ; a-relier : compte invisible, à relier d'abord ; indisponible : hors ligne, sans compte */
+  compte: 'pret' | 'a-relier' | 'indisponible';
 }
 
 export const ent = (n: number) => Math.floor(n).toLocaleString(locale()).replace(/\u202f/g, '\u00a0');

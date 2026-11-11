@@ -13,6 +13,7 @@ import { envoyerPillages, planifierGarnison, recevoirPillages } from './pillages
 import { envoyerAssauts, recevoirAssauts } from './fleche';
 import { arreterCercle, C, suivreCercle } from './cercle';
 import { t } from '../core/i18n';
+import { chargerAchats, retourPaiement } from './boutique';
 
 let minuteur: number | undefined;
 /** la partie à envoyer au compte (la plus récente), et quand on l'a envoyée la dernière fois */
@@ -166,6 +167,8 @@ function comptePret() {
 const ATTENTE_COMPTE = 8000;
 
 export async function demarrerCompte() {
+  // de retour de la page de paiement (« ?achat=ok ») : on le note avant de relire le compte (src/app/boutique.ts)
+  retourPaiement();
   if (!firebaseActif()) return;
   // un navigateur piloté (tests, captures automatiques) ne crée pas de compte et n'écrit rien dans les vraies données
   if (navigator.webdriver) { comptePret(); return; }
@@ -180,6 +183,8 @@ export async function demarrerCompte() {
     compteEtat.utilisateur = u;
     app.uid = u?.uid ?? null;
     compteEtat.synchro = 'aucune';
+    // les récits acquis sur ce compte (src/app/boutique.ts)
+    void chargerAchats(app.uid);
     G.entrees = []; G.lu = 0; G.etat = 'repos'; app.monEntree = null; app.monEntreeLue = false; reconcilie = false; jetonDistant = undefined;
     // une partie en attente pour l'ancien compte ne part pas sur le nouveau (la réconciliation s'en charge)
     clearTimeout(minuteur); minuteur = undefined; enAttente = null;

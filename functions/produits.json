@@ -1,0 +1,6 @@
+{
+  "recit-ilka": { "prix": 299, "nom": "Ossyra — Récit d'Ilka", "droits": ["recit-ilka"] },
+  "recit-doran": { "prix": 299, "nom": "Ossyra — Récit de Doran", "droits": ["recit-doran"] },
+  "recit-vela": { "prix": 299, "nom": "Ossyra — Récit de Véla", "droits": ["recit-vela"] },
+  "recits-trio": { "prix": 599, "nom": "Ossyra — Les trois Récits des origines", "droits": ["recit-ilka", "recit-doran", "recit-vela"] }
+}
