@@ -10,7 +10,7 @@ const base = new URL('art/', document.baseURI).href;
 /** à changer quand les portraits sont repeints sous le même nom : le navigateur recharge alors les nouveaux au lieu de garder les anciens en cache */
 const VERSION_PORTRAITS = 2;
 /** idem pour les illustrations des cartes */
-const VERSION_CARTES = 22;
+const VERSION_CARTES = 23;
 const PORTEURS_ILLUSTRES = new Set(['ilka', 'doran', 'vela', 'sasha', 'nuit', 'aurel', 'coursier', 'docker', 'guetteur', 'kessa', 'liane', 'joss']);
 
 /** Modules illustrés : id du Module dans donnees.ts → fichier */
@@ -20,6 +20,8 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   'toutes-les-courses': 'toutes-les-courses',
   'quarante-jours': 'quarante-jours',
   'berceuse-a-compter': 'berceuse-a-compter',
+  'ombre-nette': 'ombre-nette',
+  'nuit-blanche': 'nuit-blanche',
   // les nouvelles cartes (4 novembre 2026)
   'riveteuse': 'riveteuse',
   'racines-meres': 'racines-meres',
