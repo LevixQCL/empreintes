@@ -518,7 +518,7 @@ export function feuillePorteur(e: EcranDistrict): string {
         const m = moduleDef(c.carte);
         const effets = m.effet ? effetsDe(m).map((x) => `<span><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</span>`).join('') : `<span>${tr`Pas d’effet : sa force seule.`}</span>`;
         return `<li><span class="fp-carte-face">${faceCarte(m, 1)}</span><span class="fp-carte-texte"><strong>${echap(m.nom)}</strong>${effets}`
-          + (m.equivalent ? `<small>${tr`Mêmes chiffres que « ${echap(moduleDef(m.equivalent).nom)} », une carte qu’on trouve aussi dans le jeu.`}</small>` : '') + `</span></li>`;
+          + `<small>${tr`Carte exclusive, en argent : elle grandit avec ${echap(p.nom)} au fil de ses niveaux.`}${m.origine ? ' ' + tr`Face à un autre joueur (duel, défi d’un quai), son effet « ${echap(NOMS_EFFET[m.origine])} » est éteint.` : ''}</small></span></li>`;
       }).join('')}</ul>`;
       if (bq!.compte === 'pret') {
         h += `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="achat-payer" data-id="${droitRecit(recit)}"${bq!.occupe ? ' disabled' : ''}>${tr`Ce récit · ${prix}`}</button>`

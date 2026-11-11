@@ -33,7 +33,7 @@
 .fp-legal.rouge{color:var(--fp-rouge)}
 /* les deux cartes d'origine montrées avant l'achat : la face, puis ce qu'elle fait */
 .fp-cartes-recit{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:8px}
-.fp-cartes-recit li{display:grid;grid-template-columns:76px 1fr;gap:10px;align-items:center;padding:8px;border-radius:12px;background:rgba(255,255,255,.03);box-shadow:inset 0 0 0 1px rgba(216,180,101,.22)}
+.fp-cartes-recit li{display:grid;grid-template-columns:76px 1fr;gap:10px;align-items:start;padding:8px;border-radius:12px;background:rgba(255,255,255,.03);box-shadow:inset 0 0 0 1px rgba(216,180,101,.22)}
 .fp-carte-face{display:block;width:76px}
 .fp-carte-face>*{width:100%}
 .fp-carte-texte{display:flex;flex-direction:column;gap:4px;min-width:0;font-size:13px;line-height:1.4;color:var(--fp-doux)}

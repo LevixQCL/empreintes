@@ -530,8 +530,12 @@
    "en": "Yours for good on your account, on all your devices"
   },
   {
-   "fr": "Mêmes chiffres que « {0} », une carte qu’on trouve aussi dans le jeu.",
-   "en": "Same numbers as “{0}”, a card you can also find in the game."
+   "fr": "Carte exclusive, en argent : elle grandit avec {0} au fil de ses niveaux.",
+   "en": "Exclusive silver card: it grows with {0} as they level up."
+  },
+  {
+   "fr": "Face à un autre joueur (duel, défi d’un quai), son effet « {0} » est éteint.",
+   "en": "Against another player (duel, dock challenge), its “{0}” effect is switched off."
   },
   {
    "fr": "Ce récit · {0}",
