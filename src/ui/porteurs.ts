@@ -13,6 +13,7 @@ import { multNiveau } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
 import { illustrationBatiment, portrait } from './art';
 import { ICONES_ACTION, faceCarte } from './carte';
+import { RECITS_TEXTES } from './recits';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, entete, voletsEscouade, type EcranDistrict } from './coquille';
 import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugeCharge, jaugePv, plusLongueSuite } from './district';
 import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } from './guide';
@@ -496,8 +497,8 @@ export function feuillePorteur(e: EcranDistrict): string {
   if (recit) {
     const garde = carteDuRecit(j, recit);
     h += `<section class="fp-bloc fp-recit"><span class="fp-sceau" aria-hidden="true"></span><div><h3 class="fp-h3">${ICO.journal}${tr`Son récit d’origine`}</h3>`
-      + `<p class="fp-texte">${garde ? tr`Lu jusqu’au bout. Carte d’origine gardée : « ${moduleDef(garde).nom} ».` : tr('D’où elle vient, avant la porte : trois chapitres illustrés, et une carte d’origine à garder. Aperçu du Pack des origines.')}</p>`
-      + `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="recit-ilka">${garde ? tr('Relire son récit') : tr('Lire son récit')}</button>`
+      + `<p class="fp-texte">${garde ? tr`Lu jusqu’au bout. Carte d’origine gardée : « ${moduleDef(garde).nom} ».` : RECITS_TEXTES[recit]!.accroche}</p>`
+      + `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="recit-lire" data-id="${recit}">${garde ? tr('Relire son récit') : tr('Lire son récit')}</button>`
       + (garde ? `<button type="button" class="btn sec petit" data-action="recit-fin" data-id="${recit}">${tr`Changer de carte`}</button>` : '') + `</div></div></section>`;
   }
 

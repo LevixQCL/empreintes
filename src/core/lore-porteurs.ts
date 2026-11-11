@@ -31,11 +31,13 @@ export const ORIGINES: Record<string, PalierOrigine[]> = {
     { niveau: 8, titre: t('Pressée'), texte: t('Ilka ne sait pas marcher lentement. Quand on le lui fait remarquer, elle répond : « Je ne sais pas si c’est moi qui suis pressée, ou elle. » Personne n’a jamais su qui était « elle ». Ilka non plus, peut-être.') },
     { niveau: 12, titre: t('Le papier plié'), texte: t('Dans sa poche, Ilka garde toujours le même papier plié en quatre, usé aux coins. Elle ne le montre à personne. Au marché, on parie sur ce qu’il y a dessus. Personne n’a jamais gagné.') },
   ],
+  // 11 novembre 2026 (Bryan) : la Mue, le Levage, la Grève et la nuit de 2111 sont racontés dans le Récit de Doran
+  // (Pack des origines, src/ui/recits.ts). Son histoire gratuite ne garde que ce qu'on voit de lui aujourd'hui.
   doran: [
-    { niveau: 1, titre: t('La porte murée'), texte: t('Doran est né en 2069 dans une famille des chantiers d’abris. Son père a aidé à murer les accès sous le district en 2066, après « l’accident ». Il n’en a jamais dit qu’une phrase, répétée jusqu’à sa mort : « On a fermé la porte, mais pas de notre côté. »') },
-    { niveau: 4, titre: t('La Mue sur contrat'), texte: t('À vingt-cinq ans, Doran a signé un contrat de mue avec la Compagnie des Fondations : des poumons d’amphibien et de la chitine, contre quinze ans de service sous l’eau. Six mois dans une maison de mue des bas-fonds, à manger pour trois. Son corps a été dessiné pour le poste, pas pour lui. Il a fini son contrat en 2109.') },
-    { niveau: 8, titre: t('Quarante jours dans l’eau'), texte: t('Pendant la Grève des pompes de 2099, les Génés sont restés quarante jours dans l’eau des Fondations, là où personne d’autre ne pouvait tenir. Doran était de ceux-là. C’est de là que vient l’expression « têtus comme une marée ». Il n’en parle que si on lui sert à boire, et jamais pour s’en vanter.') },
-    { niveau: 12, titre: t('Ses épaules'), texte: t('Doran n’a pas d’enfant. « Je ne voulais pas qu’ils naissent avec mes épaules. » Un enfant sur dix des Génés de sa génération est né avec un trait de la Mue de ses parents. Il a vu ce que les Hauts voulaient faire de ces enfants-là : un registre.') },
+    { niveau: 1, titre: t('Les accès murés'), texte: t('Doran connaît chaque accès muré sous le district. Quand il passe devant l’un d’eux, il pose la main à plat sur la pierre, sans s’arrêter. Il ne dit jamais pourquoi.') },
+    { niveau: 4, titre: t('L’air qui compte'), texte: t('Quand il travaille, Doran fredonne un air qui compte les jours, un, deux, trois. Tous les Génés de sa génération le connaissent. Aucun n’en dit les paroles à quelqu’un qui n’a pas plongé.') },
+    { niveau: 8, titre: t('Il compte tout'), texte: t('Doran compte tout : les marches, les caisses, les éclats que la marée dépose. Il ne dit jamais le chiffre. Au marché, les vieux l’appellent « têtu comme une marée ». Il ne sourit pas.') },
+    { niveau: 12, titre: t('Pas de lampe'), texte: t('Tous les plongeurs portent une lampe de signal. Pas Doran. Quand on lui en tend une, il la rend sans l’avoir regardée : « Je n’en ai pas besoin. » Ilka dit qu’il voit dans le noir. Il ne la contredit pas.') },
   ],
   vela: [
     { niveau: 1, titre: t('La pierre orpheline'), texte: t('À dix-neuf ans, apprentie fouilleuse, Véla a assisté à la mort d’un vieux Résonant des bas-fonds, sans famille. Sa pierre, deuxième copie d’un dragon serpentin, n’intéressait pas les Hauts : une copie de district, pour eux, ça ne vaut rien.') },

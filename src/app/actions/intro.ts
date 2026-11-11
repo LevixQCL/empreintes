@@ -55,7 +55,7 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
     case 'recit-garder': if (app.recit) { const r = garderCarteRecit(app.jeu, app.recit, c.id); if (r.ok) sauver(); } break;
     case 'recit-quitter': app.recit = null; app.recitChoix = false; app.mode = 'district'; window.scrollTo(0, 0); break;
     case 'recit-fin': app.recit = c.id; app.recitChoix = true; app.mode = 'intro'; D.menu = false; window.scrollTo(0, 0); break;
-    case 'recit-ilka': app.recitChoix = false; app.recit = 'ilka'; app.introLongue = true; app.plan = 0; app.lignesVues = 1; app.texteCache = false; app.mode = 'intro'; D.menu = false; break;
+    case 'recit-lire': if (!RECITS_ORIGINES[c.id]) break; app.recitChoix = false; app.recit = c.id; app.introLongue = true; app.plan = 0; app.lignesVues = 1; app.texteCache = false; app.mode = 'intro'; D.menu = false; break;
     case 'intro': app.recit = null; app.introLongue = true; app.plan = 0; app.lignesVues = 1; app.texteCache = false; app.mode = 'intro'; D.menu = false; break;
     default: return 'inconnu';
   }

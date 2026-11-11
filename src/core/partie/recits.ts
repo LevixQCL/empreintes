@@ -24,6 +24,15 @@ export const RECITS_ORIGINES: Record<string, { porteur: string; question: string
       { carte: 'toutes-les-courses', phrase: t('Sa règle : accepter toutes les courses, et toujours arriver en avance.') },
     ],
   },
+  // Doran est un Géné (« tenir ») : un bouclier qui dure et un soin pour toute l'escouade (11 novembre 2026)
+  doran: {
+    porteur: 'doran',
+    question: t('Ce que Doran garde de ces années'),
+    choix: [
+      { carte: 'quarante-jours', phrase: t('Quarante jours dans le noir sous les Fondations, et des contrats qui restent à quinze ans. Têtus comme une marée.') },
+      { carte: 'berceuse-a-compter', phrase: t('La berceuse à compter les jours. Quelqu’un la commence dans le noir, et tout le monde la reprend.') },
+    ],
+  },
 };
 
 /** La carte d'origine gardée à la fin d'un récit (null : pas encore lu jusqu'au bout) */

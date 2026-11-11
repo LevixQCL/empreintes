@@ -241,10 +241,13 @@ export const MODULES: ModuleDef[] = [
 // À la fin d'un récit, le joueur choisit ce que le personnage garde de cette histoire. Tout ce qui s'achète a un équivalent
 // gratuit : chaque carte d'origine reprend exactement les chiffres d'une carte qu'on trouve dans le jeu (tests/recits.test.ts).
 // Ilka est une Augmentée : aucune carte de soin n'existe dans sa lignée, d'où une attaque et un bouclier.
+// Doran est un Géné : un bouclier qui dure (Rempart, Final) et un soin pour toute l'escouade (Vague).
 const equivalentDe = (id: string) => MODULES.find((m) => m.id === id)!;
 MODULES.push(
   origine('cle-des-pompes', tr('La clé des pompes'), equivalentDe('verin')),
   origine('toutes-les-courses', tr('Toutes les courses'), equivalentDe('condensateur')),
+  origine('quarante-jours', tr('Quarante jours'), equivalentDe('poumons-abysse')),
+  origine('berceuse-a-compter', tr('La berceuse à compter'), equivalentDe('branchies')),
 );
 
 /** La carte du parrainage */

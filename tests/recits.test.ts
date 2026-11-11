@@ -42,4 +42,15 @@ describe('Récits des origines', () => {
     garderCarteRecit(j, 'ilka', 'cle-des-pompes');
     expect(raisonNonEchangeable(j, carteId('cle-des-pompes', 'cuivre'))).toMatch(/origine/);
   });
+
+  it('Doran (Géné) : un bouclier Rempart et un soin d’escouade, de sa lignée', () => {
+    const r = RECITS_ORIGINES.doran!;
+    expect(r.choix.map((c) => c.carte)).toEqual(['quarante-jours', 'berceuse-a-compter']);
+    for (const c of r.choix) expect(moduleDef(c.carte).lignee).toBe('bio');
+    const j = nouveauJeu(3);
+    expect(garderCarteRecit(j, 'doran', 'cle-des-pompes').ok).toBe(false);
+    expect(garderCarteRecit(j, 'doran', 'berceuse-a-compter').ok).toBe(true);
+    expect(carteDuRecit(j, 'doran')).toBe('berceuse-a-compter');
+    expect(carteDuRecit(j, 'ilka')).toBeNull();
+  });
 });

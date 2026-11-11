@@ -80,6 +80,9 @@ export const LORE_CARTES: Record<string, string> = {
   // les cartes d'origine du Récit d'Ilka (11 novembre 2026)
   'cle-des-pompes': t('La clé de la station des pompes, que sa mère lui a passée autour du cou. Ilka ne l’a jamais rendue. Tant qu’on entend les pompes, on dort tranquille.'),
   'toutes-les-courses': t('Une seule règle depuis 2112 : accepter toutes les courses, les petites, les sales, celles de nuit. Elle n’arrive jamais en retard. Elle arrive en avance.'),
+  // les cartes d'origine du Récit de Doran (11 novembre 2026)
+  'quarante-jours': t('2099. La Compagnie voulait cinq ans de plus sur chaque contrat. Les Génés sont descendus et ne sont pas remontés. Le quarantième jour, l’affiche était déchirée.'),
+  'berceuse-a-compter': t('La veilleuse des maisons de mue la chante aux Génés qui pèlent. Le vingtième jour de la Grève, dans le noir, quelqu’un l’a commencée. Tout le monde l’a reprise.'),
   'empreinte-jumelle': t('Deux directeurs ont pressé le pouce sur le même éclat de cristal bleu, chacun dans son district. Depuis, l’éclat garde deux empreintes qui ne se recouvrent jamais tout à fait : quand l’une frappe, l’autre se souvient du coup.'),
   'chorale-ombres': t('Les ombres de plusieurs Résonants qui chantent ensemble, même quand leurs propriétaires se taisent. Joss dit que c’est la seule chorale qui ne fait jamais de fausse note.'),
   'cloche-abysses': t('Une cloche remontée de la Strate −8, couverte de coquillages qui n’existent plus. Quand elle sonne, chaque empreinte autour d’elle répond sur le même ton.'),
