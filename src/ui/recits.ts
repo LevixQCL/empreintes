@@ -115,7 +115,7 @@ const DORAN: Plan[] = [
     tr('Le quarantième jour, l’affiche est déchirée. Les contrats restent à quinze ans.'),
     tr('Quand ils remontent, le marché entier les attend. Une vieille femme leur crie : « Têtus comme une marée ! » Le mot reste.'),
     tr('2109. Son contrat prend fin. Doran est libre. Il reste aux pompes : sous l’eau, il n’est toujours pas lourd.')] }),
-  plan({ epoque: tr('Chapitre 3 · Quarante jours'), titre: tr('Trois éclats'), annees: [2111, 2111], ambiance: 'maree', camera: 'approche', texte: 'haut', fonds: [f('doran-09')], scene: () => nature(3), lignes: [
+  plan({ epoque: tr('Chapitre 3 · Quarante jours'), titre: tr('Trois éclats'), annees: [2111, 2111] /* même instant que « Le signal » d'Ilka : même image */, ambiance: 'maree', camera: 'approche', texte: 'haut', fonds: [f('ilka-03')], scene: () => nature(3), lignes: [
     tr('2111, la nuit où la passerelle des Hauts-Ponts cède. Une gamine coincée sous le métal. Il plonge sans réfléchir.'),
     tr('Au-dessus d’eux, quelqu’un s’accroche aux câbles et leur tend une lanterne. Sur l’eau, l’ombre d’un dragon. Doran l’a déjà vue, douze ans plus tôt.'),
     tr('Deux heures à lui tenir la tête hors de l’eau. Il sait ce que fera le courant quand les pompes repartiront. Il le sait depuis 2094.'),
