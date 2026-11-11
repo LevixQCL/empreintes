@@ -94,6 +94,14 @@
    "en": "Look at the floor. Boot prints. Fresh. Someone got here first."
   },
   {
+   "fr": "Et ça. Sous les pompes, des pieds nus, mouillés, qui sortent de l’eau. Ceux-là ne descendent pas. Ils montent.",
+   "en": "And that. Under the pumps: bare feet, wet ones, coming up out of the water. Those aren’t going down. They’re coming up."
+  },
+  {
+   "fr": "Je n’entends personne.",
+   "en": "I can’t hear anyone."
+  },
+  {
    "fr": "Au marché, ils disent que tu descends chercher l’Écluse : le truc de ceux d’avant pour retenir la mer. Dis-moi que tu y crois un peu.",
    "en": "Word at the market is you’re going down after the Sluice. You know, the thing the old ones built to hold back the sea. Tell me you believe in it. Just a bit."
   },
@@ -378,6 +386,18 @@
    "en": "Every time Aurel talks, my screen shows a number: 2. When he stops, it goes back to 1. No idea what it’s counting. But it’s counting us."
   },
   {
+   "fr": "J’ai trouvé ton 2. Aurel porte une empreinte : lui, plus elle, ça fait deux voix. Ton écran compte les Résonants, c’est tout. Un capteur de série, mal réglé.",
+   "en": "Found your 2. Aurel carries an imprint: him, plus her, that’s two voices. Your screen counts Resonants, that’s all. A stock sensor, badly calibrated."
+  },
+  {
+   "fr": "Donc ce n’est rien. Tant mieux.",
+   "en": "So it’s nothing. Good."
+  },
+  {
+   "fr": "Un inventaire. Chez nous, on dit « sous contrat ». J’en ai signé un, pour ma mue : « Quinze ans sous l’eau, et vous ressortez libre. » Personne ne m’a dit libre de quoi.",
+   "en": "An inventory. Where I live, we call it “under contract.” I signed one, for my Molt: “Fifteen years underwater, and you come out free.” Nobody told me free of what."
+  },
+  {
    "fr": "Isaure Orsève. Une grande famille des Hauts. Elle ne descend jamais : elle envoie les autres.",
    "en": "Isaure Orsève. One of the great families of the Heights. She never comes down. She sends others."
   },
@@ -578,6 +598,14 @@
    "en": "Traced the signal. It’s not your company. It comes up from below, along a cable bricked in back in 2101, under a western pillar."
   },
   {
+   "fr": "Ton capteur mal réglé, Sasha. Il vient d’écrire une ligne de plus : « Ilka : 2 ». Je n’ai pas d’empreinte. Alors qui est le deuxième ?",
+   "en": "Your badly calibrated sensor, Sasha. It just wrote one more line: “Ilka: 2.” I don’t carry an imprint. So who’s the second one?"
+  },
+  {
+   "fr": "Je ne sais pas. Je te jure que je ne sais pas.",
+   "en": "I don’t know. I swear I don’t know."
+  },
+  {
    "fr": "Leur mur s’arrête à la dernière rayure. Ils ont arrêté de graver. Ou ils n’ont plus eu de mur.",
    "en": "Their wall stops at the last scratch. Either they quit carving, or they ran out of wall."
   },
@@ -766,12 +794,44 @@
    "en": "She’s fallen asleep. Gently. For the first time in a very long while, someone else is holding the names for her: us."
   },
   {
-   "fr": "Mon écran s’est rallumé. Un seul chiffre, énorme, qui défile sans s’arrêter. Elle essaie de compter ce que la Tisseuse tenait. Elle n’y arrive pas.",
-   "en": "My screen’s back. One number, enormous, scrolling and scrolling. She’s trying to count everything the Weaver was holding. She can’t."
-  },
-  {
    "fr": "Le fond. Ceux d’avant. On y est presque.",
    "en": "The bottom. Those who came before. Nearly there."
+  },
+  {
+   "fr": "III · LE CIEL D’EN BAS",
+   "en": "III · THE SKY BELOW"
+  },
+  {
+   "fr": "Cette fois",
+   "en": "This Time"
+  },
+  {
+   "fr": "Au retour, la passerelle au-dessus du Ciel d’en bas craque sous l’escouade. Elle cède d’un côté, puis s’arrête à mi-chute, comme retenue par une main.",
+   "en": "On the way back, the walkway over the Sky Below cracks under the squad. One side gives way, then stops halfway down, as if a hand were holding it."
+  },
+  {
+   "fr": "Ce n’est pas moi. Mes jambes se sont verrouillées toutes seules. Elles tiennent la passerelle, directeur.",
+   "en": "It’s not me. My legs locked on their own. They’re holding the walkway, director."
+  },
+  {
+   "fr": "Sur mon écran, il y a une ville. De la pierre claire, des tours, un vrai ciel. Ce n’est pas l’archipel. Ce n’est nulle part que je connaisse.",
+   "en": "There’s a city on my screen. Pale stone, towers, a real sky. It’s not the archipelago. It’s nowhere I know."
+  },
+  {
+   "fr": "Avance. Ne regarde pas en bas. Pas cette fois.",
+   "en": "Keep moving. Don’t look down. Not this time."
+  },
+  {
+   "fr": "Ce n’était pas sa voix à elle. Celle-là a peur de nous. L’autre voulait qu’on passe.",
+   "en": "That wasn’t her own voice. That one’s afraid of us. The other one wanted us across."
+  },
+  {
+   "fr": "L’écran essaie de la compter. 1. 2. 1. Il n’arrive pas à se décider.",
+   "en": "The screen’s trying to count her. 1. 2. 1. It can’t make up its mind."
+  },
+  {
+   "fr": "Cette fois, elle a tenu.",
+   "en": "This time, it held."
   },
   {
    "fr": "Le fond",
@@ -806,8 +866,12 @@
    "en": "Let whoever reads this count the voices they carry."
   },
   {
-   "fr": "Mon écran affiche la même phrase. Mot pour mot. Elle ne l’a pas lue ici : elle l’a calculée. Depuis 2085, elle compte nos voix, et elle arrive au même endroit qu’eux.",
-   "en": "My screen’s showing the same sentence. Word for word. She didn’t read it here. She worked it out. She’s been counting our voices since 2085, and she’s ended up exactly where they did."
+   "fr": "Mon écran affiche la même phrase. Mot pour mot. Elle ne l’a pas calculée, directeur : elle s’en est souvenue. Et ce souvenir n’est pas à elle.",
+   "en": "My screen’s showing the same sentence. Word for word. She didn’t work it out, director. She remembered it. And that memory isn’t hers."
+  },
+  {
+   "fr": "2. Elle aussi, elle en porte deux.",
+   "en": "2. She carries two as well."
   },
   {
    "fr": "Il l’a dite comme une leçon qu’on récite. Depuis −3, ils nous disaient la même chose.",
@@ -864,6 +928,10 @@
   {
    "fr": "Ils cherchaient le ciel. Nous l’avons. Il flotte au-dessus de nous, et il est fermé.",
    "en": "They were looking for the sky. We have it. It floats over our heads, and it’s locked."
+  },
+  {
+   "fr": "Les pieds mouillés, sous les pompes, tout en haut. Ils montaient. Si ceux d’avant sont tous ici, alors qui remonte ?",
+   "en": "Those wet feet, under the pumps, all the way up top. They were climbing. If those who came before are all down here, then who’s coming up?"
   },
   {
    "fr": "ÉPILOGUE",

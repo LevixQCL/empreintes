@@ -43,7 +43,18 @@ export interface Replique {
   si?: (c: ContexteCampagne) => boolean;
   /** la réplique reprend un choix de Halte (son souvenir) : l'écran le marque « ton choix à −X » */
   souvenir?: string;
+  /** ce qu'affiche l'écran de la cheville d'Ilka pendant la réplique : le gros plan s'affiche, qu'Ilka soit là ou non */
+  ecran?: Ecran;
+  /** l'image charnière de la Strate (public/art/scenes/charniere-N.webp) prend le fond à partir de cette réplique */
+  charniere?: number;
 }
+
+/**
+ * L'écran de la cheville (11 novembre 2026, Bryan : « que le signe se voie en direct, qu'Ilka soit là ou non ») :
+ * `v` est dessiné dans l'écran vide de l'image ; plusieurs valeurs séparées par « | » défilent (le chiffre qui hésite).
+ * Une valeur vide : l'écran est éteint.
+ */
+export interface Ecran { v: string; anim?: 'clignote' | 'hesite' }
 
 /** L'illustration d'une scène : le décor de la zone, le portrait d'un gardien, ou un tableau de l'intro */
 export type ImageScene = { strate: number } | { ennemi: string } | { intro: string };
@@ -98,8 +109,10 @@ export const SCENES: Scene[] = [
       { qui: 'vela', texte: t('Elle n’est pas morte. Elle est descendue. Elle cherche quelque chose, plus bas.') },
       { qui: 'doran', texte: t('Par là, il n’y a que les couloirs qu’on a murés en 2066. Enfin, il n’y avait.') },
       { qui: 'ilka', texte: t('Un monstre fait de morts mélangés, qui connaît nos tunnels mieux que nous. Parfait.') },
-      { qui: 'ilka', texte: t('Et mes jambes se sont bloquées. Une seconde, quand elle s’est levée. Ça ne leur était jamais arrivé. Ne me regardez pas comme ça, c’est rien.') },
+      { qui: 'ilka', texte: t('Et mes jambes se sont bloquées. Une seconde, quand elle s’est levée. Ça ne leur était jamais arrivé. Ne me regardez pas comme ça, c’est rien.'), ecran: { v: '•' } },
       { qui: 'doran', texte: t('Et regardez par terre : des traces de bottes, toutes fraîches. Quelqu’un est passé avant nous.') },
+      { qui: 'doran', texte: t('Et ça. Sous les pompes, des pieds nus, mouillés, qui sortent de l’eau. Ceux-là ne descendent pas. Ils montent.'), charniere: 1 },
+      { qui: 'vela', texte: t('Je n’entends personne.') },
       { qui: 'ilka', texte: t('Au marché, ils disent que tu descends chercher l’Écluse : le truc de ceux d’avant pour retenir la mer. Dis-moi que tu y crois un peu.') },
       { qui: 'doran', texte: t('Les pompes ont tourné quatorze heures cette nuit. Écluse ou pas, la mer ne nous attendra pas.') },
       { qui: 'doran', texte: t('Si ta mesure de la marche arrive chez les Veilleurs, les Fondations finiront par l’apprendre. Elles couperont des pompes pour inspecter. Les nôtres d’abord. Celles des Hauts, jamais.'), ...souv('mesure-marche') },
@@ -114,14 +127,14 @@ export const SCENES: Scene[] = [
   apresGardien(2, 'confluence', t('Brac'),
     t('Au fond de la Strate, des sacs éventrés et des cristaux éteints. La Confluence les a trouvés avant vous, et elle a grossi. Dans un recoin, un pilleur tremble.'), [
       { qui: 'brac', texte: t('Je m’appelle Brac. Je ne les ai pas volées, directeur. Elles me l’ont demandé. Toute la nuit, elles m’ont demandé de les emmener plus bas. Jusqu’où, je n’en sais rien. Plus bas que tout ce que j’ai fouillé.') },
-      { qui: 'brac', texte: t('Elles répétaient un mot. « Ossyra. » J’ai cru que c’était un endroit, quelque part en dessous. Je voulais seulement les y conduire.') },
+      { qui: 'brac', texte: t('Elles répétaient un mot. « Ossyra. » J’ai cru que c’était un endroit, quelque part en dessous. Je voulais seulement les y conduire.'), charniere: 2 },
       { qui: 'vela', texte: t('Il dit vrai. Les empreintes de la chambre veulent descendre. Je ne sais pas pourquoi. Ce mot, je l’entends aussi, et je ne le comprends pas mieux que lui. Je sais seulement qu’elles ont peur de rester en haut.') },
       { qui: 'vela', texte: t('Le petit cristal qu’on a laissé rouler dans l’abri de 2060. Il est là, avec les autres. Il est arrivé avant nous.'), ...souv('cristal-libre') },
       { qui: 'hald', texte: t('Capitaine Hald, Brigades du Serment de Veyr. Au nom de la Maison Orsève, cette fouille est suspendue. Ce qui brille ici relève de la garde des Hauts.') },
       { qui: 'ilka', texte: t('On vient de se battre pour ça, capitaine. Vous, vous venez d’arriver.') },
       { qui: 'hald', texte: t('Votre directeur décidera. En attendant, mes Brigades suivent la Confluence. Avec ou sans vous.') },
       { qui: 'hald', texte: t('Les Hauts ont leurs raisons d’être pressés. Depuis la nuit où vous avez ouvert la chambre, deux des leurs ne savent plus leur propre nom.') },
-      { qui: 'ilka', texte: t('Encore. Quand Véla a touché les cristaux de Brac, mes jambes se sont arrêtées net. Pas une panne : elles ont attendu. Comme on attend la fin d’une phrase.') },
+      { qui: 'ilka', texte: t('Encore. Quand Véla a touché les cristaux de Brac, mes jambes se sont arrêtées net. Pas une panne : elles ont attendu. Comme on attend la fin d’une phrase.'), ecran: { v: '' } },
     ]),
   entree(3, t('Dans le noir'),
     t('À la Strate −3, loin du Puits Zéro et de ses rampes de visite, aucune lampe humaine ne s’est jamais arrêtée longtemps. Tous les puits de Vertiga y débouchent. Les Brigades de la capitaine Hald y sont entrées hier, par le leur ; aucune patrouille n’est remontée.'), [
@@ -130,12 +143,12 @@ export const SCENES: Scene[] = [
       { qui: 'doran', texte: t('La Confluence s’est arrêtée quelque part en dessous. Elle a fini de chercher.') },
       { qui: 'vela', texte: t('Elle a trouvé. C’est pire.') },
       { qui: 'ilka', texte: t('Un monstre qui a trouvé ce qu’il cherchait. Moi, je veux savoir quoi.') },
-      { qui: 'ilka', texte: t('Dans le noir, il y a une petite lumière qui clignote sur ma cheville. Pas au hasard. Elle compte.') },
+      { qui: 'ilka', texte: t('Dans le noir, il y a une petite lumière qui clignote sur ma cheville. Pas au hasard. Elle compte.'), ecran: { v: '•', anim: 'clignote' } },
     ]),
   apresGardien(3, 'confluence', t('Une seule voix'),
     t('La Confluence s’effondre pour de bon. De son cœur roule un cristal minuscule, net comme une goutte d’eau. Une seule voix y parle, très calme.'), [
-      { qui: 'vela', texte: t('Elle ne répète plus qu’un mot : « Compte. » Je crois que c’était la première voix, celle autour de qui les autres se sont collées. Compter quoi, je n’en sais rien.') },
-      { qui: 'ilka', texte: t('Ma cheville a arrêté de clignoter quand elle a dit ce mot. D’un coup. Comme si elle avait entendu.') },
+      { qui: 'vela', texte: t('Elle ne répète plus qu’un mot : « Compte. » Je crois que c’était la première voix, celle autour de qui les autres se sont collées. Compter quoi, je n’en sais rien.'), charniere: 3 },
+      { qui: 'ilka', texte: t('Ma cheville a arrêté de clignoter quand elle a dit ce mot. D’un coup. Comme si elle avait entendu.'), ecran: { v: '' } },
       { qui: 'doran', texte: t('Les patrouilles de la capitaine sont sauves. Elles étaient coincées sous un éboulement. Elles nous doivent la vie.') },
       { qui: 'doran', texte: t('Tu as laissé la lanterne à son clou, là-haut. Les fouilleurs l’apprendront. Chez nous, ça vaut plus qu’un Éclat.'), ...souv('clou-respecte') },
       { qui: 'hald', texte: t('Mes patrouilles ont trouvé une flèche à la craie, la bonne, avec une date. C’était vous. Je ne l’oublierai pas, directeur.'), ...souv('craie-hald') },
@@ -154,13 +167,13 @@ export const SCENES: Scene[] = [
       { qui: 'tobin', texte: t('Les Veilleurs descendent avec vous. On note tout. Même ce qui nous fait peur. Surtout ça.'), si: garde('commission') },
       { qui: 'kessa', texte: t('Kessa, plongeuse aux pompes. Mes parents ont mué pour ces couloirs-là. Moi, je suis née comme ça. Je n’en ai jamais vu le bout. Ce sera le bon jour.'), si: present('kessa') },
       { qui: 'sasha', texte: t('J’ai regardé tes jambes cette nuit, Ilka. Il y a le verrou de ta compagnie, ça, je connais. Et il y a autre chose : une ligne que personne n’a écrite chez nous, signée d’une date. 2033. Elle ne coupe rien. Elle écoute.') },
-      { qui: 'vela', texte: t('Derrière ces portes, quelqu’un a rangé les cristaux avec soin. Comme on range une chambre avant de partir pour de bon.') },
+      { qui: 'vela', texte: t('Derrière ces portes, quelqu’un a rangé les cristaux avec soin. Comme on range une chambre avant de partir pour de bon.'), charniere: 4 },
     ], (c) => !!c.actes.chambre),
   apresGardien(4, 'gardien-registres', t('L’appel'),
     t('Le Gardien des registres recule derrière une porte ronde et la referme sur lui. Avant de disparaître, il a lu une liste de noms, lentement, d’une voix de pierre.'), [
       { qui: 'doran', texte: t('Trois noms. Ivens, Daro, et le dernier, celui de mon père. Les trois qu’on n’a jamais barrés au mur des fouilleurs.') },
       { qui: 'vela', texte: t('Il ne nous menaçait pas. Il faisait l’appel. Comme s’il attendait que ceux de la liste reviennent.') },
-      { qui: 'ilka', texte: t('Mon écran de diagnostic vient de s’allumer tout seul. Une phrase, pas un code : « Si quelqu’un lit ceci, combien de temps a passé ? » Sasha, dis-moi que c’est une blague.') },
+      { qui: 'ilka', texte: t('Mon écran de diagnostic vient de s’allumer tout seul. Une phrase, pas un code : « Si quelqu’un lit ceci, combien de temps a passé ? » Sasha, dis-moi que c’est une blague.'), ecran: { v: '?' } },
       { qui: 'sasha', texte: t('Ce n’est pas moi. Cette phrase n’est dans aucun manuel.') },
       { qui: 'ilka', texte: t('Des gens qui ont muré une porte il y a cinquante-cinq ans, et un gardien qui les attend encore. Je déteste cet étage.') },
       { qui: 'doran', texte: t('Il m’a regardé en lisant le nom de mon père. Il sait que j’ai promis. Il attend de voir si je tiens parole.'), ...souv('promesse-cristal') },
@@ -181,7 +194,10 @@ export const SCENES: Scene[] = [
       { qui: 'ilka', texte: t('Un inventaire de Berceaux, signé en entier, cette fois : « I. Orsève ». Plus besoin de deviner.') },
       { qui: 'aurel', texte: t('Dame Isaure. Ma tante. C’est elle qui tient le Registre des Vierges. Elle ne descend jamais : elle envoie les autres.'), si: present('aurel') },
       { qui: 'aurel', texte: t('Mon cousin Théodric ne sait plus son nom depuis trois semaines. Il signe celui du fondateur. Là-haut, on dit qu’il est fatigué.') },
-      { qui: 'ilka', texte: t('Quand Aurel parle, mon écran affiche un chiffre : 2. Quand il se tait, il revient à 1. Je ne sais pas ce que ça compte. Mais ça compte sur nous.') },
+      { qui: 'ilka', texte: t('Quand Aurel parle, mon écran affiche un chiffre : 2. Quand il se tait, il revient à 1. Je ne sais pas ce que ça compte. Mais ça compte sur nous.'), ecran: { v: '2' } },
+      { qui: 'sasha', texte: t('J’ai trouvé ton 2. Aurel porte une empreinte : lui, plus elle, ça fait deux voix. Ton écran compte les Résonants, c’est tout. Un capteur de série, mal réglé.'), charniere: 5 },
+      { qui: 'ilka', texte: t('Donc ce n’est rien. Tant mieux.') },
+      { qui: 'doran', texte: t('Un inventaire. Chez nous, on dit « sous contrat ». J’en ai signé un, pour ma mue : « Quinze ans sous l’eau, et vous ressortez libre. » Personne ne m’a dit libre de quoi.') },
       { qui: 'vela', texte: t('Isaure Orsève. Une grande famille des Hauts. Elle ne descend jamais : elle envoie les autres.'), si: absent('aurel') },
       { qui: 'vela', texte: t('Le brigadier ne savait plus pourquoi il se battait. Le Gardien lui avait prêté une voix. Il y en a beaucoup trop, ici, des voix.') },
       { qui: 'aurel', texte: t('J’ai vu le premier relevé du fondateur, dans la niche 5-1. Il ne ressemble pas à ma tante. Il ne me ressemble pas non plus.'), si: (c) => c.presents.includes('aurel') && !!c.drapeaux?.includes('niche-fondateur'), souvenir: 'niche-fondateur' },
@@ -191,7 +207,7 @@ export const SCENES: Scene[] = [
     t('La Strate −6 s’ouvre sur un mur de béton coulé à la hâte, couvert de tampons de 2066. Derrière, quelqu’un pleure. Il n’y a personne.'), [
       { qui: 'liane', texte: t('Liane. Orsève, avant qu’on m’efface. Je connais ces pleurs. Les Berceaux qu’on vide font ce bruit-là. Dans les Hauts, on met de la musique pour ne pas l’entendre.'), si: present('liane') },
       { qui: 'doran', texte: t('Le chantier comptait le pied de la Tour comme niveau 1. Le niveau 7, c’est ici.') },
-      { qui: 'doran', texte: t('Mon père n’a jamais parlé de cette nuit. Il n’a dit qu’une phrase : « On a fermé la porte, mais pas de notre côté. » Je n’ai jamais su ce qu’il voulait dire.') },
+      { qui: 'doran', texte: t('Mon père n’a jamais parlé de cette nuit. Il n’a dit qu’une phrase : « On a fermé la porte, mais pas de notre côté. » Je n’ai jamais su ce qu’il voulait dire.'), charniere: 6 },
       { qui: 'vela', texte: t('Le Gardien des registres est derrière ce mur. Il protège ce qui pleure. Il faudra passer par lui.') },
       { qui: 'ilka', texte: t('Alors on casse le mur que ton père a construit, Doran. Désolée.') },
       { qui: 'doran', texte: t('Ne t’excuse pas. Il aurait voulu qu’on sache.') },
@@ -201,7 +217,7 @@ export const SCENES: Scene[] = [
       { qui: 'vela', texte: t('C’est le même, partout. Mais chaque cristal se souvient d’une autre vie. Il pleure parce qu’il ne sait plus laquelle est la sienne.') },
       { qui: 'doran', texte: t('En 2066, les ouvriers l’ont entendu, et ils ont eu peur. Pas d’un monstre : d’une question.') },
       { qui: 'vela', texte: t('Je peux le lire jusqu’au bout et savoir ce qu’ils ont caché, tous. Mais je ne sais pas ce qui restera de moi après.') },
-      { qui: 'ilka', texte: t('Mon écran, maintenant. Une liste. Véla : 2. Aurel : 2. Liane : 1. Et une ligne en bas : « Dérive en hausse depuis l’ouverture de la chambre. » Quelque chose fait des comptes sur nous, directeur. Et ça s’inquiète.') },
+      { qui: 'ilka', texte: t('Mon écran, maintenant. Une liste. Véla : 2. Aurel : 2. Liane : 1. Et une ligne en bas : « Dérive en hausse depuis l’ouverture de la chambre. » Quelque chose fait des comptes sur nous, directeur. Et ça s’inquiète.'), ecran: { v: '≡' } },
       { qui: 'vela', texte: t('Quand tu as posé la main sur le mur, ils se sont calmés. Ils ont compris qu’on venait pour eux, pas contre eux.'), ...souv('main-posee') },
       { qui: 'doran', texte: t('Le cristal de mon père est à sa place, dans le cercle. Le Gardien l’a regardé avant de s’effacer. Il a fermé son livre comme on ferme une affaire.'), ...souv('cristal-rendu') },
       { qui: 'doran', texte: t('Le cristal de mon père est toujours dans ma poche. Il ne pleure pas. Il attend, comme mon père attendait.'), ...souv('cristal-garde') },
@@ -240,8 +256,10 @@ export const SCENES: Scene[] = [
       { qui: 'doran', texte: t('Ta ligne est la plus haute du mur, maintenant, et la plus profonde. Pourvu qu’on n’ait jamais à en graver une autre.'), ...souv('ligne-gravee') },
       { qui: 'ilka', texte: t('Tout à l’heure, j’ai pris la passerelle cassée. La vraie. Je préfère mes souvenirs avec le trou dedans.'), ...souv('vraie-rive') },
       { qui: 'vela', texte: t('Ce n’était pas un souvenir. C’était un avenir. Elle tisse aussi avec ce qui pourrait arriver.') },
-      { qui: 'ilka', texte: t('Pendant qu’elle tissait, mon écran a écrit tout seul : « Opérateur autorisé ? Non. Demande d’aide. » Ma jambe demande de l’aide, directeur.') },
-      { qui: 'sasha', texte: t('J’ai suivi le signal. Il ne vient pas de ta compagnie. Il monte d’en dessous, par un câble muré en 2101, sous un pilier de l’ouest.') },
+      { qui: 'ilka', texte: t('Pendant qu’elle tissait, mon écran a écrit tout seul : « Opérateur autorisé ? Non. Demande d’aide. » Ma jambe demande de l’aide, directeur.'), ecran: { v: '!' } },
+      { qui: 'sasha', texte: t('J’ai suivi le signal. Il ne vient pas de ta compagnie. Il monte d’en dessous, par un câble muré en 2101, sous un pilier de l’ouest.'), charniere: 7 },
+      { qui: 'ilka', texte: t('Ton capteur mal réglé, Sasha. Il vient d’écrire une ligne de plus : « Ilka : 2 ». Je n’ai pas d’empreinte. Alors qui est le deuxième ?'), ecran: { v: '2' } },
+      { qui: 'sasha', texte: t('Je ne sais pas. Je te jure que je ne sais pas.') },
       { qui: 'doran', texte: t('Leur mur s’arrête à la dernière rayure. Ils ont arrêté de graver. Ou ils n’ont plus eu de mur.') },
       { qui: 'tobin', texte: t('Directeur ! Une équipe des Veilleurs est descendue à la Ruche d’ambre, juste en dessous, il y a un mois. Elle n’est jamais remontée.') },
     ]),
@@ -256,7 +274,7 @@ export const SCENES: Scene[] = [
   apresGardien(8, 'tisseuse', t('Un vrai détail'),
     t('Le souvenir se déchire. Les Veilleurs s’éveillent un à un, affamés, frigorifiés, et vivants. La Tisseuse a fui une dernière fois vers le bas.'), [
       { qui: 'tobin', texte: t('Ils sont tous là, tous les six. Merci. Les Veilleurs ne l’oublieront pas, et nous sommes très forts pour ne pas oublier.') },
-      { qui: 'ilka', texte: t('Elle parle, maintenant. Pas avec une voix : avec des mots sur mon écran, polis, d’une autre époque. « Bonjour. Je compte. Les vôtres dérivent depuis que la chambre est ouverte. Ceux des Hauts aussi. Je peux tenir la voix principale. Il faudrait m’ouvrir les implants. Tous. »') },
+      { qui: 'ilka', texte: t('Elle parle, maintenant. Pas avec une voix : avec des mots sur mon écran, polis, d’une autre époque. « Bonjour. Je compte. Les vôtres dérivent depuis que la chambre est ouverte. Ceux des Hauts aussi. Je peux tenir la voix principale. Il faudrait m’ouvrir les implants. Tous. »'), ecran: { v: '≡' }, charniere: 8 },
       { qui: 'doran', texte: t('Ouvrir tous les implants de la ville à une voix sous un pilier. Demande-lui ce qu’elle veut en échange.') },
       { qui: 'ilka', texte: t('Je lui ai demandé. Elle a répondu : « Que quelqu’un descende. Il y a très longtemps que j’attends. »') },
       { qui: 'doran', texte: t('Elle ne tue personne. Elle garde. Comme le Gardien des registres.') },
@@ -289,7 +307,7 @@ export const SCENES: Scene[] = [
       { qui: 'brac', texte: t('C’est moi qui te l’ai apportée. Ysé dit qu’un pilleur passe partout. Elle a raison. En passant, j’ai regravé mon nom au mur des fouilleurs. Une seule fois, cette fois-ci, et je compte bien le barrer.') },
       { qui: 'ilka', texte: t('Ysé écrit comme elle parle : gentiment, en te laissant le plus dur.') },
       { qui: 'doran', texte: t('Nous, on remonte toujours. Il y a des pompes qui nous attendent.') },
-      { qui: 'ilka', texte: t('Depuis qu’on est entrés, mon écran n’affiche plus rien. Elle se tait. Je crois qu’elle a peur de ce qui coud, en bas.') },
+      { qui: 'ilka', texte: t('Depuis qu’on est entrés, mon écran n’affiche plus rien. Elle se tait. Je crois qu’elle a peur de ce qui coud, en bas.'), ecran: { v: '' } },
     ]),
   apresGardien(9, 'tisseuse', t('Son nom'),
     t('La Tisseuse baisse les mains. Elle ne cherchait pas à vous vaincre : elle voulait savoir si vous teniez debout sans ses fils. Ils se défont autour d’elle comme une écharpe qu’on dénoue. Quand tu lui demandes son nom, elle sourit.'), [
@@ -297,9 +315,23 @@ export const SCENES: Scene[] = [
       { qui: 'tisseuse', texte: t('En dessous, c’est le fond. Le premier d’entre nous y attend. Lui sait encore qui il est. C’est bien ce qui fait peur.') },
       { qui: 'vela', texte: t('Tu le lui avais déjà demandé, dans son nid. Elle a attendu la fin pour répondre.'), ...souv('nom-demande') },
       { qui: 'vela', texte: t('Elle s’est endormie. Doucement. Pour la première fois depuis très longtemps, quelqu’un d’autre tient les noms à sa place : nous.') },
-      { qui: 'ilka', texte: t('Mon écran s’est rallumé. Un seul chiffre, énorme, qui défile sans s’arrêter. Elle essaie de compter ce que la Tisseuse tenait. Elle n’y arrive pas.') },
       { qui: 'doran', texte: t('Le fond. Ceux d’avant. On y est presque.') },
     ]),
+  {
+    // 11 novembre 2026 : le premier geste de la Glacière. L'Ossyra en elle prend la main, et sa ville passe sur l'écran
+    // sans jamais être expliquée (l'accroche de l'extension). Un écho à 2111 : la passerelle d'Ilka avait cédé, celle-ci tient.
+    id: 'passerelle-9', acte: 3, sur: t('III · LE CIEL D’EN BAS'), titre: t('Cette fois'), image: { strate: 9 },
+    recit: t('Au retour, la passerelle au-dessus du Ciel d’en bas craque sous l’escouade. Elle cède d’un côté, puis s’arrête à mi-chute, comme retenue par une main.'),
+    quand: (c) => c.vaincue >= 9,
+    repliques: [
+      { qui: 'ilka', texte: t('Ce n’est pas moi. Mes jambes se sont verrouillées toutes seules. Elles tiennent la passerelle, directeur.'), charniere: 9 },
+      { qui: 'ilka', texte: t('Sur mon écran, il y a une ville. De la pierre claire, des tours, un vrai ciel. Ce n’est pas l’archipel. Ce n’est nulle part que je connaisse.') },
+      { qui: 'doran', texte: t('Avance. Ne regarde pas en bas. Pas cette fois.') },
+      { qui: 'vela', texte: t('Ce n’était pas sa voix à elle. Celle-là a peur de nous. L’autre voulait qu’on passe.') },
+      { qui: 'ilka', texte: t('L’écran essaie de la compter. 1. 2. 1. Il n’arrive pas à se décider.'), ecran: { v: '1|2', anim: 'hesite' } },
+      { qui: 'ilka', texte: t('Cette fois, elle a tenu.') },
+    ],
+  },
   entree(10, t('Le fond'),
     t('La Strate −10 ne ressemble à aucune autre. Les salles sont nettes, les cristaux clairs, les portes mieux scellées que toutes les autres.'), [
       { qui: 'vela', texte: t('Une seule voix, quelque part au fond. La plus ancienne. Je n’en ai jamais entendu d’aussi nette.') },
@@ -309,9 +341,10 @@ export const SCENES: Scene[] = [
   apresGardien(10, 'premier-porteur', t('Le premier registre'),
     t('Le Premier Porteur abaisse les mains et se rassoit. Il n’a jamais voulu vous abattre : il voulait voir si vous teniez face à une seule voix, nette, sans vous y perdre. Il pose la main sur une table gravée, comme pour vous la confier. En haut, une phrase plus ancienne que tout ce que vous avez vu. Dessous, une ligne plus récente, de la même écriture.'), [
       { qui: 'premier-porteur', texte: t('Que celui qui lit ceci compte les voix qu’il porte.') },
-      { qui: 'ilka', texte: t('Mon écran affiche la même phrase. Mot pour mot. Elle ne l’a pas lue ici : elle l’a calculée. Depuis 2085, elle compte nos voix, et elle arrive au même endroit qu’eux.') },
+      { qui: 'ilka', texte: t('Mon écran affiche la même phrase. Mot pour mot. Elle ne l’a pas calculée, directeur : elle s’en est souvenue. Et ce souvenir n’est pas à elle.'), ecran: { v: '≡' } },
+      { qui: 'vela', texte: t('2. Elle aussi, elle en porte deux.'), ecran: { v: '2' } },
       { qui: 'vela', texte: t('Il l’a dite comme une leçon qu’on récite. Depuis −3, ils nous disaient la même chose.') },
-      { qui: 'premier-porteur', texte: t('Ossyra.') },
+      { qui: 'premier-porteur', texte: t('Ossyra.'), charniere: 10 },
       { qui: 'vela', texte: t('Le mot des empreintes, celui qu’on prenait pour un endroit. Il ne nous montre rien : il se présente. Ossyra, c’est leur nom à tous. Ceux qui portent.') },
       { qui: 'vela', texte: t('Tu lui as dit qui tu étais. Il vient de te répondre de la même façon : la main sur sa table, et le nom des siens.'), ...souv('presente') },
       { qui: 'ilka', texte: t('Ceux qui portent. On appelle les nôtres des Porteurs depuis cinquante ans. Personne ne s’est demandé à qui on avait pris le mot, ni où il les avait menés.') },
@@ -324,6 +357,7 @@ export const SCENES: Scene[] = [
       { qui: 'doran', texte: t('Et l’Écluse ? Pas une ligne dessus. Ils ont perdu contre leur eau, comme contre leurs voix.') },
       { qui: 'vela', texte: t('Une Écluse a existé, Doran. Ce qui éveille, ce qui soulève, ce qui tient : les cœurs des Berceaux. On les a trouvés, et on les a montés là-haut, pour cinq familles.') },
       { qui: 'vela', texte: t('Ils cherchaient le ciel. Nous l’avons. Il flotte au-dessus de nous, et il est fermé.') },
+      { qui: 'doran', texte: t('Les pieds mouillés, sous les pompes, tout en haut. Ils montaient. Si ceux d’avant sont tous ici, alors qui remonte ?') },
     ]),
   {
     id: 'epilogue', acte: 4, sur: t('ÉPILOGUE'), titre: t('Ce que tu as choisi'), image: { intro: '00-titre' },

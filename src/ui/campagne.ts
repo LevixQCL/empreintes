@@ -2,10 +2,10 @@
 // avec le portrait et le nom de qui parle. Un toucher fait parler le suivant ; « Passer » saute au bout.
 // Elles se rejouent dans la Bibliothèque, onglet Campagne (même écran, avec « Retour »).
 
-import { PERSONNAGES, SCENES, nomActe, repliquesDe, type ContexteCampagne, type ImageScene, type Scene } from '../core/campagne';
+import { PERSONNAGES, SCENES, nomActe, repliquesDe, type ContexteCampagne, type Ecran, type ImageScene, type Replique, type Scene } from '../core/campagne';
 import { strateDuSouvenir } from '../core/strates';
 import { ENNEMIS, PORTEURS, ennemiDef, porteurDef } from '../core/donnees';
-import { decorStrate, illustrationEnnemi, illustrationScene, portrait, portraitPersonnage } from './art';
+import { decorStrate, illustrationEnnemi, illustrationScene, imageCharniere, imageCheville, portrait, portraitPersonnage } from './art';
 import { NOM_LIGNEE } from './coquille';
 import { ICO } from './icones';
 import { echap } from './outils';
@@ -19,6 +19,26 @@ const imageDecor = (i: ImageScene): string =>
 
 /** l'illustration propre à la scène, sinon le décor qu'elle reprend */
 const imageScene = (s: Scene): string => illustrationScene(s.id) ?? imageDecor(s.image);
+
+/** Le fond à cette réplique : la dernière image charnière déjà apparue, sinon l'illustration de la scène */
+function fondA(s: Scene, dites: readonly Replique[]): string {
+  for (let i = dites.length - 1; i >= 0; i--) {
+    const n = dites[i]!.charniere;
+    const img = n ? imageCharniere(n) : null;
+    if (img) return img;
+  }
+  return imageScene(s);
+}
+
+/** Le gros plan sur la cheville d'Ilka, avec ce que son écran affiche (une valeur, ou plusieurs qui défilent) */
+function htmlCheville(e: Ecran): string {
+  const v = e.v.split('|');
+  const anim = e.anim ? ` ${e.anim}` : '';
+  return `<figure class="sc-cheville${e.v ? '' : ' eteint'}" aria-label="${t`L’écran de la cheville d’Ilka`}">`
+    + `<img src="${imageCheville}" alt="" decoding="async">`
+    + `<span class="sc-ecran${anim}" aria-hidden="true">${v.map((x, i) => `<b style="--i:${i}">${echap(x)}</b>`).join('')}</span>`
+    + `<figcaption>${t`Cheville d’Ilka`}</figcaption></figure>`;
+}
 
 /** Qui parle : son nom, ce qu'il est, sa couleur et son portrait (une initiale s'il n'en a pas) */
 function orateur(qui: string): { nom: string; role: string; couleur: string; img: string | null } {
@@ -45,7 +65,7 @@ export function htmlScene(s: Scene, c: ContexteCampagne, n: number, revoir = fal
   const r = dites ? repliques[dites - 1]! : null;
   const o = r ? orateur(r.qui) : null;
   const echo = r?.souvenir ? strateDuSouvenir(r.souvenir) : undefined;
-  const img = imageScene(s);
+  const img = fondA(s, repliques.slice(0, dites));
   let h = `<div class="voile scene-voile" role="dialog" aria-modal="true" aria-labelledby="scene-titre" style="--sc-img:url(${img})">`
     + `<section class="scene-campagne${fini ? ' finie' : ''}" data-action="scene-suite" aria-label="${echap(s.titre)}">`
     + `<div class="sc-fond" aria-hidden="true"><img src="${img}" alt="" decoding="async"></div>`
@@ -55,7 +75,7 @@ export function htmlScene(s: Scene, c: ContexteCampagne, n: number, revoir = fal
       : fini ? '' : `<button type="button" class="btn-sec sc-passer" data-action="scene-fin">${t`Passer`}</button>`)
     + `</header>`
     + `<p class="sc-recit${dites ? ' replie' : ''}">${echap(s.recit)}</p>`
-    + `<div class="sc-espace"></div>`;
+    + `<div class="sc-espace">${r?.ecran ? htmlCheville(r.ecran) : ''}</div>`;
   if (r && o) {
     h += `<div class="sc-replique" style="--c:${o.couleur}" aria-live="polite" data-k="${dites}">`
       + `<span class="sc-portrait" aria-hidden="true">${o.img ? `<img src="${o.img}" alt="" decoding="async">` : `<b>${echap(o.nom.replace(/^(Capitaine|Dame) /, '').charAt(0))}</b>`}</span>`

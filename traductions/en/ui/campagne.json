@@ -2,6 +2,14 @@
  "source": "src/ui/campagne.ts",
  "entrees": [
   {
+   "fr": "L’écran de la cheville d’Ilka",
+   "en": "The screen on Ilka’s ankle"
+  },
+  {
+   "fr": "Cheville d’Ilka",
+   "en": "Ilka’s ankle"
+  },
+  {
    "fr": "◆ Ton choix à −{0}",
    "en": "◆ Your choice at −{0}"
   },
