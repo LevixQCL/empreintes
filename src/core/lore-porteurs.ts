@@ -91,9 +91,10 @@ export const ORIGINES: Record<string, PalierOrigine[]> = {
 export const origineDe = (id: string, niveau: number) => (ORIGINES[id] ?? []).map((p) => ({ ...p, ouvert: niveau >= p.niveau }));
 
 export const PRESENTATIONS: Record<string, PresentationPorteur> = {
+  // 11 novembre 2026 (Bryan) : la chute à quatorze ans et le prêt-de-vie ne sont plus dits ici, ils appartiennent au Récit d'Ilka.
   ilka: {
     titre: t('Coursière des Hauts-Ponts'),
-    texte: t('Vingt-quatre ans, la plus rapide coursière du district, et la plus bavarde. Ses jambes mécaniques lui ont été posées en prêt-de-vie après une chute, à quatorze ans : chaque course rembourse un peu sa dette à la compagnie de transport. Elle connaît tous les raccourcis entre les tours.'),
+    texte: t('Vingt-quatre ans, la plus rapide coursière du district, et la plus bavarde. Elle accepte toutes les courses, à toute heure, et ne dit jamais pourquoi. Elle connaît tous les raccourcis entre les tours.'),
     replique: t('Je livre tout, partout, sauf les mauvaises nouvelles. Celles-là, je les fais traîner.'),
     pourquoi: t('Le matin de l’ouverture, ce sont les ouvriers qui l’ont envoyée chercher le nouveau directeur : quand ça presse, c’est toujours Ilka qu’on envoie. Elle aurait pu repartir. Elle est restée, parce qu’elle connaît tous les raccourcis entre les tours et qu’une course pareille ne se refuse pas. Ses jambes d’Augmentée la portent là où les autres n’osent pas sauter.'),
   },
