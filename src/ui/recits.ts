@@ -23,7 +23,7 @@ const ILKA: Plan[] = [
     tr('Ilka a quatorze ans et ses jambes à elle. Elle court déjà plus vite que tous les coursiers du district.'),
     tr('Sa mère répare les pompes. Elle répète toujours : « Tant qu’on entend les pompes, on dort tranquille. »'),
     tr('Ce soir-là, les pompes se taisent. Les quais vont fermer, et il reste un colis à livrer de l’autre côté. Le raccourci passe par la vieille passerelle.'),
-    tr('Sur la passerelle, il y a une fissure. Ilka l’a signalée. Deux autres coursiers aussi. On leur a répondu : « Conforme. »')] }),
+    tr('Sur la passerelle, il y a une fissure. Ilka l’a signalée au printemps. Une commerçante l’été, un ouvrier des Fondations l’automne. Les trois rapports sont revenus avec le même tampon : « non prioritaire ».')] }),
   plan({ epoque: tr('Chapitre 1 · Signalée trois fois'), titre: tr('Deux heures'), annees: [2111, 2111], ambiance: 'maree', camera: 'descend', texte: 'haut', fonds: [f('ilka-02')], scene: () => nature(2), lignes: [
     tr('La passerelle cède. Ilka tombe entre deux piliers, les jambes coincées sous le métal. L’eau monte.'),
     tr('Un Géné des pompes plonge, la peau dure comme une carapace. Il tire de toutes ses forces : le métal ne bouge pas. Alors il lui tient la tête hors de l’eau. « Je m’appelle Doran. On attend les pompes. »'),
