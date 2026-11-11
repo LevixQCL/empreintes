@@ -205,9 +205,9 @@ export const illustrationEnnemi = (id: string): string | null =>
  * recensement des images, on se battait contre « sa » propre Ilka. Le garde garde le nom du Porteur qu'il sert,
  * mais prend un visage de garde de sa lignée, en deux variantes pour que deux gardes d'une même lignée diffèrent.
  * Prompts : docs/prompts-recensement.md. Tant qu'un visage n'est pas peint, le garde reprend le portrait du Porteur
- * (10 novembre 2026 : tous peints sauf garnison-bio-1).
+ * (10 et 11 novembre 2026 : tous peints).
  */
-const GARNISONS_PEINTES = new Set<string>(['garnison-tech-1', 'garnison-tech-2', 'garnison-bio-2', 'garnison-reso-1', 'garnison-reso-2']);
+const GARNISONS_PEINTES = new Set<string>(['garnison-tech-1', 'garnison-tech-2', 'garnison-bio-1', 'garnison-bio-2', 'garnison-reso-1', 'garnison-reso-2']);
 export function visageGarnison(lignee: string, variante: number, porteur: string): string | null {
   const id = `garnison-${lignee}-${(variante % 2) + 1}`;
   return GARNISONS_PEINTES.has(id) ? `${base}ennemis/${id}.webp` : portrait(porteur);
@@ -218,10 +218,11 @@ export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;
 export const filigrane = (palier: 1 | 2 | 3) => `${base}empreinte/${['trace', 'sillon', 'empreinte'][palier - 1]}.webp`;
 /**
  * Décor d'une Strate : une illustration et une ambiance par Strate (28 octobre 2026, Bryan : « des thèmes différents »),
- * de −1 (fondations noyées, vert d'eau) à −10 (le fond, obsidienne et braise). Au-delà de −10, le décor du fond.
+ * de −1 (fondations noyées, vert d'eau) à −10 (le fond, obsidienne et braise), puis les Strates du Fond −11 à −15
+ * (11 novembre 2026 : l'eau d'en bas, la forêt de cristal, le registre, ton pilier, les vannes). Au-delà, le décor de −15.
  * Les anciennes images par zone (strates/zone-N.webp) restent pour les --sref des prompts.
  */
-const STRATES_PEINTES = 10;
+const STRATES_PEINTES = 15;
 const numStrate = (strate: number) => Math.min(STRATES_PEINTES, Math.max(1, Math.round(strate) || 1));
 export const decorStrate = (strate: number): string => `${base}strates/strate-${numStrate(strate)}.webp`;
 /**

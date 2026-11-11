@@ -307,7 +307,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'chouettes', livre: 2, titre: t('Les yeux d’or'), epoque: '2104 – 2111', image: '08-reponse', strate: 3,
+    id: 'chouettes', livre: 2, titre: t('Les yeux d’or'), epoque: '2104 – 2111', image: 'chap-chouettes', strate: 3,
     teaser: t('Ce que Vertiga a vu sur les écrans des marchés, et ce qu’elle n’a pas regardé.'),
     paragraphes: [
       t('Je vais te raconter deux histoires qui n’ont rien à voir l’une avec l’autre. Tu verras qu’elles se ressemblent.'),
@@ -366,7 +366,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'vierges', livre: 3, titre: t('Le Registre des Vierges'), epoque: '2071 – 2121', image: '07-ascension', strate: 6,
+    id: 'vierges', livre: 3, titre: t('Le Registre des Vierges'), epoque: '2071 – 2121', image: 'chap-vierges', strate: 6,
     teaser: t('Pourquoi les Résonants des Hauts sont plus forts que les autres.'),
     paragraphes: [
       t('Tu t’es sûrement demandé pourquoi les Résonants des Hauts sont si puissants, et ceux des districts si discrets. Les Hauts te répondront « le sang d’or ». C’est vrai pour une part : l’aptitude à accepter une pierre se transmet, un peu, comme la taille ou la couleur des yeux. Un enfant de Résonants réussit l’Accord une fois sur quatre ; un enfant de chez toi, une fois sur trente. Mais ce n’est pas l’essentiel.'),
@@ -437,7 +437,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'post-scriptum', livre: 3, titre: 'Post-scriptum', epoque: '2121', image: 'chap-avant', strate: 10,
+    id: 'post-scriptum', livre: 3, titre: 'Post-scriptum', epoque: '2121', image: 'chap-post-scriptum', strate: 10,
     teaser: t('Ce que la copie d’Ysé ne disait pas.'),
     paragraphes: [
       t('Ma copie s’arrêtait à la première phrase.'),
@@ -451,7 +451,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'clause', livre: 3, titre: t('Il y est reçu'), epoque: '2099 – 2121', image: 'chap-accords', strate: 10,
+    id: 'clause', livre: 3, titre: t('Il y est reçu'), epoque: '2099 – 2121', image: 'chap-clause', strate: 10,
     teaser: t('Ce que dit vraiment la Clause de la Flèche.'),
     paragraphes: [
       t('Tu connais la Clause de la Flèche. Tout le monde la connaît, comme on connaît une chanson dont on ne lit jamais les paroles. Je les ai relues pour toi, dans le texte signé des Accords : « Tout district peut envoyer une escouade ; s’il tient le sommet au passage d’une île, il y est reçu. »'),
@@ -477,7 +477,7 @@ export const CHAPITRES: Chapitre[] = [
   // l'Écluse qui retient l'eau). Ysé rouvre son cahier : un chapitre à chaque Strate du Fond, de −11 à −15, qui suit l'enquête
   // des Haltes du Fond (strates.ts) sans jamais la devancer. Rien n'y est tranché : le vrai choix viendra plus tard.
   {
-    id: 'rouvrir', livre: 4, titre: t('J’avais fermé mon cahier'), epoque: '2121', image: 'chap-lettre', strate: 11,
+    id: 'rouvrir', livre: 4, titre: t('J’avais fermé mon cahier'), epoque: '2121', image: 'chap-rouvrir', strate: 11,
     teaser: t('Ysé rouvre son cahier, quand tu remontes de −11.'),
     paragraphes: [
       t('J’avais fermé mon cahier, directeur. Je te l’avais dit, et je le pensais : la suite était à toi. Puis Sasha est entré dans les Archives sans frapper, trempé jusqu’aux genoux, et il a posé sur ma table une fiole d’eau tiède. « Goûtez. » Je l’ai rouvert le soir même.'),
@@ -489,7 +489,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'foret', livre: 4, titre: t('La forêt sous l’eau'), epoque: t('Les Strates du Fond'), image: '10-dessous', strate: 12,
+    id: 'foret', livre: 4, titre: t('La forêt sous l’eau'), epoque: t('Les Strates du Fond'), image: 'chap-foret', strate: 12,
     teaser: t('Ce qu’Ysé a lu dans le carnet de chantier que tu as remonté de −12.'),
     paragraphes: [
       t('Tu m’as rapporté une pince. Je l’ai posée sur mon bureau, à côté de la fiole de Sasha, et je les regarde toutes les deux depuis trois jours. Une eau qui monte, et l’outil qui l’a fait monter.'),
@@ -513,7 +513,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'cent-douze', livre: 4, titre: t('Ton pilier'), epoque: '2091 – 2121', image: '07-ascension', strate: 14,
+    id: 'cent-douze', livre: 4, titre: t('Ton pilier'), epoque: '2091 – 2121', image: 'chap-cent-douze', strate: 14,
     teaser: t('Ce qui se trouve exactement sous la Tour du Noyau.'),
     paragraphes: [
       t('Tu te souviens de la première chose que je t’ai apprise sur ton district : qu’on choisissait, pour les chantiers d’abris, un pilier dont le pied ne bougeait jamais, et que personne ne s’était demandé pourquoi ceux-là tenaient. Tu as la réponse, maintenant. Tu l’as vue de tes yeux, sous ta Tour.'),
@@ -524,7 +524,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'se-rendre', livre: 4, titre: t('Ce qui tient ne se reprend pas'), epoque: '2121', image: 'chap-glaciere', strate: 15,
+    id: 'se-rendre', livre: 4, titre: t('Ce qui tient ne se reprend pas'), epoque: '2121', image: 'chap-se-rendre', strate: 15,
     teaser: t('La dernière ligne gravée au fond du Fond.'),
     paragraphes: [
       t('« Ce qui tient ne se reprend pas. Il se rend. » J’ai écrit la phrase en haut d’une page blanche, et je n’arrive pas à écrire la suite.'),
