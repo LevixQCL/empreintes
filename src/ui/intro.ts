@@ -174,7 +174,9 @@ export const PLANS: Plan[] = [
 ];
 
 /** Illustrations Midjourney déjà déposées dans public/intro/ */
-const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '03-tempetes', '03-fracture', '04-hauteur', '05-puits-zero', '06-empreintes', '07-ascension', '08-reponse', '09-oubli', '10-dessous', '10-cuvette', '10-toi']);
+const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '03-tempetes', '03-fracture', '04-hauteur', '05-puits-zero', '06-empreintes', '07-ascension', '08-reponse', '09-oubli', '10-dessous', '10-cuvette', '10-toi',
+  // le Récit d'Ilka (Pack des origines, 11 novembre 2026)
+  ...Array.from({ length: 10 }, (_, i) => `ilka-${String(i + 1).padStart(2, '0')}`)]);
 /** Plans qui ont aussi une courte vidéo en boucle (public/intro/<id>.mp4), l'image sert d'affiche.
  *  10-toi n'en a plus : sa boucle sautait ; l'image fixe et le zoom vers la porte la remplacent. */
 const VIDEOS_DISPONIBLES = new Set<string>([]);

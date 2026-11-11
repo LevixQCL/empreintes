@@ -1,6 +1,6 @@
 # Prompts Midjourney — le Récit d'Ilka (Pack des origines, 11 novembre 2026)
 
-Dix images, une par plan du Récit (src/ui/recits.ts), à déposer dans `public/intro/ilka-01.webp` à `ilka-10.webp`
+✓ Les dix images sont dans le jeu (11 novembre 2026 ; ilka-02 refaite : la première souriait). Dix images, une par plan du Récit (src/ui/recits.ts), à déposer dans `public/intro/ilka-01.webp` à `ilka-10.webp`
 (816 × 1456, 9:16), puis à ajouter à `IMAGES_DISPONIBLES` dans src/ui/intro.ts. Tant qu'une image manque, le plan montre sa scène dessinée en code.
 
 - Style : celui de l'intro (les deux --sref ci-dessous). Midjourney 8.2 : pas de --oref ; joindre les portraits comme références d'image.
