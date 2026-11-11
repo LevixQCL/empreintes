@@ -8,7 +8,7 @@ import { LOT_RECITS, PRODUITS, aRecit, droitRecit, lotProposable, prixEuros, ACC
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
-import { NOMS_EFFET, nomsEffets, texteEffet } from '../core/effets';
+import { NOMS_EFFET, effetsDe, nomsEffets, texteEffet } from '../core/effets';
 import { multNiveau } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
 import { illustrationBatiment, portrait } from './art';
@@ -512,7 +512,14 @@ export function feuillePorteur(e: EcranDistrict): string {
       h += `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="recit-acheter" data-id="${recit}" aria-expanded="false">${ICO.verrou}${tr`Débloquer son récit · ${prix}`}</button></div>`;
     } else {
       // l'offre dépliée : ce qu'on reçoit, puis le paiement (ou ce qui manque pour payer)
-      h += `<ul class="fp-offre"><li>${tr`Trois chapitres illustrés, à relire quand tu veux`}</li><li>${tr`Une carte d’origine pour ${echap(p.nom)}, à choisir entre deux à la fin du récit`}</li><li>${tr`Acquis pour toujours sur ton compte, sur tous tes appareils`}</li></ul>`;
+      h += `<ul class="fp-offre"><li>${tr`Trois chapitres illustrés, à relire quand tu veux`}</li><li>${tr`Une carte d’origine pour ${echap(p.nom)}, tu gardes l’une des deux ci-dessous, à la fin du récit`}</li><li>${tr`Acquis pour toujours sur ton compte, sur tous tes appareils`}</li></ul>`;
+      // aucune surprise (Bryan, 11 novembre 2026) : les deux cartes d'origine en clair avant de payer, avec ce qu'elles font
+      h += `<ul class="fp-cartes-recit">${RECITS_ORIGINES[recit]!.choix.map((c) => {
+        const m = moduleDef(c.carte);
+        const effets = m.effet ? effetsDe(m).map((x) => `<span><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</span>`).join('') : `<span>${tr`Pas d’effet : sa force seule.`}</span>`;
+        return `<li><span class="fp-carte-face">${faceCarte(m, 1)}</span><span class="fp-carte-texte"><strong>${echap(m.nom)}</strong>${effets}`
+          + (m.equivalent ? `<small>${tr`Mêmes chiffres que « ${echap(moduleDef(m.equivalent).nom)} », une carte qu’on trouve aussi dans le jeu.`}</small>` : '') + `</span></li>`;
+      }).join('')}</ul>`;
       if (bq!.compte === 'pret') {
         h += `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="achat-payer" data-id="${droitRecit(recit)}"${bq!.occupe ? ' disabled' : ''}>${tr`Ce récit · ${prix}`}</button>`
           + (lotProposable(bq!.achats) ? `<button type="button" class="btn sec petit" data-action="achat-payer" data-id="${LOT_RECITS}"${bq!.occupe ? ' disabled' : ''}>${tr`Les trois récits · ${prixEuros(PRODUITS[LOT_RECITS]!.prix)}`}</button>` : '') + `</div>`

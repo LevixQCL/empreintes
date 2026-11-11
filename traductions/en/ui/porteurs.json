@@ -522,12 +522,16 @@
    "en": "Three illustrated chapters, to reread whenever you like"
   },
   {
-   "fr": "Une carte d’origine pour {0}, à choisir entre deux à la fin du récit",
-   "en": "An origin card for {0}, chosen from two at the end of the story"
+   "fr": "Une carte d’origine pour {0}, tu gardes l’une des deux ci-dessous, à la fin du récit",
+   "en": "An origin card for {0}: you keep one of the two below, at the end of the story"
   },
   {
    "fr": "Acquis pour toujours sur ton compte, sur tous tes appareils",
    "en": "Yours for good on your account, on all your devices"
+  },
+  {
+   "fr": "Mêmes chiffres que « {0} », une carte qu’on trouve aussi dans le jeu.",
+   "en": "Same numbers as “{0}”, a card you can also find in the game."
   },
   {
    "fr": "Ce récit · {0}",
