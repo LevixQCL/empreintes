@@ -64,8 +64,8 @@ export const NOMS_LIGNEE: Record<Lignee | 'neutre', { nom: string; court: string
 // Résonants = Désarmer, Fissure, Accord, Crescendo (l'empreinte lit et amplifie).
 
 /** id, nom, lignée, métal d'origine, action, force (dans le métal d'origine), Fréquences (de la principale à la plus rare), effet, lourde */
-/** du cuivre à l'argent : le même rapport que METAL_FORCE (1,32 / 1,18) */
-const METAL_FORCE_ORIGINE = 1.32 / 1.18;
+/** du cuivre à l'or : le même rapport que METAL_FORCE (1,46 / 1,18) */
+const METAL_FORCE_ORIGINE = 1.46 / 1.18;
 const c = (id: string, nom: string, lignee: Lignee, rarete: Rarete, type: TypeGeste, v: number, f: number[], effet?: Effet, lourd = false): ModuleDef =>
   ({ id, nom, lignee, rarete, type, v, f, ...(effet ? { effet } : {}), ...(lourd ? { lourd: true } : {}) });
 /** une carte exclusive (28 octobre 2026) : elle n'existe que dans son métal d'origine, jamais dans un autre */
@@ -78,12 +78,12 @@ const legs = (id: string, nom: string, lignee: Lignee, type: TypeGeste, v: numbe
 /** la carte du parrainage : exclusive, dans son seul métal, jamais tirée */
 const lien = (id: string, nom: string, lignee: Lignee, rarete: Rarete, type: TypeGeste, v: number, f: number[], effet: Effet): ModuleDef =>
   ({ ...c(id, nom, lignee, rarete, type, v, f, effet), lien: true });
-/** une carte d'origine (Récits des origines) : elle part d'une carte gratuite en cuivre, passe en argent (le seul métal où elle existe)
+/** une carte d'origine (Récits des origines) : elle part d'une carte gratuite en cuivre, passe en or (le seul métal où elle existe ; en argent jusqu'au 11 novembre 2026 au soir, Bryan : « vraiment rare »)
  *  et reçoit un second effet. Une Fréquence libre est toujours le premier effet (comme sur l'Héritage). */
 const origine = (id: string, nom: string, depuis: ModuleDef, bonus: Effet): ModuleDef => {
   const libre = bonus.type === 'accord' || bonus.type === 'diapason';
   return {
-    ...depuis, id, nom, rarete: 'argent', v: Math.round(depuis.v * METAL_FORCE_ORIGINE),
+    ...depuis, id, nom, rarete: 'or', v: Math.round(depuis.v * METAL_FORCE_ORIGINE),
     effet: libre ? bonus : depuis.effet!, effet2: libre ? depuis.effet! : bonus, origine: bonus.type,
   };
 };

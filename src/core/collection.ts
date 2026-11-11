@@ -229,7 +229,7 @@ export function cartesEnJeu(porteurId: string, cartes: { id: string; niveau: num
   return cartes.map(({ id, niveau }) => gesteDeCarte(id, porteurId, multNiveau(id, niveau), cransEffet(niveau)));
 }
 
-/** Face à un autre joueur, une carte d'origine (payante) perd l'effet qu'elle a en plus : elle y vaut une carte d'argent ordinaire.
+/** Face à un autre joueur, une carte d'origine (payante) perd l'effet qu'elle a en plus : elle y vaut une carte d'or ordinaire.
  *  Le pay-to-win ne compte qu'entre joueurs (Bryan, 11 novembre 2026) : l'avantage vendu reste dans les Strates. */
 export function sansBonusOrigine(g: GesteDef): GesteDef {
   const bonus = g.carte && estCarteConnue(g.carte) ? moduleDef(g.carte).origine : undefined;

@@ -1,7 +1,7 @@
 // L'économie à cristal unique (9 novembre 2026, docs/economie-cristal.md) : le Générateur taille le minerai rapporté en jouant
 // (`composants`) en cristaux (`energie`), rien ne se perd ; et les soins intensifs de la Clinique, payés en cristaux.
 import { describe, expect, it } from 'vitest';
-import { DISTRICT, SOINS_INTENSIFS, brutEnAttente, heuresDeTaille, nouveauJeu, raffiner, raffinageParHeure, soignerVite, tick } from '../src/core/jeu';
+import { DISTRICT, SOINS_INTENSIFS, VERSION_JEU, brutEnAttente, heuresDeTaille, nouveauJeu, raffiner, raffinageParHeure, soignerVite, tick } from '../src/core/jeu';
 
 const HEURE = 3_600_000;
 const pret = () => { const j = nouveauJeu(0, 1); j.chambre = true; j.recrues = true; return j; };
@@ -90,7 +90,7 @@ describe('Les anciennes sauvegardes (version 9 → 10)', () => {
     j.porteurs.doran!.poste = 'noyau';
     j.seances = [{ porteur: 'doran', cible: 12, xpTotale: 100, xpGagnee: 0, xpHeure: 10, energie: 2640 }];
     expect(estJeuValide(j)).toBe(true);
-    expect(j.version).toBe(12);
+    expect(j.version).toBe(VERSION_JEU);
     expect(j.energie).toBe(1000);
     expect(j.composants).toBe(1234);
     expect(j.seances![0]!.energie).toBe(132);

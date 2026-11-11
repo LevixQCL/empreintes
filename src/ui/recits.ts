@@ -219,7 +219,7 @@ export function htmlChoixRecit(recit: string, actuelle: string | null): string {
       return `<button type="button" class="cr-option${garde ? ' garde' : ''}" data-action="recit-garder" data-id="${c.carte}" aria-pressed="${garde}">`
         + `<span class="cr-face">${faceCarte(m, 1)}</span>`
         + `<span class="cr-texte"><strong>${m.nom}</strong><em>${c.phrase}</em>`
-        + `<small>${tr`Carte exclusive, en argent, à deux effets : ${nomsEffets(m)}. Elle grandit avec son Porteur.`}</small>`
+        + `<small>${tr`Carte exclusive, en or, à deux effets : ${nomsEffets(m)}. Elle grandit avec son Porteur.`}</small>`
         + (garde ? `<b class="cr-badge">${tr`Gardée`}</b>` : '') + `</span></button>`;
     }).join('')}</div>`
     + `<button type="button" class="btn sec" data-action="recit-quitter">${actuelle ? tr('Garder mon choix') : tr('Choisir plus tard')}</button>`

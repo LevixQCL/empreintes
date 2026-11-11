@@ -13,6 +13,7 @@ import { ORDRE_FAMILLES } from '../fragments';
 import { FAMILLES_DEPART, FAMILLES_DISTRICT, familleDuFragment } from '../familles';
 import { SECTEURS } from '../digue';
 import { donnerKitRecrues, recompenserLecture } from './recompenses';
+import type { Rarete } from '../types';
 import { rattraperCartesFleche } from './fleche';
 import { t } from '../i18n';
 
@@ -326,17 +327,22 @@ function migrer(j: Jeu) {
     // version 12 (11 novembre 2026) : les cartes d'origine des Récits passent du cuivre à l'argent (exclusives, deux effets).
     // La carte gardée reste la même, là où elle est : seule sa clé change de métal.
     j.version = 12;
-    originesEnArgent(j);
+    originesDeMetal(j, 'cuivre', 'argent');
+  }
+  if (j.version === 12) {
+    // version 13 (11 novembre 2026, soir) : les cartes d'origine passent de l'argent à l'or. Même carte, même niveau, même deck.
+    j.version = 13;
+    originesDeMetal(j, 'argent', 'or');
   }
   allegerSelonCharge(j);
   // 10 novembre 2026 : les quais gravés déjà passés donnent leur carte au choix (une seule fois, notée dans fleche.cartes)
   rattraperCartesFleche(j);
 }
 
-/** Les cartes d'origine gardées en cuivre deviennent leur exemplaire d'argent : collection, decks, vécu et pastilles « nouveau » */
-function originesEnArgent(j: Jeu) {
+/** Les cartes d'origine gardées dans un métal deviennent leur exemplaire du métal suivant : collection, decks, vécu et pastilles « nouveau » */
+function originesDeMetal(j: Jeu, de: Rarete, vers: Rarete) {
   for (const m of MODULES.filter((x) => x.origine)) {
-    const avant = carteId(m.id, 'cuivre'), apres = carteId(m.id, 'argent');
+    const avant = carteId(m.id, de), apres = carteId(m.id, vers);
     const c = j.collection[avant];
     if (c) {
       delete j.collection[avant];

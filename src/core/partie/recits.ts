@@ -1,7 +1,7 @@
 // Les Récits des origines (Pack des origines, 11 novembre 2026, document « Ossyra — Monétisation ») :
 // à la fin d'un récit, le joueur choisit ce que le personnage garde de cette histoire, et reçoit sa carte d'origine.
 // Le choix se change en relisant la dernière scène : l'ancienne carte devient la nouvelle, au même niveau et dans les mêmes decks.
-// Chaque carte d'origine est exclusive : en argent, à deux effets, elle grandit avec son Porteur (donnees.ts, tests/recits.test.ts).
+// Chaque carte d'origine est exclusive : en or, à deux effets, elle grandit avec son Porteur (donnees.ts, tests/recits.test.ts).
 // Ce qu'elle a en plus ne joue qu'en PVE : face à un autre joueur, cet effet s'éteint (collection.ts, sansBonusOrigine).
 // Le récit lui-même (ses plans) est dans src/ui/recits.ts ; le paiement est dans ../produits.ts et src/net/achats.ts ;
 // tant que la vente n'est pas ouverte (src/net/vente.ts), tout reste ouvert en aperçu.
@@ -11,7 +11,7 @@ import { t } from '../i18n';
 import { log, non, type Jeu, type Resultat } from './etat';
 
 export interface ChoixRecit {
-  /** la carte d'origine (id de la carte, en argent) */
+  /** la carte d'origine (id de la carte, en or) */
   carte: string;
   /** ce que le personnage garde de cette histoire, dit en une phrase */
   phrase: string;
