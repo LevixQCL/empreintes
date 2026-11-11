@@ -108,7 +108,7 @@ const DORAN: Plan[] = [
     tr('Personne ne crie. Les Génés se regardent, et le soir même, ils descendent tous. Ils ne remontent pas.'),
     tr('La Compagnie ne peut envoyer personne les chercher : il n’y a qu’eux pour tenir là-dessous.'),
     tr('Ils arrêtent les pompes des quais des Hauts, et laissent l’eau y monter. Celles du district, ils les gardent en marche. Et plus une seule caisse ne remonte.')] }),
-  plan({ epoque: tr('Chapitre 3 · Quarante jours'), titre: tr('Les paniers'), annees: [2099, 2099], ambiance: 'nuit', camera: 'descend', texte: 'haut', fonds: [f('doran-07')], scene: () => nature(2), lignes: [
+  plan({ epoque: tr('Chapitre 3 · Quarante jours'), titre: tr('Les paniers'), annees: [2099, 2099], ambiance: 'nuit', camera: 'descend', fonds: [f('doran-07')], scene: () => nature(2), lignes: [
     tr('Pour parler avec la surface, chacun a une lampe de signal. Un éclat pour « tout va bien ». Trois pour « relancez ». Doran garde la sienne contre sa poitrine.'),
     tr('Le dixième jour, des paniers descendent au bout de câbles. Du pain, du poisson séché, des mots d’enfants. Le district a compris.'),
     tr('Le panier de Doran descend toujours au même endroit, de nuit, tenu par quelqu’un sans harnais. Il ne voit jamais son visage. Seulement, sur l’eau, à la lueur d’une lanterne, l’ombre d’un dragon.'),
