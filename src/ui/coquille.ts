@@ -594,8 +594,8 @@ export function menu(e: EcranDistrict): string {
     + (e.j.chambre ? `<button type="button" class="ligne-menu" data-action="accueil">${icone('district')}<span><strong>${tr`Comment marche le district`}</strong><small>${tr`Les ressources, l’escouade et le but : creuser plus bas`}</small></span></button>` : '')
     // le glossaire (31 octobre 2026, Luc) : tous les mots du jeu, avec une recherche
     + `<button type="button" class="ligne-menu" data-action="guide" data-id="glossaire">${ICO.aide}<span><strong>${tr`Glossaire`}</strong><small>${tr`Tous les mots du jeu expliqués : Fissure, Flux, Résonance, Charge…`}</small></span></button>`
-    // le prototype des Lectures (Pack des origines, 11 novembre 2026) : à tester avant d'écrire les autres cristaux
-    + `<button type="button" class="ligne-menu" data-action="lecture-ouvrir">${ICO.cristal}<span><strong>${tr`Prototype · Lecture d’un cristal`}</strong><small>${tr`Remettre en ordre le souvenir gravé dans les jambes d’Ilka`}</small></span></button>`
+    // le prototype de « Toutes les courses » (Récit d'Ilka, Pack des origines, 11 novembre 2026)
+    + `<button type="button" class="ligne-menu" data-action="course-ouvrir">${ICO.cristal}<span><strong>${tr`Prototype · La nuit du colis`}</strong><small>${tr`Tracer la route devant Ilka, qui ne s’arrête jamais`}</small></span></button>`
     + `<button type="button" class="ligne-menu" data-action="intro">${ICO.film}<span><strong>${tr`Revoir l’intro complète`}</strong><small>${tr`L’histoire de 2121, en entier`}</small></span></button></div>`;
   // les paramètres (31 octobre 2026) : le combat automatique est une option, éteinte au départ
   const auto = autoActif();

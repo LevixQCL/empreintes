@@ -55,8 +55,8 @@ src/
     expedition.ts  une suite de combats ; c'est ce qui est sauvegardé
     explorer.ts    Explorer ou fouiller : Vestiges, étoiles de Strate, gardien éveillé, Rôdeurs (textes et réglages, docs/strates-explorer.md)
     rng.ts         hasard déterministe (même graine = même partie)
-    lectures.ts    les Lectures (prototype du Pack des origines, menu ▸ Prototype) : un cristal, ses fragments-dominos, le fil, les intrus et le faux souvenir ;
-                   l'écran est ui/lecture.ts, les gestes app/lecture.ts
+    course-ilka.ts « Toutes les courses », prototype du Récit d'Ilka (menu ▸ Prototype) : la route tracée devant Ilka qui ne s'arrête jamais ;
+                   l'écran est ui/course-ilka.ts, les gestes app/course-ilka.ts, le réglage joué au robot dans tests/course-ilka.test.ts
   ui/            l'affichage
     coquille.ts    ressources en haut, navigation en bas, menu, notifications (commun au district)
     district.ts    carte du district (la Cuvette), Tour du Noyau, escouade, cartes, Bibliothèque ; les détails s'ouvrent en feuille par le bas

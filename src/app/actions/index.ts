@@ -13,13 +13,13 @@ import { agirIntro } from './intro';
 import { agirTableau } from './tableau';
 import { agirParrainage } from './parrainage';
 import { agirCercle } from './cercle';
-import { agirLecture } from '../lecture';
+import { agirCourse } from '../course-ilka';
 import { signaler } from '../incident';
 
 /** les gains reçus pendant « Ton district » (le kit des recrues, juste après la chambre) */
 const gainsEnAttente: ReturnType<typeof comparer> = [];
 
-const THEMES = [agirLecture, agirCercle, agirIntro, agirDistrict, agirCombat, agirTableau, agirParrainage, agirCompte];
+const THEMES = [agirCourse, agirCercle, agirIntro, agirDistrict, agirCombat, agirTableau, agirParrainage, agirCompte];
 
 /** Un toucher : une erreur dans une action ne fige plus tous les boutons (filet de sécurité du 29 octobre 2026) */
 export async function agir(ev: MouseEvent) {

@@ -1,0 +1,173 @@
+{
+ "source": "src/ui/course-ilka.ts",
+ "entrees": [
+  {
+   "fr": "eau",
+   "en": ""
+  },
+  {
+   "fr": "tour",
+   "en": ""
+  },
+  {
+   "fr": "passerelle rouillée",
+   "en": ""
+  },
+  {
+   "fr": "quai",
+   "en": ""
+  },
+  {
+   "fr": "pourboire",
+   "en": ""
+  },
+  {
+   "fr": "la tour d’Ilka",
+   "en": ""
+  },
+  {
+   "fr": "arrivée",
+   "en": ""
+  },
+  {
+   "fr": "T{0}",
+   "en": ""
+  },
+  {
+   "fr": "Récit d’Ilka · Toutes les courses · Prototype",
+   "en": ""
+  },
+  {
+   "fr": "La nuit du colis",
+   "en": ""
+  },
+  {
+   "fr": "2121, la nuit de l’élection. Un colis payé triple, sans nom d’expéditeur, à livrer de l’autre côté du district avant l’aube.",
+   "en": ""
+  },
+  {
+   "fr": "Ilka ne sait plus marcher lentement. Ses jambes partent, et elles ne s’arrêtent pas.",
+   "en": ""
+  },
+  {
+   "fr": "À chaque tour, choisis une carte parmi trois et pose-la au bout de la route. Puis Ilka avance d’une case, quoi qu’il arrive.",
+   "en": ""
+  },
+  {
+   "fr": "Si la route s’arrête sous ses pieds, elle tombe. Garde de l’avance.",
+   "en": ""
+  },
+  {
+   "fr": "Les passerelles rouillées et les quais sont des raccourcis gratuits. Mais une rouillée cède deux tours plus tard, et les quais ferment au tour {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Le colis doit arriver avant l’aube, au tour {0}. Une fois par course, ses jambes connaissent une route de 2070 : un Câble offert.",
+   "en": ""
+  },
+  {
+   "fr": "Courir",
+   "en": ""
+  },
+  {
+   "fr": "{0} étoiles sur 3",
+   "en": ""
+  },
+  {
+   "fr": "Colis livré",
+   "en": ""
+  },
+  {
+   "fr": "Elle ne pose jamais de question aux colis payés triple. C’est pour ça qu’on les lui confie.",
+   "en": ""
+  },
+  {
+   "fr": "Livrer avant l’aube",
+   "en": ""
+  },
+  {
+   "fr": "Empocher le pourboire",
+   "en": ""
+  },
+  {
+   "fr": "Ne pas avoir eu besoin du geste d’une autre",
+   "en": ""
+  },
+  {
+   "fr": "Recourir",
+   "en": ""
+  },
+  {
+   "fr": "La route s’est arrêtée sous ses pieds. Elle se rattrape à un câble, mais le colis est tombé.",
+   "en": ""
+  },
+  {
+   "fr": "L’aube se lève avant qu’elle arrive. Le colis est en retard, et la compagnie retiendra la course sur sa dette.",
+   "en": ""
+  },
+  {
+   "fr": "Course ratée",
+   "en": ""
+  },
+  {
+   "fr": "Les Câbles et les Grands ponts donnent de l’avance : garde-les pour les moments où un raccourci se coupe.",
+   "en": ""
+  },
+  {
+   "fr": "Récit d’Ilka · Prototype",
+   "en": ""
+  },
+  {
+   "fr": "Quitter",
+   "en": ""
+  },
+  {
+   "fr": "Tour {0}",
+   "en": "Turn {0}"
+  },
+  {
+   "fr": "aube au tour {0}",
+   "en": ""
+  },
+  {
+   "fr": "Avance : {0}",
+   "en": ""
+  },
+  {
+   "fr": "elle tombe si rien n’est posé",
+   "en": ""
+  },
+  {
+   "fr": "case(s) de route devant elle",
+   "en": ""
+  },
+  {
+   "fr": "Cette carte ne peut aller nulle part. Choisis-en une autre.",
+   "en": ""
+  },
+  {
+   "fr": "Touche une case dorée sur la grille pour poser la carte.",
+   "en": ""
+  },
+  {
+   "fr": "Choisis une carte, puis touche une case dorée sur la grille.",
+   "en": ""
+  },
+  {
+   "fr": "Le geste d’une autre",
+   "en": ""
+  },
+  {
+   "fr": "Prendre la rouillée (+{0})",
+   "en": ""
+  },
+  {
+   "fr": "Prendre les quais (+{0})",
+   "en": ""
+  },
+  {
+   "fr": "Ne rien poser",
+   "en": ""
+  }
+ ]
+}

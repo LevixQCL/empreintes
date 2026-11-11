@@ -1,0 +1,86 @@
+/* « Toutes les courses » (prototype du Récit d'Ilka, 11 novembre 2026) : le district de nuit vu de dessus.
+   L'eau sombre, les tours en pierre, les rouillées rousses, les quais en bois ; la route tracée en or, Ilka en lumière froide. */
+
+.ecran.course-ilka{padding:calc(12px + var(--sat)) 14px calc(18px + var(--sab));width:100%;overflow-x:clip;
+  background:radial-gradient(110% 50% at 50% 0%,rgba(62,143,184,.14),transparent 70%),linear-gradient(180deg,#0A0E15 0%,#0B0D12 70%)}
+.ci-page{display:flex;flex-direction:column;gap:10px;flex:1;min-width:0;width:100%;max-width:520px;margin:0 auto}
+.ci-page>*{min-width:0}
+.ecran.course-ilka h1{font:400 26px/1.1 var(--display);color:var(--ink);margin:2px 0 0}
+.ecran.course-ilka h2{margin:0;font:400 22px/1.15 var(--display);color:var(--ink)}
+.ecran.course-ilka .surtitre{color:var(--tech)}
+
+.ci-intro{display:flex;flex-direction:column;justify-content:center;flex:1;gap:14px;padding:8px 2px}
+.ci-intro h1{font-size:34px}
+.ci-lignes{display:flex;flex-direction:column;gap:10px}
+.ci-lignes p{margin:0;font:italic 400 16px/1.5 'Literata',Georgia,serif;color:var(--ink-2)}
+.ci-regles{margin:0;padding:12px 14px 12px 30px;border-radius:14px;background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet);display:flex;flex-direction:column;gap:6px}
+.ci-regles li{font:500 14px/1.4 var(--body);color:var(--ink-2)}
+.ci-pied{display:flex;gap:10px;flex-wrap:wrap}
+.ci-pied .btn{flex:1 1 140px}
+
+.ci-tete{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.ci-infos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ci-infos>span{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:12px;background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet);font:700 16px/1.1 var(--mono);color:var(--ink)}
+.ci-infos small{font:500 12px/1.2 var(--body);color:var(--quiet)}
+.ci-infos .juste{box-shadow:inset 0 0 0 1px var(--alerte);color:var(--alerte)}
+.ci-infos .danger{box-shadow:inset 0 0 0 2px var(--danger);color:var(--danger);animation:ci-pouls 1s ease-in-out infinite}
+@keyframes ci-pouls{50%{background:rgba(226,115,90,.14)}}
+
+/* la grille */
+.ci-grille{position:relative;display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));align-self:center;width:min(100%,calc((100dvh - 390px) * var(--cols) / var(--lignes)));min-width:250px;gap:3px;padding:6px;border-radius:16px;background:#071019;box-shadow:inset 0 0 0 1px rgba(127,212,255,.2)}
+.ci-case{position:relative;aspect-ratio:1;border:none;border-radius:6px;padding:0;display:grid;place-items:center;color:var(--ink);font:700 12px/1 var(--mono)}
+.ci-case small{position:absolute;right:3px;bottom:3px;font:700 11px/1 var(--mono);color:#2A1C08}
+.t-eau{background:linear-gradient(160deg,#10304A,#0B2033)}
+.t-tour{background:linear-gradient(160deg,#4A4F5C,#2C3039);box-shadow:inset 0 -3px 0 rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08)}
+.t-rouillee{background:repeating-linear-gradient(90deg,#7A4A2A 0 6px,#5B3520 6px 9px)}
+.t-quai{background:repeating-linear-gradient(0deg,#A8824E 0 7px,#8A6A3E 7px 9px)}
+.t-pourboire{background:radial-gradient(circle,#F2D58C 0 22%,transparent 26%),linear-gradient(160deg,#10304A,#0B2033)}
+.t-depart{background:linear-gradient(160deg,#5C6C86,#38455A);box-shadow:inset 0 0 0 2px rgba(127,212,255,.5)}
+.t-arrivee{background:radial-gradient(circle,rgba(216,180,101,.55),rgba(216,180,101,.15) 70%),#1A2230;box-shadow:inset 0 0 0 2px var(--gold),0 0 14px rgba(216,180,101,.4)}
+.ci-case.ci-route::after,.ci-case.ci-passe::after{content:'';position:absolute;inset:18%;border-radius:4px;background:rgba(216,180,101,.28)}
+.ci-case.ci-passe::after{background:rgba(216,180,101,.12)}
+.ci-case.ci-fantome{box-shadow:inset 0 0 0 2px rgba(216,180,101,.55)}
+.ci-case.ci-cible{box-shadow:inset 0 0 0 3px var(--gold),0 0 12px rgba(216,180,101,.6);animation:ci-cible 1.2s ease-in-out infinite;cursor:pointer;z-index:2}
+@keyframes ci-cible{50%{box-shadow:inset 0 0 0 3px #FFF1C8,0 0 18px rgba(216,180,101,.8)}}
+.ci-compte{position:absolute;top:2px;left:4px;z-index:3;font:800 13px/1 var(--mono);color:#FFB547;text-shadow:0 1px 2px #000}
+.ci-trace{position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);pointer-events:none;z-index:1}
+.ci-trace polyline{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.ci-trace .devant{stroke:var(--gold);stroke-width:4;filter:drop-shadow(0 0 4px rgba(216,180,101,.7))}
+.ci-trace .derriere{stroke:rgba(216,180,101,.35);stroke-width:4}
+.ci-ilka{position:relative;z-index:4;width:62%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 35%,#FFFFFF,#BFE8FF 40%,#3E8FB8 75%);box-shadow:0 0 0 2px #0B0D12,0 0 14px rgba(127,212,255,.9)}
+
+.ci-journal{margin:0;font:500 14px/1.4 var(--body);color:var(--ink-2);padding:8px 12px;border-radius:12px;background:var(--verre)}
+
+/* le plateau : les cartes proposées, toujours en bas de l'écran */
+.ci-plateau{position:sticky;bottom:0;z-index:5;display:flex;flex-direction:column;gap:8px;margin:0 -14px calc(-18px - var(--sab));padding:10px 14px calc(12px + var(--sab));
+  background:linear-gradient(180deg,rgba(11,13,18,.85),rgba(11,13,18,.97));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 -1px 0 rgba(127,212,255,.25)}
+.ci-aide{margin:0;font:500 13px/1.35 var(--body);color:var(--quiet);text-align:center}
+.ci-offre{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ci-carte{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:84px;padding:9px 9px 9px 11px;border:none;border-radius:12px;text-align:left;color:var(--ink);
+  background:var(--verre-2);box-shadow:inset 0 0 0 1px var(--filet),inset 3px 0 0 var(--accent,var(--gold));transition:transform .12s ease}
+.ci-carte strong{font:400 15px/1.1 var(--display)}
+.ci-carte small{font:500 12px/1.3 var(--body);color:var(--ink-2)}
+.ci-carte b{position:absolute;top:8px;right:8px;font:800 14px/1 var(--mono);color:var(--accent)}
+.ci-carte.g-passerelle{--accent:#BFD9E6}
+.ci-carte.g-cable{--accent:#7FD4FF}
+.ci-carte.g-pont{--accent:var(--gold)}
+.ci-carte.choisie{transform:translateY(-3px);box-shadow:inset 0 0 0 2px var(--accent),0 8px 18px rgba(0,0,0,.45)}
+.ci-actions{display:flex;gap:8px;flex-wrap:wrap}
+.ci-actions .btn{flex:1 1 auto}
+.ci-geste{box-shadow:inset 0 0 0 1px rgba(127,212,255,.5)!important}
+.ci-geste.choisie{box-shadow:inset 0 0 0 2px #7FD4FF,0 0 14px rgba(127,212,255,.4)!important}
+.ci-raccourci{box-shadow:inset 0 0 0 1px rgba(216,180,101,.6)!important;color:var(--or-pale)!important}
+
+/* la fin */
+.ci-voile{position:fixed;inset:0;background:rgba(5,8,12,.72);z-index:40}
+.ci-fin{position:fixed;left:50%;bottom:calc(14px + var(--sab));transform:translateX(-50%);width:min(520px,calc(100% - 24px));max-height:calc(100dvh - 40px);overflow:auto;z-index:41;
+  display:flex;flex-direction:column;gap:12px;padding:18px;border-radius:18px;background:var(--verre-2);box-shadow:inset 0 0 0 1px var(--filet-fort),0 20px 50px rgba(0,0,0,.6)}
+.ci-fin>p{margin:0;font:500 15px/1.45 var(--body);color:var(--ink-2)}
+.ci-conseil{color:var(--quiet)!important;font-size:14px!important}
+.ci-etoiles{margin:0;font-size:30px;line-height:1;color:var(--gold);letter-spacing:4px}
+.ci-etoiles span{color:var(--track)}
+.ci-bilan{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.ci-bilan li{font:500 14px/1.35 var(--body);color:var(--mute);padding-left:22px;position:relative}
+.ci-bilan li::before{content:'○';position:absolute;left:0}
+.ci-bilan li.ok{color:var(--ink-2)}
+.ci-bilan li.ok::before{content:'★';color:var(--gold)}

@@ -6,8 +6,8 @@ import { autoActif } from '../ui/options';
 import { mesurerFluidite, suspendreHorsEcran } from '../ui/graphismes';
 import { brancherDifferes, ecransDifferes, htmlChargement } from './differes';
 import { htmlModeDuel } from './duel';
-import { LC } from './lecture';
-import { htmlLecture } from '../ui/lecture';
+import { CI } from './course-ilka';
+import { htmlCourse } from '../ui/course-ilka';
 import { repliqueGardien, sceneDef } from '../core/campagne';
 import { tousEnnemis } from '../core/combat';
 import { ennemiDef } from '../core/donnees';
@@ -41,7 +41,7 @@ import { t as tr } from '../core/i18n';
 // ---------- Rendu ----------
 
 /** zones qui défilent toutes seules : on garde leur position d'un rendu à l'autre (le district se redessine chaque seconde) */
-const DEFILANTS = ['.feuille-corps', '.rangee', '.main', '.rail', '.fb-rangee', '.lc-rangee', '.cl-filtres', '.es-cibles'];
+const DEFILANTS = ['.feuille-corps', '.rangee', '.main', '.rail', '.fb-rangee', '.cl-filtres', '.es-cibles'];
 /** une feuille, une fenêtre ou un message ne s'animent qu'à leur apparition */
 function cles(): Record<string, string> {
   const t = (sel: string) => racine.querySelector(sel)?.querySelector('h2')?.textContent ?? racine.querySelector(sel)?.textContent ?? '';
@@ -121,7 +121,7 @@ function dessiner() {
   if (app.mode === 'titre') h = htmlTitre(app.jeu.introVue, !reduit, compteTitre());
   else if (app.mode === 'intro') h = htmlIntro(app.plan, app.lignesVues, !reduit, app.texteCache, app.introLongue);
   else if (app.mode === 'duel') h = htmlModeDuel();
-  else if (app.mode === 'lecture') h = htmlLecture(LC);
+  else if (app.mode === 'course') h = htmlCourse(CI);
   else if (app.mode === 'combat' && app.jeu.expedition?.carte && app.jeu.expedition.phase === 'carte') {
     h = htmlExploration(app.jeu, K.salleVue, { details: K.halteVus ?? [], porte: K.porteChoix ?? [] });
     // le contenu des Strates s'explique la première fois qu'il apparaît (31 octobre 2026), une fenêtre à la fois
