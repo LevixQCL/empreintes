@@ -55,7 +55,7 @@ const ecrans = () => svg(`
   <g fill="#2E1E1C">${Array.from({ length: 9 }, (_, i) => `<circle cx="${214 + i * 16}" cy="${300 + (i % 2) * 8}" r="9"/><rect x="${206 + i * 16}" y="${306 + (i % 2) * 8}" width="16" height="60" rx="6"/>`).join('')}</g>
   <g class="efface"><path d="M180 360 V300 M180 320 L168 304 M180 312 L193 298" stroke="#8A6A48" stroke-width="3" fill="none"/></g>`);
 
-const nature = (k: number) => svg(`
+export const nature = (k: number) => svg(`
   <rect x="40" y="60" width="160" height="300" fill="#5E5A55"/>
   <rect x="40" y="230" height="130" class="eau-monte" width="160" fill="#3D7A8C" opacity=".85"/>
   <line x1="40" x2="200" y1="250" y2="250" stroke="#7FB4D8" stroke-width="3"/>
@@ -63,12 +63,12 @@ const nature = (k: number) => svg(`
   ${k >= 2 ? `<g class="colonne">${Array.from({ length: 14 }, (_, i) => `<g transform="translate(${220 + (i % 7) * 18} ${300 + Math.floor(i / 7) * 34})"><circle r="5" fill="#2A2228"/><rect x="-5" y="5" width="10" height="20" rx="4" fill="#2A2228"/></g>`).join('')}</g>` : ''}
   ${k >= 3 ? `<g class="glace"><path d="M200 120 L360 100 L360 260 L230 280 Z" fill="#DDEEF6"/><path class="bloc" d="M230 280 L300 190 L360 200 L360 260 Z" fill="#B9D6E6"/><path d="M200 120 L300 190 L230 280" stroke="#7FA7C9" stroke-width="2" fill="none"/></g>` : ''}`, k >= 3 ? 'froid' : '');
 
-const tours = () => svg(`
+export const tours = () => svg(`
   <rect x="0" y="330" width="360" height="70" fill="#2F5C72"/>
   ${[30, 95, 160, 225, 290].map((x, i) => `<g class="tour" style="--i:${i}"><rect x="${x}" y="${120 + (i % 2) * 40}" width="40" height="${210 - (i % 2) * 40}" fill="#C9A37A"/>${[0, 1, 2, 3, 4, 5].map((r) => `<rect x="${x + 8}" y="${140 + (i % 2) * 40 + r * 28}" width="8" height="10" fill="#FFD98A"/><rect x="${x + 24}" y="${140 + (i % 2) * 40 + r * 28}" width="8" height="10" fill="#FFD98A"/>`).join('')}<rect x="${x - 6}" y="320" width="52" height="40" fill="#7D7C86"/></g>`).join('')}
   <g class="passerelles" stroke="#7A5A3A" stroke-width="3"><line x1="70" y1="190" x2="95" y2="200"/><line x1="135" y1="210" x2="160" y2="200"/><line x1="200" y1="190" x2="225" y2="200"/><line x1="265" y1="215" x2="290" y2="200"/></g>`);
 
-const puits = () => svg(`
+export const puits = () => svg(`
   <rect x="0" y="0" width="360" height="400" fill="#140F0B"/>
   <rect x="140" y="0" width="80" height="400" fill="#241A12"/>
   <g class="descente"><g class="faisceau"><path d="M170 120 L120 300 L220 300 Z" fill="#FFE2A0" opacity=".25"/></g>
@@ -89,18 +89,18 @@ const ascension = () => svg(`
   <g transform="translate(120 230)"><circle r="16" fill="#3A2E28"/><path d="M-4 -16 C 6 -10, 4 4, 10 10" stroke="#E8C25A" stroke-width="5" fill="none"/><rect x="-16" y="16" width="32" height="120" rx="10" fill="#E9E2D0"/><rect x="-16" y="40" width="32" height="96" rx="10" fill="#2F5A3F"/></g>
   ${([[60, 70], [150, 40], [300, 25]] as [number, number][]).map(([x, y], i) => `<g class="ile" style="--i:${i}"><ellipse cx="${x}" cy="${y}" rx="30" ry="8" fill="#8FB886"/><path d="M${x - 26} ${y} L${x} ${y + 26} L${x + 26} ${y} Z" fill="#9B8C7A"/><rect x="${x - 8}" y="${y - 16}" width="16" height="14" fill="#FFFFFF"/></g>`).join('')}`);
 
-const lignees = (k: number) => svg(`
+export const lignees = (k: number) => svg(`
   <rect width="360" height="400" fill="#17191F"/>
   ${[['#7FA7C9', tr('AUGMENTÉ')], ['#8FAF6A', tr('GÉNÉ')], ['#A98BDF', tr('RÉSONANT')]].map(([c, n], i) => `<g class="carte-l${k >= 2 ? ' rapproche' : ''}" style="--i:${i}"><rect x="${30 + i * 105}" y="120" width="90" height="128" rx="10" fill="#1C1F26" stroke="${c}" stroke-width="3"/><circle cx="${75 + i * 105}" cy="170" r="22" fill="${c}" opacity=".5"/><text x="${75 + i * 105}" y="225" text-anchor="middle" font-family="Saira Semi Condensed" font-size="11" fill="${c}">${n}</text></g>`).join('')}`);
 
-const oubli = () => svg(`
+export const oubli = () => svg(`
   <rect width="360" height="400" fill="#0C0F18"/>
   ${Array.from({ length: 40 }, (_, i) => `<rect class="lumiere" style="--i:${i % 7}" x="${(i * 47) % 340 + 8}" y="${(i * 29) % 220 + 20}" width="5" height="6" fill="#FFD98A"/>`).join('')}
   <rect x="130" y="250" width="100" height="150" fill="#3A3A44"/>
   <path d="M175 252 L182 290 L170 320 L180 360" stroke="#0C0F18" stroke-width="3" fill="none"/>
   <rect x="0" y="352" width="360" height="48" fill="#1C3A4C" class="maree"/>`);
 
-const toi = (k: number) => svg(`
+export const toi = (k: number) => svg(`
   <rect width="360" height="400" fill="#F3D9A8"/>
   ${([[70, 210, 40], [290, 220, 40], [180, 260, 60]] as [number, number, number][]).map(([x, y, r]) => `<path d="M${x - r * 0.8} ${y} L${x - r * 0.6} 400 L${x + r * 0.6} 400 L${x + r * 0.8} ${y} Z" fill="#9A8A74"/><ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * 0.4}" fill="#86B86A"/>`).join('')}
   <rect x="168" y="160" width="24" height="100" rx="4" fill="#C9A37A"/><path d="M180 132 L188 148 L180 158 L172 148 Z" fill="#BFE6FF"/>
@@ -180,15 +180,15 @@ const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '03-t
 const VIDEOS_DISPONIBLES = new Set<string>([]);
 
 /** Illustration visible au plan i quand k lignes sont affichées (la dernière disponible dont le seuil est atteint) */
-function fondActif(i: number, k: number): string | null {
-  const dispo = (PLANS[i]?.fonds ?? []).filter((x) => IMAGES_DISPONIBLES.has(x.id));
+function fondActif(i: number, k: number, film: Plan[] = PLANS): string | null {
+  const dispo = (film[i]?.fonds ?? []).filter((x) => IMAGES_DISPONIBLES.has(x.id));
   const atteints = dispo.filter((x) => x.des <= k);
   return (atteints[atteints.length - 1] ?? dispo[0])?.id ?? null;
 }
 
 /** Illustrations à précharger pour le plan i (toutes celles du plan) */
-export const imagesPlan = (i: number): string[] =>
-  (PLANS[i]?.fonds ?? []).filter((x) => IMAGES_DISPONIBLES.has(x.id)).map((x) => `./intro/${x.id}.webp`);
+export const imagesPlan = (i: number, film: Plan[] = PLANS): string[] =>
+  (film[i]?.fonds ?? []).filter((x) => IMAGES_DISPONIBLES.has(x.id)).map((x) => `./intro/${x.id}.webp`);
 
 function fond(id: string, camera: string, mouvement: boolean, foyer?: [number, number]): string {
   const src = `./intro/${id}.webp`;
@@ -227,31 +227,41 @@ export function particules(ambiance: string): string {
 
 /** i = plan, k = nombre de lignes déjà lues (la k-ième est affichée seule), texteCache = mode « admirer l'image » */
 /** Les phrases d'un plan : la version courte au premier lancement, la complète quand on revoit l'intro */
-export const lignesDe = (i: number, longue: boolean): string[] => (longue ? PLANS[i]!.lignes : PLANS[i]!.court);
+export const lignesDe = (i: number, longue: boolean, film: Plan[] = PLANS): string[] => (longue ? film[i]!.lignes : film[i]!.court);
 
-export function htmlIntro(i: number, k: number, mouvement = true, texteCache = false, longue = false): string {
-  const p = { ...PLANS[i]!, lignes: lignesDe(i, longue) };
-  const dernier = i === PLANS.length - 1;
+/** Un autre « film » joué par le même lecteur que l'intro : les Récits des origines (11 novembre 2026) */
+export interface Film {
+  plans: Plan[];
+  /** le nom lu par les lecteurs d'écran */
+  nom: string;
+  /** le bouton du dernier écran */
+  fin: string;
+}
+
+export function htmlIntro(i: number, k: number, mouvement = true, texteCache = false, longue = false, film?: Film): string {
+  const PLANS_ = film?.plans ?? PLANS;
+  const p = { ...PLANS_[i]!, lignes: lignesDe(i, longue, PLANS_) };
+  const dernier = i === PLANS_.length - 1;
   const n = Math.min(Math.max(1, k), p.lignes.length);
   const complet = n >= p.lignes.length;
-  const actif = fondActif(i, n);
+  const actif = fondActif(i, n, PLANS_);
   const [de, a] = p.annees;
-  const progression = PLANS.map((_, m) => `<span class="${m < i ? 'fait' : m === i ? 'ici' : ''}"></span>`).join('');
+  const progression = PLANS_.map((_, m) => `<span class="${m < i ? 'fait' : m === i ? 'ici' : ''}"></span>`).join('');
   // une seule phrase à la fois, comme un sous-titre : l'image reste visible
   const pas = p.lignes.length > 1 ? `<div class="intro-pas" aria-hidden="true">${p.lignes.map((_, m) => `<span class="${m < n ? 'fait' : ''}"></span>`).join('')}</div>` : '';
-  return `<section class="intro amb-${p.ambiance}${actif ? ' illustree' : ''}${texteCache ? ' admirer' : ''} texte-${p.texte ?? 'bas'}" data-plan="${i}" data-k="${n}"${actif ? ` style="--image:url(./intro/${actif}.webp)"` : ''} aria-label="${tr`Introduction`}" data-action="intro-suivant">`
+  return `<section class="intro amb-${p.ambiance}${actif ? ' illustree' : ''}${texteCache ? ' admirer' : ''} texte-${p.texte ?? 'bas'}" data-plan="${i}" data-k="${n}"${actif ? ` style="--image:url(./intro/${actif}.webp)"` : ''} aria-label="${film?.nom ?? tr('Introduction')}" data-action="intro-suivant">`
     + (actif ? fond(actif, p.fonds?.find((x) => x.id === actif)?.camera ?? p.camera, mouvement, p.foyer) : '')
     + `<div class="intro-scene" aria-hidden="true">${p.scene(n)}</div>`
     + (mouvement ? particules(p.ambiance) : '')
     + `<div class="intro-voile" aria-hidden="true"></div>`
-    + `<div class="intro-haut"><div class="intro-prog" role="img" aria-label="${tr`Plan ${i + 1} sur ${PLANS.length}`}">${progression}</div>`
+    + `<div class="intro-haut"><div class="intro-prog" role="img" aria-label="${tr`Plan ${i + 1} sur ${PLANS_.length}`}">${progression}</div>`
     + `<div class="intro-outils"><button type="button" class="btn-sec rond" data-action="intro-oeil" aria-pressed="${texteCache}" aria-label="${texteCache ? tr('Afficher le texte') : tr('Masquer le texte pour voir l’image')}">${texteCache ? OEIL_BARRE : OEIL}</button>`
-    + `<button type="button" class="btn-sec" data-action="intro-passer">${tr`Passer`}</button></div></div>`
+    + `<button type="button" class="btn-sec" data-action="intro-passer">${film ? tr('Quitter') : tr('Passer')}</button></div></div>`
     + `<div class="intro-corps${n === 1 ? ' entree' : ''}"><div class="intro-date"><span class="epoque">${echap(fr(p.epoque))}</span>${p.epoque.includes(String(a)) ? '' : compteur(de, a)}</div><h2>${echap(fr(p.titre))}</h2>`
     + `<p class="ligne neuve" aria-live="polite">${echap(fr(p.lignes[n - 1]!))}</p>${pas}`
     + `</div><div class="intro-bas">${i > 0 || n > 1 ? `<button type="button" class="btn-sec" data-action="intro-precedent">${tr`Retour`}</button>` : '<span></span>'}`
     + (i === 0 ? `<span class="intro-indice">${tr`Touche l’écran pour continuer`}</span>` : '<span></span>')
-    + `<button type="button" class="prim" data-action="${dernier && complet ? 'intro-passer' : 'intro-suivant'}">${dernier && complet ? tr('Descendre vers la porte') : complet ? tr('Suite') : tr('Continuer')}</button></div></section>`;
+    + `<button type="button" class="prim" data-action="${dernier && complet ? 'intro-passer' : 'intro-suivant'}">${dernier && complet ? (film?.fin ?? tr('Descendre vers la porte')) : complet ? tr('Suite') : tr('Continuer')}</button></div></section>`;
 }
 
 const OEIL = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';

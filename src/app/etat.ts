@@ -36,6 +36,8 @@ export const app: {
   introLongue: boolean;
   /** intro : texte masqué pour admirer l'illustration */
   texteCache: boolean;
+  /** le Récit des origines joué par le lecteur de l'intro (null : l'intro elle-même) */
+  recit: string | null;
   compte: typeof import('../net/compte') | null;
   uid: string | null;
   /** la feuille du pseudo ne s'ouvre d'elle-même qu'une fois par lancement */
@@ -59,6 +61,7 @@ export const app: {
   lignesVues: 1,
   introLongue: false,
   texteCache: false,
+  recit: null,
   compte: null,
   uid: null,
   pseudoDemande: false,

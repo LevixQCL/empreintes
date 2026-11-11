@@ -1,7 +1,7 @@
 // Le lecteur de l'intro (main.ts) :
 // mise à jour sans tout reconstruire, préchargement des illustrations, compteur d'années.
 
-import { imagesPlan } from './intro';
+import { imagesPlan, type Plan } from './intro';
 
 /**
  * Mise à jour de l'intro sans tout reconstruire :
@@ -41,8 +41,8 @@ export function majIntro(racine: HTMLElement, h: string, reduit: boolean): boole
 
 const precharges = new Set<string>();
 /** Charge à l'avance les illustrations du plan i */
-export function precharger(i: number) {
-  for (const src of imagesPlan(i)) {
+export function precharger(i: number, film?: Plan[]) {
+  for (const src of imagesPlan(i, film)) {
     if (precharges.has(src)) continue;
     precharges.add(src);
     const im = new Image();

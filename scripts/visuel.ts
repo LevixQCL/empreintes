@@ -104,6 +104,8 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'strate-brume', sauvegarde: 'brume', faire: async (p) => { await ENTRER(p); await p.click('.ex-salle.accessible >> nth=0'); await p.waitForTimeout(300); } },
   { nom: 'combat', sauvegarde: 'combat', faire: async (p) => { await ENTRER(p); await p.click('[data-action="salle"]'); await p.waitForTimeout(600); } },
   { nom: 'debut', sauvegarde: 'debut', faire: ENTRER },
+  // le Récit d'Ilka (Pack des origines, 11 novembre 2026) : le premier plan, joué par le lecteur de l'intro
+  { nom: 'recit-ilka', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="recit-ilka"]'); await p.waitForTimeout(800); } },
 ];
 // VISUEL_TAILLES=1280x800,1920x1080 : d'autres tailles d'écran (par défaut, un téléphone et un PC)
 // VISUEL_LANGUE=en : la version « après » s'affiche en anglais, pour relire la traduction à côté du français

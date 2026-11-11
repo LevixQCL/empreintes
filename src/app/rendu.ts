@@ -23,6 +23,7 @@ import { htmlExploration } from '../ui/exploration';
 import { enAttente as enAttenteExpedition } from '../core/expedition';
 import { trouveesDe } from '../ui/guide';
 import { htmlIntro } from '../ui/intro';
+import { filmActif } from './intro';
 import { animerCompteur, majIntro, precharger } from '../ui/intro-lecteur';
 import { htmlPorteurs } from '../ui/porteurs';
 import { visuel as ageDistrict } from '../ui/art';
@@ -117,7 +118,7 @@ function dessiner() {
   const pseudoTape = (racine.querySelector('#gt-nom') as HTMLInputElement | null)?.value;
   let h = '';
   if (app.mode === 'titre') h = htmlTitre(app.jeu.introVue, !reduit, compteTitre());
-  else if (app.mode === 'intro') h = htmlIntro(app.plan, app.lignesVues, !reduit, app.texteCache, app.introLongue);
+  else if (app.mode === 'intro') h = htmlIntro(app.plan, app.lignesVues, !reduit, app.texteCache, app.introLongue, filmActif());
   else if (app.mode === 'duel') h = htmlModeDuel();
   else if (app.mode === 'combat' && app.jeu.expedition?.carte && app.jeu.expedition.phase === 'carte') {
     h = htmlExploration(app.jeu, K.salleVue, { details: K.halteVus ?? [], porte: K.porteChoix ?? [] });
@@ -190,7 +191,7 @@ function dessiner() {
   suspendreHorsEcran(racine);
   marquerDebordements(racine);
   if (app.mode === 'district' && D.vue === 'archipel') mesurerFluidite();
-  if (app.mode === 'intro') { precharger(app.plan); precharger(app.plan + 1); animerCompteur(racine, app.lignesVues, reduit); }
+  if (app.mode === 'intro') { precharger(app.plan, filmActif()?.plans); precharger(app.plan + 1, filmActif()?.plans); animerCompteur(racine, app.lignesVues, reduit); }
   D.uid = app.uid;
   const ie = racine.querySelector('#email') as HTMLInputElement | null;
   const im = racine.querySelector('#mdp') as HTMLInputElement | null;
