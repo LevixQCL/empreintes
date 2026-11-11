@@ -15,7 +15,8 @@ Tout est en français : code, commentaires, textes du jeu, messages de commit. L
 - Vérifier visuellement à la taille d'un téléphone (≈ 360 à 412 px de large) avec Playwright, puis sur PC (≥ 1100 px).
 
 ## Règles fixes du jeu (décidées par Bryan)
-- Aucun hasard payant, aucun pay-to-win, aucune punition si on ne joue pas ; plus tard seulement du cosmétique vendu en euros.
+- Aucun hasard payant, aucune punition si on ne joue pas. Aucun pay-to-win entre joueurs : ce qui se vend (Récits des origines,
+  11 novembre 2026) peut aider en PVE, jamais en duel ni au défi d'un quai (`sansBonusOrigine`). Sinon, du cosmétique vendu en euros.
 - Rien de gore ni de religieux, aucun pays, personne ou conflit réel ; aucun nom ou visuel copié d'un autre jeu.
 - Images : Bryan les génère sur Midjourney (Claude ne l'utilise jamais) ; Claude écrit les prompts complets avec le préfixe
   « bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette,

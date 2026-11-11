@@ -1206,6 +1206,10 @@
    "en": "level {0} with a level {1} Bearer"
   },
   {
+   "fr": "Une carte d’origine : exclusive, elle ne monte pas avec des doublons. Elle grandit avec le Porteur qui la porte : {0}. Face à un autre directeur (duel, défi d’un quai), elle joue sans son effet « {1} ».",
+   "en": "An origin card: exclusive, it doesn’t level up with duplicates. It grows with the Bearer who carries it: {0}. Against another director (duel, quay challenge), it plays without its “{1}” effect."
+  },
+  {
    "fr": "Niveau maximum : la carte est maîtrisée, un liseré de lumière parcourt son cadre.",
    "en": "Max level: the card is mastered, and a thread of light runs around its frame."
   },

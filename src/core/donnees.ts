@@ -64,6 +64,8 @@ export const NOMS_LIGNEE: Record<Lignee | 'neutre', { nom: string; court: string
 // Résonants = Désarmer, Fissure, Accord, Crescendo (l'empreinte lit et amplifie).
 
 /** id, nom, lignée, métal d'origine, action, force (dans le métal d'origine), Fréquences (de la principale à la plus rare), effet, lourde */
+/** du cuivre à l'argent : le même rapport que METAL_FORCE (1,32 / 1,18) */
+const METAL_FORCE_ORIGINE = 1.32 / 1.18;
 const c = (id: string, nom: string, lignee: Lignee, rarete: Rarete, type: TypeGeste, v: number, f: number[], effet?: Effet, lourd = false): ModuleDef =>
   ({ id, nom, lignee, rarete, type, v, f, ...(effet ? { effet } : {}), ...(lourd ? { lourd: true } : {}) });
 /** une carte exclusive (28 octobre 2026) : elle n'existe que dans son métal d'origine, jamais dans un autre */
@@ -76,9 +78,15 @@ const legs = (id: string, nom: string, lignee: Lignee, type: TypeGeste, v: numbe
 /** la carte du parrainage : exclusive, dans son seul métal, jamais tirée */
 const lien = (id: string, nom: string, lignee: Lignee, rarete: Rarete, type: TypeGeste, v: number, f: number[], effet: Effet): ModuleDef =>
   ({ ...c(id, nom, lignee, rarete, type, v, f, effet), lien: true });
-/** une carte d'origine : le nom et l'histoire changent, les chiffres sont ceux de son équivalent gratuit (même lignée, métal, rôle, force, effet) */
-const origine = (id: string, nom: string, equivalent: ModuleDef): ModuleDef =>
-  ({ ...equivalent, id, nom, equivalent: equivalent.id });
+/** une carte d'origine (Récits des origines) : elle part d'une carte gratuite en cuivre, passe en argent (le seul métal où elle existe)
+ *  et reçoit un second effet. Une Fréquence libre est toujours le premier effet (comme sur l'Héritage). */
+const origine = (id: string, nom: string, depuis: ModuleDef, bonus: Effet): ModuleDef => {
+  const libre = bonus.type === 'accord' || bonus.type === 'diapason';
+  return {
+    ...depuis, id, nom, rarete: 'argent', v: Math.round(depuis.v * METAL_FORCE_ORIGINE),
+    effet: libre ? bonus : depuis.effet!, effet2: libre ? depuis.effet! : bonus, origine: bonus.type,
+  };
+};
 
 export const MODULES: ModuleDef[] = [
   // ---------- Les 15 cartes de base : 5 par Porteur nommé, qu'il porte dès le départ ----------
@@ -238,19 +246,22 @@ export const MODULES: ModuleDef[] = [
 ];
 
 // ---------- Les cartes d'origine des Récits des origines (11 novembre 2026, document « Ossyra — Monétisation ») ----------
-// À la fin d'un récit, le joueur choisit ce que le personnage garde de cette histoire. Tout ce qui s'achète a un équivalent
-// gratuit : chaque carte d'origine reprend exactement les chiffres d'une carte qu'on trouve dans le jeu (tests/recits.test.ts).
+// À la fin d'un récit, le joueur choisit ce que le personnage garde de cette histoire. Chaque carte d'origine part
+// d'une carte qu'on trouve dans le jeu, et y ajoute un second effet (tests/recits.test.ts).
 // Ilka est une Augmentée : aucune carte de soin n'existe dans sa lignée, d'où une attaque et un bouclier.
 // Doran est un Géné : un bouclier qui dure (Rempart, Final) et un soin pour toute l'escouade (Vague).
 // Véla est une Résonante : une Fissure de groupe (Ombre de serpent) et un Désarmement total (Plume de givre).
-const equivalentDe = (id: string) => MODULES.find((m) => m.id === id)!;
+const depuis = (id: string) => MODULES.find((m) => m.id === id)!;
 MODULES.push(
-  origine('cle-des-pompes', tr('La clé des pompes'), equivalentDe('verin')),
-  origine('toutes-les-courses', tr('Toutes les courses'), equivalentDe('condensateur')),
-  origine('quarante-jours', tr('Quarante jours'), equivalentDe('poumons-abysse')),
-  origine('berceuse-a-compter', tr('La berceuse à compter'), equivalentDe('branchies')),
-  origine('ombre-nette', tr('Ombre nette'), equivalentDe('ombre-serpent')),
-  origine('nuit-blanche', tr('Nuit blanche'), equivalentDe('plume-givre')),
+  // 11 novembre 2026 (choix de Bryan) : des cartes exclusives qui aident vraiment en début et milieu de jeu, sans équivalent gratuit.
+  // En argent pour toujours (l'or et le nacre les dépassent en bas), second effet éteint face à un autre joueur.
+  origine('cle-des-pompes', tr('La clé des pompes'), depuis('verin'), { type: 'elan' }),
+  // Rafale plutôt que Lecture : au robot (Strate −3, 300 descentes), la Lecture ne rapportait rien (69 % contre 72 % pour le Condensateur), la Rafale +8 (80 %)
+  origine('toutes-les-courses', tr('Toutes les courses'), depuis('condensateur'), { type: 'rafale' }),
+  origine('quarante-jours', tr('Quarante jours'), depuis('poumons-abysse'), { type: 'riposte', part: 0.35 }),
+  origine('berceuse-a-compter', tr('La berceuse à compter'), depuis('branchies'), { type: 'releve' }),
+  origine('ombre-nette', tr('Ombre nette'), depuis('ombre-serpent'), { type: 'accord' }),
+  origine('nuit-blanche', tr('Nuit blanche'), depuis('plume-givre'), { type: 'pioche' }),
 );
 
 /** La carte du parrainage */
@@ -264,9 +275,9 @@ export const PORTEUR_LEGS: Record<string, string> = {
 };
 
 /** Les cartes qu'on peut trouver, acheter ou fabriquer : toutes, sauf celles de l’Héritage */
-export const MODULES_TIRABLES = MODULES.filter((m) => !m.legs && !m.lien && !m.equivalent);
+export const MODULES_TIRABLES = MODULES.filter((m) => !m.legs && !m.lien && !m.origine);
 /** Une carte existe-t-elle dans ce métal ? Toutes, sauf les exclusives (seulement dans leur métal) et l’Héritage (en nacre) */
-export const existeEn = (m: ModuleDef, metal: Rarete) => (!m.seul && !m.legs && !m.lien && !m.equivalent) || m.rarete === metal;
+export const existeEn = (m: ModuleDef, metal: Rarete) => (!m.seul && !m.legs && !m.lien && !m.origine) || m.rarete === metal;
 /** Les cartes qui peuvent tomber dans un métal donné (une exclusive ne tombe que dans le sien) */
 export const tirablesEn = (metal: Rarete) => MODULES_TIRABLES.filter((m) => existeEn(m, metal));
 /** Les cartes exclusives : un seul métal */

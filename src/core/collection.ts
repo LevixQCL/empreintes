@@ -1,7 +1,7 @@
 // La collection : les cartes qui tombent dans les Strates, leurs raretés, les doublons et les niveaux.
 // Tout le hasard passe par un état `rng` sauvegardé : aucun hasard n'est jamais payé.
 
-import { VOIES, carteId, gesteDeCarte, moduleDef, renforcer, tirablesEn } from './donnees';
+import { VOIES, carteId, estCarteConnue, gesteDeCarte, moduleDef, renforcer, tirablesEn } from './donnees';
 import { tireur } from './rng';
 import type { Effet, GesteDef, Lignee, ModuleDef, Rarete } from './types';
 import { t as tr } from './i18n';
@@ -152,7 +152,8 @@ export function ajouterCarte(e: EtatCollection, id: string): boolean {
 /** Doublons nécessaires pour le niveau suivant (null au niveau max) */
 export function doublonsRequis(id: string, niveau: number): number | null {
   // une carte de l’Héritage est unique : elle ne monte pas avec des doublons, elle s'éveille avec son Porteur (eveillerLegs)
-  if (moduleDef(id).legs) return null;
+  // une carte d'origine aussi : elle grandit avec son Porteur (eveillerOrigines)
+  if (moduleDef(id).legs || moduleDef(id).origine) return null;
   const r = moduleDef(id).rarete;
   if (niveau >= COLLECTION.niveauMax) return null;
   return COLLECTION.doublons[r][niveau - COLLECTION.niveauDepart[r]] ?? null;
@@ -220,11 +221,22 @@ export const chargeNiveau = (niveau: number): number => CHARGE.base + CHARGE.par
  * Une carte trouvée trop tôt entre quand même dans la collection et y monte avec ses doublons : on sait quel Porteur faire monter.
  */
 export const NIVEAU_METAL: Record<Rarete, number> = { fer: 1, cuivre: 1, argent: 4, or: 7, nacre: 10 };
-export const niveauRequis = (cle: string): number => NIVEAU_METAL[moduleDef(cle).rarete];
+/** une carte d'origine se porte dès le niveau 1 : elle est là pour aider au début (11 novembre 2026) */
+export const niveauRequis = (cle: string): number => (moduleDef(cle).origine ? 1 : NIVEAU_METAL[moduleDef(cle).rarete]);
 
 /** Les cartes qu'un Porteur apporte au deck de combat : celles qu'on lui a confiées, à leur niveau */
 export function cartesEnJeu(porteurId: string, cartes: { id: string; niveau: number }[]): GesteDef[] {
   return cartes.map(({ id, niveau }) => gesteDeCarte(id, porteurId, multNiveau(id, niveau), cransEffet(niveau)));
+}
+
+/** Face à un autre joueur, une carte d'origine (payante) perd l'effet qu'elle a en plus : elle y vaut une carte d'argent ordinaire.
+ *  Le pay-to-win ne compte qu'entre joueurs (Bryan, 11 novembre 2026) : l'avantage vendu reste dans les Strates. */
+export function sansBonusOrigine(g: GesteDef): GesteDef {
+  const bonus = g.carte && estCarteConnue(g.carte) ? moduleDef(g.carte).origine : undefined;
+  if (!bonus) return g;
+  const { effet2, ...reste } = g;
+  if (effet2?.type === bonus) return reste;
+  return g.effet?.type === bonus ? (effet2 ? { ...reste, effet: effet2 } : (({ effet: _e, ...r }) => r)(reste)) : g;
 }
 
 /**

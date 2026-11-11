@@ -145,8 +145,9 @@ export interface ModuleDef {
   seul?: true;
   /** carte d'origine d'un Récit des origines (11 novembre 2026) : on la garde à la fin du récit, jamais trouvée ailleurs
    *  (« carte d'origine » plutôt que « carte souvenir », pour ne pas la confondre avec les souvenirs confiés des familles).
-   *  Sa valeur est l'id de son équivalent gratuit : même lignée, même rôle, même métal, même force, même effet */
-  equivalent?: string;
+   *  Exclusive, en argent, à deux effets : sa valeur est le type de l'effet qu'elle a en plus de la carte gratuite dont elle part
+   *  (cet effet-là s'éteint face à un autre joueur : `sansBonusOrigine`). Elle monte avec son Porteur, sans doublons */
+  origine?: Effet['type'];
 }
 
 /** Une carte en jeu, telle que le moteur de combat la manipule */

@@ -7,7 +7,7 @@ import { noterPalmares } from '../classements';
 import { ARCHIVE, enExpedition, nuitDesLignes, raffiner, eclatsDeTaille, jourDe, log, semaineDe, type Jeu, typeDuJour } from './etat';
 import { avancerFils, retourDeMission, verifierArrivees } from './descentes';
 import { creuser, recompenserConfiance, entrainer, garnirComptoir, soinParHeure } from './district';
-import { RAVITAILLEMENT, eveillerLegs } from './recompenses';
+import { RAVITAILLEMENT, eveillerLegs, eveillerOrigines } from './recompenses';
 import { recompenserFilleul } from './parrainage';
 import { retourDeContrat } from './marees';
 import { avancerBasses } from './basses';
@@ -19,6 +19,7 @@ export function tick(j: Jeu, now: number): string[] {
   nouvelles.push(...verifierArrivees(j));
   nouvelles.push(...avancerFils(j));
   eveillerLegs(j);
+  eveillerOrigines(j);
   nouvelles.push(...recompenserFilleul(j));
   const dt = Math.max(0, now - j.dernierTick);
   const heures = dt / 3_600_000;

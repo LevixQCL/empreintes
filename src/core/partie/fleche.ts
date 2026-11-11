@@ -20,7 +20,7 @@ import { creerCombat } from '../combat';
 import { FLECHE } from '../classements';
 import { nouvelleExpedition } from '../expedition';
 import { graine, tireur } from '../rng';
-import { tirerChoix } from '../collection';
+import { sansBonusOrigine, tirerChoix } from '../collection';
 import type { Rarete } from '../types';
 import { CONFIANCE, XP, bonusPv, porteursPresents, strateVaincue, confier, gagnerXp, log, niveauPorteur, non, pvNiveau, usureAuRetour, type Jeu, type Resultat } from './etat';
 import { escouadePrete, payerRatelier, type Retour } from './descentes';
@@ -199,9 +199,11 @@ function combatFleche(j: Jeu, escouade: string[], quai: number, force: number, p
   if (!e.ok) return e;
   // un Porteur (la garnison d'un directeur) combat sous les traits d'un garde de sa lignée ; un garde de la Flèche, tel quel
   const gardes = porteurs.map((id) => (estGardeFleche(id) ? id : `garde-${porteurDef(id).lignee}`));
-  const x = nouvelleExpedition({ porteurs: e.porteurs, deck: e.deck, strate: 1, rng, sequence: [gardes[0]!], force });
+  // un défi se joue contre un autre directeur : les cartes d'origine (payantes) y perdent l'effet qu'elles ont en plus
+  const deck = defi ? e.deck.map(sansBonusOrigine) : e.deck;
+  const x = nouvelleExpedition({ porteurs: e.porteurs, deck, strate: 1, rng, sequence: [gardes[0]!], force });
   x.combat = creerCombat({
-    porteurs: e.porteurs, ennemiId: gardes[0]!, escorte: gardes.slice(1), rng, deck: e.deck, force, pvPleins: true,
+    porteurs: e.porteurs, ennemiId: gardes[0]!, escorte: gardes.slice(1), rng, deck, force, pvPleins: true,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
   });
   if (!estGardeFleche(porteurs[0]!)) x.combat.ennemi.porteur = porteurs[0];

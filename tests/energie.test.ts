@@ -90,7 +90,7 @@ describe('Les anciennes sauvegardes (version 9 → 10)', () => {
     j.porteurs.doran!.poste = 'noyau';
     j.seances = [{ porteur: 'doran', cible: 12, xpTotale: 100, xpGagnee: 0, xpHeure: 10, energie: 2640 }];
     expect(estJeuValide(j)).toBe(true);
-    expect(j.version).toBe(11);
+    expect(j.version).toBe(12);
     expect(j.energie).toBe(1000);
     expect(j.composants).toBe(1234);
     expect(j.seances![0]!.energie).toBe(132);

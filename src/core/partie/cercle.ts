@@ -98,7 +98,7 @@ export function raisonNonEchangeable(j: Jeu, id: string): string | null {
   try { m = moduleDef(id); } catch { return t('Carte inconnue.'); }
   if (m.legs) return t('Les cartes de l’Héritage ne quittent jamais le district.');
   if (m.lien) return t('Une carte de parrainage ne s’échange pas : elle se reçoit avec un ami.');
-  if (m.equivalent) return t('Une carte d’origine ne s’échange pas : elle vient d’une histoire.');
+  if (m.origine) return t('Une carte d’origine ne s’échange pas : elle vient d’une histoire.');
   if (m.rarete === 'nacre') return t('La nacre ne s’échange pas.');
   if (RARETES.indexOf(m.rarete) > RARETES.indexOf(metalMax(j))) return t`L’or s’échange à partir du niveau ${CERCLE.orAuNiveau} du Cercle.`;
   return null;

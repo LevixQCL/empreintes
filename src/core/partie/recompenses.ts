@@ -270,6 +270,27 @@ export const EVEIL_LEGS: { porteur: number; niveau: number }[] = [{ porteur: 13,
 export const niveauLegsPour = (niveauDuPorteur: number) =>
   EVEIL_LEGS.reduce((n, e) => (niveauDuPorteur >= e.porteur ? Math.max(n, e.niveau) : n), COLLECTION.niveauDepart.nacre);
 
+/** Une carte d'origine n'a pas de doublons : elle grandit avec le Porteur qui la porte (11 novembre 2026).
+ *  Plus tôt que l'Héritage : elle doit aider dès les premières Strates, et finir sa montée au milieu du jeu. */
+export const EVEIL_ORIGINE: { porteur: number; niveau: number }[] = [{ porteur: 4, niveau: 2 }, { porteur: 8, niveau: 3 }, { porteur: 12, niveau: 4 }, { porteur: 16, niveau: 5 }];
+export const niveauOriginePour = (niveauDuPorteur: number) =>
+  EVEIL_ORIGINE.reduce((n, e) => (niveauDuPorteur >= e.porteur ? Math.max(n, e.niveau) : n), 1);
+
+/** À chaque tick : chaque carte d'origine portée grandit avec son Porteur (elle ne redescend jamais) */
+export function eveillerOrigines(j: Jeu) {
+  for (const [id, p] of Object.entries(j.porteurs)) {
+    for (const cle of p.modules) {
+      const c = j.collection[cle];
+      if (!c || !moduleDef(cle).origine) continue;
+      const n = niveauOriginePour(niveauPorteur(j, id).niveau);
+      if (n > c.niveau) {
+        c.niveau = n;
+        log(j, t`${moduleDef(cle).nom} grandit avec ${porteurDef(id).nom} : niveau ${n}.`);
+      }
+    }
+  }
+}
+
 /** À chaque tick : la carte de l’Héritage s'éveille avec le Porteur qui la porte (elle ne redescend jamais) */
 export function eveillerLegs(j: Jeu) {
   if (!j.legs || j.legs === 'cle') return;

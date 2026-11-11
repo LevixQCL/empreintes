@@ -13,6 +13,7 @@ import { lignees, nature, oubli, puits, toi, tours, type Film, type Plan } from 
 import { t as tr } from '../core/i18n';
 import { RECITS_ORIGINES } from '../core/partie/recits';
 import { moduleDef } from '../core/donnees';
+import { nomsEffets } from '../core/effets';
 import { faceCarte } from './carte';
 
 const f = (id: string, des = 1, camera?: Plan['camera']) => ({ id, des, camera });
@@ -214,12 +215,11 @@ export function htmlChoixRecit(recit: string, actuelle: string | null): string {
     + `<p class="cr-aide">${actuelle ? tr('Tu peux changer d’avis : la nouvelle carte prend la place de l’ancienne, au même niveau et dans les mêmes decks.') : RECITS_TEXTES[recit]!.emporte}</p>`
     + `<div class="cr-choix">${r.choix.map((c) => {
       const m = moduleDef(c.carte);
-      const eq = moduleDef(m.equivalent!);
       const garde = actuelle === c.carte;
       return `<button type="button" class="cr-option${garde ? ' garde' : ''}" data-action="recit-garder" data-id="${c.carte}" aria-pressed="${garde}">`
         + `<span class="cr-face">${faceCarte(m, 1)}</span>`
         + `<span class="cr-texte"><strong>${m.nom}</strong><em>${c.phrase}</em>`
-        + `<small>${tr`Équivalent gratuit : ${eq.nom}, mêmes chiffres, à trouver dans le jeu.`}</small>`
+        + `<small>${tr`Carte exclusive, en argent, à deux effets : ${nomsEffets(m)}. Elle grandit avec son Porteur.`}</small>`
         + (garde ? `<b class="cr-badge">${tr`Gardée`}</b>` : '') + `</span></button>`;
     }).join('')}</div>`
     + `<button type="button" class="btn sec" data-action="recit-quitter">${actuelle ? tr('Garder mon choix') : tr('Choisir plus tard')}</button>`

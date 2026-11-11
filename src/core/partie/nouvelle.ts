@@ -322,9 +322,33 @@ function migrer(j: Jeu) {
     j.version = 11;
     convertirNiveaux(j);
   }
+  if (j.version === 11) {
+    // version 12 (11 novembre 2026) : les cartes d'origine des Récits passent du cuivre à l'argent (exclusives, deux effets).
+    // La carte gardée reste la même, là où elle est : seule sa clé change de métal.
+    j.version = 12;
+    originesEnArgent(j);
+  }
   allegerSelonCharge(j);
   // 10 novembre 2026 : les quais gravés déjà passés donnent leur carte au choix (une seule fois, notée dans fleche.cartes)
   rattraperCartesFleche(j);
+}
+
+/** Les cartes d'origine gardées en cuivre deviennent leur exemplaire d'argent : collection, decks, vécu et pastilles « nouveau » */
+function originesEnArgent(j: Jeu) {
+  for (const m of MODULES.filter((x) => x.origine)) {
+    const avant = carteId(m.id, 'cuivre'), apres = carteId(m.id, 'argent');
+    const c = j.collection[avant];
+    if (c) {
+      delete j.collection[avant];
+      j.collection[apres] ??= c;
+    }
+    for (const p of Object.values(j.porteurs)) p.modules = p.modules.map((k) => (k === avant ? apres : k));
+    if (j.vecu?.[avant]) {
+      j.vecu[apres] ??= j.vecu[avant]!;
+      delete j.vecu[avant];
+    }
+    if (j.vus?.cartes) j.vus.cartes = j.vus.cartes.map((k) => (k === avant ? apres : k));
+  }
 }
 
 /** Les anciens niveaux de départ (avant le 10 novembre 2026, sur 10 niveaux) */

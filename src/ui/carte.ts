@@ -9,7 +9,10 @@
 // Les tailles sont en unités de conteneur (cqw) : la même carte s'affiche en grand ou en petit.
 
 import { NOMS_EFFET, effetsDe, formuleEffet, nomsEffets } from '../core/effets';
-import { DEPART_PORTEURS, NOMS_LIGNEE, PORTEUR_EXCLUSIVES, PORTEUR_LEGS, voieDe } from '../core/donnees';
+import { DEPART_PORTEURS, NOMS_LIGNEE, PORTEUR_EXCLUSIVES, PORTEUR_LEGS, estCarteConnue, moduleDef, voieDe } from '../core/donnees';
+
+/** une carte d'origine (Récits des origines) : elle porte son propre sceau */
+const estOrigine = (cle: string) => estCarteConnue(cle) && !!moduleDef(cle).origine;
 import { frequenceLibre, signeLibre } from '../core/regles';
 import { RECITS_ORIGINES } from '../core/partie/recits';
 import { COLLECTION, NOMS_RARETE, effetNiveau } from '../core/collection';
@@ -162,7 +165,7 @@ export function corpsFace(d: Face): string {
     // une carte de l'Héritage (la seule à deux effets) porte son sceau en haut
     + `<span class="nf-freqs"><span class="nf-caps">${segs}${fele}</span>${d.lourd ? SIGNE_LOURD : ''}</span>`
     // le sceau de l’Héritage ou de l’exclusive : posé au bas de l'illustration, à gauche (8 novembre 2026 : en haut, il cachait les Fréquences)
-    + `<span class="nf-voile">${d.effet2 ? `<span class="nf-heritage">${tr`Héritage`}</span>` : d.seul ? `<span class="nf-heritage nf-exclusive">${tr`Exclusive`}</span>` : ''}<span class="nf-barre"></span>`
+    + `<span class="nf-voile">${d.carte && estOrigine(d.carte) ? `<span class="nf-heritage nf-exclusive">${tr`Origine`}</span>` : d.effet2 ? `<span class="nf-heritage">${tr`Héritage`}</span>` : d.seul ? `<span class="nf-heritage nf-exclusive">${tr`Exclusive`}</span>` : ''}<span class="nf-barre"></span>`
     + `<span class="nf-val ${d.type}${d.tendance ? ' ' + d.tendance : ''}">${ICONES_ACTION[d.type]}<b>${d.v}</b></span>`
     // en main : une capsule en bas à gauche, la lignée (losange) et l'icône de l'effet, en face de celle de la force
     + `<span class="nf-eff${d.effet ? ' a-effet' : ''}"><i class="nf-eff-lg"></i>${d.effet ? effetsDe(d).map((e) => ICONES_EFFET[e.type]).join('') : ''}</span>`

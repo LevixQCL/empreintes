@@ -12,7 +12,7 @@
 // Les deux joueurs (et plus tard un serveur) rejouent les mêmes choix sur le même état et obtiennent le même duel.
 
 import { carteId, moduleDef, porteurDef, DEPART_PORTEURS } from './donnees';
-import { cartesEnJeu, placesVides, puissanceCarte, PLACES_PORTEUR } from './collection';
+import { cartesEnJeu, placesVides, puissanceCarte, sansBonusOrigine, PLACES_PORTEUR } from './collection';
 import { effetsEnJeu, ligneesDeSuite } from './combat';
 import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, placesChaine, placesEnPlus, peutPayerSurtension } from './regles';
 import { graine, tireur } from './rng';
@@ -139,7 +139,7 @@ const OK: Resultat = { ok: true };
 
 /** Le deck de duel d'une escouade : les cartes de ses Porteurs à leur niveau, et leurs places vides (pas de cartes du district) */
 export function deckDuel(e: EscouadeDuel): GesteDef[] {
-  return e.porteurs.flatMap((p) => [...cartesEnJeu(p.id, p.cartes), ...placesVides(p.id, p.cartes.length)]);
+  return e.porteurs.flatMap((p) => [...cartesEnJeu(p.id, p.cartes).map(sansBonusOrigine), ...placesVides(p.id, p.cartes.length)]);
 }
 
 /** Une escouade de duel valable : trois Porteurs différents, six cartes au plus chacun, des cartes qui existent */
