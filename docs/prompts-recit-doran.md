@@ -1,5 +1,7 @@
 # Prompts Midjourney — le Récit de Doran (Pack des origines, 11 novembre 2026)
 
+✓ Sept images dans le jeu (11 novembre 2026) : 01 à 06 et 10. **07, 08 et 09 à refaire** : Doran n'y ressemblait pas (visage fin, barbe courte). Pour Doran jeune, joindre `public/art/references/doran-jeune.webp` (l'image 06) plutôt que le portrait âgé.
+
 Dix images, une par plan du Récit (`DORAN` dans src/ui/recits.ts), à déposer dans `public/intro/doran-01.webp` à `doran-10.webp`
 (816 × 1456, 9:16), puis à ajouter à `IMAGES_DISPONIBLES` dans src/ui/intro.ts. Tant qu'une image manque, le plan montre sa scène dessinée en code.
 
