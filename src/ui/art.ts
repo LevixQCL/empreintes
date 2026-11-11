@@ -247,8 +247,8 @@ export const fondFleche = `${base}scenes/fleche.webp`;
 /** La Flèche peinte (30 octobre 2026) : la Flèche entière, le médaillon de l'escouade, les plaques, les fanions, la passerelle, le sceau du gardien */
 export const artFleche = (n: 'fleche-entiere' | 'medaillon' | 'plaque' | 'fanion' | 'passerelle' | 'sceau-gardien') => `${base}fleche/${n}.webp`;
 export const illustrationScene = (id: string): string | null => (SCENES_ILLUSTREES.has(id) ? `${base}scenes/${id}.webp` : null);
-/** Les images charnières du suspense déjà peintes (11 novembre 2026) : une par Strate ; −1 et −9 sont à refaire */
-const CHARNIERES = new Set([2, 3, 4, 5, 6, 7, 8, 10]);
+/** Les images charnières du suspense déjà peintes (11 novembre 2026) : une par Strate ; −1 est à refaire */
+const CHARNIERES = new Set([2, 3, 4, 5, 6, 7, 8, 9, 10]);
 export const imageCharniere = (n: number): string | null => (CHARNIERES.has(n) ? `${base}scenes/charniere-${n}.webp` : null);
 /** Le gros plan sur la cheville d'Ilka : l'écran est vide sur l'image, le jeu y dessine ce qu'il affiche */
 export const imageCheville = `${base}scenes/cheville.webp`;
