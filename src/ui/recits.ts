@@ -4,7 +4,9 @@
 // le signal de Doran reste son secret (Bible : « Le secret de Doran »), la Glacière n'est jamais nommée.
 // Le Récit de Doran (11 novembre 2026) suit le doc « Ossyra — Récit de Doran » : la Mue, le Levage, la Grève, le signal de 2111.
 // La lanterne au-dessus de l'eau (2099 et 2111), c'est Véla : aucun récit ne le dit, le joueur relie les morceaux.
-// Les illustrations (public/intro/ilka-XX.webp, doran-XX.webp) sont à générer sur Midjourney (docs/prompts-recit-*.md) ;
+// Le Récit de Véla (11 novembre 2026) suit le doc « Ossyra — Récit de Véla » : Corvin, l'Accord ouvert, la Nuit blanche,
+// les câbles sans harnais. Elle a vu les trois éclats de 2111 et se tait (validé par Bryan) : son récit ne nomme jamais Doran.
+// Les illustrations (public/intro/ilka-XX.webp, doran-XX.webp, vela-XX.webp) sont à générer sur Midjourney (docs/prompts-recit-*.md) ;
 // tant qu'elles manquent, la scène dessinée en code du plan s'affiche.
 
 import { lignees, nature, oubli, puits, toi, tours, type Film, type Plan } from './intro';
@@ -127,15 +129,78 @@ const DORAN: Plan[] = [
     tr('Devant la salle ouverte, il pose la main à plat sur la pierre. Comme son père sur le mur de la cuisine.')] }),
 ];
 
+const VELA: Plan[] = [
+  // ---------- Chapitre 1 · Soixante (2097) ----------
+  plan({ epoque: tr('2097 · Les bas-fonds'), titre: tr('Corvin'), annees: [2097, 2097], ambiance: 'foyer', camera: 'approche', fonds: [f('vela-01')], scene: oubli, lignes: [
+    tr('2097. Véla a dix-neuf ans. Elle est apprentie fouilleuse, et elle a peur du vide.'),
+    tr('Quand elle remonte un cristal, elle l’apporte au vieux Corvin. C’est un Muet : un Résonant qui refuse de servir le Présage. Il lit les pierres des fouilleurs pour une soupe.'),
+    tr('Ce soir-là, Corvin ne lit rien. Il est couché. « Reste un peu. Je n’ai personne d’autre. »'),
+    tr('Il meurt avant l’aube, la main de Véla dans la sienne. À la lueur de la bougie, son ombre de dragon s’efface du mur.')] }),
+  plan({ epoque: tr('Chapitre 1 · Soixante'), titre: tr('Copie de district'), annees: [2097, 2097], ambiance: 'aube-doree', camera: 'gauche', fonds: [f('vela-02')], scene: tours, lignes: [
+    tr('Le lendemain matin, la Clinique est formelle. Une pierre doit être relevée et reposée dans les trois jours. Sinon, elle s’éteint.'),
+    tr('Corvin n’a pas d’héritier. Les Hauts répondent par un mot : « Copie de district. Sans intérêt. »'),
+    tr('Alors la Clinique affiche un Accord ouvert. Tout volontaire peut se présenter. La pierre de Corvin choisira.'),
+    tr('Sa mère dit non. « Je ne veux pas qu’il y ait quelqu’un d’autre dans ma fille. »')] }),
+  plan({ epoque: tr('Chapitre 1 · Soixante'), titre: tr('Soixante'), annees: [2097, 2097], ambiance: 'cristal', camera: 'approche', fonds: [f('vela-03')], scene: (k) => lignees(k), lignes: [
+    tr('Le deuxième jour, Véla se présente quand même. Ils sont soixante dans la file.'),
+    tr('La liseuse de la Clinique pose la pierre dans chaque main, quelques secondes. Elle ne se réchauffe pour personne. Douze, trente, cinquante-neuf.'),
+    tr('Véla est la dernière. La pierre est tiède avant même de toucher sa paume.')] }),
+  // ---------- Chapitre 2 · L’Accord ouvert (2097) ----------
+  plan({ epoque: tr('Chapitre 2 · L’Accord ouvert'), titre: tr('Une seule nuit'), annees: [2097, 2097], ambiance: 'nuit', camera: 'descend', texte: 'haut', fonds: [f('vela-04')], scene: (k) => lignees(k), lignes: [
+    tr('La liseuse est claire. « Une nuit, la pierre contre ta nuque. Si elle refuse, elle meurt. Et le district la perd pour toujours. »'),
+    tr('Il n’y aura pas de deuxième essai. Ni pour Véla, ni pour personne.'),
+    tr('Le soir, devant la Clinique, il y a du monde. Les cinquante-neuf autres. Des fouilleurs que Corvin aidait. Des inconnus.'),
+    tr('Véla ne dort pas. Puis elle dort. Elle rêve d’une mer qu’elle n’a jamais vue, vue d’en haut, de très haut. Elle n’a pas peur.'),
+    tr('Au réveil, la pierre est tiède. Dehors, quelqu’un se met à applaudir, puis toute la rue.')] }),
+  plan({ epoque: tr('Chapitre 2 · L’Accord ouvert'), titre: tr('La Nuit blanche'), annees: [2097, 2097], ambiance: 'foyer', camera: 'droite', fonds: [f('vela-05')], scene: oubli, lignes: [
+    tr('La greffe se fait le jour même : le cristal serti sous la peau, à la base du crâne. Viennent les trois nuits sans sommeil.'),
+    tr('La tradition veut que la famille veille le greffé et lui parle de son enfance. Pour qu’il se souvienne de qui il était avant l’arrivée de l’autre.'),
+    tr('La première nuit, personne ne vient. La liseuse s’assoit près du lit. Elle ne connaît rien de l’enfance de Véla.'),
+    tr('La deuxième nuit, la porte s’ouvre. Sa mère entre sans un mot, s’assoit, et commence : « Tu avais quatre ans, et tu ne voulais jamais descendre des escaliers. »'),
+    tr('Elle parle deux nuits entières. Véla écoute tout. Elle ne se souvenait d’aucune de ces histoires.')] }),
+  plan({ epoque: tr('Chapitre 2 · L’Accord ouvert'), titre: tr('C’est toujours toi'), annees: [2097, 2097], ambiance: 'cristal', camera: 'approche', texte: 'haut', fonds: [f('vela-06')], scene: oubli, lignes: [
+    tr('Le troisième jour, à la lueur de la bougie, l’ombre de Véla sur le mur n’est plus tout à fait la sienne. Elle ondule, longue, comme un serpent qui vole.'),
+    tr('Sa mère la regarde longtemps. Puis elle dit : « C’est toujours toi. » Elle ne le dit pas comme une question.')] }),
+  // ---------- Chapitre 3 · Sans harnais (2097-2121) ----------
+  plan({ epoque: tr('Chapitre 3 · Sans harnais'), titre: tr('Sans harnais'), annees: [2097, 2098], ambiance: 'aube-doree', camera: 'monte', fonds: [f('vela-07')], scene: tours, lignes: [
+    tr('Dans le mois, la mèche d’or pousse. Au district, beaucoup de Résonants la teignent pour qu’on les laisse tranquilles.'),
+    tr('Véla ne la teint pas. « Ce n’est pas la mienne. C’est celle de Corvin. Je n’ai pas à la cacher. »'),
+    tr('Le premier jour sur les câbles, elle décroche son harnais. Elle n’a plus peur du vide. Elle ne sait pas si c’est elle qui a changé, ou si c’est lui.')] }),
+  plan({ epoque: tr('Chapitre 3 · Sans harnais'), titre: tr('Les paniers'), annees: [2099, 2099], ambiance: 'nuit', camera: 'descend', texte: 'haut', fonds: [f('vela-08')], scene: () => nature(2), lignes: [
+    tr('2099, la Grève des pompes. Personne n’ose descendre les paniers jusqu’à l’eau. Véla, si. Quarante nuits au bout d’un câble, sans harnais, lanterne à la ceinture.'),
+    tr('En bas, un Géné aux épaules larges lève toujours la tête vers sa lumière. Elle ne connaît pas son nom. Il ne voit pas son visage.'),
+    tr('Chaque soir, elle allume une lanterne et regarde son ombre sur le mur. Elle vérifie qu’elle est toujours la même. Elle l’est. Presque.'),
+    tr('Elle rêve de mers vues d’en haut. Des côtes qu’aucune carte du district ne montre.')] }),
+  plan({ epoque: tr('Chapitre 3 · Sans harnais'), titre: tr('La place de Corvin'), annees: [2097, 2101], ambiance: 'atelier', camera: 'gauche', fonds: [f('vela-09')], scene: (k) => lignees(k), lignes: [
+    tr('Devant la Clinique, elle fait une promesse. Rendre au district ce qu’il lui a donné.'),
+    tr('La liseuse lui apprend le métier pendant quatre ans. Poser la pierre contre sa tempe, écouter, et trouver le mot juste pour un penchant.'),
+    tr('Puis Véla reprend la place de Corvin. Elle lit les pierres des fouilleurs, et ne demande rien à ceux qui n’ont rien.')] }),
+  plan({ epoque: tr('Chapitre 3 · Sans harnais'), titre: tr('Ce qu’elle a vu'), annees: [2111, 2111], ambiance: 'maree', camera: 'approche', texte: 'haut', fonds: [f('vela-10')], scene: () => nature(3), lignes: [
+    tr('2111. Elle rentre des câbles quand la passerelle des Hauts-Ponts cède. Elle ne sait pas plonger. Alors elle s’accroche au-dessus de l’eau et tend sa lanterne.'),
+    tr('En bas, le Géné de la Grève tient une gamine hors de l’eau. Deux heures. Puis Véla voit sa lampe lancer trois éclats vers la station.'),
+    tr('Elle comprend ce que fera le courant une seconde avant qu’il reparte. Elle ne dira jamais à personne ce qu’elle a vu.')] }),
+  plan({ epoque: tr('Chapitre 3 · Sans harnais'), titre: tr('Pas sa peur'), annees: [2121, 2121], ambiance: 'nuit', camera: 'recule', fonds: [f('vela-11')], scene: oubli, lignes: [
+    tr('Vingt ans passent. Le district la connaît. Quand un fouilleur remonte un cristal, c’est elle qu’on va chercher.'),
+    tr('2121, la nuit de l’élection du district. Véla se réveille d’un coup, le cœur qui cogne.'),
+    tr('Elle a peur. Mais ce n’est pas sa peur. C’est la peur de quelqu’un d’autre, qui passe en elle comme un courant d’air.'),
+    tr('Elle allume la lanterne. Son ombre tremble sur le mur, alors que la flamme est immobile.')] }),
+  plan({ epoque: tr('Chapitre 3 · Sans harnais'), titre: tr('Le même'), annees: [2121, 2121], ambiance: 'cristal', camera: 'porte', fonds: [f('vela-12')], scene: puits, lignes: [
+    tr('Personne ne l’a appelée. Elle s’habille, prend la lanterne et descend vers les pompes.'),
+    tr('À l’aube, sur une passerelle, une coursière aux cheveux blancs la dépasse en courant. Véla la reconnaît. Ilka, non.'),
+    tr('En bas, devant l’ouverture, un Géné tient la main posée sur la pierre. Le même. Véla s’arrête à côté de lui. Ni l’un ni l’autre ne dit rien.')] }),
+];
+
 export const RECITS: Record<string, Film> = {
   ilka: { plans: ILKA, nom: tr('Récit d’Ilka'), fin: tr('Fin du récit') },
   doran: { plans: DORAN, nom: tr('Récit de Doran'), fin: tr('Fin du récit') },
+  vela: { plans: VELA, nom: tr('Récit de Véla'), fin: tr('Fin du récit') },
 };
 
 /** Ce qu'on lit d'un récit sur la fiche du Porteur, et la consigne du choix final (accordée au personnage) */
 export const RECITS_TEXTES: Record<string, { accroche: string; emporte: string }> = {
   ilka: { accroche: tr('D’où elle vient, avant la porte : trois chapitres illustrés, et une carte d’origine à garder. Aperçu du Pack des origines.'), emporte: tr('Choisis la carte d’origine qu’elle emporte. Tu pourras changer d’avis en relisant cette scène.') },
   doran: { accroche: tr('D’où il vient, avant la porte : trois chapitres illustrés, et une carte d’origine à garder. Aperçu du Pack des origines.'), emporte: tr('Choisis la carte d’origine qu’il emporte. Tu pourras changer d’avis en relisant cette scène.') },
+  vela: { accroche: tr('D’où elle vient, avant la porte : trois chapitres illustrés, et une carte d’origine à garder. Aperçu du Pack des origines.'), emporte: tr('Choisis la carte d’origine qu’elle emporte. Tu pourras changer d’avis en relisant cette scène.') },
 };
 
 // ---------- La dernière scène : ce que le personnage garde de cette histoire ----------

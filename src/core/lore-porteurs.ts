@@ -39,11 +39,13 @@ export const ORIGINES: Record<string, PalierOrigine[]> = {
     { niveau: 8, titre: t('Il compte tout'), texte: t('Doran compte tout : les marches, les caisses, les éclats que la marée dépose. Il ne dit jamais le chiffre. Au marché, les vieux l’appellent « têtu comme une marée ». Il ne sourit pas.') },
     { niveau: 12, titre: t('Pas de lampe'), texte: t('Tous les plongeurs portent une lampe de signal. Pas Doran. Quand on lui en tend une, il la rend sans l’avoir regardée : « Je n’en ai pas besoin. » Ilka dit qu’il voit dans le noir. Il ne la contredit pas.') },
   ],
+  // 11 novembre 2026 (Bryan) : Corvin, l'Accord ouvert, la Nuit blanche et les câbles sans harnais sont racontés dans le
+  // Récit de Véla (Pack des origines, src/ui/recits.ts). Son histoire gratuite ne garde que ce qu'on voit d'elle aujourd'hui.
   vela: [
-    { niveau: 1, titre: t('La pierre orpheline'), texte: t('À dix-neuf ans, apprentie fouilleuse, Véla a assisté à la mort d’un vieux Résonant des bas-fonds, sans famille. Sa pierre, deuxième copie d’un dragon serpentin, n’intéressait pas les Hauts : une copie de district, pour eux, ça ne vaut rien.') },
-    { niveau: 4, titre: t('L’Accord ouvert'), texte: t('La Clinique a organisé un Accord ouvert : tout volontaire pouvait tenter la nuit avec la pierre contre la nuque. Soixante jeunes se sont présentés. Sa mère le lui avait interdit ; elle y est allée quand même. Au matin, la pierre était tiède contre sa peau, et contre la sienne seulement.') },
-    { niveau: 8, titre: t('La lanterne'), texte: t('Depuis la Nuit blanche, Véla n’a plus jamais eu peur du vide : elle travaille sur les câbles sans harnais. Elle porte toujours une lanterne. Son ombre de dragon ne se voit bien qu’à la lumière d’une flamme, et chaque soir, elle vérifie qu’elle est toujours la même.') },
-    { niveau: 12, titre: t('Ce qu’elle doit'), texte: t('Véla doit sa pierre au district, pas aux Hauts. Elle l’a promis à la Clinique : rendre ce qu’on lui a donné. Elle lit gratuitement pour les fouilleurs qui ne peuvent pas payer. C’est pour cela qu’une Résonante s’est mise au service d’un directeur de district.') },
+    { niveau: 1, titre: t('L’enseigne effacée'), texte: t('L’échoppe où Véla lit les pierres était celle de quelqu’un d’autre avant elle. Elle n’a jamais repeint l’enseigne effacée. Quand on lui demande à qui elle était, elle répond : « À quelqu’un qui lisait pour une soupe. »') },
+    { niveau: 4, titre: t('Sans harnais'), texte: t('Véla travaille sur les câbles sans harnais. Les vieux monteurs jurent qu’à dix-huit ans, elle n’osait pas traverser une passerelle. Elle ne dit pas ce qui a changé.') },
+    { niveau: 8, titre: t('La lanterne'), texte: t('Véla porte toujours une lanterne, même en plein jour. Chaque soir, elle l’allume et regarde son ombre sur le mur. Si on lui demande ce qu’elle cherche, elle dit : « Rien. Je vérifie. »') },
+    { niveau: 12, titre: t('Les histoires de sa mère'), texte: t('Véla raconte aux enfants des fouilleurs des histoires de sa propre enfance, toujours dans le même ordre. Elle avoue qu’elle ne s’en souvenait pas. Quelqu’un les lui a racontées, une nuit, il y a longtemps.') },
   ],
   sasha: [
     { niveau: 1, titre: t('L’atelier de presses'), texte: t('À seize ans, apprenti dans un atelier de presses, Sasha a perdu le bras droit dans un accident de machine.') },

@@ -242,12 +242,15 @@ export const MODULES: ModuleDef[] = [
 // gratuit : chaque carte d'origine reprend exactement les chiffres d'une carte qu'on trouve dans le jeu (tests/recits.test.ts).
 // Ilka est une Augmentée : aucune carte de soin n'existe dans sa lignée, d'où une attaque et un bouclier.
 // Doran est un Géné : un bouclier qui dure (Rempart, Final) et un soin pour toute l'escouade (Vague).
+// Véla est une Résonante : une Fissure de groupe (Ombre de serpent) et un Désarmement total (Plume de givre).
 const equivalentDe = (id: string) => MODULES.find((m) => m.id === id)!;
 MODULES.push(
   origine('cle-des-pompes', tr('La clé des pompes'), equivalentDe('verin')),
   origine('toutes-les-courses', tr('Toutes les courses'), equivalentDe('condensateur')),
   origine('quarante-jours', tr('Quarante jours'), equivalentDe('poumons-abysse')),
   origine('berceuse-a-compter', tr('La berceuse à compter'), equivalentDe('branchies')),
+  origine('ombre-nette', tr('Ombre nette'), equivalentDe('ombre-serpent')),
+  origine('nuit-blanche', tr('Nuit blanche'), equivalentDe('plume-givre')),
 );
 
 /** La carte du parrainage */

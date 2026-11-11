@@ -53,4 +53,14 @@ describe('Récits des origines', () => {
     expect(carteDuRecit(j, 'doran')).toBe('berceuse-a-compter');
     expect(carteDuRecit(j, 'ilka')).toBeNull();
   });
+
+  it('Véla (Résonante) : une Fissure de groupe et un Désarmement, de sa lignée', () => {
+    const r = RECITS_ORIGINES.vela!;
+    expect(r.choix.map((c) => c.carte)).toEqual(['ombre-nette', 'nuit-blanche']);
+    for (const c of r.choix) expect(moduleDef(c.carte).lignee).toBe('reso');
+    const j = nouveauJeu(4);
+    expect(garderCarteRecit(j, 'vela', 'quarante-jours').ok).toBe(false);
+    expect(garderCarteRecit(j, 'vela', 'ombre-nette').ok).toBe(true);
+    expect(carteDuRecit(j, 'vela')).toBe('ombre-nette');
+  });
 });

@@ -33,6 +33,15 @@ export const RECITS_ORIGINES: Record<string, { porteur: string; question: string
       { carte: 'berceuse-a-compter', phrase: t('La berceuse à compter les jours. Quelqu’un la commence dans le noir, et tout le monde la reprend.') },
     ],
   },
+  // Véla est une Résonante (« troubler ») : son ombre de dragon fissure tout le groupe, la Nuit blanche désarme (11 novembre 2026)
+  vela: {
+    porteur: 'vela',
+    question: t('Ce que Véla garde de ces années'),
+    choix: [
+      { carte: 'ombre-nette', phrase: t('Chaque soir, la lanterne et l’ombre sur le mur. Toujours la même. Presque.') },
+      { carte: 'nuit-blanche', phrase: t('Les deux nuits où sa mère lui a raconté son enfance. « C’est toujours toi. »') },
+    ],
+  },
 };
 
 /** La carte d'origine gardée à la fin d'un récit (null : pas encore lu jusqu'au bout) */

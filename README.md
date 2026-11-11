@@ -363,7 +363,7 @@ joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `gard
 
 **Le passage du 27 octobre 2026** (relecture « nouveau joueur, joueur expérimenté, game designer », décidé avec Bryan).
 - *Intro* : 14 phrases au premier lancement (`court` dans `PLANS`, `src/ui/intro.ts`) ; « Revoir l’intro complète » (titre, menu) joue toute la version.
-- *Récits des origines* (Pack des origines, 11 novembre 2026) : joués par le même lecteur que l'intro (`RECITS` dans `src/ui/recits.ts`, `app.recit`) ; les Récits d'Ilka et de Doran (10 plans chacun) s'ouvrent depuis la fiche du Porteur (page scellée) et finissent par le choix d'une carte d'origine (`RECITS_ORIGINES`) ; leurs images se génèrent avec `docs/prompts-recit-ilka.md` et `docs/prompts-recit-doran.md`.
+- *Récits des origines* (Pack des origines, 11 novembre 2026) : joués par le même lecteur que l'intro (`RECITS` dans `src/ui/recits.ts`, `app.recit`) ; les Récits d'Ilka et de Doran (10 plans chacun) et de Véla (12 plans) s'ouvrent depuis la fiche du Porteur (page scellée) et finissent par le choix d'une carte d'origine (`RECITS_ORIGINES`) ; leurs images se génèrent avec `docs/prompts-recit-ilka.md`, `docs/prompts-recit-doran.md` et `docs/prompts-recit-vela.md`.
 - *Tuto du district* : il revient à l’ouverture tant qu’il n’a pas été lu jusqu’au bout (`j.accueilVu`) ; menu Plus › « Comment marche le district ».
 - *Pas de faux choix* : deux chemins qui partent d’une même salle ne se ressemblent jamais (`distinguerChemins` dans `expedition.ts`).
 - *Strate −1* : ennemis −15 % (`FORCE.table[0]` = 0,85).
