@@ -23,11 +23,13 @@ interface PresentationPorteur {
 interface PalierOrigine { niveau: number; titre: string; texte: string }
 
 export const ORIGINES: Record<string, PalierOrigine[]> = {
+  // 11 novembre 2026 (Bryan) : la nuit de 2111, le prêt-de-vie et Pim sont racontés dans le Récit d'Ilka (Pack des origines,
+  // src/ui/recits.ts). Son histoire gratuite ne garde que ce qu'on voit d'elle aujourd'hui : des portes ouvertes sur son récit.
   ilka: [
-    { niveau: 1, titre: t('La passerelle'), texte: t('Ilka avait quatorze ans quand la passerelle des Hauts-Ponts a cédé sous elle. La rouille la rongeait depuis des années ; une fissure avait été signalée trois fois. Le Présage n’avait rien dit, puisque rien de soudain ne s’annonçait. Elle est tombée entre deux piliers, les jambes prises sous la passerelle, l’eau jusqu’au menton.') },
-    { niveau: 4, titre: t('Celui qui a plongé'), texte: t('Un ouvrier des Fondations a plongé sans hésiter : un Géné aux poumons d’amphibien, qui tient sous l’eau bien plus longtemps qu’un humain. Il lui a tenu la tête hors de l’eau pendant deux heures, jusqu’à ce qu’on relance les pompes. C’était Doran. Elle ne l’en a jamais remercié à voix haute. Elle lui garde la meilleure part de chaque marché.') },
-    { niveau: 8, titre: t('Le goût de la pièce'), texte: t('La Clinique n’a pas pu sauver ses jambes. Ilka a signé un prêt-de-vie avec la compagnie de transport : quinze ans de courses contre des jambes neuves. Leur cœur de cristal porte le geste d’une coursière des années 2070 qu’elle n’a jamais connue. Depuis, elle ne sait plus marcher lentement et parle aussi vite qu’elle court. « Je ne sais pas si c’est moi qui suis pressée, ou elle. » Ses cheveux ont blanchi en un an.') },
-    { niveau: 12, titre: t('Pim'), texte: t('Si Ilka meurt avant la fin du contrat, la clause de survivance fait passer la dette à son petit frère, Pim, douze ans. C’est pour lui qu’elle accepte toutes les courses, même celles qu’on ne devrait pas accepter. Même un colis qui contenait un cristal volé.') },
+    { niveau: 1, titre: t('Tous les raccourcis'), texte: t('Ilka connaît chaque toit, chaque câble et chaque passerelle du district, et tous les potins des marchés avec. Il y a une passerelle qu’elle prend tous les jours, même quand elle n’est pas sur son chemin : la neuve, aux Hauts-Ponts. Elle dit que c’est plus rapide. Ça ne l’est pas.') },
+    { niveau: 4, titre: t('La meilleure part'), texte: t('À chaque marché, Ilka met de côté la meilleure part pour Doran : le pain encore chaud, le fruit sans tache. Elle ne dit jamais pourquoi. Il ne le demande jamais. Quand elle la lui tend, il regarde ailleurs.') },
+    { niveau: 8, titre: t('Pressée'), texte: t('Ilka ne sait pas marcher lentement. Quand on le lui fait remarquer, elle répond : « Je ne sais pas si c’est moi qui suis pressée, ou elle. » Personne n’a jamais su qui était « elle ». Ilka non plus, peut-être.') },
+    { niveau: 12, titre: t('Le papier plié'), texte: t('Dans sa poche, Ilka garde toujours le même papier plié en quatre, usé aux coins. Elle ne le montre à personne. Au marché, on parie sur ce qu’il y a dessus. Personne n’a jamais gagné.') },
   ],
   doran: [
     { niveau: 1, titre: t('La porte murée'), texte: t('Doran est né en 2069 dans une famille des chantiers d’abris. Son père a aidé à murer les accès sous le district en 2066, après « l’accident ». Il n’en a jamais dit qu’une phrase, répétée jusqu’à sa mort : « On a fermé la porte, mais pas de notre côté. »') },

@@ -2,32 +2,36 @@
  "source": "src/core/lore-porteurs.ts",
  "entrees": [
   {
-   "fr": "La passerelle",
-   "en": "The walkway"
+   "fr": "Tous les raccourcis",
+   "en": "Every shortcut"
   },
   {
-   "fr": "Ilka avait quatorze ans quand la passerelle des Hauts-Ponts a cédé sous elle. La rouille la rongeait depuis des années ; une fissure avait été signalée trois fois. Le Présage n’avait rien dit, puisque rien de soudain ne s’annonçait. Elle est tombée entre deux piliers, les jambes prises sous la passerelle, l’eau jusqu’au menton.",
-   "en": "Ilka was fourteen when the High Bridges walkway went out from under her. Rust had been eating it for years, and the crack had been reported three times. The Presage said nothing, since nothing sudden was coming. She dropped between two pillars with her legs pinned under the deck and the water at her chin."
+   "fr": "Ilka connaît chaque toit, chaque câble et chaque passerelle du district, et tous les potins des marchés avec. Il y a une passerelle qu’elle prend tous les jours, même quand elle n’est pas sur son chemin : la neuve, aux Hauts-Ponts. Elle dit que c’est plus rapide. Ça ne l’est pas.",
+   "en": "Ilka knows every roof, every cable and every walkway in the district, and every bit of market gossip too. There is one walkway she crosses every day, even when it isn’t on her way: the new one at High Bridges. She says it’s faster. It isn’t."
   },
   {
-   "fr": "Celui qui a plongé",
-   "en": "The one who dived in"
+   "fr": "La meilleure part",
+   "en": "The best share"
   },
   {
-   "fr": "Un ouvrier des Fondations a plongé sans hésiter : un Géné aux poumons d’amphibien, qui tient sous l’eau bien plus longtemps qu’un humain. Il lui a tenu la tête hors de l’eau pendant deux heures, jusqu’à ce qu’on relance les pompes. C’était Doran. Elle ne l’en a jamais remercié à voix haute. Elle lui garde la meilleure part de chaque marché.",
-   "en": "A Foundations worker went in after her without a second thought: a Spliced with amphibian lungs, who can stay under far longer than any human. He held her head above water for two hours, until they got the pumps going again. It was Doran. She has never once thanked him out loud. She saves him the best of every market run."
+   "fr": "À chaque marché, Ilka met de côté la meilleure part pour Doran : le pain encore chaud, le fruit sans tache. Elle ne dit jamais pourquoi. Il ne le demande jamais. Quand elle la lui tend, il regarde ailleurs.",
+   "en": "At every market, Ilka sets aside the best share for Doran: the bread still warm, the fruit without a bruise. She never says why. He never asks. When she hands it to him, he looks away."
   },
   {
-   "fr": "Le goût de la pièce",
-   "en": "The taste of the coin"
+   "fr": "Pressée",
+   "en": "In a hurry"
   },
   {
-   "fr": "La Clinique n’a pas pu sauver ses jambes. Ilka a signé un prêt-de-vie avec la compagnie de transport : quinze ans de courses contre des jambes neuves. Leur cœur de cristal porte le geste d’une coursière des années 2070 qu’elle n’a jamais connue. Depuis, elle ne sait plus marcher lentement et parle aussi vite qu’elle court. « Je ne sais pas si c’est moi qui suis pressée, ou elle. » Ses cheveux ont blanchi en un an.",
-   "en": "The Clinic couldn’t save her legs. Ilka signed a life-loan with the transport company: fifteen years of deliveries in exchange for new ones. Their crystal heart carries the stride of a courier from the 2070s she never met. She hasn’t walked slowly since, and talks as fast as she runs. “I can’t tell if it’s me in a hurry, or her.” Her hair went white within the year."
+   "fr": "Ilka ne sait pas marcher lentement. Quand on le lui fait remarquer, elle répond : « Je ne sais pas si c’est moi qui suis pressée, ou elle. » Personne n’a jamais su qui était « elle ». Ilka non plus, peut-être.",
+   "en": "Ilka doesn’t know how to walk slowly. When someone points it out, she answers: “I don’t know if I’m the one in a hurry, or her.” Nobody has ever known who “her” is. Maybe not even Ilka."
   },
   {
-   "fr": "Si Ilka meurt avant la fin du contrat, la clause de survivance fait passer la dette à son petit frère, Pim, douze ans. C’est pour lui qu’elle accepte toutes les courses, même celles qu’on ne devrait pas accepter. Même un colis qui contenait un cristal volé.",
-   "en": "If Ilka dies before the contract runs out, the survivorship clause hands the debt to her little brother Pim, who is twelve. So she takes every job going, even the ones she shouldn’t. Even a parcel with a stolen crystal in it."
+   "fr": "Le papier plié",
+   "en": "The folded paper"
+  },
+  {
+   "fr": "Dans sa poche, Ilka garde toujours le même papier plié en quatre, usé aux coins. Elle ne le montre à personne. Au marché, on parie sur ce qu’il y a dessus. Personne n’a jamais gagné.",
+   "en": "In her pocket, Ilka always keeps the same paper folded in four, worn at the corners. She shows it to no one. At the market, people bet on what’s written on it. Nobody has ever won."
   },
   {
    "fr": "La porte murée",
