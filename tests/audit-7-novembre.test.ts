@@ -173,11 +173,24 @@ describe('Audit du 7 novembre : économie', () => {
   // 8 novembre 2026 : les Éclats du Comptoir et du Générateur accélèrent la Tour ; mesuré j25 (médiane de 16), voir le rapport du jour.
   // 8 novembre, midi : chantiers 6-10 en énergie, fouilleurs du jour, pillages simulés : j29 (cible de Bryan : le jour 30)
   // 8 novembre, après-midi : 32 parties au lieu de 16 (avec 16, la médiane bougeait de 4 jours selon les parties tirées)
+  // les 32 mêmes parties servent aux deux tests qui suivent (elles ne sont jouées qu'une fois)
+  let parties: ReturnType<typeof simulerParcours>[] | null = null;
+  const jouees = () => (parties ??= Array.from({ length: 32 }, (_, i) => simulerParcours(PROFILS.occasionnel, 40, 1000 + i * 7919, { joueur: 'moyen', jusqua: 10 })));
+
   it('un joueur occasionnel ouvre la Strate −10 entre le jour 27 et le jour 32', () => {
-    const jours = Array.from({ length: 32 }, (_, i) => simulerParcours(PROFILS.occasionnel, 40, 1000 + i * 7919, { joueur: 'moyen', jusqua: 10 }).ouverture[10] ?? Infinity);
-    const d = mediane(jours);
+    const d = mediane(jouees().map((r) => r.ouverture[10] ?? Infinity));
     expect(d).toBeGreaterThanOrEqual(27);
     expect(d).toBeLessThanOrEqual(32);
+  }, 300_000);
+
+  // 11 novembre 2026 (audit du 10 : « le jour 30 est tenu, mais par la défaite », et aucun test ne surveillait le taux de victoire).
+  // À chaque fois que le joueur a reçu plus de ressources, la force des ennemis a été relevée pour garder le jour 30 : le front
+  // se gagnait de moins en moins souvent sans que rien ne le signale. Mesuré ce jour-là sur ces 32 parties, jusqu'à l'ouverture
+  // de −10 : 26 % (19 % sur 50 jours, gardien de −10 compris). Le plancher est là pour que ça ne baisse plus ; la cible reste
+  // « environ une victoire sur trois » : le relever quand FORCE.table sera réglée (`npm run front` donne les chiffres).
+  it('au front, le joueur occasionnel gagne au moins une expédition sur cinq', () => {
+    const t = jouees().reduce((n, r) => n + r.front.tentatives, 0), v = jouees().reduce((n, r) => n + r.front.victoires, 0);
+    expect(v / t).toBeGreaterThanOrEqual(0.22);
   }, 300_000);
 });
 

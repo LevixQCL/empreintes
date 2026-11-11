@@ -23,6 +23,7 @@ Autres commandes :
 | `duel.html` | L'essai du duel en temps réel (page à part) : contre le robot ou un ami avec un code — voir `docs/duel.md`. Dans le jeu, le duel passe par le Cercle des quais |
 | `npm run robot` | Lance le robot d'équilibrage (quelques minutes) et écrit `docs/robot-rapport.md` |
 | `npm run voies` | Compare chaque voie à un deck classique de même Charge et écrit `docs/voies-rapport.md` |
+| `npm run front` | Rejoue les parties d'un joueur occasionnel avec la force des ennemis changée (`-- --forces 1,0.9 --creuseurs 10,11,12`) : taux de victoire au front, jour de −10, plus long blocage. Ne change rien au jeu |
 | `npm run i18n` | Met à jour les catalogues de traduction d'après le code et montre ce qui est traduit (voir `docs/traduction/README.md`) |
 
 Chaque `git push` sur `main` lance les tests, construit le site et le publie sur GitHub Pages.
@@ -33,7 +34,7 @@ Chaque `git push` sur `main` lance les tests, construit le site et le publie sur
 src/
   core/          les règles du jeu, sans affichage (pourront tourner sur un serveur)
     types.ts       les types : Porteurs, cartes, ennemis, état du combat
-    donnees.ts     le contenu : Porteurs, les cartes (112, plus 7 cartes communes du district et la Clé de l’Héritage : 120), deck de départ, ennemis
+    donnees.ts     le contenu : Porteurs, les cartes (118, dont les 6 cartes d'origine des Récits, plus 7 cartes communes du district et la Clé de l’Héritage : 126), deck de départ, ennemis
     regles.ts      les réglages chiffrés (équilibrage) + Résonance, Écho, triangle
     combat.ts      le moteur de combat
     effets.ts      les noms et textes des effets spéciaux (Perçant, Siphon, Accord…)

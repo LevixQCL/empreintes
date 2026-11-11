@@ -24,6 +24,7 @@
     "fouilles": "tsx scripts/fouilles.ts",
     "livre": "tsx scripts/livre.ts .livre && python3 scripts/livre-images.py .livre",
     "audit": "tsx scripts/audit-economie.ts",
+    "front": "tsx scripts/front.ts",
     "i18n": "tsx scripts/i18n.ts"
   },
   "devDependencies": {
