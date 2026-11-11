@@ -5,7 +5,7 @@ Douze images, une par plan du Récit (`VELA` dans src/ui/recits.ts), à déposer
 
 - Style : celui de l'intro et des autres Récits (les deux --sref). Midjourney 8.2 : pas de --oref ; le portrait de Véla est déjà en tête de prompt (référence d'image) : `art/references/vela-jeune.webp` (l'image 07) pour Véla à 19 ans (01 à 06), le portrait `art/porteurs/vela.webp` ensuite.
 
-✓ Dans le jeu (11 novembre 2026) : 01 et 03 à 12 (07 gardée comme référence de Véla jeune). **02 à retoucher** (mèche d'or avant la greffe : l'effacer dans l'Éditeur). **10 et 12 réécrites** : Doran et Ilka y avaient un visage qui ne leur ressemblait pas ; ils restent maintenant de dos ou en silhouettes.
+✓ Les douze images sont dans le jeu (11 novembre 2026 ; 07 gardée comme référence de Véla jeune). Astuce retenue : quand la référence porte un trait à éviter (la mèche avant la greffe), le mettre dans le `--no` (`gold streak, blonde streak, highlights`). **10 et 12 réécrites** : Doran et Ilka y avaient un visage qui ne leur ressemblait pas ; ils restent maintenant de dos ou en silhouettes.
 - Véla : **19 ans en 2097**, 33 ans en 2111, 43 ans en 2121. **Pas de mèche d'or aux images 1 à 5** (avant la greffe) ; la mèche d'or apparaît à l'image 6 et ne la quitte plus. Carré foncé aux épaules, cape ocre, lanterne à flamme violette.
 - Sa mère : même visage, cheveux foncés qui grisonnent. Corvin : vieil homme aux cheveux blancs avec une mèche d'or.
 - Doran et Ilka (images 8, 10, 12) restent petits, en silhouettes ou de dos, jamais de visage : le récit de Véla ne les nomme pas, et Midjourney ne les reproduit pas fidèlement à côté de Véla.
