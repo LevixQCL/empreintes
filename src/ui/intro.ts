@@ -180,7 +180,7 @@ const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '03-t
   // le Récit de Doran (11 novembre 2026) : le plan 09 reprend ilka-03 (même instant que « Le signal » d'Ilka)
   'doran-01', 'doran-02', 'doran-03', 'doran-04', 'doran-05', 'doran-06', 'doran-07', 'doran-08', 'doran-10',
   // le Récit de Véla (11 novembre 2026) : les autres images s'ajoutent ici une fois déposées
-  'vela-07',
+  'vela-07', 'vela-08', 'vela-09', 'vela-11',
 ]);
 /** Plans qui ont aussi une courte vidéo en boucle (public/intro/<id>.mp4), l'image sert d'affiche.
  *  10-toi n'en a plus : sa boucle sautait ; l'image fixe et le zoom vers la porte la remplacent. */
