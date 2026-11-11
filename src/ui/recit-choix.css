@@ -1,0 +1,26 @@
+/* La dernière scène d'un Récit des origines (11 novembre 2026) : ce que le personnage garde de cette histoire.
+   Deux cartes d'origine côte à côte, l'or pour celle qu'on a gardée ; et la page scellée de la fiche du Porteur. */
+
+.ecran.choix-recit{padding:calc(16px + var(--sat)) 14px calc(20px + var(--sab));width:100%;
+  background:radial-gradient(110% 50% at 50% 0%,rgba(216,180,101,.14),transparent 70%),linear-gradient(180deg,#0E0C10 0%,#0B0D12 70%)}
+.cr-page{display:flex;flex-direction:column;gap:14px;width:100%;max-width:560px;margin:auto}
+.cr-page h1{margin:2px 0 0;font:400 28px/1.1 var(--display);color:var(--ink)}
+.cr-page .surtitre{color:var(--gold)}
+.cr-aide{margin:0;font:500 14px/1.45 var(--body);color:var(--quiet)}
+.cr-choix{display:flex;flex-direction:column;gap:10px}
+.cr-option{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:center;padding:10px;border:none;border-radius:16px;text-align:left;color:var(--ink);
+  background:var(--verre-2);box-shadow:inset 0 0 0 1px var(--filet);transition:transform .12s ease,box-shadow .15s ease}
+.cr-option:active{transform:scale(.985)}
+.cr-option.garde{box-shadow:inset 0 0 0 2px var(--gold),0 0 20px rgba(216,180,101,.25)}
+.cr-face{display:block;width:96px}
+.cr-face>*{width:100%}
+.cr-texte{display:flex;flex-direction:column;gap:5px;min-width:0}
+.cr-texte strong{font:400 18px/1.15 var(--display)}
+.cr-texte em{font:italic 400 14px/1.45 'Literata',Georgia,serif;color:var(--ink-2)}
+.cr-texte small{font:500 12px/1.35 var(--body);color:var(--quiet)}
+.cr-badge{align-self:flex-start;font:700 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#1C1406;background:var(--gold);padding:4px 8px;border-radius:999px}
+
+/* la page scellée de la fiche du Porteur */
+.fp-recit{position:relative;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;padding:12px 14px;border-radius:14px;background:rgba(216,180,101,.05);box-shadow:inset 0 0 0 1px rgba(216,180,101,.45)}
+.fp-sceau{width:34px;height:34px;margin-top:2px;border-radius:50%;background:radial-gradient(circle at 38% 35%,#FFE7A8,#D8B465 45%,#8A6A2E 80%);box-shadow:0 0 0 3px rgba(216,180,101,.2),0 2px 8px rgba(0,0,0,.5)}
+.fp-recit-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}

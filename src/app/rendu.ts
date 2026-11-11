@@ -24,6 +24,7 @@ import { enAttente as enAttenteExpedition } from '../core/expedition';
 import { trouveesDe } from '../ui/guide';
 import { htmlIntro } from '../ui/intro';
 import { filmActif } from './intro';
+import { htmlChoixRecit } from '../ui/recits';
 import { animerCompteur, majIntro, precharger } from '../ui/intro-lecteur';
 import { htmlPorteurs } from '../ui/porteurs';
 import { visuel as ageDistrict } from '../ui/art';
@@ -118,7 +119,7 @@ function dessiner() {
   const pseudoTape = (racine.querySelector('#gt-nom') as HTMLInputElement | null)?.value;
   let h = '';
   if (app.mode === 'titre') h = htmlTitre(app.jeu.introVue, !reduit, compteTitre());
-  else if (app.mode === 'intro') h = htmlIntro(app.plan, app.lignesVues, !reduit, app.texteCache, app.introLongue, filmActif());
+  else if (app.mode === 'intro') h = app.recit && app.recitChoix ? htmlChoixRecit(app.recit, J.carteDuRecit(app.jeu, app.recit)) : htmlIntro(app.plan, app.lignesVues, !reduit, app.texteCache, app.introLongue, filmActif());
   else if (app.mode === 'duel') h = htmlModeDuel();
   else if (app.mode === 'combat' && app.jeu.expedition?.carte && app.jeu.expedition.phase === 'carte') {
     h = htmlExploration(app.jeu, K.salleVue, { details: K.halteVus ?? [], porte: K.porteChoix ?? [] });

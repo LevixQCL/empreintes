@@ -38,6 +38,8 @@ export const app: {
   texteCache: boolean;
   /** le Récit des origines joué par le lecteur de l'intro (null : l'intro elle-même) */
   recit: string | null;
+  /** la dernière scène d'un récit : le choix de la carte d'origine */
+  recitChoix: boolean;
   compte: typeof import('../net/compte') | null;
   uid: string | null;
   /** la feuille du pseudo ne s'ouvre d'elle-même qu'une fois par lancement */
@@ -62,6 +64,7 @@ export const app: {
   introLongue: false,
   texteCache: false,
   recit: null,
+  recitChoix: false,
   compte: null,
   uid: null,
   pseudoDemande: false,

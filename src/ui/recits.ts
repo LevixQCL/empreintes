@@ -7,6 +7,9 @@
 
 import { lignees, nature, oubli, puits, toi, tours, type Film, type Plan } from './intro';
 import { t as tr } from '../core/i18n';
+import { RECITS_ORIGINES } from '../core/partie/recits';
+import { moduleDef } from '../core/donnees';
+import { faceCarte } from './carte';
 
 const f = (id: string, des = 1, camera?: Plan['camera']) => ({ id, des, camera });
 /** un plan du Récit : lu en entier (la version courte et la complète sont les mêmes) */
@@ -69,3 +72,26 @@ const ILKA: Plan[] = [
 export const RECITS: Record<string, Film> = {
   ilka: { plans: ILKA, nom: tr('Récit d’Ilka'), fin: tr('Fin du récit') },
 };
+
+// ---------- La dernière scène : ce que le personnage garde de cette histoire ----------
+
+/** Le choix de la carte d'origine, à la fin du récit (relire la dernière scène permet de changer d'avis) */
+export function htmlChoixRecit(recit: string, actuelle: string | null): string {
+  const r = RECITS_ORIGINES[recit]!;
+  const nom = RECITS[recit]!.nom;
+  return `<div class="ecran choix-recit"><section class="cr-page">`
+    + `<p class="surtitre">${nom}</p><h1>${r.question}</h1>`
+    + `<p class="cr-aide">${actuelle ? tr('Tu peux changer d’avis : la nouvelle carte prend la place de l’ancienne, au même niveau et dans les mêmes decks.') : tr('Choisis la carte d’origine qu’elle emporte. Tu pourras changer d’avis en relisant cette scène.')}</p>`
+    + `<div class="cr-choix">${r.choix.map((c) => {
+      const m = moduleDef(c.carte);
+      const eq = moduleDef(m.equivalent!);
+      const garde = actuelle === c.carte;
+      return `<button type="button" class="cr-option${garde ? ' garde' : ''}" data-action="recit-garder" data-id="${c.carte}" aria-pressed="${garde}">`
+        + `<span class="cr-face">${faceCarte(m, 1)}</span>`
+        + `<span class="cr-texte"><strong>${m.nom}</strong><em>${c.phrase}</em>`
+        + `<small>${tr`Équivalent gratuit : ${eq.nom}, mêmes chiffres, à trouver dans le jeu.`}</small>`
+        + (garde ? `<b class="cr-badge">${tr`Gardée`}</b>` : '') + `</span></button>`;
+    }).join('')}</div>`
+    + `<button type="button" class="btn sec" data-action="recit-quitter">${actuelle ? tr('Garder mon choix') : tr('Choisir plus tard')}</button>`
+    + `</section></div>`;
+}

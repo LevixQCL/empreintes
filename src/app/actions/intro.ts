@@ -4,7 +4,8 @@ import { installer } from '../../ui/installer';
 import { changerLangue } from '../../ui/options';
 import { finPour } from '../combat';
 import { app, apresTitre, compteEtat, D, K, titrePret } from '../etat';
-import { avancerIntro, reculerIntro } from '../intro';
+import { avancerIntro, filmActif, reculerIntro } from '../intro';
+import { RECITS_ORIGINES, garderCarteRecit } from '../../core/jeu';
 import { afficher } from '../rendu';
 import { sauver } from '../synchro';
 import { noterAge } from '../../save/age';
@@ -36,7 +37,12 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
     case 'intro-oeil': app.texteCache = !app.texteCache; break;
     case 'intro-passer':
       // la fin d'un Récit des origines : retour au district, sans toucher à l'intro
-      if (app.recit) { app.recit = null; app.mode = 'district'; window.scrollTo(0, 0); break; }
+      // au bout du récit, la dernière scène : choisir la carte d'origine ; « Quitter » avant la fin ramène au district
+      if (app.recit) {
+        const fin = app.plan === (filmActif()?.plans.length ?? 1) - 1 && app.lignesVues >= (filmActif()?.plans[app.plan]?.lignes.length ?? 1);
+        if (fin && RECITS_ORIGINES[app.recit]) { app.recitChoix = true; window.scrollTo(0, 0); break; }
+        app.recit = null; app.mode = 'district'; window.scrollTo(0, 0); break;
+      }
       app.jeu.introVue = true;
       app.mode = app.jeu.expedition ? 'combat' : 'district';
       D.vue = app.jeu.chambre ? 'archipel' : 'rencontre';
@@ -46,7 +52,10 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
     case 'titre-compte': if (compteEtat.ageDemande) { compteEtat.ageDemande = false; break; } compteEtat.ouvert = !compteEtat.ouvert; compteEtat.erreur = ''; compteEtat.info = ''; break;
     case 'titre-langue': ev.stopPropagation(); sauver(); changerLangue(c.b.dataset.langue === 'en' ? 'en' : 'fr'); return 'fin';
     case 'installer': ev.stopPropagation(); await installer(); afficher(); return 'fin';
-    case 'recit-ilka': app.recit = 'ilka'; app.introLongue = true; app.plan = 0; app.lignesVues = 1; app.texteCache = false; app.mode = 'intro'; D.menu = false; break;
+    case 'recit-garder': if (app.recit) { const r = garderCarteRecit(app.jeu, app.recit, c.id); if (r.ok) sauver(); } break;
+    case 'recit-quitter': app.recit = null; app.recitChoix = false; app.mode = 'district'; window.scrollTo(0, 0); break;
+    case 'recit-fin': app.recit = c.id; app.recitChoix = true; app.mode = 'intro'; D.menu = false; window.scrollTo(0, 0); break;
+    case 'recit-ilka': app.recitChoix = false; app.recit = 'ilka'; app.introLongue = true; app.plan = 0; app.lignesVues = 1; app.texteCache = false; app.mode = 'intro'; D.menu = false; break;
     case 'intro': app.recit = null; app.introLongue = true; app.plan = 0; app.lignesVues = 1; app.texteCache = false; app.mode = 'intro'; D.menu = false; break;
     default: return 'inconnu';
   }

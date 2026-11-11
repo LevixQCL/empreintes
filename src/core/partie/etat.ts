@@ -437,6 +437,8 @@ export interface Jeu {
   palmares?: Palmares;
   /** le parrainage (29 octobre 2026, parrainage.ts) : son code, son parrain, les récompenses reçues ; absent avant le premier usage */
   parrainage?: import('./parrainage').EtatParrainage;
+  /** les Récits des origines (11 novembre 2026, recits.ts) : par récit, la carte d'origine gardée à la fin */
+  recits?: Record<string, { carte?: string }>;
   /** le Cercle des quais (3 novembre 2026, cercle.ts) : souhaits, vitrine, échanges du jour et en attente, duels de la semaine */
   cercle?: import('./cercle').EtatCercle;
   /** le nom de directeur choisi pour le Grand Tableau, et si on y apparaît (jamais l'e-mail du compte) */

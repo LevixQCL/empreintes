@@ -11,6 +11,7 @@
 import { NOMS_EFFET, effetsDe, formuleEffet, nomsEffets } from '../core/effets';
 import { DEPART_PORTEURS, NOMS_LIGNEE, PORTEUR_EXCLUSIVES, PORTEUR_LEGS, voieDe } from '../core/donnees';
 import { frequenceLibre, signeLibre } from '../core/regles';
+import { RECITS_ORIGINES } from '../core/partie/recits';
 import { COLLECTION, NOMS_RARETE, effetNiveau } from '../core/collection';
 import type { Effet, ModuleDef, Rarete, TypeEffet } from '../core/types';
 import { filigrane, illustrationModule, portrait, textureMetal } from './art';
@@ -172,6 +173,9 @@ export function corpsFace(d: Face): string {
 export const styleFace = (d: Pick<Face, 'metal' | 'type' | 'lignee'>) =>
   `--ac:${COULEUR_ACTION[d.type]};--lc:${d.lignee};--tex:url(${textureMetal(d.metal)})`;
 
+/** une carte d'origine (Récits des origines) prend le portrait de son personnage en attendant son illustration */
+const porteurDOrigine = (id: string): string | undefined => Object.values(RECITS_ORIGINES).find((r) => r.choix.some((c) => c.carte === id))?.porteur;
+
 /**
  * La face de la carte, dans la collection, la boutique, le détail et le guide.
  * @param niveau niveau à afficher (celui de la carte possédée, ou de départ pour une carte proposée)
@@ -181,7 +185,7 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?:
   // une carte de base sans illustration prend, en attendant, le portrait du Porteur qui la porte au départ
   const base = m.base ?? m.id;
   // (une carte de voie ou de l'Héritage : le portrait du Porteur de sa voie)
-  const qui = Object.keys(DEPART_PORTEURS).find((p) => DEPART_PORTEURS[p]!.slice(0, 5).includes(base)) ?? voieDe(base)?.porteur ?? PORTEUR_LEGS[base] ?? PORTEUR_EXCLUSIVES[base];
+  const qui = Object.keys(DEPART_PORTEURS).find((p) => DEPART_PORTEURS[p]!.slice(0, 5).includes(base)) ?? voieDe(base)?.porteur ?? PORTEUR_LEGS[base] ?? PORTEUR_EXCLUSIVES[base] ?? porteurDOrigine(base);
   const v = Math.round(m.v * mult);
   const accord = frequenceLibre(m.effet);
   const d: Face = {

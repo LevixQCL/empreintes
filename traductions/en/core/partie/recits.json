@@ -1,0 +1,29 @@
+{
+ "source": "src/core/partie/recits.ts",
+ "entrees": [
+  {
+   "fr": "Ce qu’Ilka garde de cette nuit",
+   "en": ""
+  },
+  {
+   "fr": "La clé des pompes de sa mère, qu’elle porte autour du cou. Tant qu’on entend les pompes, on dort tranquille.",
+   "en": ""
+  },
+  {
+   "fr": "Sa règle : accepter toutes les courses, et toujours arriver en avance.",
+   "en": ""
+  },
+  {
+   "fr": "Cette carte ne vient pas de ce récit.",
+   "en": ""
+  },
+  {
+   "fr": "Récit des origines : « {0} » devient « {1} ».",
+   "en": ""
+  },
+  {
+   "fr": "Récit des origines : la carte « {0} » rejoint ta collection.",
+   "en": ""
+  }
+ ]
+}

@@ -143,6 +143,10 @@ export interface ModuleDef {
   lien?: true;
   /** carte exclusive (28 octobre 2026) : elle n'existe que dans son métal d'origine (`rarete`), jamais dans un autre */
   seul?: true;
+  /** carte d'origine d'un Récit des origines (11 novembre 2026) : on la garde à la fin du récit, jamais trouvée ailleurs
+   *  (« carte d'origine » plutôt que « carte souvenir », pour ne pas la confondre avec les souvenirs confiés des familles).
+   *  Sa valeur est l'id de son équivalent gratuit : même lignée, même rôle, même métal, même force, même effet */
+  equivalent?: string;
 }
 
 /** Une carte en jeu, telle que le moteur de combat la manipule */

@@ -4,7 +4,7 @@
 
 import { BATIMENTS, CLE_LEGS, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef, deNom } from '../core/donnees';
 import { CHARGE, NIVEAU_METAL, composantsNiveau, doublonsRequis } from '../core/collection';
-import { ACCORD_OUVERT, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, NOMS_PALIER_MARQUE, PALIERS_MARQUE, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
+import { ACCORD_OUVERT, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, NOMS_PALIER_MARQUE, PALIERS_MARQUE, porteursPresents, progresMarque, RECITS_ORIGINES, carteDuRecit, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
@@ -491,6 +491,15 @@ export function feuillePorteur(e: EcranDistrict): string {
   if (pres) h += `<div class="fp-bio"><p>${echap(pres.texte)}</p>${pres.replique ? `<p class="fp-replique">« ${echap(pres.replique)} »</p>` : ''}</div>`;
   if (pres?.pourquoi) h += `<section class="fp-bloc fp-pourquoi"><h3 class="fp-h3">${ICO.porte}${tr`Pourquoi ${IL.has(id) ? tr('il') : tr('elle')} est là`}</h3><p class="fp-texte">${echap(pres.pourquoi)}</p></section>`;
   if (pres?.aParte) h += `<aside class="fp-aparte"><strong>${echap(pres.aParte.titre)}</strong><p>${echap(pres.aParte.texte)}</p></aside>`;
+  // ---------- son Récit des origines (Pack des origines, 11 novembre 2026) : une page scellée d'un sceau doré ----------
+  const recit = Object.keys(RECITS_ORIGINES).find((r) => RECITS_ORIGINES[r]!.porteur === id);
+  if (recit) {
+    const garde = carteDuRecit(j, recit);
+    h += `<section class="fp-bloc fp-recit"><span class="fp-sceau" aria-hidden="true"></span><div><h3 class="fp-h3">${ICO.journal}${tr`Son récit d’origine`}</h3>`
+      + `<p class="fp-texte">${garde ? tr`Lu jusqu’au bout. Carte d’origine gardée : « ${moduleDef(garde).nom} ».` : tr('D’où elle vient, avant la porte : trois chapitres illustrés, et une carte d’origine à garder. Aperçu du Pack des origines.')}</p>`
+      + `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="recit-ilka">${garde ? tr('Relire son récit') : tr('Lire son récit')}</button>`
+      + (garde ? `<button type="button" class="btn sec petit" data-action="recit-fin" data-id="${recit}">${tr`Changer de carte`}</button>` : '') + `</div></div></section>`;
+  }
 
   // ---------- son histoire : d'où vient son don, un palier de plus tous les quelques niveaux ----------
   const histoire = origineDe(id, n.niveau);

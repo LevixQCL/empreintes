@@ -71,7 +71,7 @@ describe('Refonte des quasi-doublons', () => {
     // les familles des voies sont à part (une carte par métal) ; ne restent comparées que les cartes hors voie
     const doubles: string[] = [];
     for (const m of MODULES) {
-      if (m.legs || m.lien) continue;
+      if (m.legs || m.lien || m.equivalent) continue; // une carte d'origine reprend exprès les chiffres de son équivalent gratuit
       const e = m.effet;
       const cle = `${m.lignee}|${m.type}|${m.rarete}|${e?.type}|${e && 'part' in e ? e.part : ''}|${e && 'max' in e ? e.max : ''}|${e && 'recharge' in e ? e.recharge : ''}`;
       if (vues.has(cle)) doubles.push(`${vues.get(cle)} / ${m.nom}`);
@@ -95,7 +95,7 @@ describe('Refonte des quasi-doublons', () => {
     const vues = new Map<string, string>();
     const doubles: string[] = [];
     for (const m of MODULES) {
-      if (m.legs || m.lien) continue;
+      if (m.legs || m.lien || m.equivalent) continue; // une carte d'origine reprend exprès les chiffres de son équivalent gratuit
       const k = sig(m);
       if (vues.has(k)) doubles.push(`${vues.get(k)} / ${m.id}`);
       else vues.set(k, m.id);

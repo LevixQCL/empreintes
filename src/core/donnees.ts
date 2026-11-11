@@ -76,6 +76,9 @@ const legs = (id: string, nom: string, lignee: Lignee, type: TypeGeste, v: numbe
 /** la carte du parrainage : exclusive, dans son seul métal, jamais tirée */
 const lien = (id: string, nom: string, lignee: Lignee, rarete: Rarete, type: TypeGeste, v: number, f: number[], effet: Effet): ModuleDef =>
   ({ ...c(id, nom, lignee, rarete, type, v, f, effet), lien: true });
+/** une carte d'origine : le nom et l'histoire changent, les chiffres sont ceux de son équivalent gratuit (même lignée, métal, rôle, force, effet) */
+const origine = (id: string, nom: string, equivalent: ModuleDef): ModuleDef =>
+  ({ ...equivalent, id, nom, equivalent: equivalent.id });
 
 export const MODULES: ModuleDef[] = [
   // ---------- Les 15 cartes de base : 5 par Porteur nommé, qu'il porte dès le départ ----------
@@ -234,6 +237,16 @@ export const MODULES: ModuleDef[] = [
   lien('empreinte-jumelle', tr('Empreinte jumelle'), 'reso', 'cuivre', 'atk', 5, [7, 8, 6], { type: 'accord' }),
 ];
 
+// ---------- Les cartes d'origine des Récits des origines (11 novembre 2026, document « Ossyra — Monétisation ») ----------
+// À la fin d'un récit, le joueur choisit ce que le personnage garde de cette histoire. Tout ce qui s'achète a un équivalent
+// gratuit : chaque carte d'origine reprend exactement les chiffres d'une carte qu'on trouve dans le jeu (tests/recits.test.ts).
+// Ilka est une Augmentée : aucune carte de soin n'existe dans sa lignée, d'où une attaque et un bouclier.
+const equivalentDe = (id: string) => MODULES.find((m) => m.id === id)!;
+MODULES.push(
+  origine('cle-des-pompes', tr('La clé des pompes'), equivalentDe('verin')),
+  origine('toutes-les-courses', tr('Toutes les courses'), equivalentDe('condensateur')),
+);
+
 /** La carte du parrainage */
 export const PARRAINAGE_CARTE = 'empreinte-jumelle';
 
@@ -245,9 +258,9 @@ export const PORTEUR_LEGS: Record<string, string> = {
 };
 
 /** Les cartes qu'on peut trouver, acheter ou fabriquer : toutes, sauf celles de l’Héritage */
-export const MODULES_TIRABLES = MODULES.filter((m) => !m.legs && !m.lien);
+export const MODULES_TIRABLES = MODULES.filter((m) => !m.legs && !m.lien && !m.equivalent);
 /** Une carte existe-t-elle dans ce métal ? Toutes, sauf les exclusives (seulement dans leur métal) et l’Héritage (en nacre) */
-export const existeEn = (m: ModuleDef, metal: Rarete) => (!m.seul && !m.legs && !m.lien) || m.rarete === metal;
+export const existeEn = (m: ModuleDef, metal: Rarete) => (!m.seul && !m.legs && !m.lien && !m.equivalent) || m.rarete === metal;
 /** Les cartes qui peuvent tomber dans un métal donné (une exclusive ne tombe que dans le sien) */
 export const tirablesEn = (metal: Rarete) => MODULES_TIRABLES.filter((m) => existeEn(m, metal));
 /** Les cartes exclusives : un seul métal */
