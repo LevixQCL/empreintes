@@ -3,15 +3,15 @@
  "entrees": [
   {
    "fr": "Ce qu’Ilka garde de cette nuit",
-   "en": ""
+   "en": "What Ilka keeps from that night"
   },
   {
    "fr": "La clé des pompes de sa mère, qu’elle porte autour du cou. Tant qu’on entend les pompes, on dort tranquille.",
-   "en": ""
+   "en": "The key to her mother’s pumps, worn around her neck. As long as you can hear the pumps, you can sleep easy."
   },
   {
    "fr": "Sa règle : accepter toutes les courses, et toujours arriver en avance.",
-   "en": ""
+   "en": "Her rule: take every run, and always get there early."
   },
   {
    "fr": "Ce que Doran garde de ces années",
@@ -39,15 +39,15 @@
   },
   {
    "fr": "Cette carte ne vient pas de ce récit.",
-   "en": ""
+   "en": "This card does not come from this story."
   },
   {
    "fr": "Récit des origines : « {0} » devient « {1} ».",
-   "en": ""
+   "en": "Origin Stories: “{0}” becomes “{1}.”"
   },
   {
    "fr": "Récit des origines : la carte « {0} » rejoint ta collection.",
-   "en": ""
+   "en": "Origin Stories: the card “{0}” joins your collection."
   }
  ]
 }
