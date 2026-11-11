@@ -38,6 +38,10 @@
    "en": "(your turn)"
   },
   {
+   "fr": "Tour {0}",
+   "en": "Turn {0}"
+  },
+  {
    "fr": "infligé",
    "en": "dealt"
   },

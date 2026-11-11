@@ -6,8 +6,6 @@ import { autoActif } from '../ui/options';
 import { mesurerFluidite, suspendreHorsEcran } from '../ui/graphismes';
 import { brancherDifferes, ecransDifferes, htmlChargement } from './differes';
 import { htmlModeDuel } from './duel';
-import { CI } from './course-ilka';
-import { htmlCourse } from '../ui/course-ilka';
 import { repliqueGardien, sceneDef } from '../core/campagne';
 import { tousEnnemis } from '../core/combat';
 import { ennemiDef } from '../core/donnees';
@@ -121,7 +119,6 @@ function dessiner() {
   if (app.mode === 'titre') h = htmlTitre(app.jeu.introVue, !reduit, compteTitre());
   else if (app.mode === 'intro') h = htmlIntro(app.plan, app.lignesVues, !reduit, app.texteCache, app.introLongue);
   else if (app.mode === 'duel') h = htmlModeDuel();
-  else if (app.mode === 'course') h = htmlCourse(CI);
   else if (app.mode === 'combat' && app.jeu.expedition?.carte && app.jeu.expedition.phase === 'carte') {
     h = htmlExploration(app.jeu, K.salleVue, { details: K.halteVus ?? [], porte: K.porteChoix ?? [] });
     // le contenu des Strates s'explique la première fois qu'il apparaît (31 octobre 2026), une fenêtre à la fois

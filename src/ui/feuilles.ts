@@ -41,7 +41,6 @@ import './lexique.css';
 import './explorer.css';
 import './duel.css';
 import './cercle.css';
-import './course-ilka.css';
 // en dernier : les gardiens reprennent la main sur les réglages du téléphone et du PC
 import './gardien.css';
 // le combat en une seule feuille (7 novembre 2026) : la matière, la modernisation, puis la table
