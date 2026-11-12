@@ -12,7 +12,7 @@ import { NOMS_EFFET, effetsDe, formuleEffet, texteEffet } from '../core/effets';
 import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe, deNom, ilElle } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, EVEIL_ORIGINE, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, EPREUVES_STRATE, epreuvesOuvertes, vestigesOuverts, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, chanceCreuseurFouille, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, EPREUVES_STRATE, epreuvesOuvertes, vestigesOuverts, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, chanceCreuseurFouille, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, gainsAmelioration, type GainNiveau,
   COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, gardienPourTour, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, plafondEntrainement, raffinageParHeure, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
@@ -34,7 +34,7 @@ import { frequenceLibre } from '../core/regles';
 import { htmlListeScenes } from './campagne';
 import { COULEUR } from './vue';
 import type { Affinite } from '../core/lieux';
-import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteDistrict, decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, prochainPalier, palierCuvette, type PalierCuvette, CALQUES_CUVETTE, calquePalier, FUMEE_FORGE, reflets, sceneDistrict, CUVETTE, visuel, portraitYse, salleEntrainement } from './art';
+import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteDistrict, decor, decorStrate, illustrationBatiment, illustrationModule, interieurBatiment, portrait, prochainVisuel, prochainPalier, palierCuvette, type PalierCuvette, CALQUES_CUVETTE, calquePalier, FUMEE_FORGE, reflets, sceneDistrict, CUVETTE, visuel, portraitYse } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { avecMots } from './lexique';
@@ -533,6 +533,19 @@ const multPoste = (b: Exclude<Poste, 'noyau'>, id: string) => {
 /** Le petit marteau sur un portrait : ce Porteur travaille ailleurs et quittera son poste (28 octobre 2026) */
 const badgePris = (j: Jeu, id: string) => { const b = j.porteurs[id]!.poste; return b ? `<span class="te-pris" title="${tr`Au travail : ${echap(batimentDef(b).nom)}`}">${ICO.marteau}</span>` : ''; };
 
+/** Le portrait d'un Porteur en tuile (12 novembre 2026, refonte des feuilles de bâtiment) : l'image en haut, liseré de sa lignée */
+function tuilePortrait(j: Jeu, id: string): string {
+  const d = porteurDef(id);
+  const p = portrait(id);
+  return `<span class="tb-visage" style="--c:${COULEUR[d.lignee]}">${p ? `<img src="${p}" alt="" decoding="async" loading="lazy">` : `<b>${echap(d.nom.charAt(0))}</b>`}${badgePris(j, id)}</span>`;
+}
+
+/** Au-delà de six Porteurs, la liste se replie : deux rangées, puis un bouton pour voir les autres */
+function tousPorteurs(e: EcranDistrict, n: number): string {
+  if (n <= 6) return '';
+  return `<button type="button" class="te-fermer tb-tous" data-action="bat-tous" aria-expanded="${e.porteursTous ? 'true' : 'false'}">${e.porteursTous ? tr('Moins de Porteurs') : tr`Voir les ${n - 6} autres`}</button>`;
+}
+
 /** Un Porteur qu'on peut poster : son portrait, ce que donnerait le poste avec lui (et l'écart), un marteau s'il travaille ailleurs */
 function candidat(j: Jeu, id: string, poste: Exclude<Poste, 'noyau'>, actuel: number, conseille = false): string {
   const d = porteurDef(id);
@@ -541,9 +554,9 @@ function candidat(j: Jeu, id: string, poste: Exclude<Poste, 'noyau'>, actuel: nu
   const ecart = Math.round((r.v - actuel) * 10) / 10;
   const signe = ecart > 0 ? 'plus' : ecart < 0 ? 'moins' : 'egal';
   const delta = poste === 'forge' || poste === 'generateur' || ecart === 0 ? '' : `<i>${ecart > 0 ? '+' : '−'}${virgule(Math.abs(ecart))}</i>`;
-  return `<button type="button" class="fb-cand ${signe}${conseille ? ' conseille' : ''}" style="--c:${COULEUR[d.lignee]}" data-action="poster" data-id="${id}" data-poste="${poste}" aria-label="${tr`Poster ${echap(d.nom)} : ${r.long}${ailleurs ? tr`, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}`}">`
-    + `<span class="fb-cand-portrait">${avatar(id, 52)}${badgePris(j, id)}</span>`
-    + `<strong>${echap(d.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">${r.court}${delta}</span>${conseille ? `<span class="fb-conseil">${tr`Conseillé`}</span>` : ''}</button>`;
+  return `<button type="button" class="tb-cand ${signe}${conseille ? ' conseille' : ''}" data-action="poster" data-id="${id}" data-poste="${poste}" aria-label="${tr`Poster ${echap(d.nom)} : ${r.long}${ailleurs ? tr`, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}`}">`
+    + `${tuilePortrait(j, id)}${multPoste(poste, id)}${conseille ? `<span class="tb-conseil">${tr`Conseillé`}</span>` : ''}`
+    + `<span class="tb-cand-txt"><strong>${echap(d.nom.split(' ')[0]!)}</strong><span class="tb-eff">${r.court}${delta}</span></span></button>`;
 }
 
 const ICONE_GAIN: Record<GainNiveau['quoi'] | 'apparence', Icone> = {
@@ -556,19 +569,20 @@ const valeurGain = (v: number, unite?: string) => (v === Infinity ? '∞' : `${N
 /** Ce que change le niveau suivant : les chiffres qui montent (avant → après), ce qui se débloque, et la nouvelle apparence */
 function gainsNiveau(j: Jeu, b: BatimentId): string {
   const niv = j.batiments[b];
-  const gains: (GainNiveau | { quoi: 'apparence'; texte: string; detail?: string; avant?: undefined; apres?: undefined; unite?: undefined })[] = gainsAmelioration(j, b);
+  const gains: (GainNiveau | { quoi: 'apparence'; texte: string; detail?: string; avant?: undefined; apres?: undefined; unite?: undefined; carte?: undefined })[] = gainsAmelioration(j, b);
   const nouvelle = (b === 'noyau' || !CUVETTE ? prochainVisuel(niv) : prochainPalier(niv)) === niv + 1;
   if (nouvelle) gains.push(b === 'noyau' ? { quoi: 'apparence', texte: tr('Le district change d’âge'), detail: tr('nouvelle vue d’ensemble') } : { quoi: 'apparence', texte: tr('Nouvelle apparence'), detail: tr('le bâtiment se transforme') });
   if (!gains.length) return '';
-  const dc = dureeChantier(j, b);
-  return `<section class="fb-suivant"><div class="fb-suivant-tete"><span class="surtitre">${tr`Au niveau ${niv + 1}`}</span><span class="fb-duree">${ICO.chrono}${dc ? duree(dc) : tr('immédiat')}</span></div><ul>`
-    + gains.map((g) => {
-      const chiffre = g.avant !== undefined && g.apres !== undefined;
-      const vignette = g.quoi === 'apparence' && b !== 'noyau' ? `<img class="fb-apercu" src="${illustrationBatiment(b, niv + 1)}" alt="" decoding="async" loading="lazy">` : '';
-      return `<li class="${chiffre ? '' : 'deblocage'}">${vignette || ICO[ICONE_GAIN[g.quoi]]}<span class="fb-g-txt">${echap(g.texte)}${g.detail ? `<small>${echap(g.detail)}</small>` : ''}</span>`
-        + (chiffre ? `<span class="fb-g-val"><s>${valeurGain(g.avant!, g.unite)}</s><b>${valeurGain(g.apres!, g.unite)}</b></span>` : '')
-        + `</li>`;
-    }).join('') + `</ul></section>`;
+  // des tuiles (12 novembre 2026, refonte des feuilles) : le chiffre d'abord, en grand, puis ce qu'il mesure
+  return `<ul class="tb-gains">` + gains.map((g) => {
+    const chiffre = g.avant !== undefined && g.apres !== undefined;
+    const ecart = chiffre && Number.isFinite(g.avant) && Number.isFinite(g.apres) ? g.apres! - g.avant! : 0;
+    const art = g.carte ? illustrationModule(g.carte) : g.quoi === 'apparence' && b !== 'noyau' ? illustrationBatiment(b, niv + 1) : null;
+    const visuel = art ? `<img class="tb-g-art${g.carte ? ' carte' : ''}" src="${art}" alt="" decoding="async" loading="lazy">` : `<span class="tb-g-ico">${ICO[ICONE_GAIN[g.quoi]]}</span>`;
+    const u = g.unite ? `<small>${g.unite}</small>` : '';
+    const valeur = chiffre ? `<span class="tb-g-val"><s>${valeurGain(g.avant!)}</s><b>${valeurGain(g.apres!)}${u}</b>${ecart > 0 ? `<i>+${valeurGain(ecart)}${g.unite ? '\u00a0' + g.unite : ''}</i>` : ''}</span>` : '';
+    return `<li class="tb-gain${chiffre ? '' : ' large'}${art ? ' illustre' : ''}">${visuel}<span class="tb-g-corps">${valeur}<span class="tb-g-txt">${echap(g.texte)}</span>${g.detail ? `<small>${echap(g.detail)}</small>` : ''}</span></li>`;
+  }).join('') + `</ul>`;
 }
 
 /** Une ressource du coût, lue « ce que j'ai / ce qu'il faut » (23 octobre 2026) : pas de soustraction à faire, le rouge dit ce qui manque */
@@ -633,69 +647,74 @@ function blocEntrainement(e: EcranDistrict): string {
   const now = e.now;
   if (!j.chambre) return '';
   // plusieurs places selon le niveau de la Tour (28 octobre 2026, Bryan) : 1 aux niveaux 1-2, 2 aux niveaux 3-4, 3 au dernier
+  // refonte du 12 novembre 2026 : chaque place est un socle (le Porteur en séance, ou un « + » doré), les règles derrière un ⓘ
   const seances = seancesDe(j);
   const places = placesEntrainement(j);
   const libresN = Math.max(0, places - seances.length);
   const ps = plafondSeance(j);
   const plafond = ps.niveau;
   const niveau = (id: string) => niveauPorteur(j, id).niveau;
-  const prix = (n: number, manque = false) => `<span class="te-prix${manque ? ' manque' : ''}">${ICO.energie}${ent(n)}</span>`;
+  const prixTe = (n: number, manque = false) => `<span class="te-prix${manque ? ' manque' : ''}">${icone('energie')}${ent(n)}</span>`;
   const presents = PORTEURS.filter((p) => !seanceDe(j, p.id) && porteursPresents(j).includes(p.id) && !enExpedition(j, p.id));
   const eligibles = presents.filter((p) => apercuSeance(j, p.id)).sort((x, y) => niveau(x.id) - niveau(y.id));
   const relance = libresN && j.derniereSeance ? eligibles.find((p) => p.id === j.derniereSeance) : undefined;
+  const enCours = seances.length > 0 || !!relance;
+  const ouvert = libresN > 0 && (!enCours || !!e.tourChanger);
+  const auMax = presents.filter((p) => !apercuSeance(j, p.id)).length;
 
-  let h = `<section class="fb-bloc te"><h3 class="titre-bloc">${ICO.monter}${tr`Entraînement`}<span class="te-regle">${places > 1 && seances.length ? tr`${seances.length}/${places} places · niv. ${plafond} max${ps.par === 'escouade' ? tr(' (titulaire)') : ''}` : tr`1 séance = 1 niveau · jusqu’au niv. ${plafond}${ps.par === 'escouade' ? tr` (ton meilleur titulaire ; la Tour irait jusqu’au ${plafondEntrainement(j)})` : ''}`}</span></h3>`;
-  const fond = `<img class="te-fond" src="${salleEntrainement}" alt="" decoding="async">`;
-  const lignes: string[] = [];
+  // l'en-tête : le plafond en clair, le reste des règles se déplie
+  const regles = [tr`Une séance = un niveau, jusqu’au niveau ${plafond}.`];
+  if (ps.par === 'escouade') regles.push(tr`La Tour irait jusqu’au ${plafondEntrainement(j)}, mais ne fait pas dépasser ton meilleur Porteur d’escouade : il monte en combattant.`);
+  if (auMax) regles.push(tr`${auMax} Porteur${auMax > 1 ? 's sont' : ' est'} déjà au niveau ${plafond}.`);
+  regles.push(tr('Les cristaux se paient au lancement ; arrêter une séance rend ce qui n’a pas servi.'));
+  let h = `<section class="fb-bloc te"><div class="tb-tete"><h3 class="titre-bloc">${ICO.monter}${tr`Entraînement`}</h3>`
+    + `<details class="tb-info"><summary aria-label="${tr`Règles de l’entraînement`}">${tr`jusqu’au <b>niv. ${plafond}</b>`}<span class="tb-i" aria-hidden="true">i</span></summary><div>${regles.map((r) => `<p>${r}</p>`).join('')}</div></details></div>`;
 
+  const socles: string[] = [];
   for (const s of seances) {
     const o = porteurDef(s.porteur);
     const debut = now - (s.xpGagnee / s.xpHeure) * 3_600_000;
     const fin = now + ((s.xpTotale - s.xpGagnee) / s.xpHeure) * 3_600_000;
     const rendu = Math.floor(s.energie * Math.max(0, 1 - s.xpGagnee / s.xpTotale));
-    lignes.push(`<div class="te-occ" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(s.porteur, seances.length > 1 ? 48 : 64)}</span>`
-      + `<div class="te-qui"><strong>${echap(o.nom)}</strong><span class="te-niv">${tr`Niv. ${niveau(s.porteur)}`} <i>→ ${s.cible}</i></span>`
-      + `<div class="jauge or">${jaugeTemps(debut, fin, now)}</div><span class="te-temps">${decompte(fin, now)}</span></div>`
-      + `<button type="button" class="btn sec te-stop" data-action="liberer" data-id="${s.porteur}" aria-label="${tr`Arrêter la séance ${echap(deNom(o.nom))}${rendu ? tr` : ${rendu} cristaux rendus` : ''}`}">${tr`Arrêter${rendu ? `<small>+${ent(rendu)}</small>` : ''}`}</button></div>`);
+    socles.push(`<div class="te-socle occ" style="--c:${COULEUR[o.lignee]}">${tuilePortrait(j, s.porteur)}`
+      + `<button type="button" class="te-arret" data-action="liberer" data-id="${s.porteur}" aria-label="${tr`Arrêter la séance ${echap(deNom(o.nom))}${rendu ? tr` : ${rendu} cristaux rendus` : ''}`}"><span>${ICO.fermer}</span></button>`
+      + `<span class="te-socle-txt"><strong>${echap(o.nom.split(' ')[0]!)}</strong><span class="te-niv">${niveau(s.porteur)} → <b>${s.cible}</b></span>`
+      + `<span class="jauge or">${jaugeTemps(debut, fin, now)}</span><span class="te-temps">${decompte(fin, now)}</span></span></div>`);
   }
   if (relance) {
     const a = apercuSeance(j, relance.id)!;
     const peut = j.energie >= a.energie;
-    lignes.push(`<div class="te-occ libre" style="--c:${COULEUR[relance.lignee]}"><span class="fb-cand-portrait">${avatar(relance.id, seances.length ? 48 : 64)}</span>`
-      + `<div class="te-qui"><span class="te-etat">${tr`Séance terminée`}</span><strong>${echap(relance.nom)}</strong><span class="te-niv">${tr`Niv. ${niveau(relance.id)}`} <i>→ ${a.cible}</i></span><span class="te-temps">${duree(a.heures * 3_600_000)}</span></div>`
-      + `<button type="button" class="btn prim te-stop" data-action="poster" data-id="${relance.id}" data-poste="noyau"${peut ? '' : ' disabled'} aria-label="${tr`Relancer ${echap(relance.nom)} vers le niveau ${a.cible} : ${a.energie} cristaux`}">${tr`Relancer${prix(a.energie, !peut)}`}</button></div>`);
+    socles.push(`<div class="te-socle fini" style="--c:${COULEUR[relance.lignee]}">${tuilePortrait(j, relance.id)}`
+      + `<span class="te-socle-txt"><span class="te-etat">${tr`Terminé`}</span><strong>${echap(relance.nom.split(' ')[0]!)}</strong>`
+      + `<button type="button" class="btn prim te-relancer" data-action="poster" data-id="${relance.id}" data-poste="noyau"${peut ? '' : ' disabled'} aria-label="${tr`Relancer ${echap(relance.nom)} vers le niveau ${a.cible} : ${a.energie} cristaux`}">${tr`Relancer`}${prixTe(a.energie, !peut)}</button></span></div>`);
   }
   const videsN = libresN - (relance ? 1 : 0);
-  if (!lignes.length) {
-    lignes.push(`<div class="te-qui"><span class="te-etat">${tr`Salle libre`}</span><strong>${tr`Choisis un Porteur`}</strong><span class="te-niv">${tr`${places > 1 ? tr`${places} places · ` : ''}les cristaux se paient au lancement`}</span></div>`);
-  } else if (videsN > 0) {
-    lignes.push(`<p class="te-place">${ICO.porteurs}${videsN > 1 ? `${videsN} places libres` : tr('Une place libre')}</p>`);
+  for (let i = 0; i < videsN; i++) {
+    // une place libre se touche pour ouvrir la liste (quand elle est fermée)
+    const touche = enCours && !e.tourChanger;
+    socles.push(`<${touche ? 'button type="button" data-action="tour-changer" aria-expanded="false"' : 'div'} class="te-socle vide"><span class="te-plus" aria-hidden="true">+</span><small>${tr`Place libre`}</small></${touche ? 'button' : 'div'}>`);
   }
-  h += `<div class="te-salle${seances.length ? '' : relance ? ' libre' : ' vide'}${lignes.length > 1 ? ' multi' : ''}">${fond}<div class="te-contenu">${lignes.join('')}</div></div>`;
+  // la place suivante, verrouillée, tant qu'il y a la place de la montrer
+  const prochain = ENTRAINEMENT.places.findIndex((n) => n > places);
+  if (prochain > 0 && socles.length < 3) socles.push(`<div class="te-socle verrou">${ICO.verrou}<small>${tr`Tour niv. ${prochain}`}</small></div>`);
+  h += `<div class="te-socles">${socles.join('')}</div>`;
 
-  // le choix d'un Porteur : ouvert d'office quand la salle est vide, sinon à la demande ; fermé quand toutes les places sont prises
-  const enCours = seances.length > 0 || !!relance;
-  if (libresN && enCours) h += `<div class="te-actions"><button type="button" class="btn sec" data-action="tour-changer" aria-expanded="${e.tourChanger ? 'true' : 'false'}">${e.tourChanger ? tr('Fermer') : relance && !videsN ? tr('Un autre Porteur') : tr('Entraîner un Porteur')}</button></div>`;
-  const ouvert = libresN > 0 && (!enCours || !!e.tourChanger);
+  if (relance && !videsN && !e.tourChanger) h += `<button type="button" class="te-fermer" data-action="tour-changer" aria-expanded="false">${tr('Un autre Porteur')}</button>`;
   if (ouvert) {
     const choix = eligibles.filter((p) => p.id !== relance?.id);
     if (choix.length) {
-      h += `<div class="fb-rangee te-choix">` + choix.map((p) => {
+      h += `<div class="tb-cands">` + choix.slice(0, e.porteursTous ? undefined : 6).map((p) => {
         const a = apercuSeance(j, p.id)!;
         const peut = j.energie >= a.energie;
         const ailleurs = j.porteurs[p.id]!.poste;
-        return `<button type="button" class="fb-cand plus" style="--c:${COULEUR[p.lignee]}" data-action="poster" data-id="${p.id}" data-poste="noyau"${peut ? '' : ' disabled'} aria-label="${tr`Entraîner ${echap(p.nom)}, niveau ${niveau(p.id)} vers ${a.cible}, ${duree(a.heures * 3_600_000)}, ${a.energie} cristaux${ailleurs ? tr`, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}`}">`
-          + `<span class="fb-cand-portrait">${avatar(p.id, 52)}${badgePris(j, p.id)}</span>`
-          + `<strong>${echap(p.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">${niveau(p.id)} <i>→ ${a.cible}</i></span>${prix(a.energie, !peut)}</button>`;
-      }).join('') + `</div>`;
+        return `<button type="button" class="tb-cand" data-action="poster" data-id="${p.id}" data-poste="noyau"${peut ? '' : ' disabled'} aria-label="${tr`Entraîner ${echap(p.nom)}, niveau ${niveau(p.id)} vers ${a.cible}, ${duree(a.heures * 3_600_000)}, ${a.energie} cristaux${ailleurs ? tr`, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}`}">`
+          + `${tuilePortrait(j, p.id)}<span class="tb-cand-txt"><strong>${echap(p.nom.split(' ')[0]!)}</strong><span class="tb-eff">${niveau(p.id)} → <b>${a.cible}</b></span>${prixTe(a.energie, !peut)}</span></button>`;
+      }).join('') + `</div>${tousPorteurs(e, choix.length)}`;
       if (choix.some((p) => j.porteurs[p.id]!.poste)) h += `<p class="te-note">${ICO.marteau}${tr`quitte son poste au district`}</p>`;
+    } else if (!enCours) {
+      h += `<p class="te-note">${tr`Personne à entraîner pour l’instant.`}</p>`;
     }
-    const auMax = presents.filter((p) => !apercuSeance(j, p.id)).length;
-    if (auMax) h += `<p class="te-note">${tr`${auMax} Porteur${auMax > 1 ? 's' : ''} au niveau ${plafond} : ${ps.par === 'escouade' ? tr('la Tour ne fait pas dépasser ton meilleur Porteur d’escouade, il monte en combattant') : plafond < XP.niveauMax ? tr('monte la Tour pour aller plus loin') : tr('le reste se gagne dans les Strates')}.`}</p>`;
-  }
-  if (!libresN) {
-    const prochain = ENTRAINEMENT.places.findIndex((n) => n > places);
-    if (prochain > 0) h += `<p class="te-note">${ICO.tour}${tr`Une place de plus au niveau ${prochain} de la Tour.`}</p>`;
+    if (enCours) h += `<button type="button" class="te-fermer" data-action="tour-changer" aria-expanded="true">${tr`Fermer`}</button>`;
   }
   return h + `</section>`;
 }
@@ -840,6 +859,24 @@ function blocForge(e: EcranDistrict): string {
   return h + `</section>`;
 }
 
+/** Le nom de l'onglet du quotidien, selon le bâtiment (12 novembre 2026) */
+function ongletSalle(b: BatimentId): string {
+  return b === 'noyau' ? tr('Salle d’entraînement') : b === 'forge' ? tr('Établi') : b === 'comptoir' ? tr('Étals du jour') : tr('Au travail');
+}
+
+/** Le coût d'une amélioration en deux pastilles « ce que j'ai / ce qu'il faut » ; le rouge dit ce qui manque */
+function coutsNiveau(j: Jeu, c: NonNullable<ReturnType<typeof coutAmelioration>>): string {
+  const res = (ic: Icone, besoin: number, possede: number, nom: string) => {
+    const court = possede < besoin;
+    return `<span class="tb-res${court ? ' court' : ''}" aria-label="${tr`${nom} : ${ent(possede)} sur ${ent(besoin)}`}">${icone(ic)}<span><b>${ent(Math.min(possede, besoin))}</b><small>/ ${ent(besoin)} ${nom}</small></span></span>`;
+  };
+  const manque: string[] = [];
+  if (c.energie > j.energie) manque.push(tr`${ent(c.energie - j.energie)} cristaux`);
+  if ((c.eclats ?? 0) > j.eclats) manque.push(tr`${ent(c.eclats! - j.eclats)} Éclat${c.eclats! - j.eclats > 1 ? 's' : ''}`);
+  return `<div class="tb-couts">${c.energie ? res('energie', c.energie, j.energie, tr('cristaux')) : ''}${c.eclats ? res('eclats', c.eclats, j.eclats, tr('Éclats')) : ''}</div>`
+    + (manque.length ? `<p class="tb-manque">${tr`Il manque ${enumerer(manque)}.`}</p>` : '');
+}
+
 function feuilleBatiment(e: EcranDistrict): string {
   const j = e.j;
   const sel = e.selection;
@@ -849,17 +886,60 @@ function feuilleBatiment(e: EcranDistrict): string {
   const d = batimentDef(b);
   const niv = j.batiments[b];
   const pv = b === 'noyau' || !CUVETTE ? prochainVisuel(niv) : prochainPalier(niv);
+  const a = amelioration(j, b);
+  const ferme = (b === 'comptoir' && !niv) || (b === 'cercle' && !cercleOuvert(j));
+  // refonte du 12 novembre 2026 (Bryan : « l'intérieur des bâtiments fait cheap ») : deux onglets au lieu d'une longue
+  // colonne, le quotidien d'un côté, le niveau suivant de l'autre ; la scène peinte de l'intérieur en tête quand elle existe
+  const onglets = niv > 0 && !ferme && !!(a.cout || a.ch);
+  const onglet: 'salle' | 'niveau' = onglets ? (e.ongletBat ?? 'salle') : 'salle';
+  const interieur = niv && onglet === 'salle' ? interieurBatiment(b) : null;
   const crans = Array.from({ length: d.niveauMax }, (_, i) => `<i class="${i < niv ? 'plein' : ''}"></i>`).join('');
   const surtitre = niv ? `${tr`Niveau ${niv}`} <span class="fb-max">/ ${d.niveauMax}</span>` : b === 'comptoir' || (b === 'cercle' && !cercleOuvert(j)) ? tr('Fermé') : tr('À construire');
   const ideal = d.affinite ? `<span class="fb-ideal" style="--c:${COULEUR[d.affinite]}">${ICO.porteurs}${tr`Idéal : ${NOM_LIGNEE[d.affinite]}`} <b>×${virgule(DISTRICT.bonusAffinite)}</b></span>` : '';
-  let h = `<div class="voile-feuille" data-action="fermer" aria-hidden="true"></div><section class="feuille fiche-bat" role="dialog" aria-modal="true" aria-labelledby="feuille-titre">`
+  let h = `<div class="voile-feuille" data-action="fermer" aria-hidden="true"></div><section class="feuille fiche-bat${interieur ? ' avec-salle' : ''}${onglets ? ' a-onglets' : ''}" role="dialog" aria-modal="true" aria-labelledby="feuille-titre">`
     + `<span class="poignee" aria-hidden="true"></span><button type="button" class="btn-icone fb-fermer" data-action="fermer" aria-label="${tr`Fermer`}">${ICO.fermer}</button>`
-    + `<div class="feuille-corps fb-corps"><header class="fb-heros"><div class="fb-scene" aria-hidden="true"><span class="fb-halo"></span><img class="fb-ilot${niv ? '' : ' vide'}" src="${illustrationBatiment(b, Math.max(1, niv))}" alt="" decoding="async"></div>`
-    + `<div class="fb-titre"><span class="surtitre">${surtitre}</span><h2 id="feuille-titre">${echap(d.nom)}</h2>`
-    + `<span class="fb-crans" aria-hidden="true">${crans}</span>${ideal}</div></header>`;
+    + `<div class="feuille-corps fb-corps">`;
+  if (onglet === 'niveau') {
+    // l'onglet du niveau suivant : le bâtiment entre l'ancien et le nouveau niveau
+    h += `<header class="fb-heros tb-vers"><span class="fb-halo"></span><span class="tb-n">${niv}</span><img class="fb-ilot" src="${illustrationBatiment(b, Math.max(1, niv))}" alt="" decoding="async"><span class="tb-n or">${niv + 1}</span>`
+      + `<h2 id="feuille-titre">${echap(d.nom)}</h2></header>`;
+  } else if (interieur) {
+    const sous = b === 'noyau' ? tr`Strate −${j.strate} ouverte · bâtiments jusqu’au niv. ${niv}` : '';
+    h += `<header class="fb-heros tb-salle"><img class="tb-interieur" src="${interieur}" alt="" decoding="async">`
+      + `<span class="tb-niveau"><b>${niv}</b><span>${tr`Niveau ${niv}`} <i>/ ${d.niveauMax}</i></span></span>`
+      + `<div class="fb-titre"><h2 id="feuille-titre">${echap(d.nom)}</h2>${sous ? `<p class="tb-sous">${sous}</p>` : ''}${ideal}</div></header>`;
+  } else {
+    h += `<header class="fb-heros"><div class="fb-scene" aria-hidden="true"><span class="fb-halo"></span><img class="fb-ilot${niv ? '' : ' vide'}" src="${illustrationBatiment(b, Math.max(1, niv))}" alt="" decoding="async"></div>`
+      + `<div class="fb-titre"><span class="surtitre">${surtitre}</span><h2 id="feuille-titre">${echap(d.nom)}</h2>`
+      + `<span class="fb-crans" aria-hidden="true">${crans}</span>${ideal}</div></header>`;
+  }
+  if (onglets) {
+    const lib = a.ch ? tr('Chantier') : tr`Niveau ${niv + 1}`;
+    h += `<div class="tb-onglets" role="tablist">`
+      + `<button type="button" role="tab" aria-selected="${onglet === 'salle'}" data-action="onglet-bat" data-id="salle">${ongletSalle(b)}</button>`
+      + `<button type="button" role="tab" aria-selected="${onglet === 'niveau'}" data-action="onglet-bat" data-id="niveau">${a.ch ? ICO.marteau : ''}${lib}${a.pret && onglet !== 'niveau' ? `<i class="tb-pret" aria-label="${tr`possible`}"></i>` : ''}</button></div>`;
+  }
+
+  if (onglet === 'niveau') {
+    // ce que le niveau suivant apporte, le chantier en cours ou le coût
+    if (a.ch) h += barreAmelioration(e, b, a, false);
+    const gains = gainsNiveau(j, b);
+    if (gains) h += `<section class="tb-niveau-corps"><div class="tb-tete"><h3 class="titre-bloc">${a.ch ? tr`Au niveau ${niv + 1}` : tr`Ce que tu gagnes`}</h3>${a.ch ? '' : `<span class="fb-duree">${ICO.chrono}${dureeChantier(j, b) ? duree(dureeChantier(j, b)) : tr('immédiat')}</span>`}</div>${gains}</section>`;
+    if (pv !== null && pv <= d.niveauMax && pv > niv + 1) h += `<p class="te-note">${tr`Nouvelle apparence au niveau ${pv}.`}</p>`;
+    if (!a.ch && a.cout) {
+      h += coutsNiveau(j, a.cout);
+      if (a.raison) h += `<p class="fb-raison">${ICO.verrou}<span>${a.raison}</span>${a.bloque ? `<button type="button" class="fb-lien" data-action="batiment" data-id="noyau" data-amelio>${tr`Voir la Tour`}</button>` : ''}</p>`;
+    }
+    h += `</div>`;
+    const pied = !a.ch && a.cout
+      ? `<button type="button" class="btn ${a.pret ? 'prim' : 'sec'} large tb-ameliorer" data-action="ameliorer" data-id="${b}"${a.pret ? '' : ' disabled'}>${ICO.monter}${tr`Passer au niveau ${niv + 1}`}</button>`
+      : b === 'noyau' ? `<button type="button" class="btn prim large fb-entrer" data-action="entrer">${ICO.tour}${tr`Entrer dans la tour`}</button>` : '';
+    return h + (pied ? `<footer class="feuille-pied fb-pied"><div class="fb-barre">${pied}</div></footer>` : '') + `</section>`;
+  }
+
   if (b === 'comptoir' && !niv) h += `<p class="fb-role">${echap(COMPTOIR_FERME)}</p>`;
   else if (b === 'cercle' && !cercleOuvert(j)) h += `<p class="fb-role">${echap(CERCLE_FERME)}</p>`;
-  else h += `<p class="fb-role">${echap(d.role)}${pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span>${tr`Nouvelle apparence au niveau ${pv}.`}</span>` : ''}</p>`;
+  else if (!interieur) h += `<p class="fb-role">${echap(d.role)}${!onglets && pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span>${tr`Nouvelle apparence au niveau ${pv}.`}</span>` : ''}</p>`;
 
   // le poste vide passe avant les chiffres (12 novembre 2026, audit du début : l'objectif 1 était caché sous la barre du bas)
   const avantChiffres = h.length;
@@ -868,8 +948,8 @@ function feuilleBatiment(e: EcranDistrict): string {
   if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>${tr`Usure soignée par heure`}</small></div>`
     + (partPvClinique(j) ? `<div class="fb-chiffre">${ICO.porteurs}<b>+${Math.round(partPvClinique(j) * 100)} %</b><small>${tr`PV max. des Porteurs`}</small></div>` : '') + `</div>`;
   if (b === 'noyau') {
-    h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.strate}<b>−${j.strate}</b><small>${tr`Strate ouverte`}</small></div><div class="fb-chiffre">${ICO.tour}<b>${niv}</b><small>${tr`niveau maximum des autres bâtiments`}</small></div></div>`
-      + blocEntrainement(e);
+    if (!interieur) h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.strate}<b>−${j.strate}</b><small>${tr`Strate ouverte`}</small></div><div class="fb-chiffre">${ICO.tour}<b>${niv}</b><small>${tr`niveau maximum des autres bâtiments`}</small></div></div>`;
+    h += blocEntrainement(e);
   }
   if (b === 'comptoir') h += blocComptoir(e);
   if (b === 'cercle') h += blocCercle(e);
@@ -904,7 +984,7 @@ function feuilleBatiment(e: EcranDistrict): string {
       const utiles = occupant ? libres.filter((x) => x.v > actuel.v) : libres;
       if (utiles.length) {
         // poste vide : le premier (la recrue la mieux placée) est mis en avant, c'est lui que l'objectif demande
-        h += `<div class="fb-rangee">${utiles.map((x, i) => candidat(j, x.p.id, poste, actuel.v, !occupant && i === 0)).join('')}</div>`;
+        h += `<div class="tb-cands">${utiles.slice(0, e.porteursTous ? undefined : 6).map((x, i) => candidat(j, x.p.id, poste, actuel.v, !occupant && i === 0)).join('')}</div>${tousPorteurs(e, utiles.length)}`;
         if (utiles.some((x) => j.porteurs[x.p.id]!.poste)) h += `<p class="te-note">${ICO.marteau}${tr`quitte son poste au district`}</p>`;
       } else if (occupant) {
         h += `<p class="te-note">${tr`Personne de disponible ne ferait mieux que ${echap(porteurDef(occupant).nom)}.`}</p>`;
@@ -919,22 +999,14 @@ function feuilleBatiment(e: EcranDistrict): string {
 
   if (b === 'forge') h += blocForge(e);
 
-  // Revue du 23 octobre 2026 : le pied fixe porte l'action qu'on fait le plus souvent. À la Tour du Noyau, c'est
-  // « Entrer dans la tour » ; l'amélioration, rare, passe en bas de la feuille (un raccourci du pied y mène).
-  // Ailleurs, l'amélioration reste au pied, mais sur une seule ligne : coût et bouton côte à côte.
-  const a = amelioration(j, b);
-  if (b === 'noyau') {
-    h += `<section class="fb-amelio" id="fb-amelio">${a.ch || !a.cout ? '' : gainsNiveau(j, b)}${barreAmelioration(e, b, a, false)}</section>`;
-  } else if (a.cout && !a.ch) h += gainsNiveau(j, b);
-  h += `</div><footer class="feuille-pied fb-pied">`;
-  if (b === 'noyau') {
-    const raccourci = a.ch ? `${ICO.marteau}${decompte(a.ch.fin, e.now)}`
-      : `${ICO.monter}<span>${tr`Niv. ${niv + 1}`}</span>`;
-    h += `<div class="fb-barre">`
-      + (a.cout || a.ch ? `<button type="button" class="btn sec fb-vers-amelio${a.pret ? ' pret' : ''}" data-action="vers-amelioration" aria-label="${a.ch ? tr('Voir le chantier en cours') : tr`Améliorer au niveau ${niv + 1}${a.pret ? tr(' : possible') : ''}`}">${raccourci}</button>` : '')
-      + `<button type="button" class="btn prim large fb-entrer" data-action="entrer">${ICO.tour}${tr`Entrer dans la tour`}</button></div>`;
-  } else h += barreAmelioration(e, b, a, true);
-  return h + `</footer></section>`;
+  // sans onglets (à construire, fermé) : le niveau suivant reste en bas de la feuille, l'amélioration au pied
+  const gainsBas = !onglets && a.cout && !a.ch ? gainsNiveau(j, b) : '';
+  if (gainsBas) h += `<section class="tb-niveau-corps"><div class="tb-tete"><h3 class="titre-bloc">${niv ? tr`Au niveau ${niv + 1}` : tr`Une fois construit`}</h3></div>${gainsBas}</section>`;
+  h += `</div>`;
+  // le pied : à la Tour, « Entrer dans la tour » ; ailleurs, rien quand l'amélioration a son onglet
+  if (b === 'noyau') h += `<footer class="feuille-pied fb-pied"><div class="fb-barre"><button type="button" class="btn prim large fb-entrer" data-action="entrer">${ICO.tour}${tr`Entrer dans la tour`}</button></div></footer>`;
+  else if (!onglets) h += `<footer class="feuille-pied fb-pied">${barreAmelioration(e, b, a, true)}</footer>`;
+  return h + `</section>`;
 }
 
 /** Où en est l'amélioration d'un bâtiment : chantier en cours, coût, et ce qui la bloque */

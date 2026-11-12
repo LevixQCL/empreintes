@@ -261,6 +261,10 @@ export const imageCharniere = (n: number): string | null => (CHARNIERES.has(n) ?
 export const imageCheville = `${base}scenes/cheville.webp`;
 /** La salle d'entraînement de la Tour du Noyau (23 octobre 2026) */
 export const salleEntrainement = `${base}salles/entrainement.webp`;
+/** L'intérieur peint d'un bâtiment (12 novembre 2026) : la scène en tête de sa feuille. Les autres attendent leur image
+ *  (prompts dans docs/prompts-interieurs.md) : ajouter ici le nom du fichier de public/art/salles/ dès qu'il est déposé. */
+const INTERIEURS: Partial<Record<BatimentId, string>> = { noyau: 'entrainement' };
+export const interieurBatiment = (id: BatimentId): string | null => (INTERIEURS[id] ? `${base}salles/${INTERIEURS[id]}.webp` : null);
 export const decor = (nom: 'coupe') => `${base}district/${nom}.webp`;
 /** Le Mur des empreintes (7 novembre 2026) : les 48 mains peintes, découpées en une planche de 8 × 6 (dans l'ordre des familles) */
 export const planchEmpreintes = `${base}district/mur-empreintes.webp`;

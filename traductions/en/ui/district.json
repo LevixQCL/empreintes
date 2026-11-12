@@ -302,6 +302,14 @@
    "en": "At work: {0}"
   },
   {
+   "fr": "Moins de Porteurs",
+   "en": ""
+  },
+  {
+   "fr": "Voir les {0} autres",
+   "en": ""
+  },
+  {
    "fr": "Poster {0} : {1}{2}",
    "en": "Assign {0}: {1}{2}"
   },
@@ -328,14 +336,6 @@
   {
    "fr": "le bâtiment se transforme",
    "en": "the building transforms"
-  },
-  {
-   "fr": "Au niveau {0}",
-   "en": "At level {0}"
-  },
-  {
-   "fr": "immédiat",
-   "en": "instant"
   },
   {
    "fr": "{0} : {1} sur {2}",
@@ -442,28 +442,52 @@
    "en": "Free"
   },
   {
+   "fr": "Une séance = un niveau, jusqu’au niveau {0}.",
+   "en": "",
+   "ancien": {
+    "fr": "1 séance = 1 niveau · jusqu’au niv. {0}{1}",
+    "en": "1 session = 1 level · up to lvl {0}{1}"
+   }
+  },
+  {
+   "fr": "La Tour irait jusqu’au {0}, mais ne fait pas dépasser ton meilleur Porteur d’escouade : il monte en combattant.",
+   "en": "",
+   "ancien": {
+    "fr": "la Tour ne fait pas dépasser ton meilleur Porteur d’escouade, il monte en combattant",
+    "en": "the Tower won’t take anyone past your best squad Bearer; they level up by fighting"
+   }
+  },
+  {
+   "fr": "{0} Porteur{1} déjà au niveau {2}.",
+   "en": "",
+   "ancien": {
+    "fr": "{0} Porteur{1} au niveau {2} : {3}.",
+    "en": "{0} Bearer{1} at level {2}: {3}."
+   }
+  },
+  {
+   "fr": "Les cristaux se paient au lancement ; arrêter une séance rend ce qui n’a pas servi.",
+   "en": "",
+   "ancien": {
+    "fr": "{0}les cristaux se paient au lancement",
+    "en": "{0}crystals are paid when you start"
+   }
+  },
+  {
    "fr": "Entraînement",
    "en": "Training"
   },
   {
-   "fr": "{0}/{1} places · niv. {2} max{3}",
-   "en": "{0}/{1} slots · lvl {2} max{3}"
+   "fr": "Règles de l’entraînement",
+   "en": ""
   },
   {
-   "fr": " (titulaire)",
-   "en": " (regular)"
-  },
-  {
-   "fr": "1 séance = 1 niveau · jusqu’au niv. {0}{1}",
-   "en": "1 session = 1 level · up to lvl {0}{1}"
-  },
-  {
-   "fr": " (ton meilleur titulaire ; la Tour irait jusqu’au {0})",
-   "en": " (your best regular; the Tower would allow up to {0})"
-  },
-  {
-   "fr": "Niv. {0}",
-   "en": "Lvl {0}"
+   "fr": "jusqu’au <b>niv. {0}</b>",
+   "en": "",
+   "ancien": {
+    "fr": "1 séance = 1 niveau · jusqu’au niv. {0}{1}",
+    "en": "1 session = 1 level · up to lvl {0}{1}"
+   }
   },
   {
    "fr": "Arrêter la séance {0}{1}",
@@ -474,40 +498,24 @@
    "en": ": {0} crystals refunded"
   },
   {
-   "fr": "Arrêter{0}",
-   "en": "Stop{0}"
-  },
-  {
-   "fr": "Séance terminée",
-   "en": "Session over"
+   "fr": "Terminé",
+   "en": ""
   },
   {
    "fr": "Relancer {0} vers le niveau {1} : {2} cristaux",
    "en": "Train {0} again toward level {1}: {2} crystals"
   },
   {
-   "fr": "Relancer{0}",
-   "en": "Go again{0}"
+   "fr": "Relancer",
+   "en": "Redraw"
   },
   {
-   "fr": "Salle libre",
-   "en": "Room free"
+   "fr": "Place libre",
+   "en": "Free slot"
   },
   {
-   "fr": "Choisis un Porteur",
-   "en": "Pick a Bearer"
-  },
-  {
-   "fr": "{0}les cristaux se paient au lancement",
-   "en": "{0}crystals are paid when you start"
-  },
-  {
-   "fr": "{0} places · ",
-   "en": "{0} slots · "
-  },
-  {
-   "fr": "Une place libre",
-   "en": "One free slot"
+   "fr": "Tour niv. {0}",
+   "en": ""
   },
   {
    "fr": "Un autre Porteur",
@@ -522,24 +530,8 @@
    "en": "leaves their post in the district"
   },
   {
-   "fr": "{0} Porteur{1} au niveau {2} : {3}.",
-   "en": "{0} Bearer{1} at level {2}: {3}."
-  },
-  {
-   "fr": "la Tour ne fait pas dépasser ton meilleur Porteur d’escouade, il monte en combattant",
-   "en": "the Tower won’t take anyone past your best squad Bearer; they level up by fighting"
-  },
-  {
-   "fr": "monte la Tour pour aller plus loin",
-   "en": "upgrade the Tower to go further"
-  },
-  {
-   "fr": "le reste se gagne dans les Strates",
-   "en": "the rest is earned in the Strata"
-  },
-  {
-   "fr": "Une place de plus au niveau {0} de la Tour.",
-   "en": "One more slot at Tower level {0}."
+   "fr": "Personne à entraîner pour l’instant.",
+   "en": ""
   },
   {
    "fr": "échanges par jour",
@@ -722,6 +714,26 @@
    "en": "See all {0} cards"
   },
   {
+   "fr": "Salle d’entraînement",
+   "en": ""
+  },
+  {
+   "fr": "Établi",
+   "en": ""
+  },
+  {
+   "fr": "Étals du jour",
+   "en": ""
+  },
+  {
+   "fr": "Au travail",
+   "en": "At work"
+  },
+  {
+   "fr": "Il manque {0}.",
+   "en": ""
+  },
+  {
    "fr": "Niveau {0}",
    "en": "Level {0}"
   },
@@ -734,8 +746,52 @@
    "en": "Ideal: {0}"
   },
   {
+   "fr": "Strate −{0} ouverte · bâtiments jusqu’au niv. {1}",
+   "en": "",
+   "ancien": {
+    "fr": "1 séance = 1 niveau · jusqu’au niv. {0}{1}",
+    "en": "1 session = 1 level · up to lvl {0}{1}"
+   }
+  },
+  {
+   "fr": "Chantier",
+   "en": ""
+  },
+  {
+   "fr": "possible",
+   "en": "",
+   "ancien": {
+    "fr": " : possible",
+    "en": ": possible"
+   }
+  },
+  {
+   "fr": "Au niveau {0}",
+   "en": "At level {0}"
+  },
+  {
+   "fr": "Ce que tu gagnes",
+   "en": ""
+  },
+  {
+   "fr": "immédiat",
+   "en": "instant"
+  },
+  {
    "fr": "Nouvelle apparence au niveau {0}.",
    "en": "New look at level {0}."
+  },
+  {
+   "fr": "Voir la Tour",
+   "en": "See the Tower"
+  },
+  {
+   "fr": "Passer au niveau {0}",
+   "en": "Upgrade to level {0}"
+  },
+  {
+   "fr": "Entrer dans la tour",
+   "en": "Enter the tower"
   },
   {
    "fr": "pour tailler ce qui attend",
@@ -748,10 +804,6 @@
   {
    "fr": "niveau maximum des autres bâtiments",
    "en": "max level of the other buildings"
-  },
-  {
-   "fr": "Au travail",
-   "en": "At work"
   },
   {
    "fr": "vitesse normale",
@@ -790,20 +842,8 @@
    "en": "No one available would do better than {0}."
   },
   {
-   "fr": "Voir le chantier en cours",
-   "en": "See the work in progress"
-  },
-  {
-   "fr": "Améliorer au niveau {0}{1}",
-   "en": "Upgrade to level {0}{1}"
-  },
-  {
-   "fr": " : possible",
-   "en": ": possible"
-  },
-  {
-   "fr": "Entrer dans la tour",
-   "en": "Enter the tower"
+   "fr": "Une fois construit",
+   "en": ""
   },
   {
    "fr": "Vaincs le gardien de la Strate −{0} pour le construire.",
@@ -854,16 +894,8 @@
    "en": "{0}Upgrade to level {1}"
   },
   {
-   "fr": "Voir la Tour",
-   "en": "See the Tower"
-  },
-  {
    "fr": "Coût",
    "en": "Cost"
-  },
-  {
-   "fr": "Passer au niveau {0}",
-   "en": "Upgrade to level {0}"
   },
   {
    "fr": "Remettre le Comptoir en état",
@@ -1648,6 +1680,10 @@
   {
    "fr": "Libre",
    "en": "Free"
+  },
+  {
+   "fr": "Niv. {0}",
+   "en": "Lvl {0}"
   },
   {
    "fr": "Max",

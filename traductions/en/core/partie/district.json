@@ -174,8 +174,12 @@
    "en": "missions at the same time"
   },
   {
-   "fr": "Plafond d’entraînement de la Tour (sans dépasser ton meilleur titulaire)",
-   "en": "Tower training cap (never above your best regular)"
+   "fr": "Plafond d’entraînement de la Tour",
+   "en": "",
+   "ancien": {
+    "fr": "Plafond d’entraînement de la Tour (sans dépasser ton meilleur titulaire)",
+    "en": "Tower training cap (never above your best regular)"
+   }
   },
   {
    "fr": "séances {0} % plus courtes",

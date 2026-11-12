@@ -83,6 +83,8 @@ export interface GainNiveau {
   /** Infinity pour « sans limite » */
   unite?: '%';
   detail?: string;
+  /** la carte commune concernée (12 novembre 2026) : son illustration dans la tuile du gain */
+  carte?: string;
 }
 
 /** La Strate la plus profonde que le logement des creuseurs permet d'ouvrir à ce niveau du Noyau (Infinity : plus de limite) */
@@ -145,16 +147,16 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
     g.push({ quoi: 'plafond', texte: tr('Niveau max. des autres bâtiments'), avant: niv, apres: niv + 1 });
     if (placesEntrainement(apres) > placesEntrainement(j)) g.push({ quoi: 'places', texte: tr('Places d’entraînement'), avant: placesEntrainement(j), apres: placesEntrainement(apres), detail: tr('des Porteurs en même temps à la Tour') });
     if (barquesMax(apres) > barquesMax(j)) g.push({ quoi: 'barques', texte: tr('Barques en mer'), avant: barquesMax(j), apres: barquesMax(apres), detail: tr('des missions en même temps') });
-    if (plafondEntrainement(apres) > plafondEntrainement(j)) g.push({ quoi: 'entrainement', texte: tr('Plafond d’entraînement de la Tour (sans dépasser ton meilleur titulaire)'), avant: plafondEntrainement(j), apres: plafondEntrainement(apres), detail: tr`séances ${Math.round(ENTRAINEMENT.vitesseParNoyau * 100)} % plus courtes` });
+    if (plafondEntrainement(apres) > plafondEntrainement(j)) g.push({ quoi: 'entrainement', texte: tr('Plafond d’entraînement de la Tour'), avant: plafondEntrainement(j), apres: plafondEntrainement(apres), detail: tr`séances ${Math.round(ENTRAINEMENT.vitesseParNoyau * 100)} % plus courtes` });
     if (niv + 1 === DISTRICT.chantiersNoyau2) g.push({ quoi: 'chantiers', texte: tr('Deux chantiers en même temps') });
   }
   // les cartes communes du Râtelier (31 octobre 2026, Luc : « savoir améliorer les cartes de district ») : on les améliore
   // en montant leur bâtiment ; la feuille du bâtiment le dit, carte par carte
   for (const c of CARTES_COMMUNES.filter((x) => x.batiment === b)) {
-    if (c.niveau === niv + 1) g.push({ quoi: 'commune', texte: tr`Nouvelle carte commune : ${c.geste.nom}`, detail: tr('à prendre au Râtelier de l’escouade') });
+    if (c.niveau === niv + 1) g.push({ quoi: 'commune', texte: tr`Nouvelle carte commune : ${c.geste.nom}`, detail: tr('à prendre au Râtelier de l’escouade'), carte: c.geste.id });
     else if (c.niveau <= niv) {
       const avant = forceCommune(c, niv), apres = forceCommune(c, niv + 1);
-      if (apres > avant) g.push({ quoi: 'commune', texte: tr`Force de la carte ${c.geste.nom}`, avant, apres });
+      if (apres > avant) g.push({ quoi: 'commune', texte: tr`Force de la carte ${c.geste.nom}`, avant, apres, carte: c.geste.id });
     }
   }
   return g;

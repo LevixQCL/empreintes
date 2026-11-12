@@ -15,7 +15,7 @@ import { NB_REPLIQUES } from '../../ui/district';
 import { contratAffiche, equipeAffichee } from '../../ui/marees';
 import type { OngletGuide } from '../../ui/guide';
 import { finPour } from '../combat';
-import { app, compteEtat, D, G, K, reduit } from '../etat';
+import { app, compteEtat, D, G, K } from '../etat';
 import { sauver } from '../synchro';
 import { ouvrir, resultat, type Clic, type Suite } from './commun';
 import { t } from '../../core/i18n';
@@ -29,8 +29,9 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'batiment': if (id === 'port' && portOuvert(app.jeu)) { ouvrir('pillages'); D.portAide = false; lireCiblesEnLigne(); break; }
       // le Cercle des quais construit : son écran directement (le bâtiment s'ouvre de là, bouton du haut)
       if (id === 'cercle' && J.cercleOuvert(app.jeu) && app.jeu.batiments.cercle && D.selection !== 'cercle') { ouvrir('cercle'); afficher(); await suivreCercle(); relireVitrines(); return 'fin'; }
-      D.selection = D.selection === id ? null : (id as typeof D.selection); D.menu = false; D.posteChanger = false; D.tourChanger = false;
-      if (b.dataset.amelio !== undefined) requestAnimationFrame(() => document.getElementById('fb-amelio')?.scrollIntoView({ block: 'start' }));
+      D.selection = D.selection === id ? null : (id as typeof D.selection); D.menu = false; D.posteChanger = false; D.tourChanger = false; D.porteursTous = false;
+      // « Voir la Tour », « Améliorer la Tour » : la feuille s'ouvre sur l'onglet du niveau suivant
+      D.ongletBat = b.dataset.amelio !== undefined ? 'niveau' : 'salle';
       break;
     case 'ok-message': D.message = ''; break;
     case 'ressource': D.ressource = id && D.ressource !== id ? (id as typeof D.ressource) : null; D.menu = false; D.selection = null; break;
@@ -153,7 +154,9 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     }
     case 'ouvrir-archive': resultat(J.ouvrirArchive(app.jeu)); break;
     case 'entrer': ouvrir('coupe'); break;
-    case 'vers-amelioration': document.getElementById('fb-amelio')?.scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: 'start' }); return 'fin';
+    case 'vers-amelioration': D.ongletBat = 'niveau'; requestAnimationFrame(() => document.querySelector('.fb-corps')?.scrollTo(0, 0)); break;
+    case 'bat-tous': D.porteursTous = !D.porteursTous; break;
+    case 'onglet-bat': D.ongletBat = id === 'niveau' ? 'niveau' : 'salle'; requestAnimationFrame(() => document.querySelector('.fb-corps')?.scrollTo(0, 0)); break;
     case 'archipel': ouvrir('archipel'); break;
     case 'coupe': ouvrir('coupe'); break;
     // les pillages (26 octobre 2026) : la carte des archipels, la fiche d'un archipel, puis le départ
