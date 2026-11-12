@@ -8,24 +8,26 @@ import { lieuBassesDef, type LieuBasses, type SecteurBasses } from '../core/digu
 import { FAMILLES_DISTRICT } from '../core/familles';
 import { flancBasses, planchEmpreintes } from './art';
 import { BASSES, bassesDe, bassesOuvertes, famillesDesBasses, libresPourBasses, lieuFait, porteursPresents, prochainSecours, raisonHorsContrat, secteurSuivant, type Jeu } from '../core/jeu';
-import { NOM_LIGNEE, avatar, decompte, tuilePorteur, jaugeTemps, type EcranDistrict } from './coquille';
+import { NOM_LIGNEE, avatar, choixConseille, decompte, tuilePorteur, jaugeTemps, type EcranDistrict } from './coquille';
 import { ICO, icone } from './icones';
 import { echap } from './outils';
 import { t as tr } from '../core/i18n';
 
 /** Les Porteurs qu'on peut envoyer chercher la famille */
-function choixPorteur(j: Jeu): string {
+function choixPorteur(j: Jeu, e: EcranDistrict): string {
   const libres = libresPourBasses(j);
   const autres = porteursPresents(j).filter((p) => raisonHorsContrat(j, p));
   const escouade = new Set(j.escouade ?? []);
   // les Porteurs de l'escouade en dernier : partis, ils ne peuvent plus descendre
   libres.sort((a, b) => Number(escouade.has(a)) - Number(escouade.has(b)));
-  // en tuiles portrait (12 novembre 2026, refonte des fiches) : on touche celui qu'on envoie
-  return `<div class="bs-choix"><div class="tb-cands">`
-    + libres.map((p) => tuilePorteur(p, { action: 'basses-envoyer', data: { id: p }, aria: tr`Envoyer ${echap(porteurDef(p).nom)}`,
-      badge: escouade.has(p) ? `<span class="tb-marque">${tr`Escouade`}</span>` : '', bas: `<span class="tb-eff">${NOM_LIGNEE[porteurDef(p).lignee]}</span><span class="tb-action">${tr`Envoyer`}</span>` })).join('')
-    + autres.map((p) => tuilePorteur(p, { indispo: true, bas: `<small class="tb-raison">${echap(raisonHorsContrat(j, p)!)}</small>` })).join('')
-    + `</div></div>`;
+  // le plus indiqué en une ligne, les autres sur demande (12 novembre 2026, Bryan : la grille entière était trop lourde)
+  const [premier, ...reste] = libres;
+  const autresH = reste.map((p) => tuilePorteur(p, { action: 'basses-envoyer', data: { id: p }, aria: tr`Envoyer ${echap(porteurDef(p).nom)}`,
+    badge: escouade.has(p) ? `<span class="tb-marque">${tr`Escouade`}</span>` : '', bas: `<span class="tb-eff">${NOM_LIGNEE[porteurDef(p).lignee]}</span>` })).join('')
+    + autres.map((p) => tuilePorteur(p, { indispo: true, bas: `<small class="tb-raison">${echap(raisonHorsContrat(j, p)!)}</small>` })).join('');
+  if (!premier) return `<div class="bs-choix"><div class="tb-cands">${autresH}</div></div>`;
+  return `<div class="bs-choix">` + choixConseille({ id: premier, action: 'basses-envoyer', info: `${NOM_LIGNEE[porteurDef(premier).lignee]}${escouade.has(premier) ? tr(' · dans ton escouade') : ''}`,
+    bouton: tr`Envoyer`, autres: autresH, nAutres: reste.length + autres.length, tous: !!e.choixTous }) + `</div>`;
 }
 
 /** La main d'une famille sur le Mur des empreintes (planche 8 × 6, dans l'ordre des familles) */
@@ -81,6 +83,6 @@ export function blocSecours(e: EcranDistrict): string {
     + `<span class="sc-legende"><small>${tr`${echap(s.secteur.nom)} · flanc de la digue`}</small><strong>${echap(s.lieu.nom)}</strong></span>`
     + gains
     + `<span class="sc-envoyer">${ICO.porteurs}${ouvert ? tr('Choisis qui y va') : tr('Envoyer un Porteur')}</span></button>`
-    + (ouvert ? choixPorteur(j) : '')
+    + (ouvert ? choixPorteur(j, e) : '')
     + `</div></section>`;
 }

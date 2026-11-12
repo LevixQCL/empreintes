@@ -37,6 +37,8 @@ export interface EcranDistrict {
   ongletBat?: 'salle' | 'niveau';
   /** l'onglet ouvert d'une fiche de carte ou de Porteur (12 novembre 2026) : null = le premier */
   ongletFiche?: string | null;
+  /** choix d'un Porteur au Port (12 novembre 2026) : le conseillé seul, ou tous dépliés */
+  choixTous?: boolean;
   /** toutes les tuiles de Porteurs dépliées (plus de six) */
   porteursTous?: boolean;
   /** Port, missions en mer (28 octobre 2026) : la destination du jour choisie */
@@ -246,6 +248,22 @@ export function tuilePorteur(id: string, o: { action?: string; data?: Record<str
   if (!o.action || o.indispo) return `<span class="${cls}"${o.aria ? ` aria-label="${o.aria}"` : ''}>${visage}${txt}</span>`;
   const data = Object.entries(o.data ?? {}).map(([k, v]) => ` data-${k}="${v}"`).join('');
   return `<button type="button" class="${cls}" data-action="${o.action}"${data}${o.aria ? ` aria-label="${o.aria}"` : ''}>${visage}${txt}</button>`;
+}
+
+/**
+ * Choisir un Porteur, version légère (12 novembre 2026, Bryan : « super lourd ») : le plus indiqué en une ligne,
+ * avec son bouton ; les autres seulement si on le demande (en tuiles, un toucher suffit).
+ */
+export function choixConseille(o: { id: string; action: string; data?: Record<string, string>; info: string; bouton: string; autres: string; nAutres: number; tous: boolean }): string {
+  const d = porteurDef(o.id);
+  const p = portrait(o.id);
+  const data = Object.entries({ id: o.id, ...(o.data ?? {}) }).map(([k, v]) => ` data-${k}="${v}"`).join('');
+  let h = `<div class="tb-conseille" style="--c:${COULEUR[d.lignee]}"><span class="tb-cs-visage">${p ? `<img src="${p}" alt="" decoding="async" loading="lazy">` : `<b>${echap(d.nom.charAt(0))}</b>`}</span>`
+    + `<span class="tb-cs-txt"><small>${tr`Le plus indiqué`}</small><strong>${echap(d.nom)}</strong><span>${o.info}</span></span>`
+    + `<button type="button" class="btn prim tb-cs-go" data-action="${o.action}"${data}>${o.bouton}</button></div>`;
+  if (o.nAutres) h += `<button type="button" class="te-fermer tb-tous" data-action="choix-tous" aria-expanded="${o.tous}">${o.tous ? tr('Masquer les autres') : tr`Choisir un autre Porteur (${o.nAutres})`}</button>`;
+  if (o.tous && o.autres) h += `<div class="tb-cands">${o.autres}</div>`;
+  return h;
 }
 
 /** Les onglets d'une fiche (bâtiment, carte, Porteur) : la même barre partout */

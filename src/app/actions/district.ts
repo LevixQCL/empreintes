@@ -63,7 +63,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'poster': resultat(J.poster(app.jeu, id, (b.dataset.poste as J.Poste) ?? null)); D.posteChanger = false; D.tourChanger = false; break;
     case 'liberer': resultat(J.poster(app.jeu, id, null)); break;
     // secourir une famille, au Port (12 novembre 2026)
-    case 'basses-lieu': D.bassesLieu = D.bassesLieu === id ? null : id; break;
+    case 'basses-lieu': D.bassesLieu = D.bassesLieu === id ? null : id; D.choixTous = false; break;
     case 'basses-envoyer': if (D.bassesLieu) { const r = J.envoyerBasses(app.jeu, D.bassesLieu, id, Date.now()); resultat(r); if (r.ok) { D.bassesLieu = null; D.message = t`${porteurDef(id).nom} part secourir une famille.`; } } break;
     // le Mur des empreintes : ouvrir une famille, confier son souvenir à une carte
     case 'famille': D.famille = D.famille === id ? null : id; break;
@@ -168,7 +168,8 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'port-volet': D.voletPort = id === 'missions' || id === 'marees' ? id : 'pillages'; D.mareePlace = null; break;
     // les contrats de marée (31 octobre 2026) : la marée affichée, le Porteur de chaque épreuve, puis le départ de la gabare
     case 'maree-rang': D.mareeRang = id as J.RangMaree; D.mareePlace = null; break;
-    case 'maree-place': { const k = Number(b.dataset.index ?? 0); D.mareePlace = D.mareePlace === k ? null : k; break; }
+    case 'maree-place': { const k = Number(b.dataset.index ?? 0); D.mareePlace = D.mareePlace === k ? null : k; D.choixTous = false; break; }
+    case 'choix-tous': D.choixTous = !D.choixTous; break;
     case 'maree-choisir': {
       const c = contratAffiche(app.jeu, D.mareeRang, Date.now());
       if (D.mareePlace == null) break;

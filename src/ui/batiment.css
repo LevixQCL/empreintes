@@ -445,3 +445,18 @@ button.te-socle.vide:active{transform:scale(.97)}
 .carte-detail .tb-onglets,.fiche-porteur .tb-onglets{margin:0 0 4px}
 .tb-cands,.tb-onglets,.tb-gain,.tb-gains{--fb-txt:#C9D6E6;--fb-doux:#93A3B8;--fb-or:#F2D58C;--fb-glace:#CDEFFF;--fb-rouge:#FF9C8A}
 .bs-choix .tb-cand strong,.mr-choix .tb-cand strong{font-family:var(--display);font-weight:400;font-size:15px;color:#F6F2EA}
+/* le Porteur le plus indiqué, en une ligne (12 novembre 2026) */
+.tb-conseille{display:flex;align-items:center;gap:12px;padding:8px 10px 8px 8px;border-radius:14px;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--c) 18%,transparent),rgba(205,239,255,.03) 70%);box-shadow:inset 0 0 0 1px rgba(242,200,110,.45)}
+.tb-cs-visage{flex:none;width:56px;height:56px;border-radius:12px;overflow:hidden;background:color-mix(in srgb,var(--c) 25%,#0d1018);box-shadow:inset 0 -2px 0 var(--c)}
+.tb-cs-visage img{width:100%;height:100%;object-fit:cover;object-position:50% 14%}
+.tb-cs-visage b{display:grid;place-items:center;height:100%;font-family:var(--display);font-size:24px;color:#F6F2EA}
+.tb-cs-txt{flex:1;min-width:0;display:grid;gap:1px}
+.tb-cs-txt small{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#F2D58C}
+.tb-cs-txt strong{font-family:var(--display);font-weight:400;font-size:19px;line-height:1.1;color:#F6F2EA;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb-cs-txt>span{font-size:13px;color:#C9D6E6}
+.tb-cs-txt .af-bon{color:#F2D58C;font-weight:600}.tb-cs-txt .af-mauvais{color:#C9A7D9;font-weight:600}.tb-cs-txt .af-neutre{font-weight:600}
+.tb-cs-go{flex:none;min-height:44px;padding:0 16px}
+.bs-choix,.mr-choix{display:grid;gap:8px}
+.bs-lieu .tb-cs-txt strong,.bs-lieu .tb-cand strong{font-family:var(--display);font-weight:400;font-size:19px;color:#F6F2EA}
+.bs-lieu .tb-cand strong{font-size:15px}
