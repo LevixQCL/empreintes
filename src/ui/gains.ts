@@ -8,7 +8,7 @@
 
 import type { Jeu } from '../core/jeu';
 import { raffinageParHeure, epithetesDe, NOMS_PALIER, NOMS_PALIER_MARQUE, niveauPorteur, palierDe, progresMarque } from '../core/jeu';
-import { moduleDef, porteurDef } from '../core/donnees';
+import { moduleDe, moduleDef, porteurDef } from '../core/donnees';
 import { NOMS_RARETE } from '../core/collection';
 import type { Rarete } from '../core/types';
 import { filigrane, illustrationModule, portrait } from './art';
@@ -56,7 +56,7 @@ export function relever(j: Jeu): Releve {
 
 type Gain =
   | { kind: 'res'; r: Res | 'cartes'; n: number; avant: number; cible: string }
-  | { kind: 'carte'; cle: string }
+  | { kind: 'carte'; cle: string; monte?: boolean }
   | { kind: 'doublons'; cles: string[] }
   | { kind: 'porteur'; id: string }
   | { kind: 'niveaux'; ids: { id: string; niveau: number }[] }
@@ -98,7 +98,8 @@ export function comparer(a: Releve, b: Releve, o: { energie?: boolean } = {}): G
   const doublons: string[] = [];
   for (const [cle, c] of Object.entries(b.cartes)) {
     const v = a.cartes[cle];
-    if (!v) g.push({ kind: 'carte', cle });
+    // une carte passée à un meilleur métal (trouvaille ou promotion, 12 novembre 2026) : la même carte, qui monte
+    if (!v) g.push({ kind: 'carte', cle, ...(Object.keys(a.cartes).some((k) => !b.cartes[k] && moduleDe(k) === moduleDe(cle)) ? { monte: true } : {}) });
     else if (c.niveau === v.niveau && c.doublons > v.doublons) for (let i = v.doublons; i < c.doublons; i++) doublons.push(cle);
   }
   if (doublons.length) g.push({ kind: 'doublons', cles: doublons });
@@ -315,7 +316,7 @@ function contenu(g: Exclude<Gain, { kind: 'res' }>): { html: string; onglet: str
     const m = moduleDef(g.cle);
     return {
       classe: `metal-${m.rarete}`, onglet: 'porteurs',
-      html: `${vignetteCarte(g.cle)}<span class="gv-texte"><small>${tr`Nouvelle carte`}</small><strong>${echap(m.nom)}</strong><em style="color:${COULEUR_METAL[m.rarete]}">${echap(NOMS_RARETE[m.rarete])}</em></span>`,
+      html: `${vignetteCarte(g.cle)}<span class="gv-texte"><small>${g.monte ? tr`Passe en ${NOMS_RARETE[m.rarete].toLowerCase()}` : tr`Nouvelle carte`}</small><strong>${echap(m.nom)}</strong><em style="color:${COULEUR_METAL[m.rarete]}">${echap(NOMS_RARETE[m.rarete])}</em></span>`,
     };
   }
   if (g.kind === 'doublons') {

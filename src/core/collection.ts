@@ -1,7 +1,7 @@
 // La collection : les cartes qui tombent dans les Strates, leurs raretés, les doublons et les niveaux.
 // Tout le hasard passe par un état `rng` sauvegardé : aucun hasard n'est jamais payé.
 
-import { MODULES, VOIES, carteId, estCarteConnue, gesteDeCarte, horsAlbum, moduleDe, moduleDef, renforcer, tirablesEn } from './donnees';
+import { MODULES, NIVEAU_FORCE, VOIES, carteId, estCarteConnue, gesteDeCarte, horsAlbum, moduleDe, moduleDef, renforcer, tirablesEn } from './donnees';
 import { tireur } from './rng';
 import type { Effet, GesteDef, Lignee, ModuleDef, Rarete } from './types';
 import { t as tr } from './i18n';
@@ -16,28 +16,37 @@ export const COLLECTION = {
    *  plus on joue, plus les cartes montent (étude du 22/10/2026 : les doublons se diluaient sur 225 exemplaires) */
   affinite: 0.4,
   /**
-   * Les niveaux (10 novembre 2026, remarque de Luc : « trop de niveaux ça tue, entre 3 et 5 c'est suffisant ») : 5 niveaux pour
-   * toutes les cartes, quel que soit le métal. Niveaux 2 et 4 : environ +15 % de la force de départ chacun (jamais moins
-   * de +1 ; parcours simulé : −10 au jour 35 à +10 %, 26 à +20 %, 29,5 à +15 % comme avant la refonte) ; niveaux 3 et 5 : un cran d'effet chacun (+20 % de la part de l'effet : une Fissure
-   * 25 % → 30 % → 35 %), ou, pour une carte sans part à renforcer (sans effet, Élan, Vague…), +5 % de force par cran.
-   * Avant, une carte de fer avait 9 niveaux et une d'or 3 : le Voile du murmure passait de 5 à 14 de force (+180 %), plus
-   * qu'une carte d'or. Le métal redevient la grande différence ; le niveau 5 garde le liseré de maîtrise.
+   * Les niveaux (12 novembre 2026, promotion validée par Bryan après la remarque de Luc : « la même carte avec une rareté au-dessus,
+   * c'est juste une carte en plus sans intérêt ») : 3 niveaux par métal. Niveau 2 : un palier de force (+10 % de la force, au moins +1 ; parcours simulé : −10 au jour 17 contre 16 avant, 18 à +6 %) ;
+   * niveau 3 : un cran d'effet (+20 % de la part de l'effet), ou +6 % de force sans effet à renforcer. Au niveau 3, la carte se
+   * promeut au métal suivant (promouvoir) : un métal au niveau 1 bat toujours le métal du dessous au niveau 3.
+   * Avant (10 novembre) : 5 niveaux à +15 %, et un exemplaire d'or neuf était plus faible qu'un argent monté.
    */
-  bonusNiveau: 0.15,
-  /** un cran d'effet : +20 % de la part ; ou, sans part, +5 % de force */
+  bonusNiveau: NIVEAU_FORCE.palier,
+  /** un cran d'effet : +20 % de la part ; ou, sans part, +6 % de force */
   cranEffet: 0.2,
-  cranForce: 0.05,
-  niveauMax: 5,
+  cranForce: NIVEAU_FORCE.cran,
+  niveauMax: 3,
   /** niveau de départ selon la rareté : 1 pour toutes depuis le 10 novembre 2026 */
   niveauDepart: { fer: 1, cuivre: 1, argent: 1, or: 1, nacre: 1 } as Record<Rarete, number>,
   /** doublons pour passer au niveau suivant (2, 3, 4, 5) : moins de doublons tombent dans les métaux rares */
   doublons: {
-    fer: [2, 4, 7, 12],
-    cuivre: [1, 3, 5, 8],
-    argent: [1, 2, 4, 6],
-    or: [1, 2, 3, 4],
-    nacre: [1, 1, 2, 3],
+    fer: [1, 2],
+    cuivre: [1, 2],
+    argent: [1, 2],
+    or: [1, 2],
+    nacre: [1, 2],
   } as Record<Rarete, number[]>,
+  /**
+   * La promotion (12 novembre 2026) : une carte au niveau 3 passe au métal suivant, au niveau 1, avec 3 copies de plus et des cristaux.
+   * Une copie d'un métal en dessous vaut un tiers de copie par métal d'écart (3 argent = 1 or) : aucune copie n'est perdue.
+   * Trouver la carte directement dans un métal au-dessus la fait passer dans ce métal en gardant son niveau.
+   */
+  promotion: {
+    copies: 3,
+    rapport: 3,
+    cristaux: { fer: 0, cuivre: 60, argent: 150, or: 400, nacre: 1000 } as Record<Rarete, number>,
+  },
   /** composants rendus par le recyclage d'un doublon */
   recyclage: { fer: 5, cuivre: 15, argent: 40, or: 100, nacre: 250 } as Record<Rarete, number>,
   /** refabriquer un exemplaire : environ 5 fois le recyclage, plus des Éclats, plus du temps de Forge.
@@ -94,6 +103,10 @@ export interface EtatCollection {
   rng: number;
   /** la fin choisie change les trouvailles (Grand Scellement : plus de nacre ; Archives ouvertes : deux fois plus) */
   actes?: { fin?: string };
+  /** ce qui, dans la partie, désigne une carte par sa clé (pour la renommer quand elle change de métal) */
+  porteurs?: Record<string, { modules: string[] } | undefined>;
+  vecu?: Record<string, unknown>;
+  vus?: { cartes: string[] };
 }
 
 const rang = (r: Rarete) => RARETES.indexOf(r);
@@ -158,15 +171,90 @@ export function tirerChoix(e: EtatCollection, strate: number, minimum: Rarete = 
   return choix;
 }
 
-/** Ajoute une carte : nouvelle carte, ou doublon si on l'a déjà. Renvoie true si c'est une découverte. */
+/** La clé possédée d'une carte de base (« lames-jumelles » → « lames-jumelles@or »), s'il y en a une : un seul métal par carte */
+export function clePossedee(e: Pick<EtatCollection, 'collection'>, base: string): string | undefined {
+  let mieux: string | undefined;
+  for (const k of Object.keys(e.collection)) if (moduleDe(k) === base && (!mieux || rang(moduleDef(k).rarete) > rang(moduleDef(mieux).rarete))) mieux = k;
+  return mieux;
+}
+
+/** Une carte change de clé (elle passe à un autre métal) : collection, decks des Porteurs, vécu et pastilles « nouveau » suivent */
+export function renommerCarte(e: EtatCollection, avant: string, apres: string): void {
+  if (avant === apres) return;
+  const c = e.collection[avant];
+  if (c) { delete e.collection[avant]; e.collection[apres] = c; }
+  for (const p of Object.values(e.porteurs ?? {})) if (p) p.modules = [...new Set(p.modules.map((k) => (k === avant ? apres : k)))];
+  if (e.vecu?.[avant] !== undefined) { e.vecu[apres] ??= e.vecu[avant]; delete e.vecu[avant]; }
+  if (e.vus?.cartes) e.vus.cartes = [...new Set(e.vus.cartes.map((k) => (k === avant ? apres : k)))];
+}
+
+/** Ce que vaut une copie du métal `de` pour une carte en métal `vers` (un tiers par métal d'écart vers le bas) */
+export const valeurCopie = (de: Rarete, vers: Rarete): number => COLLECTION.promotion.rapport ** -Math.max(0, rang(vers) - rang(de));
+const arrondi = (x: number) => Math.round(x * 1000) / 1000;
+
+/** Une carte qui monte avec des copies (pas l'Héritage, pas une carte d'origine) */
+const monteAvecCopies = (id: string) => !moduleDef(id).legs && !moduleDef(id).origine;
+
+/**
+ * Ajoute une carte (12 novembre 2026, promotion) : on ne possède qu'un exemplaire de chaque carte, dans un seul métal.
+ * - pas encore possédée : elle entre au niveau 1 (découverte) ;
+ * - même métal : un doublon ;
+ * - métal en dessous : un tiers de doublon par métal d'écart (3 argent = 1 or) ;
+ * - métal au-dessus : la carte passe dans ce métal en gardant son niveau ; ses doublons suivent, au même rapport.
+ * Renvoie true si une clé nouvelle apparaît (découverte, ou carte passée à un meilleur métal).
+ */
 export function ajouterCarte(e: EtatCollection, id: string): boolean {
-  const c = e.collection[id];
-  if (!c) {
+  if (!monteAvecCopies(id)) {
+    const c = e.collection[id];
+    if (!c) { e.collection[id] = { niveau: COLLECTION.niveauDepart[moduleDef(id).rarete], doublons: 0 }; return true; }
+    c.doublons++;
+    return false;
+  }
+  const k = clePossedee(e, moduleDe(id));
+  if (!k) {
     e.collection[id] = { niveau: COLLECTION.niveauDepart[moduleDef(id).rarete], doublons: 0 };
     return true;
   }
-  c.doublons++;
-  return false;
+  const c = e.collection[k]!;
+  const avant = moduleDef(k).rarete, recu = moduleDef(id).rarete;
+  if (rang(recu) <= rang(avant)) { c.doublons = arrondi(c.doublons + valeurCopie(recu, avant)); return false; }
+  c.doublons = arrondi(c.doublons * valeurCopie(avant, recu));
+  renommerCarte(e, k, id);
+  return true;
+}
+
+/** Le métal le plus haut qu'une promotion peut atteindre, selon la Strate vaincue : argent dès −3, or dès −7, nacre sous −10 */
+export function metalPromotionMax(strateVaincue: number): Rarete {
+  return strateVaincue >= 10 ? 'nacre' : strateVaincue >= 6 ? 'or' : strateVaincue >= 2 ? 'argent' : 'cuivre';
+}
+/** Le métal suivant (null après la nacre) */
+export const metalSuivant = (r: Rarete): Rarete | null => RARETES[rang(r) + 1] ?? null;
+
+/** Pourquoi une carte ne peut pas encore être promue (null si elle le peut), hors coût en cristaux */
+export function freinPromotion(e: Pick<EtatCollection, 'collection'>, id: string, strateVaincue: number): string | null {
+  const c = e.collection[id];
+  if (!c) return tr('Carte inconnue.');
+  if (!monteAvecCopies(id)) return tr('Cette carte grandit avec son Porteur.');
+  const vers = metalSuivant(moduleDef(id).rarete);
+  if (!vers) return tr('La nacre est le plus haut métal.');
+  if (c.niveau < COLLECTION.niveauMax) return tr`Il faut d’abord le niveau ${COLLECTION.niveauMax}.`;
+  if (rang(vers) > rang(metalPromotionMax(strateVaincue))) {
+    const seuil = vers === 'argent' ? 3 : vers === 'or' ? 7 : 11;
+    return tr`Le ${NOMS_RARETE[vers].toLowerCase()} s’ouvre à la Strate −${seuil}.`;
+  }
+  if (c.doublons < COLLECTION.promotion.copies) return tr`Il faut ${COLLECTION.promotion.copies} copies.`;
+  return null;
+}
+
+/** Promeut une carte au métal suivant, au niveau 1 (le coût en cristaux se paie à côté) ; renvoie la nouvelle clé */
+export function promouvoirCarte(e: EtatCollection, id: string): string {
+  const vers = metalSuivant(moduleDef(id).rarete)!;
+  const nouvelle = carteId(moduleDe(id), vers);
+  const c = e.collection[id]!;
+  c.doublons = arrondi((c.doublons - COLLECTION.promotion.copies) * valeurCopie(moduleDef(id).rarete, vers));
+  c.niveau = COLLECTION.niveauDepart[vers];
+  renommerCarte(e, id, nouvelle);
+  return nouvelle;
 }
 
 /** Doublons nécessaires pour le niveau suivant (null au niveau max) */
@@ -188,10 +276,10 @@ export function gainNiveau(id: string): number {
 }
 
 const borneNiveau = (n: number) => Math.max(1, Math.min(COLLECTION.niveauMax, n));
-/** Paliers de force gagnés à ce niveau (niveaux 2 et 4) */
-export const paliersForce = (niveau: number) => (borneNiveau(niveau) >= 2 ? 1 : 0) + (borneNiveau(niveau) >= 4 ? 1 : 0);
-/** Crans d'effet gagnés à ce niveau (niveaux 3 et 5) */
-export const cransEffet = (niveau: number) => (borneNiveau(niveau) >= 3 ? 1 : 0) + (borneNiveau(niveau) >= 5 ? 1 : 0);
+/** Paliers de force gagnés à ce niveau (niveau 2) */
+export const paliersForce = (niveau: number) => (borneNiveau(niveau) >= 2 ? 1 : 0);
+/** Crans d'effet gagnés à ce niveau (niveau 3) */
+export const cransEffet = (niveau: number) => (borneNiveau(niveau) >= 3 ? 1 : 0);
 /** Le niveau renforce-t-il cet effet, ou la force à sa place ? (la Décharge se règle carte par carte, l'Accord n'a rien à renforcer) */
 const effetMontant = (e: Effet | undefined): boolean => !!e && 'part' in e && e.type !== 'decharge';
 
@@ -246,6 +334,18 @@ export const chargeNiveau = (niveau: number): number => CHARGE.base + CHARGE.par
 export const NIVEAU_METAL: Record<Rarete, number> = { fer: 1, cuivre: 1, argent: 5, or: 9, nacre: 13 };
 /** une carte d'origine se porte dès le niveau 1 : elle est là pour aider au début (11 novembre 2026) */
 export const niveauRequis = (cle: string): number => (moduleDef(cle).origine ? 1 : NIVEAU_METAL[moduleDef(cle).rarete]);
+
+/**
+ * Le métal dans lequel un Porteur joue une carte (12 novembre 2026, promotion) : une carte qu'il portait déjà et qui passe à un métal
+ * trop haut pour son niveau (trouvaille ou promotion) reste dans son deck, jouée dans le plus haut métal qu'il peut porter,
+ * jusqu'à ce qu'il ait le niveau. Jamais en dessous du métal d'origine de la carte.
+ */
+export function metalJouable(cle: string, niveauPorteur: number): string {
+  if (niveauRequis(cle) <= niveauPorteur) return cle;
+  const plancher = rang(MODULES.find((m) => m.id === moduleDe(cle))?.rarete ?? 'fer');
+  for (let i = rang(moduleDef(cle).rarete) - 1; i >= plancher; i--) if (NIVEAU_METAL[RARETES[i]!] <= niveauPorteur) return carteId(moduleDe(cle), RARETES[i]!);
+  return carteId(moduleDe(cle), RARETES[plancher]!);
+}
 
 /** Les cartes qu'un Porteur apporte au deck de combat : celles qu'on lui a confiées, à leur niveau */
 export function cartesEnJeu(porteurId: string, cartes: { id: string; niveau: number }[]): GesteDef[] {

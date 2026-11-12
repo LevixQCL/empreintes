@@ -23,7 +23,7 @@ const metaux = ['fer', 'cuivre', 'argent', 'or', 'nacre'] as const;
 MODULES_TIRABLES.forEach((m, i) => {
   const r = metaux[Math.min(4, Math.floor(i / 9))]!;
   // une exclusive n'existe que dans son métal
-  j.collection[carteId(m.id, m.seul ? m.rarete : i % 3 === 0 ? 'fer' : r)] = { niveau: 1 + (i % 5), doublons: i % 4 };
+  j.collection[carteId(m.id, m.seul ? m.rarete : i % 3 === 0 ? 'fer' : r)] = { niveau: 1 + (i % 3), doublons: i % 4 };
 });
 // l'empreinte des cartes (28 octobre 2026) : quelques vétéranes, une par palier, et une carte au journal fourni
 const vec = (v: number, a: number, f: number, g: number[], ga: number[], z: number, d = v * 40, b = v * 25, s = v * 20): J.VecuCarte => ({ o: 2, p: 'ilka', l: v * 7, v, d, b, s, a, f, z, g, ga });

@@ -5,8 +5,8 @@ import { autoActif, langueReglable, NOMS_LANGUES } from './options';
 import { texteGraphismes } from './graphismes';
 import { sonActif } from './son';
 import { animationsReduites } from './outils';
-import { ennemiDef, moduleDef, porteurDef, deNom } from '../core/donnees';
-import { COLLECTION, doublonsRequis, multNiveau } from '../core/collection';
+import { ennemiDef, moduleDe, moduleDef, porteurDef, deNom } from '../core/donnees';
+import { COLLECTION, clePossedee, doublonsRequis, multNiveau, valeurCopie } from '../core/collection';
 import { vestigeDef } from '../core/explorer';
 import { faceCarte } from './carte';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
@@ -630,8 +630,11 @@ function feuilleExpedition(e: EcranDistrict): string {
       vues.add(id);
       const requis = c ? doublonsRequis(id, c.niveau) : null;
       const pret = !neuve && c && requis !== null && c.doublons >= requis;
+      // une copie d'un métal en dessous de la carte possédée (12 novembre 2026) : elle compte pour un tiers par métal d'écart
+      const haute = !c ? clePossedee(e.j, moduleDe(id)) : undefined;
+      const part = haute ? valeurCopie(moduleDef(id).rarete, moduleDef(haute).rarete) : 1;
       h += `<div class="rx-carte${neuve ? ' neuve' : ''}">`
-        + faceRapport(e.j, id) + `<span class="ruban">${neuve ? tr('Nouvelle') : pret ? tr`Niv. ${c!.niveau + 1} prêt` : tr('Doublon')}</span></div>`;
+        + faceRapport(e.j, id) + `<span class="ruban">${neuve ? tr('Nouvelle') : pret ? tr`Niv. ${c!.niveau + 1} prêt` : part < 1 ? tr`+${part > 0.3 ? '⅓' : '⅑'} de copie` : tr('Doublon')}</span></div>`;
     }
     h += `</div>`;
   }

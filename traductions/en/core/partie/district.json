@@ -342,6 +342,14 @@
    "en": "You need {0} crystals."
   },
   {
+   "fr": "Cette carte est en expédition.",
+   "en": "This card is on an expedition."
+  },
+  {
+   "fr": "{0} passe en {1}.",
+   "en": "{0} is promoted to {1}."
+  },
+  {
    "fr": "Trop lourd : {0} pèse {1}, il ne reste que {2} de Charge à {3}.",
    "en": "Too heavy: {0} weighs {1}, {3} only has {2} Load left."
   },
@@ -352,10 +360,6 @@
   {
    "fr": "Cette carte ne convient qu’à sa lignée.",
    "en": "This card only suits its own lineage."
-  },
-  {
-   "fr": "Cette carte est en expédition.",
-   "en": "This card is on an expedition."
   },
   {
    "fr": "{0} porte déjà {1} cartes : retires-en une.",

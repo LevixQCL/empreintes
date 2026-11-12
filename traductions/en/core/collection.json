@@ -22,6 +22,30 @@
    "en": "Nacre"
   },
   {
+   "fr": "Carte inconnue.",
+   "en": "Unknown card."
+  },
+  {
+   "fr": "Cette carte grandit avec son Porteur.",
+   "en": "This card grows with its Bearer."
+  },
+  {
+   "fr": "La nacre est le plus haut métal.",
+   "en": "Nacre is the highest metal."
+  },
+  {
+   "fr": "Il faut d’abord le niveau {0}.",
+   "en": "It must reach level {0} first."
+  },
+  {
+   "fr": "Le {0} s’ouvre à la Strate −{1}.",
+   "en": "{0} opens at Stratum −{1}."
+  },
+  {
+   "fr": "Il faut {0} copies.",
+   "en": "It takes {0} copies."
+  },
+  {
    "fr": "Place vide",
    "en": "Empty slot"
   },

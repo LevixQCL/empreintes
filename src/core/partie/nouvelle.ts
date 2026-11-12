@@ -2,9 +2,10 @@
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
 import { PORTEURS, CARTE_CHAMBRE, MODULES, estCarteConnue, moduleDe, moduleDef, porteurDef, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, carteId } from '../donnees';
-import { COLLECTION, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
+import { RARETES, poidsCarte, valeurCopie } from '../collection';
+import { pointsVecu } from './vecu';
 import { graine } from '../rng';
-import { nbFoyers, DISTRICT, VERSION_JEU, XP, xpPourNiveau, chargeMax, chargePortee, enExpedition, confier, niveauConfiance, strateVaincue, jourDe, log, niveauPorteur, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
+import { nbFoyers, DISTRICT, VERSION_JEU, XP, xpPourNiveau, chargeMax, chargePortee, enExpedition, confier, niveauConfiance, strateVaincue, jourDe, log, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
 import { SCENES, sceneEnAttente, type ContexteCampagne } from '../campagne';
 import { ESCOUADE_DEPART } from './descentes';
 import { accorderSeance, comptoirVide } from './district';
@@ -334,6 +335,11 @@ function migrer(j: Jeu) {
     j.version = 13;
     originesDeMetal(j, 'argent', 'or');
   }
+  if (j.version === 13) {
+    // version 14 (12 novembre 2026) : un seul exemplaire par carte, 3 niveaux par métal, promotion au métal suivant
+    j.version = 14;
+    fusionnerExemplaires(j);
+  }
   allegerSelonCharge(j);
   // 10 novembre 2026 : les quais gravés déjà passés donnent leur carte au choix (une seule fois, notée dans fleche.cartes)
   rattraperCartesFleche(j);
@@ -362,20 +368,63 @@ function originesDeMetal(j: Jeu, de: Rarete, vers: Rarete) {
   }
 }
 
+/** Un niveau sur 5 (10 novembre 2026) sur l'échelle de 1 à 3 (12 novembre 2026) : 1 → 1, 2 et 3 → 2, 4 et 5 → 3 */
+export const niveauSurTrois = (n: number) => (n >= 4 ? 3 : n >= 2 ? 2 : 1);
+
+/**
+ * Version 14 : les exemplaires d'une même carte dans plusieurs métaux se fondent dans le plus haut. La carte garde le meilleur
+ * niveau atteint (ramené de 5 à 3 niveaux) ; les autres exemplaires et tous les doublons deviennent des copies de ce métal,
+ * un tiers par métal d'écart. Les decks, le vécu et les pastilles suivent ; un exemplaire porté par deux Porteurs reste chez
+ * celui qui portait le plus haut métal.
+ */
+export function fusionnerExemplaires(j: Jeu) {
+  const parBase = new Map<string, string[]>();
+  for (const k of Object.keys(j.collection)) {
+    const m = moduleDef(k);
+    if (m.legs || m.origine) continue;
+    const b = moduleDe(k);
+    parBase.set(b, [...(parBase.get(b) ?? []), k]);
+  }
+  for (const cles of parBase.values()) {
+    cles.sort((a, b) => RARETES.indexOf(moduleDef(b).rarete) - RARETES.indexOf(moduleDef(a).rarete));
+    const haut = cles[0]!, metal = moduleDef(haut).rarete;
+    const c = j.collection[haut]!;
+    let niveau = niveauSurTrois(c.niveau), doublons = c.doublons;
+    for (const k of cles.slice(1)) {
+      const x = j.collection[k]!;
+      niveau = Math.max(niveau, niveauSurTrois(x.niveau));
+      doublons += (1 + x.doublons) * valeurCopie(moduleDef(k).rarete, metal);
+      delete j.collection[k];
+      const porteurHaut = Object.values(j.porteurs).find((p) => p?.modules.includes(haut));
+      for (const p of Object.values(j.porteurs)) {
+        if (!p?.modules.includes(k)) continue;
+        p.modules = p.modules.filter((m) => m !== k);
+        if (!Object.values(j.porteurs).some((q) => q?.modules.includes(haut)) && p !== porteurHaut) p.modules.push(haut);
+      }
+      if (j.vecu?.[k]) {
+        if (!j.vecu[haut] || pointsVecu(j.vecu[k]) > pointsVecu(j.vecu[haut])) j.vecu[haut] = j.vecu[k]!;
+        delete j.vecu[k];
+      }
+      if (j.vus?.cartes) j.vus.cartes = [...new Set(j.vus.cartes.map((v) => (v === k ? haut : v)))];
+    }
+    c.niveau = niveau;
+    c.doublons = Math.round(doublons * 1000) / 1000;
+  }
+}
+
 /** Les anciens niveaux de départ (avant le 10 novembre 2026, sur 10 niveaux) */
 const ANCIEN_DEPART: Record<string, number> = { fer: 1, cuivre: 3, argent: 5, or: 7, nacre: 8 };
 /** Un ancien niveau (départ selon le métal, maximum 10) sur l'échelle de 1 à 5 */
 export function nouveauNiveau(ancien: number, metal: string): number {
   const d = ANCIEN_DEPART[metal] ?? 1;
   if (ancien <= d) return 1;
-  return Math.min(COLLECTION.niveauMax, 1 + Math.round(((ancien - d) / (10 - d)) * (COLLECTION.niveauMax - 1)));
+  // l'échelle de 5 niveaux de l'époque (version 11) ; la version 14 la ramène ensuite à 3
+  return Math.min(5, 1 + Math.round(((ancien - d) / (10 - d)) * 4));
 }
 function convertirNiveaux(j: Jeu) {
   for (const [cle, c] of Object.entries(j.collection)) {
     const metal = cle.split('@')[1] ?? 'fer';
     c.niveau = nouveauNiveau(c.niveau, metal);
-    const requis = doublonsRequis(cle, c.niveau);
-    c.doublons = requis === null ? c.doublons : Math.min(c.doublons, requis);
   }
 }
 
@@ -414,7 +463,8 @@ function allegerSelonCharge(j: Jeu) {
     const d = j.porteurs[id]!;
     const rendues: string[] = [];
     // le métal demande un niveau (27 octobre 2026) : une carte trop haute pour lui retourne à la collection
-    for (const k of d.modules.slice()) if (niveauRequis(k) > niveauPorteur(j, id).niveau) { d.modules = d.modules.filter((x) => x !== k); rendues.push(moduleDef(k).nom); }
+    // 12 novembre 2026 : plus de retour à la collection pour le niveau ; une carte trop haute se joue dans le métal que le Porteur
+    // peut porter (metalJouable), jusqu'à ce qu'il ait le niveau
     while (d.modules.length && chargePortee(j, id) > chargeMax(j, id)) {
       // la plus légère qui suffit à rentrer dans la Charge ; sinon la plus lourde, et on recommence
       const exces = chargePortee(j, id) - chargeMax(j, id);

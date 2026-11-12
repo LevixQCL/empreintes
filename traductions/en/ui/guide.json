@@ -262,8 +262,8 @@
    "en": "Level up your favorites"
   },
   {
-   "fr": "Doublons et cristaux : 5 niveaux par carte, qui renforcent sa force puis son effet (une carte de 10 passe à 13 de force au niveau 4). Confie-les aux Porteurs que tu emmènes le plus souvent.",
-   "en": "Duplicates and crystals: 5 levels per card, raising its power, then its effect (a 10-power card reaches 13 at level 4). Give them to the Bearers you take down most often."
+   "fr": "Doublons et cristaux : 3 niveaux par métal, puis la promotion au métal suivant, plus fort. Chaque copie compte, même dans un métal en dessous. Confie-les aux Porteurs que tu emmènes le plus souvent.",
+   "en": "Duplicates and crystals: 3 levels per metal, then promotion to the next, stronger metal. Every copy counts, even from a lower metal. Give them to the Bearers you take along most often."
   },
   {
    "fr": "La carte",
@@ -426,24 +426,36 @@
    "en": "What metal changes"
   },
   {
-   "fr": "Une même carte existe dans les cinq métaux. Le métal est fixé quand tu la trouves : il ne change jamais.",
-   "en": "The same card exists in all five metals. The metal is set when you find it: it never changes."
+   "fr": "Une même carte existe dans les cinq métaux. Tu la trouves dans un métal, puis elle peut monter de métal en métal.",
+   "en": "The same card exists in all five metals. You find it in one metal, then it can climb from metal to metal."
   },
   {
    "fr": "En fer, une carte n’a pas d’effet. Il s’ouvre en cuivre ; en or et en nacre, ses chiffres montent.",
    "en": "In iron, a card has no effect. It unlocks in copper; in gold and nacre, its numbers go up."
   },
   {
-   "fr": "Un métal rare demande un Porteur expérimenté : argent au niveau {0}, or au niveau {1}, nacre au niveau {2}. Trouvée plus tôt, la carte t’attend dans ta collection.",
-   "en": "A rare metal needs an experienced Bearer: silver at level {0}, gold at level {1}, nacre at level {2}. Found earlier, the card waits in your collection."
+   "fr": "Un métal rare demande un Porteur expérimenté : argent au niveau {0}, or au niveau {1}, nacre au niveau {2}. Une carte qu’il porte déjà et qui monte trop haut pour lui reste dans son deck : il la joue dans le métal qu’il peut porter.",
+   "en": "A rare metal needs an experienced Bearer: silver at level {0}, gold at level {1}, nacre at level {2}. A card they already carry that climbs too high for them stays in their deck: they play it in the metal they can carry."
   },
   {
-   "fr": "Deux métaux d’une carte sont deux cartes à part, chacune avec ses doublons et son niveau.",
-   "en": "Two metals of one card are two separate cards, each with its own duplicates and level."
+   "fr": "Tu n’as qu’un exemplaire de chaque carte. Doublons et cristaux la font monter de 1 à {0} dans son métal : niveau 2, sa force grandit ; niveau 3, son effet se renforce (une Fissure 25 % passe à 30 %), ou sa force, si elle n’a pas d’effet à renforcer.",
+   "en": "You only own one copy of each card. Duplicates and crystals raise it from 1 to {0} within its metal: at level 2 its power grows; at level 3 its effect gets stronger (a 25% Fissure becomes 30%), or its power if it has no effect to strengthen."
   },
   {
-   "fr": "Doublons et cristaux font monter une carte, de 1 à {0} quel que soit son métal. Niveaux 2 et 4 : environ +{1} % de sa force de départ ; niveaux 3 et 5 : son effet se renforce (une Fissure 25 % passe à 30 %, puis 35 %), ou sa force, si elle n’a pas d’effet à renforcer. Au maximum, la carte est",
-   "en": "Duplicates and crystals level a card up, from 1 to {0} whatever its metal. Levels 2 and 4: about +{1}% of its starting power; levels 3 and 5: its effect grows (a 25% Fissure becomes 30%, then 35%), or its power, if it has no effect to grow. At the maximum, the card is"
+   "fr": "Au niveau {0}, {1} copies de plus et des cristaux la",
+   "en": "At level {0}, {1} more copies and some crystals"
+  },
+  {
+   "fr": "promeuvent",
+   "en": "promote it"
+  },
+  {
+   "fr": "au métal suivant, plus fort, où elle repart au niveau 1. La profondeur ouvre les métaux : l’argent à la Strate −3, l’or à −7, la nacre sous −10.",
+   "en": "to the next, stronger metal, where it starts again at level 1. Depth opens the metals: silver at Stratum −3, gold at −7, nacre below −10."
+  },
+  {
+   "fr": "Aucune copie n’est perdue : une copie d’un métal en dessous compte pour un tiers, et trouver la carte dans un meilleur métal l’y fait passer en gardant son niveau. Au niveau {0}, la carte est",
+   "en": "No copy is ever wasted: a copy from a lower metal counts as a third, and finding the card in a better metal moves it there, keeping its level. At level {0}, the card is"
   },
   {
    "fr": "maîtrisée",

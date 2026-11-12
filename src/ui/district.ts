@@ -16,7 +16,7 @@ import {
   COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, gardienPourTour, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, plafondEntrainement, raffinageParHeure, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
-import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, album, carteNiveau, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
+import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, album, carteNiveau, composantsNiveau, doublonsRequis, freinPromotion, metalSuivant, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
 import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront, finCreuse, gainCreuseurs } from '../core/jeu';
@@ -1299,20 +1299,21 @@ export function feuilleCarte(e: EcranDistrict): string {
   h += `<section class="bloc fc-prog"><h3 class="titre-bloc">${ICO.monter}${tr`Progression`}</h3>`;
   if (m.legs) h += `<p class="fc-etat or">${tr`Une vierge de l’Héritage du district : unique, elle ne monte pas avec des doublons. Elle s’éveille avec le Porteur qui la porte : ${EVEIL_LEGS.map((x) => tr`niveau ${x.niveau} avec un Porteur de niveau ${x.porteur}`).join(', ')}.`}</p>`;
   else if (m.origine) h += `<p class="fc-etat or">${tr`Une carte d’origine : exclusive, elle ne monte pas avec des doublons. Elle grandit avec le Porteur qui la porte : ${EVEIL_ORIGINE.map((x) => tr`niveau ${x.niveau} avec un Porteur de niveau ${x.porteur}`).join(', ')}. Face à un autre directeur (duel, défi d’un quai), elle joue sans son effet « ${NOMS_EFFET[m.origine]} ».`}</p>`;
-  else if (requis === null) h += `<p class="fc-etat or">${tr`Niveau maximum : la carte est maîtrisée, un liseré de lumière parcourt son cadre.`}</p>`;
+  else if (requis === null && !metalSuivant(m.rarete)) h += `<p class="fc-etat or">${tr`Niveau maximum : la carte est maîtrisée, un liseré de lumière parcourt son cadre.`}</p>`;
+  else if (requis === null) h += blocPromotion(j, cle);
   else {
     const pret = c.doublons >= requis;
-    const manqueD = Math.max(0, requis - c.doublons);
+    const manqueD = copies(Math.max(0, requis - c.doublons));
     const manqueC = Math.max(0, cout - j.energie);
-    const etat = !pret ? `${tr`Encore`} <b>${tr`${manqueD} doublon${manqueD > 1 ? 's' : ''}`}</b> ${tr`pour le niveau ${c.niveau + 1}. On en trouve en expédition, en mission, dans les colis du ravitaillement, au Comptoir et à la Forge.`}`
+    const etat = !pret ? `${tr`Encore`} <b>${tr`${manqueD} doublon${Number(manqueD.replace(',', '.')) > 1 ? 's' : ''}`}</b> ${tr`pour le niveau ${c.niveau + 1}. On en trouve en expédition, en mission, dans les colis du ravitaillement, au Comptoir et à la Forge.`}`
       : manqueC ? `${tr`Doublons réunis. Il manque`} <b>${tr`${manqueC} cristal${manqueC > 1 ? 'x' : ''}`}</b>.` : tr`Prête : elle peut passer au niveau ${c.niveau + 1}.`;
-    h += `<div class="progression"><div class="jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></div><span class="chiffre">${tr`${c.doublons} / ${requis} doublons`}</span></div>`
+    h += `<div class="progression"><div class="jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></div><span class="chiffre">${tr`${copies(c.doublons)} / ${requis} doublons`}</span></div>`
       + `<p class="fc-etat${pret && !manqueC ? ' or' : ''}">${etat} <span>${gainSuivant(m, c.niveau)}${c.niveau + 1 >= COLLECTION.niveauMax ? tr(', et la carte est maîtrisée') : ''}.</span></p>`
       + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="monter" data-module="${cle}"${pret && j.energie >= cout ? '' : ' disabled'}>${ICO.monter}${tr`Passer au niveau ${c.niveau + 1} · ${prix('energie', cout, j.energie >= cout)}`}</button>`;
-    if (c.doublons > 0) h += `<button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}${tr`Recycler 1 · +${COLLECTION.recyclage[m.rarete]} minerai`}</button>`;
+    if (c.doublons >= 1) h += `<button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}${tr`Recycler 1 · +${COLLECTION.recyclage[m.rarete]} minerai`}</button>`;
     h += `</div>`;
   }
-  if (requis === null && c.doublons > 0) h += `<div class="ligne-btn"><button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}${tr`Recycler 1 · +${COLLECTION.recyclage[m.rarete]} minerai`}</button></div>`;
+  if (requis === null && !metalSuivant(m.rarete) && c.doublons >= 1) h += `<div class="ligne-btn"><button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}${tr`Recycler 1 · +${COLLECTION.recyclage[m.rarete]} minerai`}</button></div>`;
   h += `</section>`;
   return h + `</div></section>`;
 }
@@ -1617,7 +1618,8 @@ export function htmlCartes(e: EcranDistrict): string {
   const toutes = MODULES.flatMap((m) => exemplaires(j, m.id));
   const peutMonter = (cle: string) => {
     const m = moduleDef(cle); const c = j.collection[cle]!; const requis = doublonsRequis(m.id, c.niveau);
-    return requis !== null && c.doublons >= requis && j.energie >= composantsNiveau(c.niveau + 1);
+    if (requis === null) return !freinPromotion(j, cle, strateVaincue(j)) && j.energie >= (COLLECTION.promotion.cristaux[metalSuivant(m.rarete) ?? 'nacre'] ?? 0);
+    return c.doublons >= requis && j.energie >= composantsNiveau(c.niveau + 1);
   };
   const portees = new Set(Object.values(j.porteurs).flatMap((p) => p.modules));
   const estLibre = (cle: string) => !portees.has(cle);
@@ -1690,6 +1692,33 @@ export function htmlCartes(e: EcranDistrict): string {
 }
 
 /** Ce que le prochain niveau change : la force (niveaux 2 et 4) ou l'effet (niveaux 3 et 5), en clair (10 novembre 2026) */
+/** Un nombre de copies : entier, ou avec une décimale (une copie d'un métal en dessous vaut un tiers) */
+const copies = (x: number) => (Math.abs(x - Math.round(x)) < 0.05 ? String(Math.round(x)) : (Math.round(x * 10) / 10).toFixed(1).replace('.', ','));
+
+/**
+ * La promotion dans la fiche d'une carte au niveau maximum (12 novembre 2026, retour de Luc) : les copies réunies, ce qui manque
+ * (copies, profondeur ou cristaux), ce que la carte gagne, et le bouton.
+ */
+function blocPromotion(j: Jeu, cle: string): string {
+  const m = moduleDef(cle), c = j.collection[cle]!;
+  const vers = metalSuivant(m.rarete)!;
+  const apres = moduleDef(carteId(moduleDe(cle), vers));
+  const besoin = COLLECTION.promotion.copies, cout = COLLECTION.promotion.cristaux[vers];
+  const frein = freinPromotion(j, cle, strateVaincue(j));
+  const manqueC = Math.max(0, cout - j.energie);
+  const nom = NOMS_RARETE[vers].toLowerCase();
+  const etat = frein && c.doublons >= besoin ? echap(frein)
+    : c.doublons < besoin ? `${tr`Encore`} <b>${tr`${copies(besoin - c.doublons)} copie${besoin - c.doublons > 1 ? 's' : ''}`}</b> ${tr`pour passer en ${nom}. Une copie d’un métal en dessous compte pour un tiers.`}${frein && !/copies/.test(frein) ? ` ${echap(frein)}` : ''}`
+    : manqueC ? `${tr`Copies réunies. Il manque`} <b>${tr`${manqueC} cristal${manqueC > 1 ? 'x' : ''}`}</b>.` : tr`Prête : elle peut passer en ${nom}.`;
+  const pret = !frein && !manqueC;
+  const f1 = carteNiveau(m, c.niveau).v, f2 = carteNiveau(apres, 1).v;
+  return `<div class="progression"><div class="jauge" style="--jc:${COULEUR_RARETE[vers]}"><i style="width:${Math.min(100, (100 * c.doublons) / besoin)}%"></i></div><span class="chiffre">${tr`${copies(c.doublons)} / ${besoin} copies`}</span></div>`
+    + `<p class="fc-etat${pret ? ' or' : ''}">${etat} <span>${tr`En ${nom} : force ${f1} →`} <b>${f2}</b>${apres.f.length > m.f.length ? tr`, une Fréquence de plus` : ''}${tr`, puis de nouveau 3 niveaux`}.</span></p>`
+    + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="promouvoir" data-module="${cle}"${pret ? '' : ' disabled'}>${ICO.monter}${tr`Passer en ${nom} · ${prix('energie', cout, j.energie >= cout)}`}</button>`
+    + (c.doublons >= besoin + 1 ? `<button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}${tr`Recycler 1 · +${COLLECTION.recyclage[m.rarete]} minerai`}</button>` : '')
+    + `</div>`;
+}
+
 function gainSuivant(m: ModuleDef, niveau: number): string {
   const avant = carteNiveau(m, niveau), apres = carteNiveau(m, niveau + 1);
   const e1 = avant.effet, e2 = apres.effet;

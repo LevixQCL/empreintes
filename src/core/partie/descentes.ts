@@ -7,7 +7,7 @@ import { FOND, RECIT_CARTE, estFond, halteDef, queteDef, type HalteDef } from '.
 import { ETOILES, EXPLORER, PALIERS_ETOILES, RODEURS, metalEveille, rodeurDeZone, type EtoileId, vestigesDe } from '../explorer';
 import { ZONES, sequenceStrate, gesteDeCarte, GESTES_SPECIAUX, carteId } from '../donnees';
 import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
-import { COLLECTION, NIVEAU_METAL, ajouterCarte, auMoins, cartesEnJeu, metalDessus, metalTranche, niveauRequis, paliersForce, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
+import { COLLECTION, NIVEAU_METAL, ajouterCarte, auMoins, cartesEnJeu, metalDessus, metalTranche, metalJouable, niveauRequis, paliersForce, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
@@ -24,7 +24,8 @@ import { t as tr } from '../i18n';
 
 /** Les cartes qu'un Porteur apporte au deck de combat : celles qu'on lui a confiées, à leur niveau */
 export function gestesDe(j: Jeu, id: string): GesteDef[] {
-  const cartes = (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).map((k) => ({ id: k, niveau: j.collection[k]!.niveau }));
+  const niv = niveauPorteur(j, id).niveau;
+  const cartes = (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).map((k) => ({ id: metalJouable(k, niv), niveau: j.collection[k]!.niveau }));
   const jeu = cartesEnJeu(id, cartes);
   // après la dernière lecture, Véla joue en plus sa Lecture profonde
   if (id === 'vela' && j.actes.lecture === 'autoriser') jeu.push(LECTURE_PROFONDE);

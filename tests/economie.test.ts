@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { nouveauNiveau } from '../src/core/partie/nouvelle';
-import { COLLECTION, ajouterCarte, doublonsRequis, effetNiveau, multNiveau, tableRarete, tirerCarte, type EtatCollection } from '../src/core/collection';
+import { COLLECTION, ajouterCarte, doublonsRequis, effetNiveau, freinPromotion, metalPromotionMax, multNiveau, puissanceCarte, tableRarete, tirerCarte, type EtatCollection } from '../src/core/collection';
 import { moduleDef } from '../src/core/donnees';
 import {
-  ARCHIVE, OBJECTIFS, VERSION_JEU, ameliorer, estJeuValide, greffer, jourDe, monter, nouveauJeu, ouvrirArchive, prendre, quotidienFait,
-  reclamerQuotidien, recycler, semaineDe, tick, type Jeu,
+  ARCHIVE, OBJECTIFS, VERSION_JEU, ameliorer, estJeuValide, jourDe, monter, nouveauJeu, ouvrirArchive, prendre, quotidienFait,
+  promouvoir, reclamerQuotidien, recycler, semaineDe, tick, type Jeu,
 } from '../src/core/jeu';
 
 const MIN = 60_000;
@@ -68,32 +68,48 @@ describe('Collection', () => {
     expect(max).toBeLessThan(COLLECTION.garanties.argent);
   });
 
-  it('un doublon fait monter une carte : 5 niveaux, force aux niveaux 2 et 4, effet aux niveaux 3 et 5', () => {
+  it('un doublon fait monter une carte : 3 niveaux, force au niveau 2, effet au niveau 3 (12 novembre 2026)', () => {
     const j = avance();
     expect(ajouterCarte(j, 'jambes-ressort@fer')).toBe(false);
-    expect(ajouterCarte(j, 'jambes-ressort@fer')).toBe(false);
-    expect(doublonsRequis('jambes-ressort@fer', 1)).toBe(2);
+    expect(doublonsRequis('jambes-ressort@fer', 1)).toBe(1);
     expect(monter(j, 'jambes-ressort@fer').ok).toBe(true);
     expect(j.collection['jambes-ressort@fer']).toEqual({ niveau: 2, doublons: 0 });
-    const v = Math.round(10 * multNiveau('jambes-ressort@fer', 1)) / 10;
-    expect(v).toBe(1);
-    // chaque montée change la force affichée, d'un entier
+    expect(Math.round(10 * multNiveau('jambes-ressort@fer', 1)) / 10).toBe(1);
     for (const cle of ['jambes-ressort@fer', 'jambes-ressort@cuivre']) {
-      const base = Math.round(moduleDef(cle).v * multNiveau(cle, 1));
       let avant = 0;
-      for (let n = 1; n <= 5; n++) { const f = Math.round(moduleDef(cle).v * multNiveau(cle, n)); expect(f).toBeGreaterThanOrEqual(avant); avant = f; }
-      expect(base).toBeGreaterThan(0);
+      for (let n = 1; n <= 3; n++) { const f = Math.round(moduleDef(cle).v * multNiveau(cle, n)); expect(f).toBeGreaterThanOrEqual(avant); avant = f; }
     }
-    // au maximum : bien moins qu'avant (+90 % pour le fer), le métal reste la grande différence
-    expect(multNiveau('jambes-ressort@fer', 5)).toBeLessThan(1.6);
-    expect(multNiveau('jambes-ressort@fer', 9)).toBe(multNiveau('jambes-ressort@fer', 5));
-    // l'effet monte aux niveaux 3 et 5 (Fissure 25 % → 30 % → 35 %), avec les plafonds du métal
+    expect(multNiveau('jambes-ressort@fer', 9)).toBe(multNiveau('jambes-ressort@fer', 3));
     expect(effetNiveau({ type: 'fissure', part: 0.25 }, 3)).toEqual({ type: 'fissure', part: 0.3 });
-    expect(effetNiveau({ type: 'fissure', part: 0.25 }, 5)).toEqual({ type: 'fissure', part: 0.35 });
-    expect(effetNiveau({ type: 'rempart', part: 0.9 }, 5)).toEqual({ type: 'rempart', part: 0.9 });
-    // une carte en or démarre au niveau 1, comme toutes
-    expect(ajouterCarte(j, 'lames-orbitales@or')).toBe(true);
-    expect(j.collection['lames-orbitales@or']!.niveau).toBe(1);
+    expect(effetNiveau({ type: 'rempart', part: 0.9 }, 3)).toEqual({ type: 'rempart', part: 0.9 });
+    expect(doublonsRequis('jambes-ressort@fer', 3)).toBeNull();
+  });
+
+  it('chaque métal au niveau 1 bat le métal du dessous au niveau 3', () => {
+    for (const m of ['jambes-ressort', 'bond', 'morsure', 'murmure', 'lames-jumelles']) {
+      const r = ['fer', 'cuivre', 'argent', 'or', 'nacre'];
+      for (let i = r.indexOf(moduleDef(m).rarete); i < 4; i++) expect(puissanceCarte(`${m}@${r[i + 1]}`, 1)).toBeGreaterThan(puissanceCarte(`${m}@${r[i]}`, 3));
+    }
+  });
+
+  it('promotion : niveau 3, 3 copies, des cristaux, et la profondeur ouvre le métal', () => {
+    const j = avance();
+    const k = 'jambes-ressort@fer';
+    j.collection[k] = { niveau: 3, doublons: 2 };
+    expect(promouvoir(j, k).ok).toBe(false); // il manque une copie
+    ajouterCarte(j, k);
+    j.energie = 1000;
+    expect(promouvoir(j, k).ok).toBe(true);
+    expect(j.collection[k]).toBeUndefined();
+    expect(j.collection['jambes-ressort@cuivre']).toEqual({ niveau: 1, doublons: 0 });
+    expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@cuivre');
+    expect(j.energie).toBe(1000 - COLLECTION.promotion.cristaux.cuivre);
+    // l'argent ne s'ouvre qu'à la Strate −3
+    j.collection['jambes-ressort@cuivre'] = { niveau: 3, doublons: 3 };
+    expect(freinPromotion(j, 'jambes-ressort@cuivre', 1)).toMatch(/−3/);
+    expect(freinPromotion(j, 'jambes-ressort@cuivre', 2)).toBeNull();
+    expect(metalPromotionMax(9)).toBe('or');
+    expect(metalPromotionMax(10)).toBe('nacre');
   });
 
   it('version 11 : les anciens niveaux sur 10 passent sur 5, le chemin parcouru gardé', () => {
@@ -116,11 +132,17 @@ describe('Collection', () => {
 });
 
 describe('Une carte, cinq métaux', () => {
-  it('une même carte existe dans chaque métal, chaque exemplaire à part', () => {
+  it('un seul exemplaire par carte : un meilleur métal la fait passer en gardant son niveau, un moins bon vaut un tiers', () => {
     const j = avance();
-    expect(ajouterCarte(j, 'jambes-ressort@or')).toBe(true); // nouvelle carte, pas un doublon du fer
-    expect(j.collection['jambes-ressort@or']!.niveau).toBe(1);
-    expect(j.collection['jambes-ressort@fer']!.doublons).toBe(0);
+    j.collection['jambes-ressort@fer'] = { niveau: 2, doublons: 0.5 };
+    expect(ajouterCarte(j, 'jambes-ressort@argent')).toBe(true);
+    expect(j.collection['jambes-ressort@fer']).toBeUndefined();
+    expect(j.collection['jambes-ressort@argent']!.niveau).toBe(2);
+    expect(j.collection['jambes-ressort@argent']!.doublons).toBeCloseTo(0.5 / 9, 3);
+    expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@argent');
+    expect(j.porteurs.ilka!.modules).not.toContain('jambes-ressort@fer');
+    ajouterCarte(j, 'jambes-ressort@cuivre');
+    expect(j.collection['jambes-ressort@argent']!.doublons).toBeCloseTo(0.5 / 9 + 1 / 3, 3);
     expect(moduleDef('jambes-ressort@or').base).toBe('jambes-ressort');
     expect(moduleDef('jambes-ressort@or').nom).toBe('Jambes à ressort');
   });
@@ -148,17 +170,17 @@ describe('Une carte, cinq métaux', () => {
     expect(moduleDef('bobine-recuperation@nacre').effet).toEqual({ type: 'flux', v: 2 });
   });
 
-  it('un Porteur ne porte pas deux fois la même carte : un meilleur métal remplace l’ancien (24 octobre 2026)', () => {
+  it('version 14 : les exemplaires d’une carte se fondent dans le plus haut métal, au meilleur niveau', () => {
     const j = avance();
-    ajouterCarte(j, 'jambes-ressort@or');
-    expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@fer');
-    const avant = j.porteurs.ilka!.modules.length;
-    j.porteurs.ilka!.xp = 1_000_000; // l'or demande un Porteur de niveau 9
-    expect(greffer(j, 'jambes-ressort@or', 'ilka').ok).toBe(true);
+    j.collection['jambes-ressort@fer'] = { niveau: 5, doublons: 1 };
+    j.collection['jambes-ressort@or'] = { niveau: 1, doublons: 0 };
+    j.porteurs.coursier ??= { usure: 0, poste: null, modules: [] };
+    j.version = 13;
+    expect(estJeuValide(j)).toBe(true);
+    expect(j.collection['jambes-ressort@fer']).toBeUndefined();
+    expect(j.collection['jambes-ressort@or']!.niveau).toBe(3);
+    expect(j.collection['jambes-ressort@or']!.doublons).toBeCloseTo(2 / 27, 3);
     expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@or');
-    expect(j.porteurs.ilka!.modules).not.toContain('jambes-ressort@fer');
-    expect(j.porteurs.ilka!.modules.length).toBe(avant);
-    expect(greffer(j, 'jambes-ressort@fer', 'coursier').ok).toBe(true);
   });
 
   it('les tirages donnent des cartes de tous les métaux d’origine dans chaque métal', () => {
@@ -239,8 +261,8 @@ describe('Migration', () => {
     expect(v3.collection['jambes-ressort@fer']).toEqual({ niveau: 1, doublons: 1 });
     expect(v3.collection['lames-orbitales@or']).toEqual({ niveau: 1, doublons: 0 });
     expect(Object.keys(v3.collection)).toHaveLength(17); // + les 15 cartes de base (version 6)
-    // la carte en or retourne à la collection : Ilka, niveau 1, ne peut pas encore la porter (NIVEAU_METAL)
-    expect(v3.porteurs.ilka!.modules).toEqual(['ruee@fer', 'bond@fer', 'esquive@fer', 'tir@fer', 'tir-vif@fer']);
+    // la carte en or reste chez Ilka (12 novembre 2026) : elle se joue dans le métal qu'Ilka peut porter (metalJouable)
+    expect(v3.porteurs.ilka!.modules).toEqual(['lames-orbitales@or', 'ruee@fer', 'bond@fer', 'esquive@fer', 'tir@fer', 'tir-vif@fer']);
     expect(v3.forge!.moduleId).toBe('jambes-ressort@fer');
     expect(v3.choix[0]!.options).toEqual(['bras-grue@argent', 'crocs-fossiles@fer']);
   });

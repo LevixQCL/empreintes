@@ -1750,6 +1750,42 @@
    "en": ", in squad {0}’s Rack"
   },
   {
+   "fr": "{0} copie{1}",
+   "en": "{0} cop{1|ies|y}"
+  },
+  {
+   "fr": "pour passer en {0}. Une copie d’un métal en dessous compte pour un tiers.",
+   "en": "to be promoted to {0}. A copy from a lower metal counts as a third."
+  },
+  {
+   "fr": "Copies réunies. Il manque",
+   "en": "Copies gathered. Still missing"
+  },
+  {
+   "fr": "Prête : elle peut passer en {0}.",
+   "en": "Ready: it can be promoted to {0}."
+  },
+  {
+   "fr": "{0} / {1} copies",
+   "en": "{0} / {1} copies"
+  },
+  {
+   "fr": "En {0} : force {1} →",
+   "en": "In {0}: power {1} →"
+  },
+  {
+   "fr": ", une Fréquence de plus",
+   "en": ", one more Frequency"
+  },
+  {
+   "fr": ", puis de nouveau 3 niveaux",
+   "en": ", then 3 levels again"
+  },
+  {
+   "fr": "Passer en {0} · {1}",
+   "en": "Promote to {0} · {1}"
+  },
+  {
    "fr": "Niveau {0} : {1} {2} →",
    "en": "Level {0}: {1} {2} →"
   },

@@ -20,7 +20,7 @@ import { creerCombat } from '../combat';
 import { FLECHE } from '../classements';
 import { nouvelleExpedition } from '../expedition';
 import { graine, tireur } from '../rng';
-import { sansBonusOrigine, tirerChoix } from '../collection';
+import { metalJouable, sansBonusOrigine, tirerChoix } from '../collection';
 import type { Rarete } from '../types';
 import { CONFIANCE, XP, bonusPv, porteursPresents, strateVaincue, confier, gagnerXp, log, niveauPorteur, non, pvNiveau, usureAuRetour, type Jeu, type Resultat } from './etat';
 import { escouadePrete, payerRatelier, type Retour } from './descentes';
@@ -320,7 +320,7 @@ export function garnisonFleche(j: Jeu, escouade: string[]): Garnison {
     porteurs: escouade.slice(0, 3).map((id) => ({
       id,
       pv: pvNiveau(j, id) + bonusPv(j, id),
-      cartes: (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).map((k) => ({ id: k, niveau: j.collection[k]!.niveau })),
+      cartes: (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).map((k) => ({ id: metalJouable(k, niveauPorteur(j, id).niveau), niveau: j.collection[k]!.niveau })),
     })),
     strate: 1,
     coffre: 0,

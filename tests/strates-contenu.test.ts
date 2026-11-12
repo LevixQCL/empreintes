@@ -164,11 +164,11 @@ describe('La quête de la Strate', () => {
     j.quetes = { 1: 2 };
     partir(j, ESC, 1, 4);
     j.expedition!.gains!.etape = true;
-    const avant = Object.keys(j.collection).length + Object.values(j.collection).reduce((n, c) => n + c.doublons, 0);
+    const avant = JSON.stringify(j.collection);
     const r = remonter(j);
     expect(r.quete?.finie).toBe(true);
     expect(r.cartes.length).toBeGreaterThan(0);
-    expect(Object.keys(j.collection).length + Object.values(j.collection).reduce((n, c) => n + c.doublons, 0)).toBeGreaterThan(avant);
+    expect(JSON.stringify(j.collection)).not.toBe(avant);
     partir(j, ESC, 1, 5);
     expect(j.expedition!.carte!.salles.some((s) => s.quete)).toBe(false);
   });

@@ -3,7 +3,7 @@
 
 import { batimentDef, porteurDef, MODULES, tirablesEn, NOMS_LIGNEE, moduleDe, moduleDef, carteId, deNom } from '../donnees';
 import type { Rarete } from '../types';
-import { COLLECTION, NIVEAU_METAL, ajouterCarte, auMoins, metalDessus, metalTranche, tirerChoix, NOMS_RARETE } from '../collection';
+import { COLLECTION, NIVEAU_METAL, ajouterCarte, auMoins, metalDessus, metalTranche, tirerChoix, NOMS_RARETE, RARETES, clePossedee } from '../collection';
 import { tireur } from '../rng';
 import { CHAPITRES, chapitreOuvert } from '../chroniques';
 import { ARCHIVE, DISTRICT, log, niveauPorteur, non, porteursPresents, strateVaincue, type Jeu, type Resultat, typeDuJour } from './etat';
@@ -80,8 +80,8 @@ export function recompenserLecture(j: Jeu, chapitreId: string): string | null {
   // (Bryan : « si j'attends la fin du jeu avant de lire les Chroniques, je n'aurai que des bonnes cartes ? »)
   const metal = metalTranche(CHAPITRES.find((c) => c.id === chapitreId)?.strate ?? 1);
   const pool = tirablesEn(metal).filter((m) => m.lignee === lignee);
-  // d'abord une carte qu'on n'a pas encore dans ce métal ; sinon un doublon
-  const neuves = pool.filter((m) => !j.collection[carteId(m.id, metal)]);
+  // d'abord une carte qu'on n'a pas encore dans ce métal ou mieux (une carte d'un métal en dessous y passe) ; sinon un doublon
+  const neuves = pool.filter((m) => { const k = clePossedee(j, m.id); return !k || RARETES.indexOf(moduleDef(k).rarete) < RARETES.indexOf(metal); });
   const liste = neuves.length ? neuves : pool;
   const id = carteId(liste[tireur(j).entier(liste.length)]!.id, metal);
   const neuve = ajouterCarte(j, id);

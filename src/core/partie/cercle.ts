@@ -221,8 +221,8 @@ export function rendreEchange(j: Jeu, id: string, now: number): EchangeEnAttente
   const e = c.enAttente.find((x) => x.id === id);
   if (!e) return null;
   c.enAttente = c.enAttente.filter((x) => x !== e);
-  j.collection[e.donne] ??= { niveau: COLLECTION.niveauDepart[metalDe(e.donne)], doublons: 0 };
-  j.collection[e.donne]!.doublons++;
+  // la carte a pu changer de métal entre-temps : l'exemplaire revient comme toute copie (12 novembre 2026)
+  ajouterCarte(j, e.donne);
   j.energie += e.cout;
   if (c.jour === jourDe(now) && jourDe(e.le) === c.jour) compter(j, now, -1);
   return e;

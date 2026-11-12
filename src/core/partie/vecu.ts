@@ -5,7 +5,8 @@
 // Pur prestige : AUCUN effet en combat (une carte vétérane ne frappe pas plus fort, un nouveau joueur n'est pas désavantagé).
 // Tout se lit dans le journal du combat (CombatEtat.historique) : rien à brancher dans le moteur.
 
-import { deNom, ennemiDef, estCarteConnue, moduleDef, porteurDef } from '../donnees';
+import { deNom, ennemiDef, estCarteConnue, moduleDe, moduleDef, porteurDef } from '../donnees';
+import { clePossedee } from '../collection';
 import type { CombatEtat } from '../types';
 import { rodeurDef } from '../explorer';
 import { familleDef } from '../familles';
@@ -65,6 +66,8 @@ export type Palier = 0 | 1 | 2 | 3;
 export const vecuDe = (j: Jeu, cle: string): VecuCarte | undefined => j.vecu?.[cle];
 function vecuOuNeuf(j: Jeu, cle: string): VecuCarte {
   const t = (j.vecu ??= {});
+  // la carte a changé de métal pendant la descente, ou se joue dans un métal plus bas (metalJouable) : son vécu reste le sien
+  if (!j.collection[cle]) cle = clePossedee(j, moduleDe(cle)) ?? cle;
   return (t[cle] ??= { l: 0, v: 0, d: 0, b: 0, s: 0, a: 0, f: 0, z: 0, g: [], ga: [] });
 }
 

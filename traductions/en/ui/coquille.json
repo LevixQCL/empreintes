@@ -750,6 +750,10 @@
    "en": "Lvl {0} ready"
   },
   {
+   "fr": "+{0} de copie",
+   "en": "+{0} of a copy"
+  },
+  {
    "fr": "{0} cartes au choix",
    "en": "{0} cards to choose from"
   },

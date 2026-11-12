@@ -2,10 +2,6 @@
  "source": "src/core/partie/cercle.ts",
  "entrees": [
   {
-   "fr": "Carte inconnue.",
-   "en": "Unknown card."
-  },
-  {
    "fr": "Les cartes de l’Héritage ne quittent jamais le district.",
    "en": "Legacy cards never leave the district."
   },

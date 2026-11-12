@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { CHARGE, NIVEAU_METAL, PLACES_PORTEUR, chargeNiveau, poidsCarte } from '../src/core/collection';
+import { CHARGE, NIVEAU_METAL, PLACES_PORTEUR, chargeNiveau, metalJouable, poidsCarte } from '../src/core/collection';
 import { ajouter, creerCombat, lancer } from '../src/core/combat';
 import { DEPART_PORTEURS, carteId, gesteDeCarte } from '../src/core/donnees';
 import { chargeMax, chargePortee, echanger, estJeuValide, greffer, niveauPorteur, nouveauJeu, partir } from '../src/core/jeu';
+import { gestesDe } from '../src/core/partie/descentes';
 import { mesurer } from '../src/core/robot';
 
 describe('La Charge', () => {
@@ -41,15 +42,17 @@ describe('La Charge', () => {
     expect(echanger(j, 'ruee@fer', 'tir-vif@fer', 'ilka').ok).toBe(true);
   });
 
-  it('une vieille sauvegarde trop lourde rend des cartes à la collection, sans rien perdre', () => {
+  it('une carte d’un métal trop haut pour son Porteur reste dans son deck, jouée dans le métal qu’il peut porter (12 novembre 2026)', () => {
     const j = nouveauJeu(0);
     j.chambre = true;
-    for (const k of ['bras-grue@argent', 'dorsale@argent', 'coeur-reprise@or']) j.collection[k] = { niveau: 5, doublons: 0 };
-    j.porteurs.ilka!.modules = ['bras-grue@argent', 'dorsale@argent', 'coeur-reprise@or', 'ruee@fer', 'bond@fer', 'tir-vif@fer'];
+    for (const k of ['jambes-ressort@or']) j.collection[k] = { niveau: 3, doublons: 0 };
+    j.porteurs.ilka!.modules = ['jambes-ressort@or', 'ruee@fer', 'bond@fer', 'tir-vif@fer'];
     expect(estJeuValide(j)).toBe(true);
-    expect(chargePortee(j, 'ilka')).toBeLessThanOrEqual(chargeMax(j, 'ilka'));
-    expect(j.collection['coeur-reprise@or']).toBeDefined();
-    expect(j.journal[0]).toMatch(/Ilka portait des cartes/);
+    expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@or');
+    expect(niveauPorteur(j, 'ilka').niveau).toBeLessThan(NIVEAU_METAL.argent);
+    const jouees = gestesDe(j, 'ilka').map((g) => g.carte);
+    expect(jouees).toContain(metalJouable('jambes-ressort@or', niveauPorteur(j, 'ilka').niveau));
+    expect(jouees).not.toContain('jambes-ressort@or');
   });
 
   it('le métal demande un niveau de Porteur : argent 5, or 9, nacre 13 (12 novembre 2026 ; avant 4, 7 et 10)', () => {

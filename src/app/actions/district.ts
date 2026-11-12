@@ -142,6 +142,13 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       break;
     }
     case 'monter': resultat(J.monter(app.jeu, b.dataset.module ?? '')); break;
+    case 'promouvoir': {
+      // la carte change de clé en changeant de métal : sa fiche reste ouverte sur la nouvelle
+      const r = J.promouvoir(app.jeu, b.dataset.module ?? '');
+      resultat(r);
+      if (r.ok && r.cle && D.carte === b.dataset.module) D.carte = r.cle;
+      break;
+    }
     case 'recycler': resultat(J.recycler(app.jeu, b.dataset.module ?? '')); break;
     case 'epithete': J.choisirEpithete(app.jeu, b.dataset.module ?? '', b.dataset.id ?? ''); break;
     case 'prendre': resultat(J.prendre(app.jeu, Number(b.dataset.index ?? 0))); break;

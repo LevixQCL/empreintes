@@ -64,8 +64,8 @@ export const NOMS_LIGNEE: Record<Lignee | 'neutre', { nom: string; court: string
 // Résonants = Désarmer, Fissure, Accord, Crescendo (l'empreinte lit et amplifie).
 
 /** id, nom, lignée, métal d'origine, action, force (dans le métal d'origine), Fréquences (de la principale à la plus rare), effet, lourde */
-/** du cuivre à l'or : le même rapport que METAL_FORCE (1,46 / 1,18) */
-const METAL_FORCE_ORIGINE = 1.46 / 1.18;
+/** du cuivre à l'or : le même rapport que METAL_FORCE (1,69 / 1,19 depuis le 12 novembre 2026 ; avant 1,46 / 1,18) */
+const METAL_FORCE_ORIGINE = 1.69 / 1.19;
 const c = (id: string, nom: string, lignee: Lignee, rarete: Rarete, type: TypeGeste, v: number, f: number[], effet?: Effet, lourd = false): ModuleDef =>
   ({ id, nom, lignee, rarete, type, v, f, ...(effet ? { effet } : {}), ...(lourd ? { lourd: true } : {}) });
 /** une carte exclusive (28 octobre 2026) : elle n'existe que dans son métal d'origine, jamais dans un autre */
@@ -321,7 +321,15 @@ export const CARTES_DE_BASE = MODULES.slice(0, 15).map((m) => m.id);
 // ---------- Les métaux ----------
 // Décision du 21 octobre 2026 : le métal est fixé quand on trouve l'exemplaire, il ne change jamais (pas de montée de métal).
 // Décision du 22 octobre 2026 : le métal ouvre aussi des Fréquences, pour se glisser plus facilement dans une suite.
-export const METAL_FORCE: Record<Rarete, number> = { fer: 1, cuivre: 1.18, argent: 1.32, or: 1.46, nacre: 1.6 };
+// 12 novembre 2026 (promotion) : des écarts plus francs entre métaux (avant : 1 / 1,18 / 1,32 / 1,46 / 1,6), pour qu'un métal
+// au niveau 1 batte toujours le métal du dessous au niveau 3
+export const METAL_FORCE: Record<Rarete, number> = { fer: 1, cuivre: 1.19, argent: 1.42, or: 1.69, nacre: 2 };
+/** Ce qu'apportent les niveaux d'une carte (collection.ts) : un palier de force (+10 %, au moins +1) et, sans effet à renforcer,
+ *  un cran de force (+6 %, au moins +1). Rangé ici pour que chaque métal batte le métal du dessous au niveau 3. */
+export const NIVEAU_FORCE = { palier: 0.1, cran: 0.06 } as const;
+const effetQuiMonte = (e: Effet | undefined): boolean => !!e && 'part' in e && e.type !== 'decharge';
+/** La force d'une carte au niveau 3 de son métal (voir forceNiveau dans collection.ts) */
+const forceAuMax = (m: ModuleDef, v: number) => v + Math.max(1, Math.round(v * NIVEAU_FORCE.palier)) + (effetQuiMonte(m.effet) ? 0 : Math.max(1, Math.round(v * NIVEAU_FORCE.cran)));
 export const METAL_FREQ: Record<Rarete, number> = { fer: 1, cuivre: 1, argent: 2, or: 2, nacre: 3 };
 /** 0 : pas d'effet ; 1 : l'effet de la carte ; au-delà : l'effet renforcé (parts ×1,25 en or, ×1,5 en nacre, Surcharge +1 en nacre) */
 export const METAL_RENFORT: Record<Rarete, number> = { fer: 0, cuivre: 1, argent: 1, or: 1.25, nacre: 1.5 };
@@ -832,7 +840,12 @@ export const moduleDef = (cle: string): ModuleDef => {
   const m = MODULES.find((x) => x.id === id);
   if (!m || (metal !== undefined && !METAUX.includes(metal))) throw new Error(tr('Carte inconnue : ') + cle);
   if (metal === undefined) return m;
-  const def: ModuleDef = { ...m, id: cle, base: id, rarete: metal, v: Math.round(m.v * METAL_FORCE[metal] / METAL_FORCE[m.rarete]), f: m.f.slice(0, METAL_FREQ[metal]) };
+  let v = Math.round(m.v * METAL_FORCE[metal] / METAL_FORCE[m.rarete]);
+  // 12 novembre 2026 (promotion) : sur les petites forces, l'arrondi pouvait laisser le métal au niveau 1 à égalité avec celui du
+  // dessous au niveau 3 ; il le dépasse toujours d'au moins 1
+  const i = METAUX.indexOf(metal);
+  if (m.v > 0 && i > METAUX.indexOf(m.rarete)) { const dessous = moduleDef(carteId(id, METAUX[i - 1]!)); v = Math.max(v, forceAuMax(m, dessous.v) + 1); }
+  const def: ModuleDef = { ...m, id: cle, base: id, rarete: metal, v, f: m.f.slice(0, METAL_FREQ[metal]) };
   delete def.effet;
   delete def.effet2;
   if (m.effet && METAL_RENFORT[metal] > 0) def.effet = renforcer(m.effet, METAL_RENFORT[metal]);

@@ -8,7 +8,7 @@
 
 import { ennemiDef, porteurDef } from '../donnees';
 import { creerCombat } from '../combat';
-import { doublonsRequis, puissanceCarte } from '../collection';
+import { doublonsRequis, metalJouable, puissanceCarte } from '../collection';
 import { forceStrate, nouvelleExpedition } from '../expedition';
 
 /** Un combat de référence pour les pillages : 6 composants × (1 + 0,25 × (Strate − 1)). Gardé tel quel quand les combats des Strates
@@ -83,7 +83,7 @@ export function garnisonDe(j: Jeu): Garnison {
     porteurs: ids.map((id) => ({
       id,
       pv: pvNiveau(j, id) + bonusPv(j, id),
-      cartes: (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).map((k) => ({ id: k, niveau: j.collection[k]!.niveau })),
+      cartes: (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).map((k) => ({ id: metalJouable(k, niveauPorteur(j, id).niveau), niveau: j.collection[k]!.niveau })),
     })),
     strate: Math.max(1, strateVaincue(j)),
     coffre: Math.floor(etatPillage(j).coffre),
@@ -103,7 +103,7 @@ export function forceEscouade(j: Jeu, escouade: string[]): number {
     porteurs: escouade.map((id) => ({
       id,
       pv: Math.max(1, pvNiveau(j, id) + bonusPv(j, id) - Math.floor(j.porteurs[id]?.usure ?? 0)),
-      cartes: (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).map((k) => ({ id: k, niveau: j.collection[k]!.niveau })),
+      cartes: (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).map((k) => ({ id: metalJouable(k, niveauPorteur(j, id).niveau), niveau: j.collection[k]!.niveau })),
     })),
   });
 }

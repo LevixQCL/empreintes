@@ -132,6 +132,8 @@ describe('Moins de répétition au parcours simulé', () => {
     };
     const avant = compter(true), apres = compter(false);
     expect(apres.part).toBeLessThan(avant.part / 2);
-    expect(Math.abs(apres.j10 - avant.j10)).toBeLessThanOrEqual(1);
+    // 12 novembre 2026 (promotion des cartes) : les cartes promues rendent l'ouverture de −10 plutôt plus rapide sans la répétition
+    // (médianes 7 contre 10) ; ce qui compte ici, c'est que moins refouiller ne ralentisse pas la descente
+    expect(apres.j10).toBeLessThanOrEqual(avant.j10 + 1);
   }, 240_000);
 });

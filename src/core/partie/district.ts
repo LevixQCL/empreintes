@@ -3,7 +3,7 @@
 
 import { batimentDef, porteurDef, PORTEURS, BATIMENTS, tirablesEn, moduleDe, moduleDef, carteId, CARTES_COMMUNES, forceCommune, deNom } from '../donnees';
 import type { BatimentId, Rarete } from '../types';
-import { COLLECTION, RARETES, ajouterCarte, auMoins, NOMS_RARETE, composantsNiveau, doublonsRequis, metalDessus, metalTranche, niveauRequis, poidsCarte } from '../collection';
+import { COLLECTION, RARETES, ajouterCarte, auMoins, NOMS_RARETE, composantsNiveau, doublonsRequis, metalDessus, metalTranche, niveauRequis, poidsCarte, freinPromotion, metalSuivant, promouvoirCarte } from '../collection';
 import { tireur } from '../rng';
 import { partPvClinique, CERCLE, CERCLE_OUVERTURE, CONFIANCE, accueillirFamille, nbFoyers, ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, heuresDeTaille, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, strateVaincue, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
 import { OBJECTIFS, objectifCourant } from './objectifs';
@@ -309,6 +309,20 @@ export function monter(j: Jeu, moduleId: string): Resultat {
   c.niveau++;
   log(j, tr`${moduleDef(moduleId).nom} passe au niveau ${c.niveau}.`);
   return { ok: true };
+}
+
+/** Promeut une carte au niveau maximum vers le métal suivant (12 novembre 2026) : 3 copies et des cristaux */
+export function promouvoir(j: Jeu, moduleId: string): Resultat & { cle?: string } {
+  const frein = freinPromotion(j, moduleId, strateVaincue(j));
+  if (frein) return non(frein);
+  const vers = metalSuivant(moduleDef(moduleId).rarete)!;
+  const cout = COLLECTION.promotion.cristaux[vers];
+  if (j.energie < cout) return non(tr`Il faut ${cout} cristaux.`);
+  if (greffesDe(j, moduleId).some((id) => enExpedition(j, id))) return non(tr('Cette carte est en expédition.'));
+  j.energie -= cout;
+  const nouvelle = promouvoirCarte(j, moduleId);
+  log(j, tr`${moduleDef(nouvelle).nom} passe en ${NOMS_RARETE[vers].toLowerCase()}.`);
+  return { ok: true, cle: nouvelle };
 }
 
 /** La carte dépasserait-elle la Charge du Porteur (en prenant la place de `retire`) ? Renvoie le refus, sinon null */
@@ -682,7 +696,8 @@ export function garnirComptoir(j: Jeu, now: number): void {
 /** Une offre du métal r : un doublon utile une fois sur deux, sinon une carte tirable ; jamais un module déjà dans bases */
 function tirerOffre(j: Jeu, t: ReturnType<typeof tireur>, r: Rarete, bases: Set<string>): string | undefined {
   let id: string | undefined;
-  const aMonter = Object.keys(j.collection).filter((k) => k.endsWith('@' + r) && !moduleDef(k).legs && !bases.has(moduleDe(k)) && doublonsRequis(k, j.collection[k]!.niveau) !== null);
+  // une carte encore à monter ou à promouvoir (la nacre au niveau 3 n'a plus besoin de copies)
+  const aMonter = Object.keys(j.collection).filter((k) => k.endsWith('@' + r) && !moduleDef(k).legs && !moduleDef(k).origine && !bases.has(moduleDe(k)) && (doublonsRequis(k, j.collection[k]!.niveau) !== null || r !== 'nacre'));
   if (aMonter.length && t.nombre() < COMPTOIR.partDoublons) id = aMonter[t.entier(aMonter.length)];
   for (let g = 0; !id && g < 40; g++) {
     const pool = tirablesEn(r);

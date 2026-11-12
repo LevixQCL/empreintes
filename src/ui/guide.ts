@@ -203,7 +203,7 @@ function ongletDeck(): string {
     + idee('<b class="g-etoile">∗</b>', tr('Des jokers pour les suites'), tr('Une carte ∗ (Accord) prend toujours la Fréquence qui prolonge ta suite. En argent et en or, une carte porte 2 Fréquences, en nacre 3.'))
     + idee(ICO_TRIANGLE, tr('Pense au triangle'), tr`Augmenté bat Résonant, Résonant bat Géné, Géné bat Augmenté : +${Math.round((REGLES.bonusLignee - 1) * 100)} % de dégâts. Les ennemis en profitent aussi contre tes Porteurs. Le dessin est dans « Lire une carte ».`)
     + idee(ICO.repiocher, tr('Un deck court tourne plus vite'), tr`Un Porteur peut porter moins de ${DISTRICT.cartesMax} cartes : tes meilleures reviennent plus souvent en main, mais tu couvres moins de Fréquences.`)
-    + idee(ICO.monter, tr('Fais monter tes favorites'), tr`Doublons et cristaux : 5 niveaux par carte, qui renforcent sa force puis son effet (une carte de 10 passe à 13 de force au niveau 4). Confie-les aux Porteurs que tu emmènes le plus souvent.`)
+    + idee(ICO.monter, tr('Fais monter tes favorites'), tr`Doublons et cristaux : 3 niveaux par métal, puis la promotion au métal suivant, plus fort. Chaque copie compte, même dans un métal en dessous. Confie-les aux Porteurs que tu emmènes le plus souvent.`)
     + `</ul></section>`;
   return h;
 }
@@ -252,11 +252,12 @@ function ongletCarte(): string {
   h += `<section class="bloc">${titre(ICO.cristal, tr('Cinq métaux'))}<div class="g-metaux" role="table" aria-label="${tr`Ce que change le métal`}">`
     + `<div role="row" class="g-metal-tete"><span role="columnheader"></span>${RARETES.map((r) => `<span role="columnheader" style="--r:${COULEUR_RARETE[r]}"><i style="--tex:url(${textureMetal(r)})"></i>${NOMS_RARETE[r]}</span>`).join('')}</div>`
     + lignes.map(([nom, f]) => `<div role="row"><span role="rowheader">${nom}</span>${RARETES.map((r) => `<span role="cell">${f(r)}</span>`).join('')}</div>`).join('')
-    + `</div><ul class="g-regles"><li>${tr`Une même carte existe dans les cinq métaux. Le métal est fixé quand tu la trouves : il ne change jamais.`}</li>`
+    + `</div><ul class="g-regles"><li>${tr`Une même carte existe dans les cinq métaux. Tu la trouves dans un métal, puis elle peut monter de métal en métal.`}</li>`
     + `<li>${tr`En fer, une carte n’a pas d’effet. Il s’ouvre en cuivre ; en or et en nacre, ses chiffres montent.`}</li>`
-    + `<li>${tr`Un métal rare demande un Porteur expérimenté : argent au niveau ${NIVEAU_METAL.argent}, or au niveau ${NIVEAU_METAL.or}, nacre au niveau ${NIVEAU_METAL.nacre}. Trouvée plus tôt, la carte t’attend dans ta collection.`}</li>`
-    + `<li>${tr`Deux métaux d’une carte sont deux cartes à part, chacune avec ses doublons et son niveau.`}</li>`
-    + `<li>${tr`Doublons et cristaux font monter une carte, de 1 à ${COLLECTION.niveauMax} quel que soit son métal. Niveaux 2 et 4 : environ +${Math.round(COLLECTION.bonusNiveau * 100)} % de sa force de départ ; niveaux 3 et 5 : son effet se renforce (une Fissure 25 % passe à 30 %, puis 35 %), ou sa force, si elle n’a pas d’effet à renforcer. Au maximum, la carte est`} <b>${tr`maîtrisée`}</b> ${tr`: un liseré de lumière parcourt son cadre.`}</li></ul></section>`;
+    + `<li>${tr`Un métal rare demande un Porteur expérimenté : argent au niveau ${NIVEAU_METAL.argent}, or au niveau ${NIVEAU_METAL.or}, nacre au niveau ${NIVEAU_METAL.nacre}. Une carte qu’il porte déjà et qui monte trop haut pour lui reste dans son deck : il la joue dans le métal qu’il peut porter.`}</li>`
+    + `<li>${tr`Tu n’as qu’un exemplaire de chaque carte. Doublons et cristaux la font monter de 1 à ${COLLECTION.niveauMax} dans son métal : niveau 2, sa force grandit ; niveau 3, son effet se renforce (une Fissure 25 % passe à 30 %), ou sa force, si elle n’a pas d’effet à renforcer.`}</li>`
+    + `<li>${tr`Au niveau ${COLLECTION.niveauMax}, ${COLLECTION.promotion.copies} copies de plus et des cristaux la`} <b>${tr`promeuvent`}</b> ${tr`au métal suivant, plus fort, où elle repart au niveau 1. La profondeur ouvre les métaux : l’argent à la Strate −3, l’or à −7, la nacre sous −10.`}</li>`
+    + `<li>${tr`Aucune copie n’est perdue : une copie d’un métal en dessous compte pour un tiers, et trouver la carte dans un meilleur métal l’y fait passer en gardant son niveau. Au niveau ${COLLECTION.niveauMax}, la carte est`} <b>${tr`maîtrisée`}</b> ${tr`: un liseré de lumière parcourt son cadre.`}</li></ul></section>`;
 
   // les lignées
   const plages = plageFrequences;

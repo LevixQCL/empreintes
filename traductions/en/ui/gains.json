@@ -2,6 +2,10 @@
  "source": "src/ui/gains.ts",
  "entrees": [
   {
+   "fr": "Passe en {0}",
+   "en": "Promoted to {0}"
+  },
+  {
    "fr": "Nouvelle carte",
    "en": "New card"
   },

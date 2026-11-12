@@ -10,7 +10,7 @@ import { niveauRequis, poidsCarte, puissanceCarte } from './collection';
 import { DEPART_PORTEURS, MODULES, moduleDe, moduleDef, porteurDef } from './donnees';
 import { accessibles, mainAccordable, reperentPassage, salleCourante, typeApparent } from './expedition';
 import { envoyerBasses, libresPourBasses, prochainSecours, escouadeDe,
-  acheterEclat, prixEclatComptoir, choisirLegs, choisirHalte, ouvrirPorte, passerPorte, relancerPorte, suivrePassage, acheter, garnirComptoir, prixComptoir,
+  acheterEclat, prixEclatComptoir, promouvoir, choisirLegs, choisirHalte, ouvrirPorte, passerPorte, relancerPorte, suivrePassage, acheter, garnirComptoir, prixComptoir,
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
   enMission, envoyerMission, destinationsDuJour, secoursPossible, epreuvesDeLaSemaine, fouiller, partirEpreuve,
@@ -186,7 +186,15 @@ function gerer(j: Jeu, now: number): void {
   // (peu chères, c'est sa force en bas), lance ses chantiers, puis garde de côté de quoi payer le prochain (60 %)
   // avant d'acheter au Comptoir ou de refabriquer.
   const enDeck = new Set(Object.values(j.porteurs).flatMap((p) => p.modules));
-  for (const id of Object.keys(j.collection).filter((x) => enDeck.has(x))) while (monter(j, id).ok);
+  // 12 novembre 2026 : il monte ses cartes du deck, puis les promeut au métal suivant dès qu'il le peut
+  for (let id of Object.keys(j.collection).filter((x) => enDeck.has(x))) {
+    for (let g = 0; g < 12; g++) {
+      if (monter(j, id).ok) continue;
+      const p = promouvoir(j, id);
+      if (!p.ok) break;
+      id = p.cle!;
+    }
+  }
   // un chantier de la Tour bloqué faute d'Éclats : il en achète au Comptoir
   const tour = coutAmelioration(j, 'noyau');
   if (tour && j.eclats < (tour.eclats ?? 0) && j.energie >= tour.energie) while (j.batiments.comptoir && j.eclats < (tour.eclats ?? 0) && j.energie - prixEclatComptoir(j) >= tour.energie && acheterEclat(j, now).ok);
