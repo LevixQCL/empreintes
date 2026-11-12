@@ -2452,7 +2452,8 @@ export function htmlEscouade(e: EcranDistrict): string {
 
   // 3. ce que donne leur deck
   const maigre = e.escouade.length === 3 && deck < deckMin;
-  if (e.escouade.length) {
+  // au premier départ, ni histogramme ni Râtelier : l'escouade, sa force et « Partir » (audit du 12 novembre 2026). L'alerte d'un deck trop maigre reste
+  if (e.escouade.length && (!premiersPas(j) || maigre)) {
     const cartes = deckEscouade(j, e.escouade, indiceEscouade(j, e.escouade), sortie);
     const n = frequencesDe(cartes);
     const jokers = cartes.filter((g) => g.effet?.type === 'accord').length;
