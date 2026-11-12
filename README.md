@@ -102,6 +102,7 @@ public/fonts/    les polices (Saira, Marcellus SC, Literata), hébergées sur le
 public/sw.js     le service worker : la page passe par le réseau d'abord, les fichiers du build et les images sont gardés sur l'appareil
                  (le jeu démarre hors ligne, les images ne repartent plus au réseau). Changer VERSION dans sw.js vide les anciens caches
 sources/         les images de travail qui ne sont pas publiées (ex. sources/art/district/cuvette2-batiments.webp, d'où est tirée la Cuvette)
+scripts/cuvette-lumiere.py  la lumière de la Cuvette (13 novembre 2026) : refait la retouche du tableau, des calques et de la mer large depuis sources/art/district/lumiere-origine
 scripts/mer-district.py  prolonge chaque tableau du district par sa mer et son ciel pour l'écran PC (public/art/district/mer-N.webp) : à relancer quand un âge change
 src/ui/carte.ts  la face des cartes Module (métal de la rareté, effets sur l'illustration)
 tests/           les tests automatiques
