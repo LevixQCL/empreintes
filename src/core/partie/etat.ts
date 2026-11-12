@@ -1,8 +1,8 @@
 // Couche 1 — l'état d'une partie : réglages du district, types, expérience et Marques des Porteurs, Confiance, creuseurs, escouade.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { batimentDef, porteurDef, PORTEURS, deNom } from '../donnees';
-import { PLACES_PORTEUR, chargeNiveau, poidsCarte, type CarteCollection } from '../collection';
+import { batimentDef, moduleDef, porteurDef, PORTEURS, deNom } from '../donnees';
+import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, PLACES_PORTEUR, appliquerAttente, brancherPorteurDeLaCarte, chargeNiveau, metalSuivant, poidsCarte, type CarteCollection } from '../collection';
 import type { Expedition } from '../expedition';
 import type { Palmares } from '../classements';
 import type { BatimentId, GesteDef, BonusMarques, Rarete } from '../types';
@@ -128,6 +128,24 @@ export const pvNiveau = (j: Pick<Jeu, 'porteurs'>, id: string) => Math.round(por
 export const chargeMax = (j: Pick<Jeu, 'porteurs'>, id: string) => chargeNiveau(niveauPorteur(j, id).niveau);
 export const chargePortee = (j: Pick<Jeu, 'porteurs'>, id: string) => (j.porteurs[id]?.modules ?? []).reduce((n, k) => n + poidsCarte(k), 0);
 /** Donne de l'XP à un Porteur ; renvoie son nouveau niveau s'il en a pris un */
+/**
+ * Ce que le niveau d'un Porteur fait à ses cartes (12 novembre 2026, Bryan : « quand le niveau monte, des cartes peuvent évoluer
+ * avec ») : celles trouvées trop tôt passent dans leur métal, et on annonce celles qui peuvent désormais être promues.
+ */
+export function cartesQuiEvoluent(j: Jeu, id: string, avant: number, apres: number): string | null {
+  const d = j.porteurs[id];
+  if (!d) return null;
+  const passees: string[] = [];
+  for (const k of d.modules.slice()) { const n = appliquerAttente(j, k); if (n) passees.push(tr`${moduleDef(n).nom} passe en ${NOMS_RARETE[moduleDef(n).rarete].toLowerCase()}`); }
+  const ouvertes = d.modules.filter((k) => {
+    const c = j.collection[k], vers = metalSuivant(moduleDef(k).rarete);
+    return !!c && !!vers && !moduleDef(k).legs && !moduleDef(k).origine && c.niveau >= COLLECTION.niveauMax && NIVEAU_METAL[vers] > avant && NIVEAU_METAL[vers] <= apres;
+  });
+  const parties = [...passees];
+  if (ouvertes.length) parties.push(ouvertes.length > 1 ? tr`${ouvertes.length} de ses cartes peuvent évoluer` : tr`${moduleDef(ouvertes[0]!).nom} peut évoluer`);
+  return parties.length ? tr`${porteurDef(id).nom}, niveau ${apres} : ${parties.join(' ; ')}.` : null;
+}
+
 export function gagnerXp(j: Jeu, id: string, xp: number): number | null {
   const d = j.porteurs[id];
   if (!d || xp <= 0) return null;
@@ -137,6 +155,8 @@ export function gagnerXp(j: Jeu, id: string, xp: number): number | null {
   const apres = niveauPorteur(j, id).niveau;
   if (apres > avant) {
     log(j, tr`${porteurDef(id).nom} passe au niveau ${apres} : ${pvNiveau(j, id)} PV.`);
+    const cartes = cartesQuiEvoluent(j, id, avant, apres);
+    if (cartes) log(j, cartes);
     const m = MARQUES[id];
     const pal = palierAuNiveau(apres);
     if (m && pal > palierAuNiveau(avant)) {
@@ -922,3 +942,9 @@ export const RAPPORTS_LUS_MAX = 5;
 export interface Comptoir { jour: number; offres: string[]; achetes: number[]; rng: number; renouvele?: boolean; /** Éclats achetés aujourd'hui */ eclats?: number }
 
 export type DureeMission = 'courte' | 'longue';
+
+// la collection demande qui porte une carte, et à quel niveau (promotion, cartes trouvées trop tôt)
+brancherPorteurDeLaCarte((e, cle) => {
+  const id = Object.keys(e.porteurs ?? {}).find((p) => e.porteurs![p]?.modules.includes(cle));
+  return id ? { id, niveau: niveauPorteur(e as Jeu, id).niveau } : null;
+});

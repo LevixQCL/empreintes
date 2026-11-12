@@ -1,7 +1,7 @@
 // La collection : les cartes qui tombent dans les Strates, leurs raretés, les doublons et les niveaux.
 // Tout le hasard passe par un état `rng` sauvegardé : aucun hasard n'est jamais payé.
 
-import { MODULES, NIVEAU_FORCE, VOIES, carteId, estCarteConnue, gesteDeCarte, horsAlbum, moduleDe, moduleDef, renforcer, tirablesEn } from './donnees';
+import { MODULES, NIVEAU_FORCE, VOIES, carteId, porteurDef, estCarteConnue, gesteDeCarte, horsAlbum, moduleDe, moduleDef, renforcer, tirablesEn } from './donnees';
 import { tireur } from './rng';
 import type { Effet, GesteDef, Lignee, ModuleDef, Rarete } from './types';
 import { t as tr } from './i18n';
@@ -91,8 +91,10 @@ export function tableRarete(strate: number): Record<Rarete, number> {
 
 export interface CarteCollection {
   niveau: number;
-  /** doublons accumulés vers le niveau suivant */
+  /** doublons accumulés vers le niveau suivant (un tiers par métal d'écart pour une copie d'un métal en dessous) */
   doublons: number;
+  /** trouvée dans ce métal alors que son Porteur n'en avait pas encore le niveau : elle y passera quand il l'aura (12 novembre 2026) */
+  attente?: Rarete;
 }
 
 /** Ce que la collection a besoin de connaître de la partie */
@@ -218,32 +220,71 @@ export function ajouterCarte(e: EtatCollection, id: string): boolean {
   const c = e.collection[k]!;
   const avant = moduleDef(k).rarete, recu = moduleDef(id).rarete;
   if (rang(recu) <= rang(avant)) { c.doublons = arrondi(c.doublons + valeurCopie(recu, avant)); return false; }
-  c.doublons = arrondi(c.doublons * valeurCopie(avant, recu));
-  renommerCarte(e, k, id);
+  // trouvée dans un métal que son Porteur ne peut pas encore porter : la carte garde son métal et attend son niveau
+  const qui = porteurDeLaCarte(e, k);
+  if (qui && NIVEAU_METAL[recu] > qui.niveau) {
+    if (c.attente && rang(c.attente) >= rang(recu)) c.doublons = arrondi(c.doublons + 1);
+    else c.attente = recu;
+    return false;
+  }
+  passerAuMetal(e, k, recu);
   return true;
 }
 
-/** Le métal le plus haut qu'une promotion peut atteindre, selon la Strate vaincue : argent dès −3, or dès −7, nacre sous −10 */
-export function metalPromotionMax(strateVaincue: number): Rarete {
-  return strateVaincue >= 10 ? 'nacre' : strateVaincue >= 6 ? 'or' : strateVaincue >= 2 ? 'argent' : 'cuivre';
+/** La carte passe dans un meilleur métal en gardant son niveau ; ses doublons suivent, au tiers par métal d'écart */
+function passerAuMetal(e: EtatCollection, k: string, vers: Rarete): string {
+  const c = e.collection[k]!;
+  const nouvelle = carteId(moduleDe(k), vers);
+  c.doublons = arrondi(c.doublons * valeurCopie(moduleDef(k).rarete, vers));
+  if (c.attente && rang(c.attente) <= rang(vers)) delete c.attente;
+  renommerCarte(e, k, nouvelle);
+  return nouvelle;
 }
+
+/**
+ * Le Porteur qui porte une carte et son niveau (null si personne ne la porte). La collection ne connaît pas l'XP :
+ * la partie (etat.ts) branche ce calcul au chargement.
+ */
+let porteurDeLaCarte: (e: EtatCollection, cle: string) => { id: string; niveau: number } | null = () => null;
+export function brancherPorteurDeLaCarte(f: typeof porteurDeLaCarte) { porteurDeLaCarte = f; }
+
+/** Une carte trouvée trop tôt (attente) passe dans son métal si son Porteur en a désormais le niveau, ou si personne ne la porte */
+export function appliquerAttente(e: EtatCollection, cle: string): string | null {
+  const c = e.collection[cle];
+  if (!c?.attente) return null;
+  const qui = porteurDeLaCarte(e, cle);
+  if (qui && NIVEAU_METAL[c.attente] > qui.niveau) return null;
+  return passerAuMetal(e, cle, c.attente);
+}
+
 /** Le métal suivant (null après la nacre) */
 export const metalSuivant = (r: Rarete): Rarete | null => RARETES[rang(r) + 1] ?? null;
 
-/** Pourquoi une carte ne peut pas encore être promue (null si elle le peut), hors coût en cristaux */
-export function freinPromotion(e: Pick<EtatCollection, 'collection'>, id: string, strateVaincue: number): string | null {
+/**
+ * Pourquoi une carte ne peut pas encore être promue (null si elle le peut), hors coût en cristaux.
+ * 12 novembre 2026 (Bryan : « le niveau du Porteur devrait être ce qui permet de la faire évoluer ») : une carte évolue avec
+ * le Porteur qui la porte ; le métal suivant demande son niveau (argent 5, or 9, nacre 13).
+ */
+export function freinPromotion(e: EtatCollection, id: string): string | null {
   const c = e.collection[id];
   if (!c) return tr('Carte inconnue.');
   if (!monteAvecCopies(id)) return tr('Cette carte grandit avec son Porteur.');
   const vers = metalSuivant(moduleDef(id).rarete);
   if (!vers) return tr('La nacre est le plus haut métal.');
   if (c.niveau < COLLECTION.niveauMax) return tr`Il faut d’abord le niveau ${COLLECTION.niveauMax}.`;
-  if (rang(vers) > rang(metalPromotionMax(strateVaincue))) {
-    const seuil = vers === 'argent' ? 3 : vers === 'or' ? 7 : 11;
-    return tr`Le ${NOMS_RARETE[vers].toLowerCase()} s’ouvre à la Strate −${seuil}.`;
-  }
+  const qui = porteurDeLaCarte(e, id);
+  if (!qui) return tr('Confie-la à un Porteur : elle évolue avec lui.');
+  if (NIVEAU_METAL[vers] > qui.niveau) return tr`Pour passer en ${NOMS_RARETE[vers].toLowerCase()}, son Porteur doit être niveau ${NIVEAU_METAL[vers]} (${porteurDef(qui.id).nom} est niveau ${qui.niveau}).`;
   if (c.doublons < COLLECTION.promotion.copies) return tr`Il faut ${COLLECTION.promotion.copies} copies.`;
   return null;
+}
+
+/** Les copies qu'il faut pour le prochain pas d'une carte : le niveau suivant, ou la promotion au niveau maximum (null : plus rien) */
+export function copiesRequises(id: string, niveau: number): { n: number; promotion: boolean } | null {
+  const d = doublonsRequis(id, niveau);
+  if (d !== null) return { n: d, promotion: false };
+  if (!monteAvecCopies(id) || !metalSuivant(moduleDef(id).rarete)) return null;
+  return { n: COLLECTION.promotion.copies, promotion: true };
 }
 
 /** Promeut une carte au métal suivant, au niveau 1 (le coût en cristaux se paie à côté) ; renvoie la nouvelle clé */

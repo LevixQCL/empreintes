@@ -633,8 +633,10 @@ function feuilleExpedition(e: EcranDistrict): string {
       // une copie d'un métal en dessous de la carte possédée (12 novembre 2026) : elle compte pour un tiers par métal d'écart
       const haute = !c ? clePossedee(e.j, moduleDe(id)) : undefined;
       const part = haute ? valeurCopie(moduleDef(id).rarete, moduleDef(haute).rarete) : 1;
+      // trouvée dans un métal trop haut pour son Porteur : la carte l'attend
+      const attend = !!haute && e.j.collection[haute]?.attente === moduleDef(id).rarete;
       h += `<div class="rx-carte${neuve ? ' neuve' : ''}">`
-        + faceRapport(e.j, id) + `<span class="ruban">${neuve ? tr('Nouvelle') : pret ? tr`Niv. ${c!.niveau + 1} prêt` : part < 1 ? tr`+${part > 0.3 ? '⅓' : '⅑'} de copie` : tr('Doublon')}</span></div>`;
+        + faceRapport(e.j, id) + `<span class="ruban">${neuve ? tr('Nouvelle') : attend ? tr('Attend son Porteur') : pret ? tr`Niv. ${c!.niveau + 1} prêt` : part < 1 ? tr`+${part > 0.3 ? '⅓' : '⅑'} de copie` : tr('Doublon')}</span></div>`;
     }
     h += `</div>`;
   }

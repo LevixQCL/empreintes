@@ -694,6 +694,10 @@
    "en": "Max level"
   },
   {
+   "fr": "Peut évoluer",
+   "en": "Can evolve"
+  },
+  {
    "fr": "Peut monter",
    "en": "Can level up"
   },
@@ -706,8 +710,8 @@
    "en": ", max level"
   },
   {
-   "fr": ", {0} doublons sur {1}",
-   "en": ", {0} of {1} duplicates"
+   "fr": ", {0} copies sur {1}",
+   "en": ", {0} copies out of {1}"
   },
   {
    "fr": "Voir les {0} cartes",
@@ -1196,6 +1200,14 @@
   {
    "fr": "Progression",
    "en": "Progress"
+  },
+  {
+   "fr": "Trouvée en {0} : elle y passera, à son niveau et sans rien payer, quand {1} aura le niveau {2}.",
+   "en": "Found in {0}: it will move up to it, keeping its level and for free, once {1} reaches level {2}."
+  },
+  {
+   "fr": "son Porteur",
+   "en": "its Bearer"
   },
   {
    "fr": "Une vierge de l’Héritage du district : unique, elle ne monte pas avec des doublons. Elle s’éveille avec le Porteur qui la porte : {0}.",
@@ -1696,6 +1708,10 @@
   {
    "fr": "Max",
    "en": "Max"
+  },
+  {
+   "fr": "Copies pour passer en {0}",
+   "en": "Copies to be promoted to {0}"
   },
   {
    "fr": "Doublons pour le niveau {0}",

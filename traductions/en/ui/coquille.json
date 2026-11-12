@@ -746,6 +746,10 @@
    "en": "New"
   },
   {
+   "fr": "Attend son Porteur",
+   "en": "Waiting for its Bearer"
+  },
+  {
    "fr": "Niv. {0} prêt",
    "en": "Lvl {0} ready"
   },

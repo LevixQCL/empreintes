@@ -2,6 +2,22 @@
  "source": "src/core/partie/etat.ts",
  "entrees": [
   {
+   "fr": "{0} passe en {1}",
+   "en": "{0} is promoted to {1}"
+  },
+  {
+   "fr": "{0} de ses cartes peuvent évoluer",
+   "en": "{0} of their cards can evolve"
+  },
+  {
+   "fr": "{0} peut évoluer",
+   "en": "{0} can evolve"
+  },
+  {
+   "fr": "{0}, niveau {1} : {2}.",
+   "en": "{0}, level {1}: {2}."
+  },
+  {
    "fr": "{0} passe au niveau {1} : {2} PV.",
    "en": "{0} reaches level {1}: {2} HP."
   },

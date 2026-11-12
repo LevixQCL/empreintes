@@ -25,6 +25,8 @@ function partie(niveau = 1) {
   j.energie = 1000;
   j.collection[A] = { niveau: 5, doublons: 2 };
   j.collection[Cu] = { niveau: 3, doublons: 1 };
+  // la carte reçue n'est portée par personne : sinon, plus haute que le niveau de son Porteur, elle l'attendrait (12 novembre 2026)
+  for (const p of Object.values(j.porteurs)) p.modules = p.modules.filter((k) => !k.startsWith(b!.id + '@'));
   return j;
 }
 

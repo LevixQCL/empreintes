@@ -3,9 +3,9 @@
 
 import { batimentDef, porteurDef, PORTEURS, BATIMENTS, tirablesEn, moduleDe, moduleDef, carteId, CARTES_COMMUNES, forceCommune, deNom } from '../donnees';
 import type { BatimentId, Rarete } from '../types';
-import { COLLECTION, RARETES, ajouterCarte, auMoins, NOMS_RARETE, composantsNiveau, doublonsRequis, metalDessus, metalTranche, niveauRequis, poidsCarte, freinPromotion, metalSuivant, promouvoirCarte } from '../collection';
+import { COLLECTION, RARETES, ajouterCarte, auMoins, NOMS_RARETE, composantsNiveau, doublonsRequis, metalDessus, metalTranche, niveauRequis, poidsCarte, freinPromotion, metalSuivant, promouvoirCarte, appliquerAttente } from '../collection';
 import { tireur } from '../rng';
-import { partPvClinique, CERCLE, CERCLE_OUVERTURE, CONFIANCE, accueillirFamille, nbFoyers, ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, heuresDeTaille, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, strateVaincue, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
+import { partPvClinique, CERCLE, CERCLE_OUVERTURE, CONFIANCE, accueillirFamille, nbFoyers, ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, heuresDeTaille, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, strateVaincue, cartesQuiEvoluent, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
 import { OBJECTIFS, objectifCourant } from './objectifs';
 import { ORDRE_FAMILLES, fragmentDef } from '../fragments';
 import { familleDef, familleDuFragment } from '../familles';
@@ -313,7 +313,7 @@ export function monter(j: Jeu, moduleId: string): Resultat {
 
 /** Promeut une carte au niveau maximum vers le métal suivant (12 novembre 2026) : 3 copies et des cristaux */
 export function promouvoir(j: Jeu, moduleId: string): Resultat & { cle?: string } {
-  const frein = freinPromotion(j, moduleId, strateVaincue(j));
+  const frein = freinPromotion(j, moduleId);
   if (frein) return non(frein);
   const vers = metalSuivant(moduleDef(moduleId).rarete)!;
   const cout = COLLECTION.promotion.cristaux[vers];
@@ -365,6 +365,8 @@ export function greffer(j: Jeu, moduleId: string, porteurId: string): Resultat {
   }
   p.modules.push(moduleId);
   log(j, tr`${moduleDef(moduleId).nom} confiée à ${porteurDef(porteurId).nom}.`);
+  // trouvée trop tôt pour son ancien Porteur : celui-ci en a peut-être le niveau
+  appliquerAttente(j, moduleId);
   return { ok: true };
 }
 
@@ -389,6 +391,7 @@ export function echanger(j: Jeu, retireId: string, ajouteId: string, porteurId: 
   if (ancien) j.porteurs[ancien]!.modules = j.porteurs[ancien]!.modules.filter((m) => m !== ajouteId);
   p.modules[p.modules.indexOf(retireId)] = ajouteId;
   log(j, tr`${moduleDef(ajouteId).nom} remplace ${moduleDef(retireId).nom} chez ${porteurDef(porteurId).nom}.`);
+  appliquerAttente(j, ajouteId);
   return { ok: true };
 }
 
@@ -397,6 +400,8 @@ export function degreffer(j: Jeu, moduleId: string): Resultat {
   if (!id) return { ok: true };
   if (enExpedition(j, id)) return non(tr('Ce Porteur est en expédition.'));
   j.porteurs[id]!.modules = j.porteurs[id]!.modules.filter((m) => m !== moduleId);
+  // libre, une carte trouvée trop tôt passe dans son métal (il faudra le niveau pour la confier)
+  appliquerAttente(j, moduleId);
   return { ok: true };
 }
 
@@ -526,7 +531,7 @@ export function plafondSeance(j: Jeu): { niveau: number; par: 'tour' | 'escouade
 /** Raccourcissement des séances dû à la Tour (1 = aucun) */
 export const vitesseEntrainement = (noyau: number) => 1 - ENTRAINEMENT.vitesseParNoyau * Math.max(0, noyau - 1);
 /** XP totale pour atteindre un niveau depuis le niveau 1 */
-const xpPourAtteindre = (niveau: number) => { let s = 0; for (let n = 1; n < niveau; n++) s += xpPourNiveau(n); return s; };
+export const xpPourAtteindre = (niveau: number) => { let s = 0; for (let n = 1; n < niveau; n++) s += xpPourNiveau(n); return s; };
 
 /** Ce que coûterait et durerait la séance d'un Porteur (null : rien à gagner, plafond atteint) */
 export function apercuSeance(j: Jeu, id: string): { cible: number; heures: number; energie: number; xp: number } | null {
@@ -583,6 +588,7 @@ export function entrainer(j: Jeu, heures: number): string[] {
   for (const s of seancesDe(j).slice()) {
     const d = j.porteurs[s.porteur];
     if (!d || d.poste !== 'noyau' || enExpedition(j, s.porteur)) { interrompreSeance(j, s.porteur); continue; }
+    const nivAvant = niveauPorteur(j, s.porteur).niveau;
     if (heures > 0) {
       // l'XP s'accumule à la fraction près (le district se met à jour chaque seconde)
       const gain = Math.min(s.xpTotale - s.xpGagnee, s.xpHeure * heures);
@@ -600,6 +606,8 @@ export function entrainer(j: Jeu, heures: number): string[] {
     const t = tr`${porteurDef(s.porteur).nom} a fini sa séance à la Tour : niveau ${niveauPorteur(j, s.porteur).niveau}, ${pvNiveau(j, s.porteur)} PV. Une place se libère.`;
     log(j, t);
     annonces.push(t);
+    const cartes = cartesQuiEvoluent(j, s.porteur, Math.min(nivAvant, s.cible - 1), niveauPorteur(j, s.porteur).niveau);
+    if (cartes) { log(j, cartes); annonces.push(cartes); }
   }
   return annonces;
 }
@@ -617,14 +625,15 @@ export const COMPTOIR = {
     ['fer', 'fer', 'cuivre', 'cuivre', 'cuivre', 'argent', 'argent'], ['fer', 'cuivre', 'cuivre', 'cuivre', 'argent', 'argent', 'argent'],
     ['fer', 'fer', 'cuivre', 'cuivre', 'cuivre', 'argent', 'argent', 'argent'], ['fer', 'cuivre', 'cuivre', 'cuivre', 'cuivre', 'argent', 'argent', 'argent'],
     ['fer', 'cuivre', 'cuivre', 'cuivre', 'argent', 'argent', 'argent', 'argent']] as Rarete[][],
-  /** prix fixes : environ 1,5 fois la refabrication à la Forge (qui, elle, ne refait qu'une carte déjà trouvée) */
-  prix: { fer: { composants: 40, eclats: 0 }, cuivre: { composants: 120, eclats: 0 }, argent: { composants: 300, eclats: 3 },
-    // l'or n'était jamais vendu ; son prix suit la même règle (environ 1,5 fois la refabrication : 535 cristaux et 5 Éclats)
-    or: { composants: 800, eclats: 7 } } as Partial<Record<Rarete, { composants: number; eclats: number }>>,
+  // 12 novembre 2026 (retour de Luc : « vu que tu utilises les minerais pour tout, ça devient beaucoup pour les cartes ») :
+  // depuis le cristal unique, une carte coûtait un chantier. Parcours simulé (12 parties) : 29 cartes achetées les 14 premiers
+  // jours au lieu de 16, −10 au jour 17 au lieu de 18, autant de victoires au front. Avant : 40 / 120 / 300 + 3 / 800 + 7.
+  prix: { fer: { composants: 25, eclats: 0 }, cuivre: { composants: 70, eclats: 0 }, argent: { composants: 180, eclats: 1 },
+    or: { composants: 450, eclats: 3 } } as Partial<Record<Rarete, { composants: number; eclats: number }>>,
   strateArgent: 4,
   partDoublons: 0.5,
   /** renouveler les étals encore en vente, une fois par jour (1er novembre 2026, Bryan) : la moitié d'une carte en cuivre */
-  renouveler: 60,
+  renouveler: 35,
   /**
    * Des Éclats contre des composants (audit du 7 novembre 2026 : 10 000 composants sans usage au jour 21, Éclats entre 0 et 4
    * dès le jour 10, Noyau bloqué au niveau 8 du jour 25 au jour 40). Les fouilleurs revendent aussi les Éclats qu'ils remontent,

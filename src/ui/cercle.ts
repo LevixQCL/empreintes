@@ -389,7 +389,7 @@ function feuilleEchange(e: EcranDistrict, c: CercleEcran): string {
     .sort((u, v) => Number(p.souhaits.includes(v)) - Number(p.souhaits.includes(u)));
   h += `<p class="aide">${t`Un de tes doubles en ${NOMS_RARETE[metal].toLowerCase()}. Ce qu’il cherche ${ICO.ok} passe en premier : il acceptera plus volontiers.`}</p>`
     + `<div class="cr-paire grand">${petiteCarte(j, x.recoit, { note: t('tu reçois') })}<span class="cr-fleche">${ICO.echange}</span>${x.donne ? petiteCarte(j, x.donne, { note: t('tu donnes') }) : `<span class="cr-place vide" aria-hidden="true">?</span>`}</div>`
-    + (miens.length ? `<div class="cr-grille">${miens.map((id) => petiteCarte(j, id, { action: 'cercle-donne', choisie: x.donne === id, marque: p.souhaits.includes(id) ? ICO.ok : '', note: t`${j.collection[id]!.doublons} en double` })).join('')}</div>`
+    + (miens.length ? `<div class="cr-grille">${miens.map((id) => petiteCarte(j, id, { action: 'cercle-donne', choisie: x.donne === id, marque: p.souhaits.includes(id) ? ICO.ok : '', note: t`${Math.floor(j.collection[id]!.doublons)} en double` })).join('')}</div>`
       : `<p class="cr-vide">${t`Tu n’as aucun double en ${NOMS_RARETE[metal].toLowerCase()} à donner.`}</p>`);
   const v = x.donne ? J.verifierProposition(j, x.donne, x.recoit, a.depuis, e.now) : null;
   const cout = J.coutEchange(x.recoit);

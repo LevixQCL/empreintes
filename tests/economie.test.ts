@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { nouveauNiveau } from '../src/core/partie/nouvelle';
-import { COLLECTION, ajouterCarte, doublonsRequis, effetNiveau, freinPromotion, metalPromotionMax, multNiveau, puissanceCarte, tableRarete, tirerCarte, type EtatCollection } from '../src/core/collection';
+import { xpPourAtteindre } from '../src/core/partie/district';
+import { COLLECTION, ajouterCarte, doublonsRequis, effetNiveau, NIVEAU_METAL, freinPromotion, multNiveau, puissanceCarte, tableRarete, tirerCarte, type EtatCollection } from '../src/core/collection';
 import { moduleDef } from '../src/core/donnees';
 import {
   ARCHIVE, OBJECTIFS, VERSION_JEU, ameliorer, estJeuValide, jourDe, monter, nouveauJeu, ouvrirArchive, prendre, quotidienFait,
-  promouvoir, reclamerQuotidien, recycler, semaineDe, tick, type Jeu,
+  gagnerXp, promouvoir, reclamerQuotidien, recycler, semaineDe, tick, type Jeu,
 } from '../src/core/jeu';
 
 const MIN = 60_000;
@@ -104,12 +105,14 @@ describe('Collection', () => {
     expect(j.collection['jambes-ressort@cuivre']).toEqual({ niveau: 1, doublons: 0 });
     expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@cuivre');
     expect(j.energie).toBe(1000 - COLLECTION.promotion.cristaux.cuivre);
-    // l'argent ne s'ouvre qu'à la Strate −3
+    // l'argent demande que son Porteur soit niveau 5 (12 novembre 2026 : la carte évolue avec son Porteur)
     j.collection['jambes-ressort@cuivre'] = { niveau: 3, doublons: 3 };
-    expect(freinPromotion(j, 'jambes-ressort@cuivre', 1)).toMatch(/−3/);
-    expect(freinPromotion(j, 'jambes-ressort@cuivre', 2)).toBeNull();
-    expect(metalPromotionMax(9)).toBe('or');
-    expect(metalPromotionMax(10)).toBe('nacre');
+    expect(freinPromotion(j, 'jambes-ressort@cuivre')).toMatch(/niveau 5/);
+    j.porteurs.ilka!.xp = xpPourAtteindre(5);
+    expect(freinPromotion(j, 'jambes-ressort@cuivre')).toBeNull();
+    // libre, elle n'évolue pas
+    j.porteurs.ilka!.modules = j.porteurs.ilka!.modules.filter((k) => k !== 'jambes-ressort@cuivre');
+    expect(freinPromotion(j, 'jambes-ressort@cuivre')).toMatch(/Confie-la/);
   });
 
   it('version 11 : les anciens niveaux sur 10 passent sur 5, le chemin parcouru gardé', () => {
@@ -132,9 +135,26 @@ describe('Collection', () => {
 });
 
 describe('Une carte, cinq métaux', () => {
+  it('trouvée dans un métal trop haut pour son Porteur, la carte attend son niveau, puis y passe sans rien payer', () => {
+    const j = avance();
+    j.collection['jambes-ressort@fer'] = { niveau: 2, doublons: 0 };
+    expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@fer');
+    expect(ajouterCarte(j, 'jambes-ressort@or')).toBe(false);
+    expect(j.collection['jambes-ressort@fer']).toEqual({ niveau: 2, doublons: 0, attente: 'or' });
+    // une copie du même métal en attente compte comme une copie
+    ajouterCarte(j, 'jambes-ressort@or');
+    expect(j.collection['jambes-ressort@fer']!.doublons).toBe(1);
+    gagnerXp(j, 'ilka', xpPourAtteindre(NIVEAU_METAL.or) + 10);
+    expect(j.collection['jambes-ressort@fer']).toBeUndefined();
+    expect(j.collection['jambes-ressort@or']!.niveau).toBe(2);
+    expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@or');
+    expect(j.journal.some((l) => /Jambes à ressort passe en or/.test(l))).toBe(true);
+  });
+
   it('un seul exemplaire par carte : un meilleur métal la fait passer en gardant son niveau, un moins bon vaut un tiers', () => {
     const j = avance();
     j.collection['jambes-ressort@fer'] = { niveau: 2, doublons: 0.5 };
+    j.porteurs.ilka!.xp = xpPourAtteindre(NIVEAU_METAL.argent);
     expect(ajouterCarte(j, 'jambes-ressort@argent')).toBe(true);
     expect(j.collection['jambes-ressort@fer']).toBeUndefined();
     expect(j.collection['jambes-ressort@argent']!.niveau).toBe(2);

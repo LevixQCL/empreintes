@@ -350,3 +350,17 @@ function relacher(c: HTMLElement) {
 const lever = (e: PointerEvent) => { if (e.pointerType !== 'mouse' && carteActive) { relacher(carteActive); carteActive = null; } };
 document.addEventListener('pointerup', lever, { passive: true });
 document.addEventListener('pointercancel', lever, { passive: true });
+
+/**
+ * Un nombre de copies lisible (12 novembre 2026, capture de Bryan : « 0.667/1 ») : un entier et, s'il le faut, ⅓ ou ⅔.
+ * Une copie d'un métal en dessous vaut un tiers (ou un neuvième à deux métaux d'écart) : l'écriture arrondit vers le bas au tiers,
+ * pour ne jamais annoncer une copie qu'on n'a pas encore ; la jauge, elle, montre la valeur exacte.
+ */
+export function texteCopies(x: number, vers: 'bas' | 'haut' = 'bas'): string {
+  // ce qui manque s'arrondit vers le haut : on ne promet jamais qu'il manque moins qu'en vrai
+  const tiers = vers === 'haut' ? Math.ceil(x * 3 - 1e-6) : Math.floor(x * 3 + 1e-6);
+  if (vers === 'haut') return tiers % 3 ? `${Math.floor(tiers / 3) || ''}${tiers % 3 === 1 ? '⅓' : '⅔'}` : String(tiers / 3);
+  const entier = Math.floor(tiers / 3), reste = tiers % 3;
+  if (!reste) return x > 0 && !entier && x * 9 >= 1 - 1e-6 ? '⅑' : String(entier);
+  return `${entier || ''}${reste === 1 ? '⅓' : '⅔'}`;
+}

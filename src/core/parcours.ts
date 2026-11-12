@@ -6,7 +6,7 @@
 // Aucun DOM ici : il tourne dans les tests et dans `npm run robot`.
 
 import { CHAPITRES, chapitreOuvert } from './chroniques';
-import { niveauRequis, poidsCarte, puissanceCarte } from './collection';
+import { clePossedee, niveauRequis, poidsCarte, puissanceCarte } from './collection';
 import { DEPART_PORTEURS, MODULES, moduleDe, moduleDef, porteurDef } from './donnees';
 import { accessibles, mainAccordable, reperentPassage, salleCourante, typeApparent } from './expedition';
 import { envoyerBasses, libresPourBasses, prochainSecours, escouadeDe,
@@ -215,8 +215,10 @@ function gerer(j: Jeu, now: number): void {
   // en gardant de quoi monter ses niveaux (une réserve de 2 fois le prix)
   garnirComptoir(j, now);
   const plusFaible = Math.min(...[...enDeck].map((id) => valeurCarte(id, j.collection[id]?.niveau ?? 1)));
+  const basesDeck = new Set([...enDeck].map(moduleDe));
   j.comptoir.offres.forEach((id, i) => {
-    const utile = enDeck.has(id) || (!j.collection[id] && valeurCarte(id, 1) > plusFaible);
+    // 12 novembre 2026 : une copie d'une carte du deck sert dans n'importe quel métal (un tiers par métal d'écart, ou elle la fait monter)
+    const utile = basesDeck.has(moduleDe(id)) || (!clePossedee(j, moduleDe(id)) && valeurCarte(id, 1) > plusFaible);
     if (utile && libre() >= 2 * prixComptoir(id).composants) acheter(j, i, now);
   });
   // la Forge refabrique la carte du deck la plus proche de son prochain niveau, si les cristaux le permettent

@@ -38,8 +38,12 @@
    "en": "It must reach level {0} first."
   },
   {
-   "fr": "Le {0} s’ouvre à la Strate −{1}.",
-   "en": "{0} opens at Stratum −{1}."
+   "fr": "Confie-la à un Porteur : elle évolue avec lui.",
+   "en": "Give it to a Bearer: it evolves with them."
+  },
+  {
+   "fr": "Pour passer en {0}, son Porteur doit être niveau {1} ({2} est niveau {3}).",
+   "en": "To be promoted to {0}, its Bearer must be level {1} ({2} is level {3})."
   },
   {
    "fr": "Il faut {0} copies.",
