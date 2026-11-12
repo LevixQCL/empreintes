@@ -12,7 +12,7 @@ import { OBJECTIFS } from './objectifs';
 import { ORDRE_FAMILLES } from '../fragments';
 import { FAMILLES_DEPART, FAMILLES_DISTRICT, familleDuFragment } from '../familles';
 import { SECTEURS } from '../digue';
-import { donnerKitRecrues, recompenserLecture } from './recompenses';
+import { donnerKitRecrues, noterStrates, recompenserLecture } from './recompenses';
 import type { Rarete } from '../types';
 import { rattraperCartesFleche } from './fleche';
 import { t } from '../i18n';
@@ -337,6 +337,11 @@ function migrer(j: Jeu) {
   allegerSelonCharge(j);
   // 10 novembre 2026 : les quais gravés déjà passés donnent leur carte au choix (une seule fois, notée dans fleche.cartes)
   rattraperCartesFleche(j);
+  // 12 novembre 2026 : le métal d'une récompense en réserve ne dépend plus du jour où on l'ouvre ; celles qui attendaient
+  // déjà gardent la Strate ouverte au chargement
+  noterStrates(j.ravitaillement, j.strate);
+  noterStrates(j.quotidien, j.strate);
+  if (j.archive.aOuvrir && !j.archive.strates) j.archive.strates = [j.strate, ...(j.archive.enAttente ?? []).map(() => j.strate)];
 }
 
 /** Les cartes d'origine gardées dans un métal deviennent leur exemplaire du métal suivant : collection, decks, vécu et pastilles « nouveau » */

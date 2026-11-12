@@ -231,7 +231,7 @@ export function envoyerContrat(j: Jeu, id: string, equipe: string[], now: number
  * Pas de tirage de rareté : un contrat ne fait jamais tomber d'or par surprise (réglé au robot, 31 octobre 2026). */
 function carteFixe(j: Jeu, metal: Rarete, lignee: Lignee): string {
   const t = tireur(j);
-  const possedees = Object.keys(j.collection).filter((id) => id.endsWith('@' + metal) && !moduleDef(id).legs && moduleDef(id).lignee === lignee);
+  const possedees = Object.keys(j.collection).filter((id) => id.endsWith('@' + metal) && !moduleDef(id).legs && !moduleDef(id).origine && moduleDef(id).lignee === lignee);
   if (possedees.length && t.nombre() < COLLECTION.affinite) return possedees[t.entier(possedees.length)]!;
   const pool = tirablesEn(metal).filter((m) => m.lignee === lignee);
   return carteId(pool[t.entier(pool.length)]!.id, metal);

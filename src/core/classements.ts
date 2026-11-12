@@ -11,7 +11,7 @@
 // Deux périodes : depuis le début, et la semaine en cours (ce qu'on a gagné depuis lundi), pour qu'un nouveau venu
 // puisse finir premier d'une semaine même face à quelqu'un qui joue depuis un mois.
 
-import { MODULES, moduleDe, moduleDef, zoneDe } from './donnees';
+import { MODULES_TIRABLES, horsAlbum, moduleDe, moduleDef, zoneDe } from './donnees';
 import type { Rarete } from './types';
 import { COLLECTION, RARETES } from './collection';
 import { t as tr, locale } from './i18n';
@@ -51,9 +51,11 @@ interface ValeurRegistre {
   points: number;
   /** exemplaires possédés (une carte dans un métal) */
   exemplaires: number;
-  /** cartes différentes découvertes, sur `total` */
+  /** cartes de l'album découvertes, sur `total` (les cartes qu'on peut trouver) */
   decouvertes: number;
   total: number;
+  /** cartes possédées hors album : Héritage, parrainage, origines (en plus, jamais à compléter) */
+  enPlus: number;
   /** exemplaires par métal */
   parMetal: Record<Rarete, number>;
 }
@@ -70,7 +72,10 @@ export function valeurRegistre(collection: Record<string, { niveau: number }>): 
     points += valeurExemplaire(cle, c.niveau);
   }
   points += bases.size * VALEUR_DECOUVERTE;
-  return { points, exemplaires: Object.values(parMetal).reduce((a, b) => a + b, 0), decouvertes: bases.size, total: MODULES.length, parMetal };
+  // l'album ne compte que les cartes qu'on peut trouver : avant le 12 novembre 2026, le total comptait aussi les 9 cartes de
+  // l’Héritage (une seule par directeur), la carte du parrainage et les 6 cartes d'origine, et ne pouvait jamais être atteint
+  const enPlus = [...bases].filter((b) => horsAlbum(moduleDef(b))).length;
+  return { points, exemplaires: Object.values(parMetal).reduce((a, b) => a + b, 0), decouvertes: bases.size - enPlus, total: MODULES_TIRABLES.length, enPlus, parMetal };
 }
 
 // ---------- La Profondeur ----------

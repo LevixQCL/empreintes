@@ -16,7 +16,7 @@ import {
   COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, gardienPourTour, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, plafondEntrainement, raffinageParHeure, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
-import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, carteNiveau, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
+import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, album, carteNiveau, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
 import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront, finCreuse, gainCreuseurs } from '../core/jeu';
@@ -823,7 +823,7 @@ function blocForge(e: EcranDistrict): string {
   }
   // les cartes : celles qui peuvent encore monter, les plus proches d'abord (moins de doublons manquants, puis moins chères)
   const ordre = (m: ModuleDef) => RARETES.indexOf(m.rarete);
-  const cartes = Object.keys(j.collection).map((k) => ({ m: moduleDef(k), c: j.collection[k]! })).filter((x) => !x.m.legs)
+  const cartes = Object.keys(j.collection).map((k) => ({ m: moduleDef(k), c: j.collection[k]! })).filter((x) => !x.m.legs && !x.m.origine)
     .map((x) => ({ ...x, requis: doublonsRequis(x.m.id, x.c.niveau) }));
   // une carte qui a déjà ses doublons n'a pas besoin de la Forge pour monter : elle passe après les autres
   const manque = (x: { requis: number | null; c: { doublons: number } }) => { const n = x.requis! - x.c.doublons; return n > 0 ? n : 1000 + n; };
@@ -1589,9 +1589,10 @@ export function htmlCartes(e: EcranDistrict): string {
     for (const lignee of lignees) {
       h += `<h2 class="titre-section" style="--c:${COULEUR[lignee]}">${NOM_LIGNEES[lignee]}</h2><div class="grille-cartes">`;
       // les cartes trouvées, triées ; celles qui restent à trouver à la fin
-      const bases = MODULES.filter((x) => x.lignee === lignee && ((!x.legs && !x.lien) || exemplaires(j, x.id).length));
-      for (const cle of trierCartes(bases.flatMap((b) => exemplaires(j, b.id)), j.collection, tri, j.vus.cartes)) h += tuileCarte(cle);
-      for (const base of bases.filter((b) => !exemplaires(j, b.id).length)) h += `<div class="carte-dos cl-dos" aria-label="${tr`Carte pas encore trouvée`}">${gemme(base.rarete)}<span>?</span><small>${tr`À trouver`}</small><em>${tr`Fouille « ${echap(CIBLES_FOUILLE[lignee].nom)} »`}</em></div>`;
+      // l’Héritage, le parrainage et les cartes d'origine ne sont jamais « à trouver » : on ne les montre que possédées (album)
+      const a = album(j.collection, lignee);
+      for (const cle of trierCartes(a.possedees.flatMap((b) => exemplaires(j, b.id)), j.collection, tri, j.vus.cartes)) h += tuileCarte(cle);
+      for (const base of a.aTrouver) h += `<div class="carte-dos cl-dos" aria-label="${tr`Carte pas encore trouvée`}">${gemme(base.rarete)}<span>?</span><small>${tr`À trouver`}</small><em>${tr`Fouille « ${echap(CIBLES_FOUILLE[lignee].nom)} »`}</em></div>`;
       h += `</div>`;
     }
   }

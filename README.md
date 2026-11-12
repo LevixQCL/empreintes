@@ -402,6 +402,10 @@ Corrigé ce jour-là (avant → après) :
 - *Épreuves* : force ×0,85 à partir de −4 (`EPREUVES_PROFONDES`) : 0-6 % → 15-60 % de victoires au premier essai.
 - *Éclats* : le Comptoir en vend 1 à 6 par jour à 300, 450 puis 650 cristaux (`COMPTOIR.eclats`, `acheterEclat`).
 - *Réserves* : Butins de la semaine empilés (4 au plus, `ARCHIVE.empilesMax`), 7 colis de ravitaillement, caisse de la Flèche 7 jours.
+  Le métal d'une récompense en réserve est fixé le jour où elle est gagnée, pas le jour où on l'ouvre (12 novembre 2026) : chaque colis,
+  objectif du jour et Butin garde la Strate ouverte ce jour-là (`strates`, `noterStrates` dans `recompenses.ts`), comme un chapitre des Chroniques garde la sienne.
+- *Album* (`album` dans `collection.ts`, `horsAlbum` dans `donnees.ts`) : l’Héritage, la carte du parrainage et les cartes d'origine sont des cartes
+  en plus, jamais « à trouver » ni comptées dans le total du Registre ; aucune trouvaille n'en donne un doublon et la Forge ne les refait pas.
 - *Clinique* : +2 % de PV max par niveau au-delà du 3e (`CLINIQUE_PV`).
 - *Explorer* : minerai ×1,5 (×2 pour la première exploration du front de la journée, `REGLES.exploration.premiere`), chance de carte +5 points, Éclats 20 % dès −5 (`REGLES.exploration`), contre les fouilles.
 

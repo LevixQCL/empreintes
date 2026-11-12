@@ -167,7 +167,7 @@ function seul(j: Jeu, t: TableauId, per: Periode, semaine: number, message: stri
 function detailRegistre(j: Jeu): string {
   const r = valeurRegistre(j.collection);
   return `<ul class="gt-metaux">${RARETES.map((m) => `<li class="m-${m}"><b>${r.parMetal[m]}</b><small>${NOMS_RARETE[m]}</small></li>`).join('')}</ul>`
-    + `<p class="gt-decouvertes">${tr`${r.decouvertes} cartes découvertes sur ${r.total}`}</p>`;
+    + `<p class="gt-decouvertes">${tr`${r.decouvertes} cartes découvertes sur ${r.total}`}${r.enPlus ? ' ' + tr`· ${r.enPlus} en plus (Héritage, origines)` : ''}</p>`;
 }
 
 function liste(g: GrandTableau, uid: string | null, t: TableauId, semaine: number, now: number): string {

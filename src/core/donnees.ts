@@ -274,6 +274,9 @@ export const PORTEUR_LEGS: Record<string, string> = {
   'lanterne-lecture': 'vela', 'sceau-orseve': 'aurel', 'voix-quartier': 'joss',
 };
 
+/** Une carte hors album : l’Héritage (une seule par directeur), la carte du parrainage et les cartes d'origine des Récits. Ce sont
+ *  des cartes en plus dans la collection, pas des cartes à compléter (Bryan, 12 novembre 2026) : jamais « à trouver », jamais comptées dans le total. */
+export const horsAlbum = (m: ModuleDef): boolean => !!(m.legs || m.lien || m.origine);
 /** Les cartes qu'on peut trouver, acheter ou fabriquer : toutes, sauf celles de l’Héritage */
 export const MODULES_TIRABLES = MODULES.filter((m) => !m.legs && !m.lien && !m.origine);
 /** Une carte existe-t-elle dans ce métal ? Toutes, sauf les exclusives (seulement dans leur métal) et l’Héritage (en nacre) */

@@ -51,6 +51,19 @@ export const RAVITAILLEMENT = {
   minimumCycle: 'cuivre' as Rarete,
 } as const;
 
+/**
+ * Le métal d'une récompense gardée en réserve est fixé le jour où elle est gagnée, pas le jour où on l'ouvre (12 novembre 2026,
+ * Bryan, après les Chroniques : garder sept colis pour les ouvrir une tranche plus bas donnait de meilleures cartes).
+ * Chaque colis, objectif du jour ou Butin en réserve garde la Strate ouverte ce jour-là, le plus ancien en tête.
+ */
+export function noterStrates(r: { reserve: number; strates?: number[] }, strate: number): void {
+  const s = (r.strates ?? []).slice(0, r.reserve);
+  while (s.length < r.reserve) s.push(strate);
+  r.strates = s;
+}
+/** La Strate du plus ancien de la réserve (celle d'aujourd'hui pour une réserve d'avant cette règle) */
+const strateGagnee = (r: { strates?: number[] }, j: Jeu): number => r.strates?.shift() ?? j.strate;
+
 /** La lignée qui a le moins d'exemplaires : la carte de lecture va là où le deck manque le plus */
 function ligneeLaMoinsFournie(j: Jeu): 'tech' | 'bio' | 'reso' {
   const n = { tech: 0, bio: 0, reso: 0 };
@@ -98,6 +111,7 @@ interface Colis { composants: number; doublon: string | null; choix: boolean }
 export function ouvrirColis(j: Jeu): Resultat & { colis?: Colis } {
   if (!colisDisponible(j)) return non(t('Pas de colis pour l’instant : le prochain arrive demain.'));
   const r = j.ravitaillement;
+  const gagne = strateGagnee(r, j);
   r.reserve--;
   r.ouverts++;
   // le filleul d'un parrain : colis doublés pendant ses premiers jours (parrainage.ts ; même règle, sans importer la couche du dessus)
@@ -113,7 +127,7 @@ export function ouvrirColis(j: Jeu): Resultat & { colis?: Colis } {
   const doublon = possibles.length ? possibles[tireur(j).entier(possibles.length)]! : null;
   if (doublon) ajouterCarte(j, doublon);
   const choix = r.ouverts % RAVITAILLEMENT.cycle === 0;
-  if (choix) j.choix.push({ source: 'ravitaillement', options: tirerChoix(j, j.strate, auMoins(RAVITAILLEMENT.minimumCycle, metalDessus(j.strate)), undefined, porteursPresents(j)) });
+  if (choix) j.choix.push({ source: 'ravitaillement', options: tirerChoix(j, gagne, auMoins(RAVITAILLEMENT.minimumCycle, metalDessus(gagne)), undefined, porteursPresents(j)) });
   log(j, t`Ravitaillement : +${composants} cristaux${doublon ? t`, un doublon ${deNom(moduleDef(doublon).nom)}` : ''}${choix ? t(', et une carte au choix') : ''}.`);
   return { ok: true, colis: { composants, doublon, choix } };
 }
@@ -141,7 +155,8 @@ export const QUOTIDIEN_ECLATS = 2;
 /** Récupère l'objectif du jour : une carte au choix parmi 3, ou 2 Éclats */
 export function reclamerQuotidien(j: Jeu): Resultat {
   if (!quotidienFait(j)) return non(t('Objectif du jour pas encore rempli.'));
-  j.choix.push({ source: 'quotidien', options: tirerChoix(j, j.strate, metalTranche(j.strate), undefined, porteursPresents(j)), eclats: QUOTIDIEN_ECLATS });
+  const gagne = strateGagnee(j.quotidien, j);
+  j.choix.push({ source: 'quotidien', options: tirerChoix(j, gagne, metalTranche(gagne), undefined, porteursPresents(j)), eclats: QUOTIDIEN_ECLATS });
   progresser(j, 'quotidien');
   const q = j.quotidien;
   q.reserve--;
@@ -156,13 +171,17 @@ export function ouvrirArchive(j: Jeu): Resultat {
   const n = j.archive.aOuvrir;
   if (!n) return non(t('Le Butin de la semaine n’est pas encore prêt.'));
   j.energie += ARCHIVE.composants;
-  j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, metalTranche(j.strate), undefined, porteursPresents(j)) });
+  // le métal est celui de la Strate ouverte le lundi où ce Butin a été gagné
+  const gagne = strateGagnee(j.archive, j);
+  const prestige = () => tirerChoix(j, gagne, auMoins('argent', metalDessus(gagne)), undefined, porteursPresents(j));
+  j.choix.push({ source: 'archive', options: tirerChoix(j, gagne, metalTranche(gagne), undefined, porteursPresents(j)) });
   if (n >= 2) j.eclats += ARCHIVE.eclatsPalier2;
-  if (n >= 3) j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, auMoins('argent', metalDessus(j.strate)), undefined, porteursPresents(j)) });
-  if (n >= 4) { j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, auMoins('argent', metalDessus(j.strate)), undefined, porteursPresents(j)) }); j.eclats += ARCHIVE.eclatsPalier4; }
+  if (n >= 3) j.choix.push({ source: 'archive', options: prestige() });
+  if (n >= 4) { j.choix.push({ source: 'archive', options: prestige() }); j.eclats += ARCHIVE.eclatsPalier4; }
   // le Butin suivant, s'il y en a un qui attend
   j.archive.aOuvrir = j.archive.enAttente?.shift() ?? 0;
   if (j.archive.enAttente && !j.archive.enAttente.length) delete j.archive.enAttente;
+  if (!j.archive.aOuvrir) delete j.archive.strates;
   log(j, t`Butin de la semaine ouvert : palier ${n} sur ${ARCHIVE.paliers.length}.`);
   return { ok: true };
 }

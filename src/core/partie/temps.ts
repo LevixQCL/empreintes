@@ -7,7 +7,7 @@ import { noterPalmares } from '../classements';
 import { ARCHIVE, enExpedition, nuitDesLignes, raffiner, eclatsDeTaille, jourDe, log, semaineDe, type Jeu, typeDuJour } from './etat';
 import { avancerFils, retourDeMission, verifierArrivees } from './descentes';
 import { creuser, recompenserConfiance, entrainer, garnirComptoir, soinParHeure } from './district';
-import { RAVITAILLEMENT, eveillerLegs, eveillerOrigines } from './recompenses';
+import { RAVITAILLEMENT, eveillerLegs, eveillerOrigines, noterStrates } from './recompenses';
 import { recompenserFilleul } from './parrainage';
 import { retourDeContrat } from './marees';
 import { avancerBasses } from './basses';
@@ -81,12 +81,14 @@ export function tick(j: Jeu, now: number): string[] {
     j.quotidien.reserve = Math.min(3, j.quotidien.reserve + (jour - j.quotidien.jour));
     if (avant === 0) { j.quotidien.type = typeDuJour(jour); j.quotidien.progres = 0; }
     j.quotidien.jour = jour;
+    noterStrates(j.quotidien, j.strate);
   }
 
   // un colis de ravitaillement de plus chaque jour, une semaine au plus (aucune série à perdre)
   if (jour > j.ravitaillement.jour) {
     j.ravitaillement.reserve = Math.min(RAVITAILLEMENT.reserveMax, j.ravitaillement.reserve + (jour - j.ravitaillement.jour));
     j.ravitaillement.jour = jour;
+    noterStrates(j.ravitaillement, j.strate);
   }
 
   // l'Archive de la semaine s'ouvre le lundi
@@ -95,8 +97,14 @@ export function tick(j: Jeu, now: number): string[] {
     const paliers = ARCHIVE.paliers.filter((p) => j.archive.points >= p).length;
     if (paliers > 0) {
       // un Butin pas encore ouvert n'est plus écrasé par le suivant (audit du 7 novembre 2026) : ils s'empilent
-      if (!j.archive.aOuvrir) j.archive.aOuvrir = paliers;
-      else j.archive.enAttente = [...(j.archive.enAttente ?? []), paliers].slice(-(ARCHIVE.empilesMax - 1));
+      // chaque Butin garde la Strate ouverte ce lundi-là : son métal ne change plus s'il attend (12 novembre 2026)
+      const a = j.archive, connues = a.strates ?? [];
+      if (!a.aOuvrir) { a.aOuvrir = paliers; a.strates = [j.strate]; }
+      else {
+        const attente = (a.enAttente ?? []).map((_, i) => connues[i + 1] ?? j.strate);
+        a.enAttente = [...(a.enAttente ?? []), paliers].slice(-(ARCHIVE.empilesMax - 1));
+        a.strates = [connues[0] ?? j.strate, ...[...attente, j.strate].slice(-(ARCHIVE.empilesMax - 1))];
+      }
       const t = tr('Le Butin de la semaine est prêt à être ouvert.');
       log(j, t);
       nouvelles.push(t);

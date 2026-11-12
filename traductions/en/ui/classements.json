@@ -162,6 +162,10 @@
    "en": "{0} of {1} cards discovered"
   },
   {
+   "fr": "· {0} en plus (Héritage, origines)",
+   "en": "· {0} extra (Legacy, origins)"
+  },
+  {
    "fr": "Les écrans s’allument…",
    "en": "The screens are lighting up…"
   },

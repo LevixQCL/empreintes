@@ -1,7 +1,7 @@
 // La collection : les cartes qui tombent dans les Strates, leurs raretés, les doublons et les niveaux.
 // Tout le hasard passe par un état `rng` sauvegardé : aucun hasard n'est jamais payé.
 
-import { VOIES, carteId, estCarteConnue, gesteDeCarte, moduleDef, renforcer, tirablesEn } from './donnees';
+import { MODULES, VOIES, carteId, estCarteConnue, gesteDeCarte, horsAlbum, moduleDe, moduleDef, renforcer, tirablesEn } from './donnees';
 import { tireur } from './rng';
 import type { Effet, GesteDef, Lignee, ModuleDef, Rarete } from './types';
 import { t as tr } from './i18n';
@@ -135,7 +135,8 @@ export function tirerCarte(e: EtatCollection, strate: number, minimum: Rarete = 
 export function tirerTrouvaille(e: EtatCollection, strate: number, minimum: Rarete = 'fer', lignee?: Lignee): string {
   const r = tirerRarete(e, strate, minimum);
   const t = tireur(e);
-  const possedees = Object.keys(e.collection).filter((id) => id.endsWith('@' + r) && !moduleDef(id).legs && (!lignee || moduleDef(id).lignee === lignee));
+  // jamais le doublon d'une carte qui ne monte pas avec des doublons (Héritage, origine) : la trouvaille serait perdue
+  const possedees = Object.keys(e.collection).filter((id) => id.endsWith('@' + r) && !moduleDef(id).legs && !moduleDef(id).origine && (!lignee || moduleDef(id).lignee === lignee));
   if (possedees.length && t.nombre() < COLLECTION.affinite) return possedees[t.entier(possedees.length)]!;
   const pool = tirablesEn(r).filter((m) => !lignee || m.lignee === lignee);
   return carteId(pool[t.entier(pool.length)]!.id, r);
@@ -269,6 +270,19 @@ export function sansBonusOrigine(g: GesteDef): GesteDef {
 export const PLACES_PORTEUR = 6;
 export function placesVides(porteurId: string, nb: number): GesteDef[] {
   return Array.from({ length: Math.max(0, PLACES_PORTEUR - nb) }, () => ({ id: 'vide', porteur: porteurId, nom: tr('Place vide'), f: 0, type: 'atk', v: 0, vide: true }));
+}
+
+// ---------- L'album (12 novembre 2026) ----------
+
+/**
+ * L'album d'une lignée : les cartes possédées (dans un métal au moins), puis celles qui restent à trouver.
+ * Une carte hors album (Héritage, parrainage, origine) n'y figure que possédée : on ne peut pas toutes les avoir,
+ * elle n'est donc jamais « à trouver » (Bryan : « des cartes en plus dans la collection, pas des cartes à compléter »).
+ */
+export function album(collection: Record<string, unknown>, lignee: Lignee): { possedees: ModuleDef[]; aTrouver: ModuleDef[] } {
+  const trouvees = new Set(Object.keys(collection).filter(estCarteConnue).map(moduleDe));
+  const cartes = MODULES.filter((m) => m.lignee === lignee);
+  return { possedees: cartes.filter((m) => trouvees.has(m.id)), aTrouver: cartes.filter((m) => !trouvees.has(m.id) && !horsAlbum(m)) };
 }
 
 // ---------- Trier la collection (24 octobre 2026) ----------

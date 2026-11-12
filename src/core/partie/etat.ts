@@ -352,7 +352,7 @@ export interface Jeu {
   /** les recrues ont reçu leur kit de départ (3 cartes chacune) */
   kitRecrues: boolean;
   /** Ravitaillement du jour : colis en réserve (3 au plus, rien ne se perd), dernier jour compté, colis déjà ouverts */
-  ravitaillement: { jour: number; reserve: number; ouverts: number };
+  ravitaillement: { jour: number; reserve: number; ouverts: number; /** la Strate ouverte le jour où chaque colis en réserve est arrivé, le plus ancien en tête (noterStrates) */ strates?: number[] };
   /** les pillages : jetons, coffre et attaques à envoyer (pillages.ts) ; absent avant le premier */
   pillage?: import('./pillages').EtatPillage;
   /** la présentation du Port a été lue (28 octobre 2026) : elle s'affiche à la première visite */
@@ -375,9 +375,9 @@ export interface Jeu {
   chantiers: Chantier[];
   choix: Choix[];
   /** objectif du jour : jours en réserve (3 au plus) et progression */
-  quotidien: { jour: number; reserve: number; type: TypeQuotidien; progres: number };
+  quotidien: { jour: number; reserve: number; type: TypeQuotidien; progres: number; /** la Strate ouverte le jour où chaque objectif en réserve est arrivé, le plus ancien en tête */ strates?: number[] };
   /** Archive de la semaine : points de la semaine en cours, paliers à ouvrir de la semaine passée */
-  archive: { semaine: number; points: number; aOuvrir: number; /** les Butins des semaines suivantes, pas encore ouverts */ enAttente?: number[] };
+  archive: { semaine: number; points: number; aOuvrir: number; /** les Butins des semaines suivantes, pas encore ouverts */ enAttente?: number[]; /** la Strate ouverte le lundi où chaque Butin a été gagné : celui à ouvrir, puis ceux en attente */ strates?: number[] };
   /** les Éclats recueillis en taillant (9 novembre 2026) : le jour du jeu, ceux trouvés ce jour-là, et les cristaux taillés vers le prochain */
   eclatsTaille?: { jour: number; n: number; reste: number };
   /** les Porteurs partis en mission en mer, depuis le Port (le niveau de la mission est celui de la dernière Strate vaincue) */

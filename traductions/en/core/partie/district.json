@@ -290,6 +290,10 @@
    "en": "A Legacy card is unique: the Forge can’t remake it."
   },
   {
+   "fr": "Une carte d’origine est unique : la Forge ne sait pas la refaire.",
+   "en": "An origin card is unique: the Forge can’t remake it."
+  },
+  {
    "fr": "La Forge est déjà occupée.",
    "en": "The Forge is already busy."
   },
