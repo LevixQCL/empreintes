@@ -364,3 +364,16 @@ export function texteCopies(x: number, vers: 'bas' | 'haut' = 'bas'): string {
   if (!reste) return x > 0 && !entier && x * 9 >= 1 - 1e-6 ? '⅑' : String(entier);
   return `${entier || ''}${reste === 1 ? '⅓' : '⅔'}`;
 }
+
+/**
+ * Les copies en pastilles (12 novembre 2026, Bryan : « des pastilles de couleur plutôt que des fractions ») : une pastille par
+ * copie demandée, qui se remplit comme un cadran (un tiers, deux tiers) avec les copies d'un métal en dessous.
+ * La couleur est celle du métal visé : le métal de la carte pour un niveau, le suivant pour la promotion.
+ */
+export function pastillesCopies(x: number, n: number, couleur: string, classe = ''): string {
+  const p = Array.from({ length: n }, (_, i) => {
+    const f = Math.max(0, Math.min(1, x - i));
+    return `<i class="${f >= 1 - 1e-6 ? 'pleine' : ''}" style="--f:${Math.round(f * 360)}deg"></i>`;
+  }).join('');
+  return `<span class="pastilles${classe ? ' ' + classe : ''}" style="--pc:${couleur}" role="img" aria-label="${tr`${texteCopies(x)} copies sur ${n}`}">${p}</span>`;
+}

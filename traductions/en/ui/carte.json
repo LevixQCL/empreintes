@@ -64,6 +64,10 @@
   {
    "fr": ", maîtrisée",
    "en": ", mastered"
+  },
+  {
+   "fr": "{0} copies sur {1}",
+   "en": "{0} copies out of {1}"
   }
  ]
 }

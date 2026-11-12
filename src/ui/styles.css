@@ -305,6 +305,12 @@ h1,h2,h3{font-weight:400}
 .tuile-bas .libre{font-family:var(--mono);font-size:var(--t-min);letter-spacing:.06em;color:var(--mute);text-transform:uppercase}
 .mini-jauge{flex:1;height:4px;background:var(--track)}
 .mini-jauge i{display:block;height:100%;background:var(--jc,var(--gold))}
+/* les copies en pastilles (12 novembre 2026) : une par copie demandée, remplie en cadran */
+.pastilles{display:inline-flex;align-items:center;gap:4px;flex:none}
+.pastilles i{width:10px;height:10px;border-radius:50%;background:conic-gradient(var(--pc,var(--gold)) var(--f,0deg),rgba(205,239,255,.12) 0);box-shadow:inset 0 0 0 1px rgba(205,239,255,.28)}
+.pastilles i.pleine{background:var(--pc,var(--gold));box-shadow:0 0 6px color-mix(in srgb,var(--pc,var(--gold)) 55%,transparent),inset 0 0 0 1px rgba(255,255,255,.35)}
+.pastilles.grandes{gap:7px}
+.pastilles.grandes i{width:16px;height:16px}
 .carte-tuile>.pastille-alerte{top:-4px;right:-4px}
 .carte-dos{--cut:10px;position:relative;aspect-ratio:63/88;display:grid;place-content:center;justify-items:center;gap:2px}
 .carte-dos span{font-family:var(--display);font-size:30px;color:var(--mute)}

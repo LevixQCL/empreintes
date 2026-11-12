@@ -1246,8 +1246,8 @@
    "en": "Ready: it can go to level {0}."
   },
   {
-   "fr": "{0} / {1} doublons",
-   "en": "{0} / {1} duplicates"
+   "fr": "{0} doublon{1} sur {2}",
+   "en": "{0} duplicate{1} out of {2}"
   },
   {
    "fr": ", et la carte est maîtrisée",
@@ -1782,8 +1782,8 @@
    "en": "Ready: it can be promoted to {0}."
   },
   {
-   "fr": "{0} / {1} copies",
-   "en": "{0} / {1} copies"
+   "fr": "{0} copie{1} sur {2}",
+   "en": "{0} cop{1|ies|y} out of {2}"
   },
   {
    "fr": "En {0} : force {1} →",
