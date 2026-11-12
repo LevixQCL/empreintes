@@ -311,9 +311,12 @@
   .archipel.cuvette .toile{top:auto;bottom:var(--monte);height:var(--zh);width:auto;aspect-ratio:2/3;left:var(--gauche);transform:none}
   .archipel.cuvette .tableau-fond{display:none}
   .archipel.cuvette .toile :is(.tableau,.anime,.houle){-webkit-mask-image:linear-gradient(to bottom,transparent,#000 9%,#000 94%,transparent);mask-image:linear-gradient(to bottom,transparent,#000 9%,#000 94%,transparent)}
-  .archipel.cuvette .mer-fond{display:block;position:absolute;z-index:0;top:auto;bottom:var(--monte);height:var(--zh);width:auto;aspect-ratio:3924/2464;
-    left:calc(var(--gauche) - var(--zh) * .472);transform:none;background:var(--mer) center/100% 100% no-repeat;pointer-events:none;
-    -webkit-mask-image:linear-gradient(to bottom,transparent,#000 9%,#000 94%,transparent);mask-image:linear-gradient(to bottom,transparent,#000 9%,#000 94%,transparent)}
+  /* Carte finie en haut et en bas (12 novembre 2026, Bryan : « le haut et le bas ne sont pas finis ») : sur téléphone, la
+     Cuvette prolongée est la version agrandie vers le haut et le bas (cuvette-haute.webp, 1911 × 1911, la vue large d'origine
+     de y = 355 à 1555). Elle déborde de l'écran des deux côtés : plus de fondu dans le vide, la peinture va jusqu'aux bords. */
+  .archipel.cuvette .mer-fond{display:block;position:absolute;z-index:0;top:auto;bottom:calc(var(--monte) - var(--zh) * .2967);height:calc(var(--zh) * 1.5925);
+    width:auto;aspect-ratio:1;left:calc(var(--gauche) - var(--zh) * .472);transform:none;
+    background:var(--mer-haute,var(--mer)) center/100% 100% no-repeat;pointer-events:none}
   .archipel.cuvette .mer-fond .mer-reflets{display:none}
 }
 /* Sur PC, la Cuvette est prolongée en largeur (art/district/cuvette-large.webp, peinte avec Midjourney autour du district) :
