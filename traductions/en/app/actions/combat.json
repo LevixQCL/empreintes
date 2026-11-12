@@ -88,6 +88,10 @@
   {
    "fr": "la Tour du Noyau doit passer au niveau {0}",
    "en": "the Core Tower must reach level {0}"
+  },
+  {
+   "fr": "Le gardien est vaincu : les creuseurs percent la galerie, la Strate −{0} s’ouvre dans {1}.",
+   "en": "The guardian is beaten: the diggers are cutting the gallery, and Stratum −{0} opens in {1}."
   }
  ]
 }

@@ -478,6 +478,10 @@
    "en": "{0} Core Tower level{1}"
   },
   {
+   "fr": "Gardien vaincu : la galerie est percée dans {0}",
+   "en": "Guardian beaten: the gallery breaks through in {0}"
+  },
+  {
    "fr": "Prête à être creusée plus bas",
    "en": "Ready to be dug deeper"
   },
@@ -490,12 +494,16 @@
    "en": "The guardian of Stratum −{0} guards the way to the next level."
   },
   {
-   "fr": "Assez de creuseurs ({0} / {1})",
-   "en": "Enough diggers ({0} / {1})"
+   "fr": "Laisser les creuseurs percer la galerie ({0} h pour −{1})",
+   "en": "Let the diggers cut the gallery ({0} h for −{1})"
   },
   {
-   "fr": "La Tour du Noyau en loge {0}. On en gagne avec les fouilles, les missions, les Épreuves et les gardiens.",
-   "en": "The Core Tower houses {0}. You get more from digs, missions, Trials and guardians."
+   "fr": "Chaque creuseur logé par la Tour raccourcit la creuse de {0} %, jusqu’à {1} % (tu en as {2}, la Tour en loge {3}). On en gagne avec les fouilles, les missions, les Épreuves et les gardiens.",
+   "en": "Each digger housed by the Tower shortens the digging by {0} %, up to {1} % (you have {2}, the Tower houses {3}). You get more from digs, missions, Trials and guardians.",
+   "ancien": {
+    "fr": "La Tour du Noyau en loge {0}. On en gagne avec les fouilles, les missions, les Épreuves et les gardiens.",
+    "en": "The Core Tower houses {0}. You get more from digs, missions, Trials and guardians."
+   }
   },
   {
    "fr": "Des cartes de meilleur métal",

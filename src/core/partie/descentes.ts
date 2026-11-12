@@ -898,6 +898,7 @@ export function remonter(j: Jeu): Retour {
   if (victoire && x.strate === j.strate && !j.frontVaincu) {
     // le gardien du front est vaincu : l'étage suivant est prêt à être creusé, s'il y a assez de creuseurs
     j.frontVaincu = true;
+    j.creuseDebut = j.dernierTick;
     gagnerCreuseurs(j, CREUSEURS.gardien, tr('le gardien vaincu, des fouilleurs se joignent au chantier'));
     // l'espoir de l'Écluse grandit au quartier (30 octobre 2026)
     confier(j, x.strate <= 10 ? CONFIANCE.gardien : CONFIANCE.gardienProfond, 'gardiens');

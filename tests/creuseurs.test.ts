@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
-  creuser, creuseursRequis, fouiller, gagnerCreuseurs, logementCreuseurs, manquePourCreuser, noyauRequis,
-  nouveauJeu, remonter, partir, strateVaincue, type Jeu,
+  CREUSE, creuser, creuseursRequis, dureeCreuse, finCreuse, heuresCreuse, fouiller, gagnerCreuseurs, logementCreuseurs, manquePourCreuser, noyauRequis,
+  nouveauJeu, remonter, partir, type Jeu,
 } from '../src/core/jeu';
 
 const T0 = Date.UTC(2026, 9, 21, 12);
@@ -32,14 +32,33 @@ describe('Les creuseurs', () => {
     expect(manquePourCreuser(j)).toBeNull();
   });
 
-  it('plus bas aussi, avec une Tour au niveau 1 et sans un seul creuseur', () => {
+  // 12 novembre 2026, soir (Bryan : « un délai de creuse pour freiner un petit peu ») : la galerie se perce en un temps fixe,
+  // qui grandit avec la profondeur ; chaque creuseur logé le raccourcit. Plus bas que −2, rien ne s'ouvre avant la fin.
+  it('plus bas, la galerie se perce en un temps fixe, sans Tour ni creuseur à réunir', () => {
     const j = pret(9);
     j.batiments.noyau = 1;
     j.creuseurs = 0;
+    j.dernierTick = T0;
     const r = vaincreGardien(j);
-    expect(r.nouvelleStrate).toBe(true);
+    expect(r.nouvelleStrate).toBe(false);
+    expect(j.strate).toBe(9);
+    // le gardien amène un creuseur : la creuse est déjà un peu plus courte
+    expect(finCreuse(j)).toBe(T0 + dureeCreuse(j, 10));
+    expect(dureeCreuse(j, 10)).toBeLessThan(heuresCreuse(10) * 3_600_000);
+    j.dernierTick = finCreuse(j)! - 1;
+    expect(creuser(j)).toBe(false);
+    j.dernierTick = finCreuse(j)!;
+    expect(creuser(j)).toBe(true);
     expect(j.strate).toBe(10);
-    expect(strateVaincue(j)).toBe(9);
+    expect(j.creuseDebut).toBeUndefined();
+  });
+
+  it('la creuse grandit avec la profondeur, et les creuseurs la raccourcissent jusqu’à 40 %', () => {
+    for (let s = 4; s <= 10; s++) expect(heuresCreuse(s)).toBeGreaterThan(heuresCreuse(s - 1));
+    expect(heuresCreuse(2)).toBe(0);
+    expect(heuresCreuse(15)).toBe(heuresCreuse(10));
+    expect(dureeCreuse({ creuseurs: 4 }, 10)).toBe(Math.round(heuresCreuse(10) * 3_600_000 * 0.8));
+    expect(dureeCreuse({ creuseurs: 60 }, 10)).toBe(Math.round(heuresCreuse(10) * 3_600_000 * (1 - CREUSE.plafond)));
   });
 
   it('on gagne toujours des creuseurs, logés par la Tour', () => {

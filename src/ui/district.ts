@@ -19,7 +19,7 @@ import {
 import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, carteNiveau, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
-import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront } from '../core/jeu';
+import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront, finCreuse, gainCreuseurs } from '../core/jeu';
 import { FAMILLES, FRAGMENTS } from '../core/fragments';
 import { CONFIANCE, CERCLE, CERCLE_OUVERTURE, cercleOuvert, echangesParJour, metalMax, ouvertesMax, vitrineMax, niveauConfiance, nbFoyers, bassesOuvertes, bulleBasses } from '../core/jeu';
 import { feuilleBasses } from './basses';
@@ -1874,6 +1874,16 @@ export function htmlCoupe(e: EcranDistrict): string {
         + (j.chambre && strateVaincue(j) >= EPREUVES_STRATE ? `<li>${ICO.boost}<span>${tr`Épreuve`} <em>${tr`(1re victoire de la semaine)`}</em></span><b>${tr`assuré`}</b></li>` : '') + `</ul>` : '')
       + `<div class="tr-boutons">${auPort ? `<button type="button" class="btn prim" data-action="batiment" data-id="port">${ICO.ouvrier}${tr`Aller au Port`}</button>` : ''}${manque.creuseurs ? `<button type="button" class="btn ${auPort ? 'sec' : 'prim'}" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.cristal}${tr`Fouiller la Strate −${j.strate}`}</button>` : ''}`
       + `${manque.noyau ? `<button type="button" class="btn ${manque.creuseurs ? 'sec' : 'prim'}" data-action="batiment" data-id="noyau" data-amelio>${ICO.tour}${tr`Améliorer la Tour`}</button>` : ''}</div>`;
+  } else if (j.frontVaincu && (finCreuse(j) ?? 0) > e.now) {
+    // la creuse (12 novembre 2026) : un temps fixe et affiché, pendant lequel on joue à autre chose
+    const fin = finCreuse(j)!, debut = j.creuseDebut ?? j.dernierTick;
+    const gain = Math.round(100 * gainCreuseurs(j.creuseurs ?? 0));
+    etape = `<strong>${tr`Les creuseurs percent la galerie vers la Strate −${cible}`}</strong>`
+      + `<small>${tr`Ouverture dans`} <b>${decompte(fin, e.now)}</b>. ${j.creuseurs ? tr`${j.creuseurs} creuseur${j.creuseurs > 1 ? 's' : ''} au travail : la creuse va ${gain} % plus vite.` : ''}</small>`
+      + `<div class="tr-creuse" aria-hidden="true">${jaugeTemps(debut, fin, e.now)}</div>`
+      + `<small class="tr-creuse-aide">${tr`En attendant, renforce l’escouade : fouilles, missions en mer, niveaux des cartes. Des creuseurs en plus raccourcissent la creuse.`}</small>`
+      + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.cristal}${tr`Fouiller la Strate −${j.strate}`}</button>`
+      + `${portOuvert(j) ? `<button type="button" class="btn sec" data-action="batiment" data-id="port">${ICO.ouvrier}${tr`Aller au Port`}</button>` : ''}</div>`;
   } else {
     etape = `<strong>${tr`La roche cède : la Strate −${cible} va s’ouvrir`}</strong><small>${tr`Tout est prêt. Descends pour découvrir le nouvel étage.`}</small>`
       + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.descendre}${tr`Descendre`}</button></div>`;

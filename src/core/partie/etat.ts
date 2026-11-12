@@ -419,6 +419,8 @@ export interface Jeu {
   creuseurs: number;
   /** le gardien de la Strate la plus profonde est vaincu : l'étage suivant attend d'être creusé */
   frontVaincu: boolean;
+  /** quand les creuseurs ont attaqué la roche sous le gardien vaincu (12 novembre 2026 : la creuse prend du temps) */
+  creuseDebut?: number;
   /** les fils des Porteurs : nombre d'étapes faites par Porteur (23 octobre 2026) */
   fils?: Record<string, number>;
   /** l’Héritage du district choisi dans la lettre de la directrice (27 octobre 2026) : une carte de l’Héritage, ou « cle » (la Clé de l’Héritage) */

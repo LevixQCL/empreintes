@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { creuseursRequis, nouveauJeu, noyauRequis, tick } from '../src/core/jeu';
+import { creuseursRequis, dureeCreuse, nouveauJeu, noyauRequis, tick } from '../src/core/jeu';
 
 describe('La roche se perce dès que tout est prêt (31 octobre 2026, Luc)', () => {
   it('gardien vaincu, assez de creuseurs, Tour assez haute : la Strate suivante s’ouvre au prochain passage du temps', () => {
@@ -8,7 +8,10 @@ describe('La roche se perce dès que tout est prêt (31 octobre 2026, Luc)', () 
     j.strate = 5; j.frontVaincu = true;
     j.batiments.noyau = Math.max(j.batiments.noyau, noyauRequis(6));
     j.creuseurs = creuseursRequis(6);
+    // 12 novembre 2026 : la galerie se perce en un temps fixe, qui commence au premier passage du temps
     tick(j, 60_000);
+    expect(j.strate).toBe(5);
+    tick(j, 60_000 + dureeCreuse(j, 6));
     expect(j.strate).toBe(6);
     expect(j.frontVaincu).toBe(false);
   });

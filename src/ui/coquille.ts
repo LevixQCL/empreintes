@@ -11,7 +11,7 @@ import { vestigeDef } from '../core/explorer';
 import { faceCarte } from './carte';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
 import { blocMur } from './mur';
-import { CERCLE_OUVERTURE, MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, nbFoyers, nomConfiance, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, chapitresALire, porteursNouveaux, creuseursRequis, brutEnAttente, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
+import { CREUSE, finCreuse, heuresCreuse, CERCLE_OUVERTURE, MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, nbFoyers, nomConfiance, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, chapitresALire, porteursNouveaux, brutEnAttente, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { miniature, portrait } from './art';
 import { feuilleGuide, trouveesDe } from './guide';
@@ -350,9 +350,11 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined, famille: stri
     const manque = manquePourCreuser(j);
     surtitre = 'PROFONDEUR'; titre = tr`La Strate −${j.strate}`;
     resume = tr('L’étage le plus profond que ton district a creusé sous la ville. Plus on descend, plus c’est ancien, dangereux et précieux.');
-    etat = `<b>−${j.strate}</b><small>${j.frontVaincu ? (manque ? tr`Gardien vaincu : il manque ${enumerer([manque.creuseurs ? tr`${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : '', manque.noyau ? tr`${manque.noyau} niveau${manque.noyau > 1 ? 'x' : ''} de Tour du Noyau` : ''].filter(Boolean))} pour creuser plus bas` : tr('Prête à être creusée plus bas')) : tr`Bats son gardien pour pouvoir creuser l’étage suivant`}</small>`;
+    // 12 novembre 2026 : plus de verrou, la galerie se perce en un temps fixe (j.dernierTick : l'heure du dernier passage du jeu)
+    const fin = finCreuse(j);
+    etat = `<b>−${j.strate}</b><small>${j.frontVaincu ? (manque ? tr`Gardien vaincu : il manque ${enumerer([manque.creuseurs ? tr`${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : '', manque.noyau ? tr`${manque.noyau} niveau${manque.noyau > 1 ? 'x' : ''} de Tour du Noyau` : ''].filter(Boolean))} pour creuser plus bas` : fin && fin > j.dernierTick ? tr`Gardien vaincu : la galerie est percée dans ${decompte(fin, j.dernierTick)}` : tr('Prête à être creusée plus bas')) : tr`Bats son gardien pour pouvoir creuser l’étage suivant`}</small>`;
     gagner = [ligne('porte', tr('Vaincre le gardien'), tr`Le gardien de la Strate −${j.strate} garde l’accès à l’étage suivant.`),
-      ligne('ouvrier', tr`Assez de creuseurs (${j.creuseurs ?? 0} / ${creuseursRequis(j.strate + 1)})`, tr`La Tour du Noyau en loge ${logementCreuseurs(j)}. On en gagne avec les fouilles, les missions, les Épreuves et les gardiens.`)];
+      ligne('ouvrier', tr`Laisser les creuseurs percer la galerie (${heuresCreuse(j.strate + 1)} h pour −${j.strate + 1})`, tr`Chaque creuseur logé par la Tour raccourcit la creuse de ${Math.round(100 * CREUSE.parCreuseur)} %, jusqu’à ${Math.round(100 * CREUSE.plafond)} % (tu en as ${j.creuseurs ?? 0}, la Tour en loge ${logementCreuseurs(j)}). On en gagne avec les fouilles, les missions, les Épreuves et les gardiens.`)];
     servir = [ligne('cartes', tr('Des cartes de meilleur métal'), tr('Plus la Strate est profonde, plus les trouvailles sont rares.')),
       ligne('codex', tr('Les Chroniques'), tr('Les chapitres profonds se débloquent en descendant.'))];
   }

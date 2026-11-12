@@ -28,7 +28,7 @@ const ENTRER = async (p: Page) => {
     await p.waitForTimeout(300);
   }
 };
-const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer' | 'comptoir'; faire: (p: Page) => Promise<void> }[] = [
+const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer' | 'comptoir' | 'creuse'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
   { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="forge"]'); } },
@@ -45,6 +45,7 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'panneau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.objectif:visible').first(); if (await d.count()) await d.click(); } },
   { nom: 'bulle-appel', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.appel-bulle:visible').first(); if (await d.count()) await d.click(); } },
   { nom: 'tour', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); } },
+  { nom: 'tour-creuse', sauvegarde: 'creuse', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); await p.$eval('.tr-etape', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
   // la liste des Strates (9 novembre 2026) : front mis en avant, boutons près du nom sur PC
   { nom: 'tour-strates', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); await p.waitForTimeout(300); await p.$eval('.tr-strates ol', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'tour-haut', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); await p.waitForTimeout(300); await p.$eval('.tr-strates ol', (e) => { e.scrollIntoView({ block: 'start' }); const s = document.scrollingElement; s?.scrollBy(0, -150); (e.closest('.contenu') as HTMLElement | null)?.scrollBy?.(0, -150); }); } },
@@ -248,6 +249,11 @@ async function main() {
     cp.data.batiments.comptoir = 3;
     cp.data.composants = Math.max(cp.data.composants ?? 0, 500);
     (saves as Record<string, unknown>).comptoir = cp;
+    // la creuse en cours (12 novembre 2026) : gardien vaincu, la galerie se perce depuis deux heures
+    const cr = JSON.parse(JSON.stringify(saves.district));
+    cr.data.frontVaincu = true;
+    cr.data.creuseDebut = T - 2 * 3_600_000;
+    (saves as Record<string, unknown>).creuse = cr;
     // la même expédition, mais à la Strate −6 : le brouillard ne laisse voir que des indices (30 octobre 2026)
     const br = JSON.parse(JSON.stringify(saves.combat));
     if (br.data.expedition) br.data.expedition.strate = 6;

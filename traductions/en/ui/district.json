@@ -2046,6 +2046,22 @@
    "en": "Upgrade the Tower"
   },
   {
+   "fr": "Les creuseurs percent la galerie vers la Strate −{0}",
+   "en": "The diggers are cutting the gallery towards Stratum −{0}"
+  },
+  {
+   "fr": "Ouverture dans",
+   "en": "Opens in"
+  },
+  {
+   "fr": "{0} creuseur{1} au travail : la creuse va {2} % plus vite.",
+   "en": "{0} digger{1} at work: digging goes {2} % faster."
+  },
+  {
+   "fr": "En attendant, renforce l’escouade : fouilles, missions en mer, niveaux des cartes. Des creuseurs en plus raccourcissent la creuse.",
+   "en": "Meanwhile, strengthen the squad: digs, missions at sea, card levels. More diggers shorten the digging."
+  },
+  {
    "fr": "La roche cède : la Strate −{0} va s’ouvrir",
    "en": "The rock gives way: Stratum −{0} is about to open"
   },

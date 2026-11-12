@@ -142,8 +142,8 @@
    "en": "Diggers housed"
   },
   {
-   "fr": "de quoi creuser jusqu’à la Strate −{0}",
-   "en": "enough to dig down to Stratum −{0}"
+   "fr": "la creuse d’une Strate {0} % plus rapide ({1} % avant)",
+   "en": "digging a Stratum {0} % faster ({1} % before)"
   },
   {
    "fr": "Ouvre la Strate −{0}",

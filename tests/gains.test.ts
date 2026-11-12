@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BATIMENTS } from '../src/core/donnees';
-import { DISTRICT, gainsAmelioration, nouveauJeu, profondeurNoyau, vitesseForge, type Jeu } from '../src/core/jeu';
+import { DISTRICT, gainsAmelioration, logementCreuseurs, nouveauJeu, profondeurNoyau, vitesseForge, type Jeu } from '../src/core/jeu';
 
 const T0 = Date.UTC(2026, 9, 22, 12);
 const jeu = (): Jeu => { const j = nouveauJeu(T0, 1); j.chambre = true; j.recrues = true; return j; };
@@ -31,8 +31,8 @@ describe('Ce que rapporte le niveau suivant (22 octobre 2026)', () => {
     expect([f.avant, f.apres]).toEqual([Math.round(vitesseForge(1) * 100), Math.round(vitesseForge(2) * 100)]);
     const n = gainsAmelioration(j, 'noyau');
     expect(n.find((x) => x.quoi === 'stockage')).toBeUndefined();
-    // 12 novembre 2026 : les creuseurs ne ferment plus de porte, leur logement n'est plus annoncé comme un gain de la Tour
-    expect(n.find((x) => x.quoi === 'creuseurs')).toBeUndefined();
+    // 12 novembre 2026 : les creuseurs logés raccourcissent la creuse, la Tour l'annonce
+    expect(n.find((x) => x.quoi === 'creuseurs')).toMatchObject({ avant: logementCreuseurs(j) });
   });
 
   it('la Tour du Noyau annonce le deuxième chantier au bon niveau, et la Forge l’arrivée de Sasha', () => {

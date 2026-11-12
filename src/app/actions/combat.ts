@@ -8,6 +8,7 @@ import { NOMS_RARETE } from '../../core/collection';
 import { composerTourMoyen } from '../../core/robot';
 import { suitePorte } from '../../core/expedition';
 import { comparer, montrer, relever } from '../../ui/gains';
+import { duree } from '../../ui/coquille';
 import { basculerSon, debloquerSon } from '../../ui/son';
 import { vibrer } from '../../ui/toucher';
 import { autoActif, basculerAuto, changerLangue } from '../../ui/options';
@@ -187,6 +188,9 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
           + (r.nouvelleStrate ? t`Un nouvel étage est creusé : la Strate −${app.jeu.strate} est ouverte.`
           : r.victoire && manque && app.jeu.frontVaincu && J.strateVaincue(app.jeu) === app.jeu.strate
             ? t`Le gardien est vaincu, mais l’étage suivant attend : ${manque.creuseurs ? t`il manque ${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : ''}${manque.creuseurs && manque.noyau ? t(' et ') : ''}${manque.noyau ? t`la Tour du Noyau doit passer au niveau ${J.noyauRequis(app.jeu.strate + 1)}` : ''}.`
+            // 12 novembre 2026 : la creuse prend un temps fixe, annoncé dès la victoire
+            : r.victoire && app.jeu.frontVaincu && J.strateVaincue(app.jeu) === app.jeu.strate && (J.finCreuse(app.jeu) ?? 0) > Date.now()
+            ? t`Le gardien est vaincu : les creuseurs percent la galerie, la Strate −${app.jeu.strate + 1} s’ouvre dans ${duree(J.finCreuse(app.jeu)! - Date.now())}.`
             : '')
           + (r.quete?.finie && r.quete.fin ? ` ${r.quete.fin}` : '');
         // le rapport d'expédition (31 octobre 2026) remplace la longue phrase du bandeau

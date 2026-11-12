@@ -264,3 +264,7 @@
   html #app .tr-deplier::after{content:"";position:absolute;right:18px;top:28px;width:9px;height:9px;border-right:2px solid var(--x-glace);border-bottom:2px solid var(--x-glace);transform:rotate(45deg);filter:drop-shadow(0 1px 3px #000)}
   html #app .tr-deplier[aria-expanded="true"]::after{top:32px;transform:rotate(-135deg)}
 }
+/* la creuse (12 novembre 2026) : la galerie se perce pendant qu'on joue à autre chose */
+.tr-creuse{height:6px;margin:8px 0 6px;border-radius:3px;background:rgba(205,239,255,.12);overflow:hidden}
+.tr-creuse i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,rgba(242,213,140,.45),var(--x-or,#F2D58C));box-shadow:0 0 8px rgba(242,200,110,.5)}
+.tr-creuse-aide{display:block;margin-top:2px;color:var(--x-doux)}

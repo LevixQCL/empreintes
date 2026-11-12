@@ -136,9 +136,10 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
   }
   if (b === 'noyau') {
     // 12 novembre 2026 : les creuseurs ne ferment plus de porte ; leur logement n'est annoncé que s'il limite encore une profondeur
-    const prof = profondeurNoyau(niv + 1);
-    if (prof !== Infinity) g.push({ quoi: 'creuseurs', texte: tr('Creuseurs logés'), avant: logementCreuseurs(j), apres: logementCreuseurs(apres),
-      detail: tr`de quoi creuser jusqu’à la Strate −${prof}` });
+    // 12 novembre 2026 : plus de logement nécessaire pour ouvrir une Strate, mais chaque creuseur logé raccourcit la creuse
+    const gain = (x: number) => Math.round(100 * gainCreuseurs(x));
+    if (gain(logementCreuseurs(apres)) > gain(logementCreuseurs(j))) g.push({ quoi: 'creuseurs', texte: tr('Creuseurs logés'), avant: logementCreuseurs(j), apres: logementCreuseurs(apres),
+      detail: tr`la creuse d’une Strate ${gain(logementCreuseurs(apres))} % plus rapide (${gain(logementCreuseurs(j))} % avant)` });
     const manque = manquePourCreuser(j);
     if (manque && manque.creuseurs === 0 && noyauRequis(j.strate + 1) === niv + 1) g.push({ quoi: 'strate', texte: tr`Ouvre la Strate −${j.strate + 1}`, detail: tr('les creuseurs attendent déjà la place') });
     g.push({ quoi: 'plafond', texte: tr('Niveau max. des autres bâtiments'), avant: niv, apres: niv + 1 });
@@ -419,12 +420,39 @@ export function manquePourCreuser(j: Jeu): { creuseurs: number; noyau: number } 
   return c || n ? { creuseurs: c, noyau: n } : null;
 }
 
-/** Creuse l'étage suivant si tout est prêt ; renvoie true si une Strate s'est ouverte */
+// ---------- La creuse (12 novembre 2026) ----------
+// Bryan : plus de verrou de creuseurs, mais « un délai de creuse pour freiner un petit peu la progression des Strates ».
+// Le gardien vaincu, les creuseurs percent la galerie : un temps fixe, affiché, pendant lequel on joue à autre chose
+// (fouilles, missions, Flèche). Rien à chercher : c'est l'attente sans but de l'ancien verrou qui frustrait.
+// Le délai grandit avec la profondeur ; −2 s'ouvre tout de suite (la première séance ne doit pas s'arrêter).
+// Les creuseurs retrouvent un rôle : chacun, logé par la Tour, raccourcit la creuse.
+export const CREUSE = {
+  /** heures de creuse pour ouvrir la Strate −n (index = n) ; au-delà, la dernière valeur (le Fond) */
+  heures: [0, 0, 0, 4, 6, 8, 10, 13, 16, 18, 20] as number[],
+  /** chaque creuseur logé raccourcit la creuse de cette part, au plus `plafond` (atteint avec 8 creuseurs, Tour 7) */
+  parCreuseur: 0.05,
+  plafond: 0.4,
+};
+export const heuresCreuse = (strate: number) => CREUSE.heures[Math.min(strate, CREUSE.heures.length - 1)] ?? 0;
+/** la part de la creuse que les creuseurs font gagner */
+export const gainCreuseurs = (creuseurs: number) => Math.min(CREUSE.plafond, CREUSE.parCreuseur * Math.max(0, creuseurs));
+export const dureeCreuse = (j: Pick<Jeu, 'creuseurs'>, strate: number) => Math.round(heuresCreuse(strate) * 3_600_000 * (1 - gainCreuseurs(j.creuseurs ?? 0)));
+/** quand la galerie sera percée (null : le gardien n'est pas vaincu) ; les creuseurs arrivés en route accélèrent la fin */
+export function finCreuse(j: Jeu): number | null {
+  if (!j.frontVaincu) return null;
+  return (j.creuseDebut ?? j.dernierTick) + dureeCreuse(j, j.strate + 1);
+}
+
+/** Creuse l'étage suivant si tout est prêt et la galerie percée ; renvoie true si une Strate s'est ouverte */
 export function creuser(j: Jeu): boolean {
   if (!j.frontVaincu || manquePourCreuser(j)) return false;
+  // une partie dont le gardien était vaincu avant la creuse : elle commence au premier passage
+  j.creuseDebut ??= j.dernierTick;
+  if (j.dernierTick < finCreuse(j)!) return false;
   j.creuseurs -= creuseursRequis(j.strate + 1);
   j.strate++;
   j.frontVaincu = false;
+  delete j.creuseDebut;
   log(j, tr`Les creuseurs percent la roche : la Strate −${j.strate} est ouverte.`);
   return true;
 }
