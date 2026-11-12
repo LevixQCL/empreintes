@@ -142,6 +142,11 @@ export function decouvertesExploration(x: Expedition, quetes: Record<number, num
     r.push({ id: 'fond', sur: tr`STRATE −${x.strate} · LE FOND`, titre: tr('Le Fond change chaque semaine'), ico: 'strate',
       texte: tr`Sous −10, les Strates n’ont plus de façon d’être à elles. Chaque semaine, chacune emprunte celle d’une Strate d’au-dessus, et en change le lundi.${p ? tr` Ici, cette semaine : ${p.nom.charAt(0).toLowerCase()}${p.nom.slice(1)} (Strate −${m}).` : ''}`,
       conseil: tr`Le gardien du Fond paie mieux : un choix de cartes en argent et ${FOND.eclatsGardien} Éclats de plus à chaque victoire, une carte en or la première fois.` });
+  } else if (x.remuee) {
+    // la Strate remuée (descentes.ts, REMUEE) : expliquée une fois, à la première sortie dans une Strate remuée
+    r.push({ id: 'remuee', sur: tr`STRATE −${x.strate} · REMUÉE`, titre: tr('La roche a bougé cette nuit'), ico: 'strate',
+      texte: tr`Chaque jour, une Strate que tu as déjà vaincue se réveille autrement : pour la journée, elle emprunte la façon d’être d’une autre.${p ? tr` Ici, aujourd’hui : ${p.nom.charAt(0).toLowerCase()}${p.nom.slice(1)} (Strate −${m}).` : ''}`,
+      conseil: tr('La première sortie réussie du jour dans la Strate remuée laisse une prime : des Éclats et une carte au choix. Une fouille facile ne suffit pas.') });
   } else if (p) {
     r.push({ id: `strate-${x.strate}`, sur: tr`STRATE −${x.strate} · SA PARTICULARITÉ`, titre: p.nom, ico: 'strate',
       texte: tr`Chaque Strate a sa façon d’être. Ici : ${p.texte.charAt(0).toLowerCase()}${p.texte.slice(1)} Elle reste rappelée sous le nom de la Strate.`,

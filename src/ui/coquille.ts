@@ -494,6 +494,7 @@ export function gainsRapport(r: RapportMission): string {
     + `<li>${ICO.monter}<b>+${r.xp}</b><small>${tr`XP${r.niveau ? tr` · niveau ${r.niveau}` : ''}`}</small></li>`
     + r.cartes.map((c) => `<li class="rm-carte${c.nouvelle ? ' nouvelle' : ''}">${ICO.cartes}<b>${echap(moduleDef(c.id).nom)}</b><small>${METAL(moduleDef(c.id).rarete)}${c.nouvelle ? tr(' · nouvelle') : tr(' · doublon')}</small></li>`).join('')
     + (r.creuseurs ? `<li>${ICO.ouvrier}<b>+${r.creuseurs}</b><small>${tr`creuseur${r.creuseurs > 1 ? 's' : ''}`}</small></li>` : '')
+    + (r.confiee && r.eclats ? `<li>${ICO.eclats}<b>+${r.eclats}</b><small>${tr`Éclat${r.eclats > 1 ? 's' : ''}`}</small></li>` : '')
     + (r.contrat?.choix ? `<li class="rm-carte nouvelle">${ICO.cartes}<b>${tr`3 cartes`}</b><small>${tr`au choix, au district`}</small></li>` : '')
     + (r.contrat && !r.contrat.reussi ? `<li>${ICO.lueur}<b>${tr`+1 Indice`}</b><small>${tr`pour la prochaine tentative`}</small></li>` : '')
     + (r.usure ? `<li class="rm-usure">${ICO.soin}<b>+${virgule(r.usure)}</b><small>${tr`Usure`}</small></li>` : '')
@@ -508,7 +509,10 @@ function feuilleRapport(e: EcranDistrict): string {
   const p = porteurDef(r.porteur);
   const reste = (e.j.rapports ?? []).filter((x) => !x.lu).length - 1;
   const ct = r.contrat;
-  const tete = ct
+  const cf = r.confiee;
+  const tete = cf
+    ? `<span class="rm-equipe">${cf.porteurs.map((x) => avatar(x, 36)).join('')}</span><div class="titres"><span class="surtitre">${tr`Fouille confiée · Strate −${cf.strate}`}</span><h2 id="rm-titre">${tr`Retour de l’escouade ${cf.escouade + 1}`}</h2></div>`
+    : ct
     ? `<span class="rm-equipe">${ct.porteurs.map((x) => avatar(x, 36)).join('')}</span><div class="titres"><span class="surtitre">${tr`${MAREES[ct.rang].nom} · ${ct.taux} % de chances`}</span><h2 id="rm-titre">${echap(ct.titre)} : ${ct.reussi ? tr('réussi') : tr('manqué')}</h2></div>`
     : `${avatar(r.porteur, 48)}<div class="titres"><span class="surtitre">${r.basses ? tr('Famille secourue') : tr('Mission en mer')}</span><h2 id="rm-titre">${tr`Retour ${echap(deNom(p.nom))}`}</h2></div>`;
   return `<div class="voile-feuille" data-action="rapport-lu" aria-hidden="true"></div><section class="feuille rapport-mission${ct ? ` rm-contrat${ct.reussi ? ' reussi' : ' manque'}` : ''}" role="dialog" aria-modal="true" aria-labelledby="rm-titre" style="--c:${COULEUR[p.lignee]}">`

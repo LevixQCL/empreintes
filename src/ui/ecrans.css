@@ -268,3 +268,21 @@
 .tr-creuse{height:6px;margin:8px 0 6px;border-radius:3px;background:rgba(205,239,255,.12);overflow:hidden}
 .tr-creuse i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,rgba(242,213,140,.45),var(--x-or,#F2D58C));box-shadow:0 0 8px rgba(242,200,110,.5)}
 .tr-creuse-aide{display:block;margin-top:2px;color:var(--x-doux)}
+
+/* Autour du front (12 novembre 2026) : la Strate remuée du jour, la fouille confiée, la Flèche */
+.tr-autour{display:grid;gap:8px;padding:12px 14px;border-radius:4px;background:rgba(10,13,26,.6);box-shadow:inset 0 0 0 1px rgba(205,239,255,.14)}
+.tr-autour .surtitre{font-size:12px;color:var(--x-glace)}
+.tr-autour .surtitre::before{display:none}
+.tr-autour ul{list-style:none;margin:0;padding:0;display:grid}
+.tr-autour-ligne{display:flex;align-items:center;gap:10px;padding:10px 0}
+.tr-autour-ligne+.tr-autour-ligne{border-top:1px solid rgba(205,239,255,.1)}
+.tr-autour-ligne>.ico{width:20px;height:20px;flex-shrink:0;color:var(--x-or)}
+.tr-autour-ligne.faite>.ico{color:var(--x-vert)}
+.tr-autour-ligne>span{flex:1;min-width:0;display:grid;gap:2px}
+.tr-autour-ligne strong{font-size:15px;font-weight:600;line-height:1.25;color:#F6F2EA}
+.tr-autour-ligne small{font-size:13px;line-height:1.4;color:var(--x-txt)}
+.tr-autour-ligne small b{color:var(--x-or);font-weight:600;font-variant-numeric:tabular-nums}
+.tr-autour-ligne .jauge{display:block;margin-top:4px}
+.tr-autour-ligne .btn{flex-shrink:0;min-height:42px;padding:0 14px;font-size:14px}
+.tr-remuee{display:flex;align-items:center;gap:6px;color:var(--x-or)!important}
+.tr-remuee .ico{width:14px;height:14px;flex-shrink:0}

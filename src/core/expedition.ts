@@ -15,6 +15,8 @@ export interface Expedition {
   strate: number;
   /** une Strate du Fond (−11 et plus bas) : la Strate dont elle emprunte cette semaine la particularité (strates.ts, FOND) */
   modele?: number;
+  /** la Strate remuée du jour (descentes.ts, REMUEE) : sa particularité est empruntée pour la journée, et sa prime attend */
+  remuee?: boolean;
   sequence: string[];
   index: number;
   porteurs: PorteurEtat[];
@@ -687,8 +689,10 @@ export function nouvelleExploration(opts: {
   vestiges?: string[]; rodeur?: { id: string; part: number }; eveille?: boolean; releve?: boolean;
   /** la semaine en cours : la particularité qu'emprunte une Strate du Fond */
   semaine?: number;
+  /** la Strate remuée du jour (descentes.ts, REMUEE) : la Strate dont elle emprunte la particularité aujourd'hui */
+  remuee?: number;
 }): Expedition {
-  const modele = modeleStrate(opts.strate, opts.semaine ?? 0);
+  const modele = opts.remuee ?? modeleStrate(opts.strate, opts.semaine ?? 0);
   // les Vestiges de la carte : 2 jusqu'à −5, 3 plus bas, tirés parmi ceux qui manquent ; le suivant attend derrière le passage secret
   const manque = opts.fouille ? [] : tireur({ rng: (opts.rng ^ 0x2545f491) >>> 0 }).melanger([...(opts.vestiges ?? [])]);
   const n = opts.strate <= 5 ? EXPLORER.vestiges.haut : EXPLORER.vestiges.bas;
@@ -702,11 +706,11 @@ export function nouvelleExploration(opts: {
   const attente = creerCombat({ porteurs: opts.porteurs, ennemiId: premier, rng: opts.rng, deck: opts.deck });
   attente.issue = 'victoire';
   return {
-    strate: opts.strate, ...(modele !== opts.strate ? { modele } : {}), sequence: [], index: -1, porteurs: opts.porteurs, deck: opts.deck, combat: attente,
+    strate: opts.strate, ...(modele !== opts.strate ? { modele } : {}), ...(opts.remuee ? { remuee: true } : {}), sequence: [], index: -1, porteurs: opts.porteurs, deck: opts.deck, combat: attente,
     butin: 0, terminee: false, cloture: true, carte, phase: 'carte', gagnes: 0, gains: gainsVides(),
     recit: opts.fouille
-      ? tr`L’escouade descend fouiller ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Pas de gardien cette fois : le filon est au fond.`
-      : tr`L’escouade entre dans ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Choisis ton chemin : le gardien attend tout au fond.${particularite(modele) ? ` ${modele !== opts.strate ? tr`Cette semaine, le Fond emprunte à la Strate −${modele} ${particularite(modele)!.nom.charAt(0).toLowerCase()}${particularite(modele)!.nom.slice(1)}.` : `${particularite(modele)!.nom}.`} ${particularite(modele)!.texte}` : ''}${carte.salles.some((s) => s.quete) ? tr` Une marque de quête ✦ brille quelque part sur le plan.` : ''}${places.size ? tr` ${places.size > 1 ? tr`${places.size} Vestiges dorment` : tr('Un Vestige dort')} sur le plan.` : ''}${traque ? ` ${rodeurDef(traque.id)!.traces}` : ''}`,
+      ? tr`L’escouade descend fouiller ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Pas de gardien cette fois : le filon est au fond.${opts.remuee && particularite(modele) ? tr` La roche a bougé cette nuit : aujourd’hui, cette Strate emprunte à la Strate −${modele} ${particularite(modele)!.nom.charAt(0).toLowerCase()}${particularite(modele)!.nom.slice(1)}. ${particularite(modele)!.texte}` : ''}`
+      : tr`L’escouade entre dans ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Choisis ton chemin : le gardien attend tout au fond.${particularite(modele) ? ` ${modele !== opts.strate ? (opts.remuee ? tr`La roche a bougé cette nuit : aujourd’hui, cette Strate emprunte à la Strate −${modele} ${particularite(modele)!.nom.charAt(0).toLowerCase()}${particularite(modele)!.nom.slice(1)}.` : tr`Cette semaine, le Fond emprunte à la Strate −${modele} ${particularite(modele)!.nom.charAt(0).toLowerCase()}${particularite(modele)!.nom.slice(1)}.`) : `${particularite(modele)!.nom}.`} ${particularite(modele)!.texte}` : ''}${carte.salles.some((s) => s.quete) ? tr` Une marque de quête ✦ brille quelque part sur le plan.` : ''}${places.size ? tr` ${places.size > 1 ? tr`${places.size} Vestiges dorment` : tr('Un Vestige dort')} sur le plan.` : ''}${traque ? ` ${rodeurDef(traque.id)!.traces}` : ''}`,
     ...(opts.fouille ? { fouille: opts.fouille } : {}),
     ...(opts.fouille && opts.difficulte ? { difficulte: opts.difficulte } : {}),
     ...(opts.facteur && opts.facteur !== 1 ? { facteur: opts.facteur } : {}),

@@ -254,7 +254,7 @@ export interface Chantier {
 
 /** Un choix de carte en attente (boss, objectif du jour, Archive) */
 export interface Choix {
-  source: 'boss' | 'quotidien' | 'archive' | 'ravitaillement' | 'fouille' | 'epreuve' | 'parrainage' | 'releve' | 'etoiles' | 'rodeur' | 'maree' | 'fleche';
+  source: 'boss' | 'quotidien' | 'archive' | 'ravitaillement' | 'fouille' | 'epreuve' | 'parrainage' | 'releve' | 'etoiles' | 'rodeur' | 'maree' | 'fleche' | 'remuee';
   options: string[];
   /** le joueur peut prendre des Éclats à la place */
   eclats?: number;
@@ -421,6 +421,10 @@ export interface Jeu {
   frontVaincu: boolean;
   /** quand les creuseurs ont attaqué la roche sous le gardien vaincu (12 novembre 2026 : la creuse prend du temps) */
   creuseDebut?: number;
+  /** la fouille confiée en cours (12 novembre 2026, partie/confiees.ts) : une escouade fouille seule une Strate vaincue */
+  confiee?: FouilleConfiee | null;
+  /** le jour où la prime de la Strate remuée a été prise (12 novembre 2026, descentes.ts : REMUEE) */
+  remueeFaite?: number;
   /** les fils des Porteurs : nombre d'étapes faites par Porteur (23 octobre 2026) */
   fils?: Record<string, number>;
   /** l’Héritage du district choisi dans la lettre de la directrice (27 octobre 2026) : une carte de l’Héritage, ou « cle » (la Clé de l’Héritage) */
@@ -531,7 +535,7 @@ export function log(j: Jeu, t: string) {
 
 export const enExpedition = (j: Jeu, id: string) => (!!j.expedition && j.expedition.porteurs.some((p) => p.id === id)) || enMission(j, id);
 /** en mer : sur une barque, ou sur la gabare d'un contrat de marée (31 octobre 2026) */
-export const enMission = (j: Jeu, id: string) => !!j.missions?.some((m) => m.porteur === id) || !!j.marees?.contrat?.porteurs.includes(id) || j.basses?.expedition?.porteur === id;
+export const enMission = (j: Jeu, id: string) => !!j.missions?.some((m) => m.porteur === id) || !!j.marees?.contrat?.porteurs.includes(id) || j.basses?.expedition?.porteur === id || !!j.confiee?.porteurs.includes(id);
 export const posteDe = (j: Jeu, b: Poste) => Object.keys(j.porteurs).find((id) => j.porteurs[id]!.poste === b) ?? null;
 export const pvMaxCombat = (j: Jeu, id: string) => pvNiveau(j, id) + bonusPv(j, id) - Math.floor(j.porteurs[id]!.usure);
 /** L'Usure ne peut pas dépasser tous les PV du Porteur */
@@ -878,6 +882,9 @@ export interface Mission { porteur: string; strate: number; duree: DureeMission;
   /** des naufragés ont été recueillis (la première barque du jour vers ce lieu, dans le plafond de la Strate) */
   secours?: boolean }
 
+/** Une fouille confiée (12 novembre 2026) : trois Porteurs fouillent seuls une Strate déjà vaincue, pendant que le joueur fait autre chose */
+export interface FouilleConfiee { porteurs: string[]; escouade: number; strate: number; cible: 'tech' | 'bio' | 'reso' | 'composants' | 'eclats'; debut: number; fin: number }
+
 /** Le rapport d'une mission rentrée (demande de Luc, 28 octobre 2026) : un petit récit et tout ce qu'elle a rapporté */
 export interface RapportMission {
   porteur: string; strate: number; duree: DureeMission; fin: number; lieu?: string; butin?: Mission['butin']; eclats?: number;
@@ -895,6 +902,8 @@ export interface RapportMission {
   habitants?: number;
   /** une expédition dans les Basses : le lieu et la famille ramenée (7 novembre 2026) */
   basses?: { lieu: string; famille: string };
+  /** une fouille confiée (12 novembre 2026) : la Strate, ce qu'on y cherchait et toute l'escouade */
+  confiee?: { strate: number; cible: FouilleConfiee['cible']; porteurs: string[]; escouade: number };
   /** un contrat de marée (31 octobre 2026) : toute l'équipe, réussi ou non, et l'épreuve qui a cédé */
   contrat?: { rang: 'montante' | 'vive' | 'grande'; titre: string; reussi: boolean; porteurs: string[]; taux: number; choix: boolean; cedee?: string };
   lu: boolean;

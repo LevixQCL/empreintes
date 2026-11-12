@@ -2,6 +2,10 @@
  "source": "src/ui/porteurs.ts",
  "entrees": [
   {
+   "fr": "En fouille · Strate −{0}",
+   "en": "On a dig · Stratum −{0}"
+  },
+  {
    "fr": "En mission",
    "en": "On a mission"
   },

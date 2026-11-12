@@ -30,6 +30,7 @@ const fr = (x: number) => x.toLocaleString(locale()).replace(/\u202f/g, '\u00a0'
 /** Où est le Porteur en ce moment */
 function statut(j: Jeu, id: string): { texte: string; classe: string } {
   const d = j.porteurs[id]!;
+  if (j.confiee?.porteurs.includes(id)) return { texte: tr`En fouille · Strate −${j.confiee.strate}`, classe: 'parti' };
   if (enMission(j, id)) return { texte: tr('En mission'), classe: 'parti' };
   if (enExpedition(j, id)) return { texte: tr('En expédition'), classe: 'parti' };
   if (d.poste === 'noyau') return { texte: tr('À l’entraînement · Tour du Noyau'), classe: 'travail' };

@@ -90,12 +90,20 @@
    "en": "A smell of dead fire, softer air. Diggers stopped here."
   },
   {
-   "fr": "L’escouade descend fouiller {0}. Pas de gardien cette fois : le filon est au fond.",
-   "en": "The squad goes down to dig {0}. No guardian this time: the seam is at the bottom."
+   "fr": "L’escouade descend fouiller {0}. Pas de gardien cette fois : le filon est au fond.{1}",
+   "en": "The squad goes down to dig {0}. No guardian this time: the seam is at the bottom.{1}"
+  },
+  {
+   "fr": " La roche a bougé cette nuit : aujourd’hui, cette Strate emprunte à la Strate −{0} {1}{2}. {3}",
+   "en": " The rock shifted overnight: today, this Stratum borrows {1}{2} from Stratum −{0}. {3}"
   },
   {
    "fr": "L’escouade entre dans {0}. Choisis ton chemin : le gardien attend tout au fond.{1}{2}{3}{4}",
    "en": "The squad enters {0}. Choose your path: the guardian waits at the very bottom.{1}{2}{3}{4}"
+  },
+  {
+   "fr": "La roche a bougé cette nuit : aujourd’hui, cette Strate emprunte à la Strate −{0} {1}{2}.",
+   "en": "The rock shifted overnight: today, this Stratum borrows {1}{2} from Stratum −{0}."
   },
   {
    "fr": "Cette semaine, le Fond emprunte à la Strate −{0} {1}{2}.",

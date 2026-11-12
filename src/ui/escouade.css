@@ -187,3 +187,18 @@ button.es-place.vide{width:100%;border:0;font:inherit;cursor:pointer;color:inher
 .es-force-chiffres b{color:var(--es-glace);font-weight:600;font-variant-numeric:tabular-nums}
 .es-force-conseils{margin:8px 0 0;padding:8px 0 0 16px;border-top:1px solid rgba(205,239,255,.1);font-size:13px;line-height:1.45;color:var(--es-txt)}
 .es-force-conseils li+li{margin-top:3px}
+
+/* La Strate remuée et la fouille confiée (12 novembre 2026) : même verre que la force de l'escouade */
+.es-remuee{display:flex;align-items:flex-start;gap:10px;margin:12px 0 0;padding:10px 12px;border-radius:6px;font-size:13.5px;line-height:1.45;color:var(--es-txt);background:linear-gradient(180deg,rgba(242,200,110,.1),rgba(242,200,110,.03));box-shadow:inset 0 0 0 1px rgba(242,200,110,.24)}
+.es-remuee .ico{width:18px;height:18px;flex-shrink:0;margin-top:1px;color:var(--es-or)}
+.es-remuee strong{display:block;font-weight:600;color:var(--es-or)}
+.es-remuee.faite{background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12)}
+.es-remuee.faite .ico,.es-remuee.faite strong{color:var(--es-glace)}
+.es-confier{margin:14px 0 4px;padding:12px;border-radius:6px;background:linear-gradient(180deg,rgba(205,239,255,.06),rgba(205,239,255,.02));box-shadow:inset 0 0 0 1px rgba(205,239,255,.12)}
+.es-confier-tete{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.es-confier-tete b{font-size:15px;font-weight:600;color:var(--es-or);font-variant-numeric:tabular-nums}
+.es-confier p{margin:6px 0 0;font-size:13.5px;line-height:1.45;color:var(--es-doux)}
+.es-confier p b{color:var(--es-txt);font-weight:600}
+.es-confier-non{display:flex;align-items:flex-start;gap:8px;color:#E8B86A!important}
+.es-confier-non .ico{width:15px;height:15px;flex-shrink:0;margin-top:2px}
+.es-confier .btn{width:100%;min-height:46px;margin-top:10px;justify-content:center}

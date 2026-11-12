@@ -1066,6 +1066,10 @@
    "en": "The tide’s catch"
   },
   {
+   "fr": "La prime de la Strate remuée",
+   "en": "The shifted Stratum’s bonus"
+  },
+  {
    "fr": "Un quai gravé de la Flèche",
    "en": "An engraved quay of the Spire"
   },
@@ -2182,6 +2186,10 @@
    "en": "front line: its guardian awaits you"
   },
   {
+   "fr": "Remuée aujourd’hui",
+   "en": "Shifted today"
+  },
+  {
    "fr": "Roche à creuser",
    "en": "Rock to dig"
   },
@@ -2470,6 +2478,10 @@
    "en": "Latest reports"
   },
   {
+   "fr": "Escouade {0} · fouille confiée, Strate −{1}",
+   "en": "Squad {0} · entrusted dig, Stratum −{1}"
+  },
+  {
    "fr": "+{0} minerai{1}{2}",
    "en": "+{0} ore{1}{2}"
   },
@@ -2480,6 +2492,78 @@
   {
    "fr": " · +{0} creuseur{1}",
    "en": " · +{0} digger{1}"
+  },
+  {
+   "fr": "Strate remuée du jour · −{0}",
+   "en": "Today’s shifted Stratum · −{0}"
+  },
+  {
+   "fr": "(empruntée à −{0})",
+   "en": "(borrowed from −{0})"
+  },
+  {
+   "fr": "Prime prise aujourd’hui.",
+   "en": "Bonus taken today."
+  },
+  {
+   "fr": "Première sortie réussie : {0} Éclats et une carte au choix.",
+   "en": "First successful outing: {0} Shards and a card of your choice."
+  },
+  {
+   "fr": "L’escouade {0} fouille seule la Strate −{1}",
+   "en": "Squad {0} is digging Stratum −{1} on its own"
+  },
+  {
+   "fr": "Retour dans",
+   "en": "Back in"
+  },
+  {
+   "fr": "Fouille confiée",
+   "en": "Entrusted dig"
+  },
+  {
+   "fr": "Une escouade fouille seule une Strate vaincue ({0} h) pendant que tu joues avec une autre.",
+   "en": "A squad digs a beaten Stratum on its own ({0} h) while you play with another."
+  },
+  {
+   "fr": "§fouille§Confier",
+   "en": "Entrust"
+  },
+  {
+   "fr": "La Flèche · quai {0}",
+   "en": "The Spire · quay {0}"
+  },
+  {
+   "fr": "Un seul combat contre les gardiens des Hauts.",
+   "en": "A single fight against the guardians of the Heights."
+  },
+  {
+   "fr": "Trop haut pour ton escouade pour l’instant : renforce-la d’abord.",
+   "en": "Too high for your squad for now: make it stronger first."
+  },
+  {
+   "fr": "Un seul combat : {0} % de chances avec ton escouade.",
+   "en": "A single fight: {0}% chance with your squad."
+  },
+  {
+   "fr": "Voir",
+   "en": "View"
+  },
+  {
+   "fr": "Monter",
+   "en": "Climb"
+  },
+  {
+   "fr": "Autour du front",
+   "en": "Around the front line"
+  },
+  {
+   "fr": "En attendant la galerie",
+   "en": "While the gallery is dug"
+  },
+  {
+   "fr": "Aujourd’hui en bas",
+   "en": "Down below today"
   },
   {
    "fr": "leurs cartes, et une au filon",
@@ -2566,6 +2650,42 @@
    "en": "recommended for Stratum −{0}"
   },
   {
+   "fr": "Strate remuée aujourd’hui",
+   "en": "Shifted Stratum today"
+  },
+  {
+   "fr": "La prime du jour est déjà prise.",
+   "en": "Today’s bonus is already taken."
+  },
+  {
+   "fr": "Première sortie réussie du jour : {0} Éclats et une carte au choix (pas en fouille facile).",
+   "en": "First successful outing of the day: {0} Shards and a card of your choice (not on an easy dig)."
+  },
+  {
+   "fr": "L’escouade {0} fouille déjà seule la Strate −{1}. Une seule fouille confiée à la fois.",
+   "en": "Squad {0} is already digging Stratum −{1} on its own. One entrusted dig at a time."
+  },
+  {
+   "fr": "chacun",
+   "en": "each"
+  },
+  {
+   "fr": "Ou la confier à cette escouade",
+   "en": "Or entrust it to this squad"
+  },
+  {
+   "fr": "Elle part seule et rapporte",
+   "en": "It goes on its own and brings back"
+  },
+  {
+   "fr": "Pendant ce temps, tu joues avec une autre escouade. C’est moins qu’une fouille jouée : ni creuseur, ni prime de Strate remuée.",
+   "en": "Meanwhile, you play with another squad. It is less than a dig you play yourself: no digger, no shifted Stratum bonus."
+  },
+  {
+   "fr": "Confier la fouille ({0} h)",
+   "en": "Entrust the dig ({0} h)"
+  },
+  {
    "fr": "FLÈCHE · DÉFI DU QUAI {0}",
    "en": "SPIRE · QUAY {0} CHALLENGE"
   },
@@ -2604,10 +2724,6 @@
   {
    "fr": "Choisis 3 Porteurs",
    "en": "Pick 3 Bearers"
-  },
-  {
-   "fr": "La Flèche · quai {0}",
-   "en": "The Spire · quay {0}"
   },
   {
    "fr": "Un seul combat contre les gardiens des Hauts : {0}.",
@@ -2848,10 +2964,6 @@
   {
    "fr": "{0} cartes, prêt",
    "en": "{0} cards, ready"
-  },
-  {
-   "fr": "Monter",
-   "en": "Climb"
   },
   {
    "fr": "Piller",
