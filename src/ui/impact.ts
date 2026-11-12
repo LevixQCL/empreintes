@@ -580,18 +580,21 @@ function lance(de: DOMPoint, a: DOMPoint, couleur: string, force: number, delai 
  * Fissure : l'éclat de roche en fusion peint par Bryan (12 novembre 2026, « ce n'est presque pas visible ») jaillit sur
  * l'ennemi, tient un moment, puis se consume ; sans la texture, les lézardes dorées dessinées prennent le relais.
  */
-function fissures(p: DOMPoint) {
+function fissures(p: DOMPoint, pastille?: Element | null) {
   const eclat = tirer('fissure');
   if (eclat && !reduit) {
+    // Bryan (12 novembre 2026) : sur l'ennemi, l'éclat se mélangeait grossièrement aux effets des dégâts. Il reste donc
+    // petit, sur la pastille « Fissure +25 % dégâts » qui vient d'apparaître, et la pastille bat une fois.
+    const r = pastille?.getBoundingClientRect();
+    const ici = r && r.width ? new DOMPoint(r.left + r.width / 2, r.top + r.height / 2) : p;
     const angle = hasard(-0.4, 0.4);
-    const large = 250 * ech;
+    const large = (r && r.width ? 120 : 110) * ech;
     trait((c, k) => {
-      const pop = k < 0.1 ? 0.5 + (k / 0.1) * 0.6 : 1.1 - Math.min(1, (k - 0.1) / 0.15) * 0.1 + k * 0.04;
-      peinte(c, eclat, p.x, p.y, large * pop, angle, consume(k, 0.55));
-      halo(c, p.x, p.y, large * (0.25 + k * 0.5), '#FFF3D0', Math.max(0, 1 - k * 5) * 0.6);
-    }, ms(1100));
-    eclats(p.x, p.y, 16, '#FFC56A', { vitesse: 300, taille: 2.4, gravite: 260, vie: 0.8 });
-    geler(70);
+      const pop = k < 0.12 ? 0.5 + (k / 0.12) * 0.6 : 1.1 - Math.min(1, (k - 0.12) / 0.15) * 0.1 + k * 0.04;
+      peinte(c, eclat, ici.x, ici.y, large * pop, angle, consume(k, 0.3));
+    }, ms(620));
+    eclats(ici.x, ici.y, 8, '#FFC56A', { vitesse: 160, taille: 2, gravite: 220, vie: 0.6 });
+    pastille?.animate([{ transform: 'scale(1.18)', filter: 'brightness(1.5)' }, { transform: 'none', filter: 'none' }], { duration: 420, easing: 'ease-out' });
     S.sonFissure();
     return;
   }
@@ -1282,7 +1285,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       return 0;
     }
     case 'effet': {
-      if (ev.texte === 'Fissure' && pEnnemi) fissures(pEnnemi);
+      if (ev.texte === 'Fissure' && pEnnemi) fissures(pEnnemi, racine.querySelector('.scene-ennemi .etat.fissure:not(.prevue)'));
       else if (ev.texte === 'Troublé') desarme(racine.querySelector('.scene-ennemi .intention'));
       else if (ev.texte === 'Élan') { const r = racine.querySelector('.zone-chaine')?.getBoundingClientRect(); if (r) elan(r); }
       else if (ev.texte === 'Dissonance' && !reduit) racine.querySelector('.zone-chaine')?.animate([{ filter: 'none' }, { filter: 'hue-rotate(70deg) blur(1px)', transform: 'translateX(3px)' }, { filter: 'hue-rotate(-50deg)', transform: 'translateX(-3px)' }, { filter: 'none', transform: 'none' }], { duration: 480 });
