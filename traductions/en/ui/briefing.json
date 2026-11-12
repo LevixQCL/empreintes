@@ -70,8 +70,8 @@
    "en": "Ore"
   },
   {
-   "fr": "Ce que l’escouade rapporte d’en bas : de la pierre bleue encore prise dans sa gangue.",
-   "en": "What the squad brings back from below: blue stone still locked in its rock."
+   "fr": "Ce que l’escouade rapporte d’en bas : de la pierre bleue encore prise dans sa gangue. En haut, c’est le petit « + » sous tes cristaux : ce qui attend d’être taillé.",
+   "en": "What the squad brings back from below: blue stone still locked in its rock. Up top, it’s the small “+” under your crystals: what’s waiting to be cut."
   },
   {
    "fr": "Les cristaux",
@@ -114,8 +114,8 @@
    "en": "The diggers break through"
   },
   {
-   "fr": "Quelques heures, affichées à la Tour. Des creuseurs en plus vont plus vite.",
-   "en": "A few hours, shown at the Tower. Extra diggers go faster."
+   "fr": "Tout de suite pour −2, puis quelques heures de plus à chaque étage, affichées à la Tour. Des creuseurs en plus vont plus vite.",
+   "en": "Right away for −2, then a few more hours for each level, shown at the Tower. Extra diggers go faster."
   },
   {
    "fr": "En attendant, renforce l’escouade",
@@ -162,8 +162,8 @@
    "en": "Your district"
   },
   {
-   "fr": "Ici, tout tourne avec trois ressources. Tu les vois en haut de l’écran : touches-en une pour tout savoir sur elle.",
-   "en": "Here, everything runs on three resources. You see them at the top of the screen: tap one to learn all about it."
+   "fr": "Ici, tout tourne avec trois ressources, toutes en haut de l’écran : touche les cristaux ou les Éclats pour tout savoir.",
+   "en": "Here, everything runs on three resources, all at the top of the screen: tap the crystals or the Shards to learn all about them."
   },
   {
    "fr": "Ceux qui restent, ceux qui descendent",

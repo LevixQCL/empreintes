@@ -54,7 +54,7 @@ export const ETAPES: Etape[] = [
 // pas le district : à quoi servent les ressources, qui travaille et qui descend, et le but (creuser plus bas).
 
 const demoRessources = () => `<ul class="demo-liste">`
-  + `<li>${icone('composants')}<span><b>${tr`Le minerai`}</b>${tr`Ce que l’escouade rapporte d’en bas : de la pierre bleue encore prise dans sa gangue.`}</span></li>`
+  + `<li>${icone('composants')}<span><b>${tr`Le minerai`}</b>${tr`Ce que l’escouade rapporte d’en bas : de la pierre bleue encore prise dans sa gangue. En haut, c’est le petit « + » sous tes cristaux : ce qui attend d’être taillé.`}</span></li>`
   + `<li>${icone('energie')}<span><b>${tr`Les cristaux`}</b>${tr`Le Générateur taille le minerai en cristaux, même quand tu ne joues pas. Ils paient tout : bâtiments, cartes, entraînement.`}</span></li>`
   + `<li>${icone('eclats')}<span><b>${tr`Les Éclats`}</b>${tr`Rares, trouvés en profondeur. Pour les cartes précieuses.`}</span></li>`
   + `</ul>`;
@@ -70,7 +70,7 @@ const demoEquipes = () => `<div class="demo-equipes">`
 const demoBoucle = () => `<ol class="demo-boucle">`
   + `<li><i>1</i>${icone('porte')}<span><b>${tr`Vaincre le gardien`}</b>${tr`On descend par la Tour du Noyau.`}</span></li>`
   // 12 novembre 2026 (audit du début) : la creuse, mise en ligne le même jour, rythme la suite ; on la dit ici
-  + `<li><i>2</i>${icone('ouvrier')}<span><b>${tr`Les creuseurs percent`}</b>${tr`Quelques heures, affichées à la Tour. Des creuseurs en plus vont plus vite.`}</span></li>`
+  + `<li><i>2</i>${icone('ouvrier')}<span><b>${tr`Les creuseurs percent`}</b>${tr`Tout de suite pour −2, puis quelques heures de plus à chaque étage, affichées à la Tour. Des creuseurs en plus vont plus vite.`}</span></li>`
   + `<li><i>3</i>${icone('strate')}<span><b>${tr`En attendant, renforce l’escouade`}</b>${tr`Fouilles, missions en mer, niveaux des cartes. L’écran de départ dit si elle est prête.`}</span></li>`
   + `<li class="fin">${icone('strate')}<span><b>${tr`La Strate suivante s’ouvre`}</b>${tr`Plus profond, plus précieux.`}</span></li></ol>`;
 
@@ -82,7 +82,7 @@ const demoRepere = () => `<ul class="demo-liste">`
 export const ETAPES_DISTRICT: Etape[] = [
   {
     qui: 'vela', titre: tr('Ton district'),
-    texte: tr('Ici, tout tourne avec trois ressources. Tu les vois en haut de l’écran : touches-en une pour tout savoir sur elle.'),
+    texte: tr('Ici, tout tourne avec trois ressources, toutes en haut de l’écran : touche les cristaux ou les Éclats pour tout savoir.'),
     demo: demoRessources,
   },
   {

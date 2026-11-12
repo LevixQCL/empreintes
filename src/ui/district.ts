@@ -1968,7 +1968,8 @@ function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof m
   const remuee = strateRemuee(j, e.now);
   let h = `<section class="tr-strates" aria-label="${tr`Les Strates`}">`
     + `<ul class="tr-legende"><li>${ICO.cristal}<span><b>${tr`Fouiller`}</b>${tr` : une descente courte, sans gardien, vers un filon (cartes, minerai ou Éclats).`}</span></li>`
-    + `<li>${ICO.descendre}<span><b>${tr`Explorer`}</b>${tr` : toute la Strate jusqu’à son gardien, éveillé s’il est déjà vaincu (meilleures cartes). Seul endroit où trouver les Vestiges, les étoiles et les Rôdeurs.`}</span></li></ul>`
+    // les Vestiges et ce qui va avec ne sont nommés qu'une fois ouverts (après −2), comme le reste des nouveautés par Strate
+    + `<li>${ICO.descendre}<span><b>${tr`Explorer`}</b>${vestigesOuverts(j) ? tr` : toute la Strate jusqu’à son gardien, éveillé s’il est déjà vaincu (meilleures cartes). Seul endroit où trouver les Vestiges, les étoiles et les Rôdeurs.` : tr` : toute la Strate jusqu’à son gardien, éveillé s’il est déjà vaincu (meilleures cartes).`}</span></li></ul>`
     + `<p class="tr-etoiles-total">${ICO.etoile}<b>${totalEtoiles(j)}</b> ${tr`étoile${totalEtoiles(j) > 1 ? 's' : ''}${prochainPalierEtoiles(j) ? tr` · prochaine récompense à ${prochainPalierEtoiles(j)!.etoiles} (une carte au choix, dont une en ${NOMS_RARETE[prochainPalierEtoiles(j)!.metal]})` : tr(' · toutes les récompenses sont prises')}`}</p><ol><li class="tr-sommet" aria-hidden="true"><img src="${decor('coupe')}" alt="" loading="lazy" decoding="async"><span>${tr`Surface · la Tour`}</span></li>`;
   for (let n = 1; n <= j.strate; n++) {
     const front = n === j.strate;
