@@ -566,20 +566,24 @@
    "en": "District"
   },
   {
-   "fr": "Tour",
-   "en": "Tower"
-  },
-  {
-   "fr": "Port",
-   "en": "Port"
-  },
-  {
    "fr": "Chroniques",
    "en": "Chronicles"
   },
   {
    "fr": "Plus",
    "en": "More"
+  },
+  {
+   "fr": "Descendre dans les Strates (−{0})",
+   "en": "Descend into the Strata (−{0})"
+  },
+  {
+   "fr": "Monter à la Flèche (quai {0})",
+   "en": "Climb the Spire (quay {0})"
+  },
+  {
+   "fr": "La Flèche, encore endormie",
+   "en": "The Spire, still asleep"
   },
   {
    "fr": "Navigation",

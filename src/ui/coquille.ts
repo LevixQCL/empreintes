@@ -15,7 +15,7 @@ import { CREUSE, finCreuse, heuresCreuse, cercleOuvert, MAREES, ACCORD_OUVERT, A
 import type { Lignee } from '../core/types';
 import { miniature, portrait, visageGarnison } from './art';
 import { feuilleGuide, trouveesDe } from './guide';
-import { ICO, icone, type Icone } from './icones';
+import { ICO, baseIcones, icone, type Icone } from './icones';
 import { feuilleNom } from './classements';
 import { cristalAllume, cristalRail, entreeFiche, feuilleFiche } from './fiche';
 import { COULEUR, ICONE_MUET, ICONE_SON, panneauCompte, type Compte } from './vue';
@@ -441,14 +441,14 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined, famille: stri
 /** la Strate vaincue à partir de laquelle l'onglet de la Flèche se montre (fermé jusqu'à −6) */
 const FLECHE_VISIBLE = 3;
 
-const ONGLETS: { vue: Vue | 'plus'; nom: string; icone: Icone }[] = [
+// 12 novembre 2026 (Bryan, après deux audits de game design) : la barre ne garde que les verbes. Les lieux (Tour, Port, Cercle…)
+// vivent sur la carte du district ; au centre, un médaillon peint fendu en deux comme un yin et yang : à gauche on descend
+// dans les Strates, à droite on monte à la Flèche. Tant que la Flèche n'est pas ouverte, sa moitié reste pétrifiée.
+const ONGLETS: { vue: Vue | 'plus' | 'medaillon'; nom: string; icone: Icone }[] = [
   { vue: 'archipel', nom: tr('District'), icone: 'district' },
-  { vue: 'coupe', nom: tr('Tour'), icone: 'tour' },
   // Porteurs et Cartes ne font plus qu'un onglet (25 octobre 2026) : l'escouade, ses Porteurs et leurs cartes au même endroit
   { vue: 'porteurs', nom: tr('Escouade'), icone: 'porteurs' },
-  // les Pillages et la Flèche ont leur onglet (28 octobre 2026, Bryan) : la carte des archipels voisins ne passe plus par le Port
-  { vue: 'pillages', nom: tr('Port'), icone: 'carte' },
-  { vue: 'fleche', nom: tr('Flèche'), icone: 'fleche' },
+  { vue: 'medaillon', nom: '', icone: 'strate' },
   // les Chroniques juste avant Plus (28 octobre 2026, Bryan) : on y va moins souvent qu'au reste
   { vue: 'codex', nom: tr('Chroniques'), icone: 'codex' },
   { vue: 'plus', nom: tr('Plus'), icone: 'plus' },
@@ -484,18 +484,33 @@ export function navigation(e: EcranDistrict): string {
     pillages: (!!j.chambre && strateVaincue(j) >= PILLAGE.strateDuPort && !j.portVu) || !!(o && o.onglet === 'pillages' && !o.fait(j)),
     fleche: flecheOuverte(j) && !j.fleche,
   };
-  const actif = e.menu || e.vue === 'classements' || e.vue === 'recruter' ? 'plus' : e.vue === 'escouade' ? (e.fleche ? 'fleche' : e.pillage ? 'pillages' : 'coupe') : e.vue === 'cartes' ? 'porteurs' : e.vue;
-  // sur PC (rail.css) : le cristal en tête (il ouvre la fiche du directeur et s'allume quand une récompense attend : 29 octobre 2026), puis les sept onglets ; la jauge des Strates a cédé sa place aux Pillages
-  // et à la Flèche (28 octobre 2026) : la Strate reste dans la barre du haut
-  // le premier jour désencombré (4 novembre 2026, après le test critique : sept onglets dont deux fermés dès la première minute) :
-  // le Port n'apparaît qu'une fois ouvert (après −1), la Flèche à partir de −3 (on la voit venir avant qu'elle ouvre à −6) ;
-  // tant qu'il y a 5 onglets ou moins, chacun garde son nom sous l'icône (classe « noms »)
-  const visibles = ONGLETS.filter((t) => (t.vue === 'pillages' ? (!!j.chambre && strateVaincue(j) >= PILLAGE.strateDuPort) || actif === 'pillages'
-    : t.vue === 'fleche' ? (!!j.chambre && strateVaincue(j) >= FLECHE_VISIBLE) || flecheOuverte(j) || actif === 'fleche' : true));
-  return `<nav class="nav${visibles.length <= 5 ? ' noms' : ''}" style="--onglets:${visibles.length}" aria-label="${tr`Navigation`}">${cristalRail(e)}` + visibles.map((t) => {
+  // le Port et le Cercle sont des lieux du district : leur écran garde l'onglet District allumé
+  const actif = e.menu || e.vue === 'classements' || e.vue === 'recruter' ? 'plus' : e.vue === 'escouade' ? (e.fleche ? 'fleche' : e.pillage ? 'archipel' : 'coupe')
+    : e.vue === 'cartes' ? 'porteurs' : e.vue === 'pillages' || e.vue === 'cercle' ? 'archipel' : e.vue;
+  // ce qui attend au Port s'annonce sur l'onglet District, puisque le Port n'a plus d'onglet
+  if (alerte.pillages) alerte.archipel = true;
+  // sur PC (rail.css) : le cristal en tête (il ouvre la fiche du directeur et s'allume quand une récompense attend), puis les onglets et le médaillon
+  const pastille = '<i class="pastille-alerte" aria-label="nouveau"></i>';
+  const medaillon = () => {
+    const ouverte = flecheOuverte(j);
+    // la moitié de la Flèche mène à son écran dès qu'on la voit venir (−3) ; avant, elle répond seulement qu'elle dort
+    const accessible = (!!j.chambre && strateVaincue(j) >= FLECHE_VISIBLE) || ouverte;
+    const ef = ouverte ? etatFleche(j) : null;
+    const moitie = (cote: 'coupe' | 'fleche', action: string, nom: string, etiquette: string, alerteCote: boolean) =>
+      `<button type="button" class="med-moitie med-${cote}${actif === cote ? ' actif' : ''}" data-action="${action}" aria-label="${etiquette}"${actif === cote ? ' aria-current="page"' : ''}>`
+      + (alerteCote ? pastille : '') + `<span class="onglet-nom">${nom}</span></button>`;
+    return `<div class="medaillon${ouverte ? '' : ' scelle'}${actif === 'coupe' || actif === 'fleche' ? ' actif' : ''}">`
+      + `<img class="med-image" src="${baseIcones}${ouverte ? 'medaillon' : 'medaillon-scelle'}.webp" alt="" aria-hidden="true" decoding="async">`
+      + moitie('coupe', 'coupe', tr('Strates'), tr`Descendre dans les Strates (−${j.strate})`, !!alerte.coupe)
+      + moitie('fleche', accessible ? 'fleche' : 'fleche-scellee', tr('Flèche'),
+        ouverte && ef ? tr`Monter à la Flèche (quai ${ef.quai})` : tr('La Flèche, encore endormie'), !!alerte.fleche)
+      + `</div>`;
+  };
+  return `<nav class="nav nav-medaillon noms" aria-label="${tr`Navigation`}">${cristalRail(e)}` + ONGLETS.map((t) => {
+    if (t.vue === 'medaillon') return medaillon();
     const action = t.vue === 'plus' ? 'menu' : t.vue;
     return `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${actif === t.vue ? ' aria-current="page"' : ''}>`
-      + `<span class="onglet-ico">${icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>'
+      + `<span class="onglet-ico">${icone(t.icone)}${alerte[t.vue as Vue | 'plus'] ? pastille
         // sur téléphone, le cristal n'existe pas : c'est l'onglet Plus (où vit la fiche) qui porte l'appel
         : t.vue === 'plus' && cristalAllume(e) ? `<i class="pastille-alerte appel-fiche" aria-label="${tr('une récompense t’attend')}"></i>` : ''}</span><span class="onglet-nom">${t.nom}</span></button>`;
   }).join('') + `</nav>`;

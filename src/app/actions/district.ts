@@ -34,6 +34,8 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       D.ongletBat = b.dataset.amelio !== undefined ? 'niveau' : 'salle';
       break;
     case 'ok-message': D.message = ''; break;
+    // la moitié pétrifiée du médaillon (12 novembre 2026) : la Flèche existe, mais elle dort encore
+    case 'fleche-scellee': D.message = t('La Flèche dort encore au-dessus de la ville. Continue de descendre : elle se réveillera.'); break;
     case 'ressource': D.ressource = id && D.ressource !== id ? (id as typeof D.ressource) : null; D.menu = false; D.selection = null; break;
     // la fiche du directeur (29 octobre 2026) : le cristal du rail, le médaillon de la barre du haut
     case 'fiche': D.fiche = !D.fiche; D.ressource = null; D.menu = false; D.selection = null; D.bulle = null; break;

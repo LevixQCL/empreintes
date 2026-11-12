@@ -1,0 +1,58 @@
+/* OSSYRA — le médaillon de la navigation (12 novembre 2026, Bryan).
+   Au centre de la barre, une seule image peinte sur Midjourney, fendue en S comme un yin et yang :
+   à gauche le puits bleu des Strates (on descend), à droite la tour dorée de la Flèche (on monte).
+   Deux zones de toucher invisibles se partagent l'image. Tant que la Flèche dort, sa moitié est pétrifiée
+   (medaillon-scelle.webp, même cadrage : le passage de l'une à l'autre est un simple fondu). */
+
+.nav .medaillon{position:relative;z-index:2;min-width:0;-webkit-tap-highlight-color:transparent}
+.nav .med-image{position:absolute;left:50%;pointer-events:none;transform:translateX(-50%);
+  filter:drop-shadow(0 0 12px rgba(95,168,255,.35)) drop-shadow(0 4px 8px rgba(0,0,0,.7));transition:filter .25s ease,transform .25s cubic-bezier(.2,1.4,.4,1)}
+.nav .medaillon.actif .med-image{filter:drop-shadow(0 0 16px rgba(140,200,255,.6)) drop-shadow(0 0 22px rgba(255,200,120,.25)) drop-shadow(0 4px 8px rgba(0,0,0,.7))}
+.nav .medaillon:has(.med-moitie:active) .med-image{transform:translateX(-50%) scale(.95)}
+
+/* les deux moitiés : chacune couvre sa moitié de l'image et son nom dessous */
+.nav .med-moitie{position:absolute;bottom:0;width:50%;margin:0;padding:0 0 3px;border:0;background:none;cursor:pointer;
+  display:flex;align-items:flex-end;color:#8E9AB5;font:inherit;font-size:var(--t-min);font-weight:600;letter-spacing:.02em}
+.nav .med-coupe{left:0;justify-content:flex-end}
+.nav .med-fleche{right:0;justify-content:flex-start}
+.nav .med-moitie .onglet-nom{white-space:nowrap;padding:0 7px}
+.nav .med-coupe.actif{color:#DDF0FF;text-shadow:0 0 10px rgba(120,190,255,.7)}
+.nav .med-fleche.actif{color:#FFF1D2;text-shadow:0 0 10px rgba(255,200,120,.65)}
+.nav .medaillon.scelle .med-fleche{color:#6C7591}
+.nav .med-moitie:focus-visible{outline:none}
+.nav .med-moitie:focus-visible .onglet-nom{text-decoration:underline;text-underline-offset:3px}
+/* chaque moitié a sa pastille, posée sur le bord du médaillon de son côté */
+.nav .med-moitie .pastille-alerte{position:absolute;z-index:3;width:17px;height:17px;border-radius:0;transform:none;
+  background:url("/art/icones/pastille.webp") center/contain no-repeat;box-shadow:none;
+  filter:drop-shadow(0 0 5px rgba(255,181,71,.85)) drop-shadow(0 1px 1px rgba(0,0,0,.8));animation:nav-eclat 2.2s ease-in-out infinite}
+
+/* ================= Téléphone : la barre du bas ================= */
+@media not ((min-width:1100px) and (min-height:600px)){
+  .nav.nav-medaillon{grid-template-columns:1fr 1fr 1.55fr 1fr 1fr}
+  .nav .medaillon{min-height:58px}
+  /* le médaillon dépasse de la barre : le bas de chaque écran garde de quoi défiler au-dessus */
+  .ecran:has(> .nav-medaillon) .contenu{padding-bottom:calc(var(--nav-h) + 52px + var(--sab))}
+  .nav .med-image{bottom:19px;width:84px;height:84px}
+  /* les zones de toucher montent jusqu'en haut de l'image */
+  .nav .med-moitie{top:-46px}
+  .nav .med-coupe .pastille-alerte{top:2px;right:30px}
+  .nav .med-fleche .pastille-alerte{top:2px;left:30px}
+  /* une encoche de lumière sur l'arête de la barre, sous la moitié ouverte */
+  .nav .medaillon.actif::after{content:"";position:absolute;z-index:0;left:50%;top:-1px;width:64px;height:2px;transform:translateX(-50%);
+    background:linear-gradient(90deg,transparent,#BFE2FF 30%,#fff 50%,#BFE2FF 70%,transparent);box-shadow:0 0 12px rgba(140,200,255,.9)}
+}
+
+/* ================= PC : le rail à gauche ================= */
+@media (min-width:1100px) and (min-height:600px){
+  .ecran > .nav .medaillon{flex:none;height:128px;margin:4px 0}
+  .ecran > .nav .med-image{top:6px;width:90px;height:90px}
+  .ecran > .nav .med-moitie{top:0;font-size:12.5px;padding-bottom:6px}
+  .ecran > .nav .med-moitie:hover{color:var(--ink)}
+  .ecran > .nav .medaillon.scelle .med-fleche:hover{color:#8E9AB5}
+  .ecran > .nav .med-coupe .pastille-alerte{top:6px;right:34px}
+  .ecran > .nav .med-fleche .pastille-alerte{top:6px;left:34px}
+  .ecran > .nav .medaillon.actif::before{content:"";position:absolute;top:50%;left:0;width:3px;height:38px;transform:translateY(-50%);
+    background:linear-gradient(180deg,#fff,var(--glace,var(--cristal)) 40%,#8fb6ff);box-shadow:0 0 12px rgba(160,210,255,.9)}
+}
+
+@media (prefers-reduced-motion:reduce){ .nav .med-moitie .pastille-alerte{animation:none} }

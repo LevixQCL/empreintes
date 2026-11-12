@@ -26,6 +26,8 @@ import './toucher.css';
 import './matieres.css';
 import './gains.css';
 import './rail.css';
+// le médaillon Strates / Flèche au centre de la barre (12 novembre 2026)
+import './medaillon.css';
 import './panneau-district.css';
 import './classements.css';
 import './parrainage.css';

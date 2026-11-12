@@ -2,6 +2,10 @@
  "source": "src/app/actions/district.ts",
  "entrees": [
   {
+   "fr": "La Flèche dort encore au-dessus de la ville. Continue de descendre : elle se réveillera.",
+   "en": "The Spire still sleeps above the city. Keep descending: it will wake."
+  },
+  {
    "fr": "Ravitaillement : +{0} cristaux{1}.{2}",
    "en": "Supplies: +{0} crystals{1}.{2}"
   },
