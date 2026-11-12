@@ -105,7 +105,7 @@
 .nf-ico svg{width:100%;height:100%;filter:drop-shadow(0 0 1cqw rgba(243,210,122,.6))}
 
 /* carte moyenne (91 à 150 px : main et chaîne sur PC, tuiles du deck) : gros chiffres, le nom et l'effet sans sa formule */
-@container (min-width:91px) and (max-width:150px){
+@container (90px < width <= 150px){
   .nf-caps{height:22cqw;border-radius:12cqw}
   .nf-seg{min-width:14cqw;font-size:11cqw}
   .nf-seg.p{min-width:23cqw;font-size:17.5cqw}
@@ -158,7 +158,7 @@
 /* en main, pas de nom (Bryan : il allonge la carte) : un appui prolongé ouvre la loupe ; il revient sur les cartes posées dans la chaîne */
 .geste.main .nf-ligne,.geste.main .nf-art::after{display:none}
 /* en main sur grand écran (carte moyenne) : comme en petit, l'image entière et deux capsules en bas, sans bande vide */
-@container (min-width:91px){
+@container (width > 90px){
   .geste.main .nf-voile{height:0;padding:0;background:none}
   .geste.main :is(.nf-barre,.nf-regle){display:none}
   .geste.main .nf-val{top:auto;bottom:3cqw;right:3cqw}
@@ -223,7 +223,7 @@
 @media (prefers-reduced-motion:reduce){ .loupe{animation:none} }
 
 /* un nom long passe sur deux lignes au lieu d'être coupé (« Grand uniss… », audit du 7 novembre 2026) : le voile grandit vers le haut */
-@container (min-width:91px){
+@container (width > 90px){
 .nf-voile{height:auto;min-height:calc(25% - var(--bord));padding-bottom:2.4cqw}
 .nf-nom{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.05;overflow-wrap:anywhere}
 }

@@ -28,9 +28,10 @@ const ENTRER = async (p: Page) => {
     await p.waitForTimeout(300);
   }
 };
-const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer' | 'comptoir' | 'creuse' | 'autour' | 'confier'; faire: (p: Page) => Promise<void> }[] = [
+const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer' | 'comptoir' | 'creuse' | 'autour' | 'confier' | 'choix'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
+  { nom: 'recompense-choix', sauvegarde: 'choix', faire: async (p) => { await p.click('.titre-go'); await p.waitForTimeout(600); } },
   { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="forge"]'); } },
   { nom: 'generateur', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="generateur"]'); } },
   // le Comptoir (1er novembre 2026) : les étals du jour et le bouton pour les renouveler une fois par jour
@@ -274,6 +275,10 @@ async function main() {
     const co = JSON.parse(JSON.stringify(saves.district));
     co.data.missions = [];
     (saves as Record<string, unknown>).confier = co;
+    // une récompense au choix (12 novembre 2026) : deux cartes neuves et un doublon, avec des Éclats à la place
+    const ch = JSON.parse(JSON.stringify(saves.district));
+    ch.data.choix = [{ source: 'quotidien', options: ['bras-grue@argent', Object.keys(ch.data.collection)[0], 'ombre-ailee@argent'], eclats: 2 }];
+    (saves as Record<string, unknown>).choix = ch;
     // la même expédition, mais à la Strate −6 : le brouillard ne laisse voir que des indices (30 octobre 2026)
     const br = JSON.parse(JSON.stringify(saves.combat));
     if (br.data.expedition) br.data.expedition.strate = 6;
