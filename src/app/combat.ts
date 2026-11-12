@@ -126,7 +126,7 @@ function popsDe(ev: Evenement, etat?: CombatEtat) {
   else if (ev.kind === 'effet' && ev.texte === 'Fissure') {
     // la Fissure se lit de loin (12 novembre 2026, Bryan : « presque pas visible ») : en grand, avec ce qu'elle ajoute
     const en = etat && C.tousEnnemis(etat).find((e) => (e.rang ?? 0) === (ev.rang ?? 0));
-    pop(ev.cible, en?.fissure ? t`Fissure +${Math.round(en.fissure * 100)} %` : t('Fissure'), 'var(--gold)', 1.5);
+    pop(ev.cible, en?.fissure ? t`Fissure +${Math.round(en.fissure * 100)} %` : t('Fissure'), 'var(--gold)', 1.2);
   } else if (ev.kind === 'effet') pop(ev.cible, EFFETS_AFFICHES[ev.texte] ?? ev.texte, 'var(--gold)');
   else if (ev.kind === 'flux') pop('escouade', t`+${ev.gain} Flux`, 'var(--gold)');
 }

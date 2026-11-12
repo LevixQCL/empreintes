@@ -65,8 +65,8 @@ const ms = (v: number) => v * cadence;
 // Chaque geste a sa texture ; tant qu'elle n'est pas chargée (ou si elle manque), le trait dessiné en code prend le relais.
 // Depuis le 4 novembre 2026, chaque effet existe en plusieurs variantes peintes par Bryan (3 ou 4) : chaque partie en charge
 // deux au hasard, et deux coups de suite ne prennent jamais la même. Les coups ennemis ont leurs propres textures (« e- »).
-type NomSprite = 'tech' | 'bio' | 'reso' | 'impact' | 'recu' | 'grand' | 'e-tech' | 'e-bio' | 'e-reso';
-const VARIANTES: Record<NomSprite, number> = { tech: 4, bio: 3, reso: 3, impact: 4, recu: 4, grand: 4, 'e-tech': 3, 'e-bio': 3, 'e-reso': 4 };
+type NomSprite = 'tech' | 'bio' | 'reso' | 'impact' | 'recu' | 'grand' | 'fissure' | 'e-tech' | 'e-bio' | 'e-reso';
+const VARIANTES: Record<NomSprite, number> = { tech: 4, bio: 3, reso: 3, impact: 4, recu: 4, grand: 4, fissure: 3, 'e-tech': 3, 'e-bio': 3, 'e-reso': 4 };
 /** variantes chargées par partie : assez pour varier, sans charger toutes les images sur téléphone */
 const PAR_PARTIE = 2;
 interface Texture { im: HTMLImageElement; etapes?: HTMLCanvasElement[] }
@@ -576,8 +576,25 @@ function lance(de: DOMPoint, a: DOMPoint, couleur: string, force: number, delai 
   setTimeout(() => eclats(fin.x - ux * 60, fin.y - uy * 60, 12 + force * 3, couleur, { vitesse: 320, taille: 2, trainee: true, gravite: 80, angle: Math.atan2(uy, ux), ouverture: 0.35 }), delai + 110);
 }
 
-/** Fissure : des lézardes dorées qui courent depuis l'impact et restent un instant */
+/**
+ * Fissure : l'éclat de roche en fusion peint par Bryan (12 novembre 2026, « ce n'est presque pas visible ») jaillit sur
+ * l'ennemi, tient un moment, puis se consume ; sans la texture, les lézardes dorées dessinées prennent le relais.
+ */
 function fissures(p: DOMPoint) {
+  const eclat = tirer('fissure');
+  if (eclat && !reduit) {
+    const angle = hasard(-0.4, 0.4);
+    const large = 250 * ech;
+    trait((c, k) => {
+      const pop = k < 0.1 ? 0.5 + (k / 0.1) * 0.6 : 1.1 - Math.min(1, (k - 0.1) / 0.15) * 0.1 + k * 0.04;
+      peinte(c, eclat, p.x, p.y, large * pop, angle, consume(k, 0.55));
+      halo(c, p.x, p.y, large * (0.25 + k * 0.5), '#FFF3D0', Math.max(0, 1 - k * 5) * 0.6);
+    }, ms(1100));
+    eclats(p.x, p.y, 16, '#FFC56A', { vitesse: 300, taille: 2.4, gravite: 260, vie: 0.8 });
+    geler(70);
+    S.sonFissure();
+    return;
+  }
   const n = 5 + Math.floor(hasard(0, 3));
   const chemins: [number, number][][] = [];
   for (let i = 0; i < n; i++) {
