@@ -19,9 +19,10 @@ export const TITRE_JOUEUR = tr('Directeur');
 
 const ent = (n: number) => Math.floor(n).toLocaleString(locale()).replace(/\u202f/g, '\u00a0');
 const GEMME = `<img class="fj-gemme" src="${baseIcones}pastille.webp" alt="" aria-hidden="true">`;
-const CRISTAL = './art/embleme-cristal.webp';
+/** le logo Ossyra (9 novembre 2026) : en tête du rail PC, du menu et de la fiche, à la place de l'ancien cristal */
+const CRISTAL = './art/logo-rail.webp';
 /** en tête du rail PC : le logo Ossyra (9 novembre 2026), à la place du cristal */
-const LOGO_RAIL = './art/logo-rail.webp';
+const LOGO_RAIL = CRISTAL;
 
 /** Le cristal s'allume ailleurs qu'au district : là, les panneaux et les bulles montrent déjà ce qui attend */
 export const cristalAllume = (e: EcranDistrict): boolean => e.vue !== 'archipel' && appelDuCristal(e.j);
