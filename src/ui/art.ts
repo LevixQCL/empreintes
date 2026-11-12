@@ -261,9 +261,11 @@ export const imageCharniere = (n: number): string | null => (CHARNIERES.has(n) ?
 export const imageCheville = `${base}scenes/cheville.webp`;
 /** La salle d'entraînement de la Tour du Noyau (23 octobre 2026) */
 export const salleEntrainement = `${base}salles/entrainement.webp`;
-/** L'intérieur peint d'un bâtiment (12 novembre 2026) : la scène en tête de sa feuille. Les autres attendent leur image
- *  (prompts dans docs/prompts-interieurs.md) : ajouter ici le nom du fichier de public/art/salles/ dès qu'il est déposé. */
-const INTERIEURS: Partial<Record<BatimentId, string>> = { noyau: 'entrainement' };
+/** L'intérieur peint d'un bâtiment (12 novembre 2026) : la scène en tête de sa feuille (prompts dans docs/prompts-interieurs.md).
+ *  Le Cercle n'en a pas encore : sa feuille garde l'en-tête sans image. */
+const INTERIEURS: Partial<Record<BatimentId, string>> = {
+  noyau: 'entrainement', forge: 'forge', generateur: 'generateur', clinique: 'clinique', comptoir: 'comptoir',
+};
 export const interieurBatiment = (id: BatimentId): string | null => (INTERIEURS[id] ? `${base}salles/${INTERIEURS[id]}.webp` : null);
 export const decor = (nom: 'coupe') => `${base}district/${nom}.webp`;
 /** Le Mur des empreintes (7 novembre 2026) : les 48 mains peintes, découpées en une planche de 8 × 6 (dans l'ordre des familles) */
@@ -357,6 +359,8 @@ export const barque = `${base}missions/barque.webp`;
  * Seuls les piliers du bord servent : le district, au centre du panorama, reste hors du cadre ; le premier est vu en miroir.
  */
 export const merLarge = `${base}district/mer-1.webp`;
+/** Le bandeau du Port : le port sur pilotis au pied de la digue de la Cuvette, devant son sas (Midjourney, 12 novembre 2026) */
+export const bandeauPort = `${base}district/port-bandeau.webp`;
 export const PILIERS_LARGE: readonly { x: number; y: number; miroir: boolean }[] = [
   { x: 3590, y: 415, miroir: false }, { x: 3710, y: 415, miroir: false }, { x: 360, y: 410, miroir: true },
 ];

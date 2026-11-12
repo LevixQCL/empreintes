@@ -74,7 +74,7 @@ type NomSprite = 'tech' | 'bio' | 'reso' | 'impact' | 'recu' | 'grand' | 'e-tech
 // public/art/effets (scripts/effets.py), il suffit d'écrire ici le nombre de variantes.
 const VARIANTES: Record<NomSprite, number> = {
   tech: 4, bio: 3, reso: 3, impact: 4, recu: 4, grand: 4, 'e-tech': 3, 'e-bio': 3, 'e-reso': 4,
-  ecu: 0, rempart: 0, brise: 0, soin: 0, vague: 0, lance: 0, anneau: 0, cristal: 0,
+  ecu: 3, rempart: 3, brise: 2, soin: 3, vague: 3, lance: 3, anneau: 3, cristal: 1,
 };
 /** variantes chargées par partie : assez pour varier, sans charger toutes les images sur téléphone */
 const PAR_PARTIE = 2;

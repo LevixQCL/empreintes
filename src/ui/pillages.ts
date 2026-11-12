@@ -4,7 +4,7 @@
 // Les règles sont dans src/core/partie/pillages.ts.
 
 import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, difficulte, escouadeActive, escouadeDefense, escouadesDe, etatPillage, forceEscouade, majJetons, MISSIONS, barquesMax, MAREES, bulleBasses, contratsDuMoment, mareesDe, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
-import { ageArchipel, merLarge, vignetteArchipel, vignetteDistrict, visuel } from './art';
+import { ageArchipel, bandeauPort, vignetteArchipel, vignetteDistrict, visuel } from './art';
 import { avatar, avatarGarde, gardesGarnison, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
 import { ICO, icone } from './icones';
@@ -26,7 +26,7 @@ export function htmlPillages(e: EcranDistrict): string {
   const pres = !portOuvert(j) ? 'fermee' : !j.portVu ? 'premiere' : e.portAide ? 'aide' : null;
   const aide = pres ? '' : `<button type="button" class="btn-icone" data-action="port-aide" aria-label="${t`Comment marche le Port`}">${ICO.aide}</button>`;
   // le bandeau peint (12 novembre 2026, Bryan : « rendre ceci beaucoup plus visuel ») : la mer des piliers derrière le titre
-  let h = entete(t('La mer des piliers'), t('Le Port'), aide).replace('<header class="entete">', `<header class="entete pl-bandeau" style="--decor:url(${merLarge})">`);
+  let h = entete(t('La mer des piliers'), t('Le Port'), aide).replace('<header class="entete">', `<header class="entete pl-bandeau" style="--decor:url(${bandeauPort})">`);
   if (pres) return coquille(e, h + presentation(pres, pillagesOuverts(j)), 'pl pl-pres');
 
   // deux volets : les pillages et les missions en mer
