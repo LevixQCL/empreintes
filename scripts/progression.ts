@@ -6,6 +6,7 @@
 // Clés d'un essai (toutes facultatives) :
 //   force=0.9 des=4      force des ennemis multipliée à partir de la Strate −des
 //   pente=0.95           en plus : force multipliée par pente^(Strate − des) (les Strates profondes baissent davantage, ou montent si > 1)
+//   t4=1.05 … t10=0.9    en plus : force de la Strate −4 … −10 multipliée (réglage Strate par Strate)
 //   bonus=0.25           COLLECTION.bonusNiveau (niveaux 2 et 4 : part de la force de départ)
 //   cran=0.15            COLLECTION.cranForce (niveaux 3 et 5 d'une carte sans effet à renforcer)
 //   doublons=0.5         doublons demandés par niveau, multipliés (arrondi, 1 au moins)
@@ -69,11 +70,11 @@ const METAUX: Record<number, typeof TABLES_RARETE> = {
   ],
 };
 function regler(r: Record<string, number>): void {
-  (CHARGE as { base: number }).base = r.charge === 0 ? 9999 : chargeBase;
+  (CHARGE as { base: number }).base = r.charge === 0 ? 150 : chargeBase;
   Object.assign(NIVEAU_METAL, seuilsOrigine, r.seuils ? SEUILS[r.seuils] : {});
   TABLES_RARETE.splice(0, TABLES_RARETE.length, ...(r.metaux ? METAUX[r.metaux]! : (JSON.parse(raretes) as typeof TABLES_RARETE).map((t) => ({ ...t, jusqua: t.jusqua ?? Infinity }))));
   const des = r.des ?? 4, k = r.force ?? 1, pente = r.pente ?? 1;
-  FORCE.table.splice(0, origine.table.length, ...origine.table.map((f, i) => (i + 1 >= des ? Math.round(f * k * pente ** (i + 1 - des) * 1000) / 1000 : f)));
+  FORCE.table.splice(0, origine.table.length, ...origine.table.map((f, i) => Math.round((i + 1 >= des ? f * k * pente ** (i + 1 - des) : f) * (r['t' + (i + 1)] ?? 1) * 1000) / 1000));
   C.bonusNiveau = r.bonus ?? origine.bonus;
   C.cranForce = r.cran ?? origine.cran;
   const d = JSON.parse(origine.doublons) as Record<Rarete, number[]>;
@@ -92,6 +93,7 @@ console.log('essai'.padEnd(22), 'front'.padEnd(6), '−4'.padEnd(5), '−7'.padE
 for (const e of ESSAIS) {
   regler(e.r);
   let sessions = 0, attentes = 0, prepa = 0;
+  const parStrate: Record<number, [number, number]> = {};
   const jourNiveau: Record<number, number[]> = { 4: [], 7: [], 10: [], 13: [] }, metal: Record<number, number[]> = {};
   const niveaux: Record<number, number[]> = {}, porteurs: number[] = [], rares: number[] = [], charge: Record<number, number[]> = {};
   const runs = Array.from({ length: GRAINES }, (_, i) => {
@@ -99,6 +101,7 @@ for (const e of ESSAIS) {
     const atteint = new Set<number>();
     return simulerParcours(PROFIL, JOURS, 1000 + i * 7919, {
       joueur: 'moyen',
+      tentative: (st, _f, v) => { const x = (parStrate[st] ??= [0, 0]); x[0]++; if (v) x[1]++; },
       ...(e.r.oser ? { oser: (j: { strate: number }, strate: number, force: number) => { const ok = force >= e.r.oser! * (e.r.conseil ?? 2.15) * forceStrate(strate); if (!ok && j.strate < 10) prepa++; return ok; } } : {}),
       session: (j, _jour, attente) => {
         if (e.r.niveaux) for (const c of Object.values(j.collection)) c.niveau = Math.max(c.niveau, e.r.niveaux);
@@ -130,7 +133,7 @@ for (const e of ESSAIS) {
     `${Math.round((100 * attentes) / Math.max(1, sessions))} %`.padEnd(8), `${Math.round((100 * prepa) / Math.max(1, sessions))} %`.padEnd(8), `${mediane(blocage)} (pire ${Math.max(...blocage)})`.padEnd(14),
     `${un(moy(niveaux[4] ?? []))} / ${un(moy(niveaux[7] ?? []))} / ${un(moy(niveaux[10] ?? []))}`.padEnd(42),
     `${Math.round(100 * moy(rares))} %`.padEnd(27), un(moy(porteurs)).padEnd(6),
-    `Porteurs niveau 4 / 7 / 10 / 13 au jour ${[4, 7, 10, 13].map((n) => (jourNiveau[n]!.length >= GRAINES / 2 ? mediane(jourNiveau[n]!) : '—')).join(' / ')}   argent+ à −4 / −7 / −10 : ${[4, 7, 10].map((x) => Math.round(100 * moy(metal[x] ?? [])) + ' %').join(' / ')}   ` + `Charge remplie à −4 / −7 / −10 : ${[4, 7, 10].map((x) => Math.round(100 * moy(charge[x] ?? [])) + ' %').join(' / ')}   ` + 'expéditions par front −2…−9 : ' + [2, 3, 4, 5, 6, 7, 8, 9].map((x) => mediane(runs.map((r) => r.expeditions[x + 1] ?? 0))).join(' '),
+    `victoires par front −2…−10 : ${[2, 3, 4, 5, 6, 7, 8, 9, 10].map((x) => (parStrate[x] ? Math.round((100 * parStrate[x]![1]) / parStrate[x]![0]) : '—')).join(' ')}   force −4…−10 : ${FORCE.table.slice(3, 10).join(' ')}   ` + `Porteurs niveau 4 / 7 / 10 / 13 au jour ${[4, 7, 10, 13].map((n) => (jourNiveau[n]!.length >= GRAINES / 2 ? mediane(jourNiveau[n]!) : '—')).join(' / ')}   argent+ à −4 / −7 / −10 : ${[4, 7, 10].map((x) => Math.round(100 * moy(metal[x] ?? [])) + ' %').join(' / ')}   ` + `Charge remplie à −4 / −7 / −10 : ${[4, 7, 10].map((x) => Math.round(100 * moy(charge[x] ?? [])) + ' %').join(' / ')}   ` + 'expéditions par front −2…−9 : ' + [2, 3, 4, 5, 6, 7, 8, 9].map((x) => mediane(runs.map((r) => r.expeditions[x + 1] ?? 0))).join(' '),
   );
 }
 regler({});
