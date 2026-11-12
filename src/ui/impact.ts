@@ -66,14 +66,14 @@ const ms = (v: number) => v * cadence;
 // Chaque geste a sa texture ; tant qu'elle n'est pas chargée (ou si elle manque), le trait dessiné en code prend le relais.
 // Depuis le 4 novembre 2026, chaque effet existe en plusieurs variantes peintes par Bryan (3 ou 4) : chaque partie en charge
 // deux au hasard, et deux coups de suite ne prennent jamais la même. Les coups ennemis ont leurs propres textures (« e- »).
-type NomSprite = 'tech' | 'bio' | 'reso' | 'impact' | 'recu' | 'grand' | 'fissure' | 'e-tech' | 'e-bio' | 'e-reso'
+type NomSprite = 'tech' | 'bio' | 'reso' | 'impact' | 'recu' | 'grand' | 'e-tech' | 'e-bio' | 'e-reso'
   | 'ecu' | 'rempart' | 'brise' | 'soin' | 'vague' | 'lance' | 'anneau' | 'cristal';
 // Les effets de défense, de soin et les effets de carte (12 novembre 2026) : ils étaient encore tracés en code, en traits fins,
 // à côté des attaques peintes. Chacun a maintenant sa texture prévue (docs/prompts-effets.md) : tant que Bryan ne l'a pas
 // peinte, le nombre de variantes reste à 0 et le tracé en code continue de servir. Une fois les images déposées dans
 // public/art/effets (scripts/effets.py), il suffit d'écrire ici le nombre de variantes.
 const VARIANTES: Record<NomSprite, number> = {
-  tech: 4, bio: 3, reso: 3, impact: 4, recu: 4, grand: 4, fissure: 3, 'e-tech': 3, 'e-bio': 3, 'e-reso': 4,
+  tech: 4, bio: 3, reso: 3, impact: 4, recu: 4, grand: 4, 'e-tech': 3, 'e-bio': 3, 'e-reso': 4,
   ecu: 0, rempart: 0, brise: 0, soin: 0, vague: 0, lance: 0, anneau: 0, cristal: 0,
 };
 /** variantes chargées par partie : assez pour varier, sans charger toutes les images sur téléphone */
@@ -615,46 +615,10 @@ function lance(de: DOMPoint, a: DOMPoint, couleur: string, force: number, delai 
 }
 
 /**
- * Fissure : l'éclat de roche en fusion peint par Bryan (12 novembre 2026, « ce n'est presque pas visible ») jaillit sur
- * l'ennemi, tient un moment, puis se consume ; sans la texture, les lézardes dorées dessinées prennent le relais.
+ * Fissure (12 novembre 2026) : plus rien ne se dessine sur l'ennemi. Bryan trouvait les lézardes « presque pas visibles »,
+ * puis l'éclat peint « kitsch » et mêlé aux effets des dégâts : c'est la pastille de l'ennemi qui change, en fondu (vue.ts).
  */
-function fissures(p: DOMPoint, pastille?: Element | null) {
-  const eclat = tirer('fissure');
-  if (eclat && !reduit) {
-    // Bryan (12 novembre 2026) : sur l'ennemi, l'éclat se mélangeait grossièrement aux effets des dégâts. Il reste donc
-    // petit, sur la pastille « Fissure +25 % dégâts » qui vient d'apparaître, et la pastille bat une fois.
-    const r = pastille?.getBoundingClientRect();
-    const ici = r && r.width ? new DOMPoint(r.left + r.width / 2, r.top + r.height / 2) : p;
-    const angle = hasard(-0.4, 0.4);
-    const large = (r && r.width ? 120 : 110) * ech;
-    trait((c, k) => {
-      const pop = k < 0.12 ? 0.5 + (k / 0.12) * 0.6 : 1.1 - Math.min(1, (k - 0.12) / 0.15) * 0.1 + k * 0.04;
-      peinte(c, eclat, ici.x, ici.y, large * pop, angle, consume(k, 0.3));
-    }, ms(620));
-    eclats(ici.x, ici.y, 8, '#FFC56A', { vitesse: 160, taille: 2, gravite: 220, vie: 0.6 });
-    pastille?.animate([{ transform: 'scale(1.18)', filter: 'brightness(1.5)' }, { transform: 'none', filter: 'none' }], { duration: AMPLE, easing: ENTREE });
-    S.sonFissure();
-    return;
-  }
-  const n = 5 + Math.floor(hasard(0, 3));
-  const chemins: [number, number][][] = [];
-  for (let i = 0; i < n; i++) {
-    let a = (i / n) * Math.PI * 2 + hasard(-0.3, 0.3);
-    let x = p.x, y = p.y;
-    const pts: [number, number][] = [[x, y]];
-    const seg = 4 + Math.floor(hasard(0, 3));
-    for (let j = 0; j < seg; j++) { a += hasard(-0.5, 0.5); const l = hasard(10, 20) * ech; x += Math.cos(a) * l; y += Math.sin(a) * l * 0.8; pts.push([x, y]); }
-    chemins.push(pts);
-  }
-  trait((c, k) => {
-    const ouvert = Math.min(1, k * 3);
-    c.globalAlpha = k < 0.6 ? 1 : 1 - (k - 0.6) / 0.4;
-    c.strokeStyle = '#FFD98A'; c.shadowColor = '#FF9E3D'; c.shadowBlur = 10; c.lineWidth = 2; c.lineJoin = 'round';
-    for (const pts of chemins) {
-      const m = Math.max(2, Math.ceil(pts.length * ouvert));
-      c.beginPath(); pts.slice(0, m).forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y))); c.stroke();
-    }
-  }, 900);
+function fissures() {
   S.sonFissure();
 }
 
@@ -1358,7 +1322,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       return 0;
     }
     case 'effet': {
-      if (ev.texte === 'Fissure' && pEnnemi) fissures(pEnnemi, racine.querySelector('.scene-ennemi .etat.fissure:not(.prevue)'));
+      if (ev.texte === 'Fissure') fissures();
       else if (ev.texte === 'Troublé') desarme(racine.querySelector('.scene-ennemi .intention'));
       else if (ev.texte === 'Élan') { const r = racine.querySelector('.zone-chaine')?.getBoundingClientRect(); if (r) elan(r); }
       else if (ev.texte === 'Dissonance' && !reduit) racine.querySelector('.zone-chaine')?.animate([{ filter: 'none' }, { filter: 'hue-rotate(70deg) blur(1px)', transform: 'translateX(3px)' }, { filter: 'hue-rotate(-50deg)', transform: 'translateX(-3px)' }, { filter: 'none', transform: 'none' }], { duration: AMPLE });

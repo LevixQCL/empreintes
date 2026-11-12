@@ -110,6 +110,17 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 #app[data-mode="combat"] .ecran-combat .etat.fissure.prevue{color:#FFE3A0;background:rgba(40,22,0,.72);box-shadow:inset 0 0 0 1px rgba(255,200,100,.25),0 0 10px rgba(255,170,60,.35);
   outline:1.5px dashed #FFC24D;outline-offset:-1.5px;animation:fissure-pulse 1.2s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.ecran-combat .etat.fissure.prevue{animation:none}}
+/* les fondus (12 novembre 2026, Bryan : « moins kitsch ») : ce qui change pendant la chaîne se dissout, ce qui le remplace paraît */
+.fondu{position:relative;display:inline-flex}
+#app[data-mode="combat"] .ecran-combat .nait{animation:fondu-nait .65s ease-out both}
+#app[data-mode="combat"] .ecran-combat .part,#app[data-mode="combat"] .ecran-combat .etat.fissure.prevue.part{animation:fondu-part .65s ease-in both;pointer-events:none}
+.fondu > .part{position:absolute;inset:0;justify-content:center;white-space:nowrap}
+/* l'ancienne plaque couvre toute la nouvelle (fond plein, contenu calé à droite comme avant) : on ne lit jamais les deux à la fois */
+.plaque-fantome{position:absolute;z-index:1;inset:0;display:flex}
+#app[data-mode="combat"] .ecran-combat .plaque-fantome > .plaque-int{position:static;margin:0;width:100%;max-width:none;flex-wrap:nowrap;justify-content:flex-end;height:100%;box-sizing:border-box;background:#0b0e18}
+@keyframes fondu-nait{0%,40%{opacity:0;filter:blur(3px) brightness(1.6)}100%{opacity:1;filter:none}}
+@keyframes fondu-part{0%{opacity:1;filter:none;transform:none}70%,100%{opacity:0;filter:blur(6px) brightness(1.4);transform:translateY(-5px) scale(1.04)}}
+@media (prefers-reduced-motion:reduce){#app[data-mode="combat"] .ecran-combat .nait{animation:none}#app[data-mode="combat"] .ecran-combat .part{display:none}}
 /* la carte qui agit s'avance, dans la couleur de sa lignée ; celles déjà jouées s'éteignent */
 .zone-chaine .en-jeu{transform:translateY(-10px) scale(1.08);filter:brightness(1.25) drop-shadow(0 0 14px var(--c,var(--gold)));z-index:2;transition:transform var(--vif) var(--entree)}
 .zone-chaine .jouee{filter:saturate(.35) brightness(.6);transform:scale(.96)}
@@ -854,6 +865,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
   #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi > .ennemi-infos{order:1}
   #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi > .plaque-int{order:2;position:relative;top:auto;left:auto;align-self:flex-end;
     width:auto;max-width:100%;margin:4px 0 0;flex-wrap:nowrap;gap:6px;padding:3px 10px 3px 3px;border-radius:999px}
+  #app[data-mode="combat"] .ecran-combat .plaque-fantome > .plaque-int{gap:6px;padding:3px 10px 3px 3px;border-radius:999px}
   /* une seule ligne : icône, nom de l'attaque, cible, dégâts, et la Fêlure en petit (« ◆9 18 → 9 ») */
   #app[data-mode="combat"] .ecran-combat .plaque-int .int-ico{width:24px;height:24px;flex:none}
   #app[data-mode="combat"] .ecran-combat .plaque-int .int-ico .ico{width:13px;height:13px}

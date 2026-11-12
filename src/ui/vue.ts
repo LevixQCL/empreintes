@@ -66,6 +66,8 @@ export interface Ecran {
   etat: CombatEtat;
   verrou: boolean;
   regles: boolean;
+  /** ce qui vient de changer pendant la chaîne et se fond (12 novembre 2026) : la Fissure posée, la Fêlure brisée (avec l'état d'avant) */
+  fondus?: { fissure?: number; felure?: { ne: number; avant: CombatEtat } };
   fin: Fin | null;
   /** consigne du combat guidé (chambre scellée) */
   lecon?: string;
@@ -441,7 +443,7 @@ export function htmlLieu(x: Expedition): string {
  * L'intention de l'ennemi visé, en plaque (26 octobre 2026) : ce qu'il prépare en petit, sur qui en clair (avec le portrait),
  * et la valeur en grand à droite. La phrase complète reste pour les lecteurs d'écran.
  */
-function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtml: string): string {
+function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtml: string, avant?: { html: string; delai: string }): string {
   const it = s.intention;
   let nom = '', quoi = '', val = '', unite = '', av = 1;
   // Brouillard : on sait ce que l'ennemi prépare, pas combien ni sur qui
@@ -471,11 +473,32 @@ function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtm
   else if (it.type === 'appel') { nom = it.nom; quoi = it.rompu ? tr('Appel rompu') : tr('Un renfort va surgir'); }
   else if (it.type === 'boost') { nom = tr('Se concentre'); quoi = tr('Prochaine attaque'); val = '×2'; unite = tr('dégâts'); }
   else { nom = it.nom; quoi = tr('Ni suite ni Écho au tour suivant'); }
-  return `<div class="intention plaque-int ${classe}" aria-live="polite" aria-label="${echap(texteIntention(s))}">`
+  return `<div class="intention plaque-int ${classe}${avant ? ' nait' : ''}"${avant ? avant.delai : ''} aria-live="polite" aria-label="${echap(texteIntention(s))}">`
     + `<span class="int-ico">${icone}</span>`
     + `<span class="int-corps" aria-hidden="true"><small class="int-nom">${echap(nom)}</small><span class="int-quoi">${it.type === 'atk' ? '<i class="int-fleche"></i>' : ''}${quoi}</span></span>`
     + (val ? `<span class="int-val${av > 1 ? ' alourdi' : ''}" aria-hidden="true"><b>${val}</b><small>${unite}</small></span>` : '')
-    + ensuite(s) + felureHtml + '</div>';
+    + ensuite(s) + felureHtml + (avant ? `<span class="plaque-fantome part"${avant.delai} aria-hidden="true">${avant.html}</span>` : '') + '</div>';
+}
+
+/** Un fondu en cours : le retard négatif qui garde l'animation à sa place d'un rendu à l'autre (comme les chiffres qui jaillissent) */
+const DUREE_FONDU = 650;
+function delaiFondu(ne: number | undefined): string {
+  if (!ne) return '';
+  const age = Date.now() - ne;
+  return age < 0 || age >= DUREE_FONDU ? '' : ` style="animation-delay:-${Math.round(age)}ms"`;
+}
+/**
+ * La Fêlure vient d'être brisée (12 novembre 2026, Bryan) : l'ancienne plaque de l'intention (« 17 ») se dissout par-dessus
+ * la nouvelle (« 9 »), qui paraît en même temps. Rien d'autre ne s'ajoute sur l'ennemi.
+ */
+function plaqueAvant(e: Ecran): { html: string; delai: string } | undefined {
+  const f = e.fondus?.felure;
+  const delai = delaiFondu(f?.ne);
+  if (!f || !delai || C_brume(f.avant)) return undefined;
+  const it = f.avant.intention;
+  const classe = it.type === 'atk' ? 'danger' : it.type === 'bouclier' || it.type === 'soin' ? 'garde' : 'boost';
+  const icone = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
+  return { delai, html: plaqueIntention(f.avant, classe, icone, f.avant.ennemi.felure === undefined ? '' : ligneFelure(f.avant, true, false)).replace(' aria-live="polite"', '') };
 }
 
 /**
@@ -781,6 +804,7 @@ function htmlEcranCombat(e: Ecran): string {
     + `<button type="button" class="btn-icone" data-action="regles" aria-expanded="${e.regles}" aria-label="${tr`Règles`}">${ICO.aide}</button></div></header>`;
 
   const enJeuTraits = traitsEnJeu(s.ennemi);
+  const fonduFissure = delaiFondu(e.fondus?.fissure);
   const fissurePrevue = !s.ennemi.fissure && s.ennemi.pv > 0 && s.chaine.some((g) => g.effet?.type === 'fissure' || g.effet2?.type === 'fissure') ? apercuChaine(s).fissure : 0;
   // l'Assimilation dit la lignée prise, dans sa couleur (28 octobre 2026) : on voit le changement sans lire le journal
   const marques = (enJeuTraits.length ? enJeuTraits.map((t) => {
@@ -789,7 +813,8 @@ function htmlEcranCombat(e: Ecran): string {
     return `<span class="trait${pris ? ' assimile' : ''}" tabindex="0" title="${echap(x.texte)}" aria-label="${echap(`${x.nom}${pris ? ` (devenu ${pris})` : ''} : ${x.texte}`)}"${pris ? ` style="--c:${COULEUR[s.ennemi.assimile!]}"` : ''}>${echap(x.nom)}${pris ? ` · ${echap(pris)}` : ''}</span>`;
   }).join('') : '')
     + (s.ennemi.bouclier ? `<span class="etat garde">${ICO.bouclier}${s.ennemi.bouclier}</span>` : '')
-    + (s.ennemi.fissure ? `<span class="etat fissure" tabindex="0" title="${tr`Fissure : il subit ${Math.round(s.ennemi.fissure * 100)} % de dégâts en plus`}">${ICO.fissure}${tr`Fissure +${Math.round(s.ennemi.fissure * 100)} % dégâts`}</span>`
+    // la Fissure vient d'être posée : la pastille en pointillés se dissout, celle en or paraît (12 novembre 2026, Bryan : « moins kitsch »)
+    + (s.ennemi.fissure ? `<span class="fondu"><span class="etat fissure${fonduFissure ? ' nait' : ''}"${fonduFissure} tabindex="0" title="${tr`Fissure : il subit ${Math.round(s.ennemi.fissure * 100)} % de dégâts en plus`}">${ICO.fissure}${tr`Fissure +${Math.round(s.ennemi.fissure * 100)} % dégâts`}</span>${fonduFissure ? `<span class="etat fissure prevue part"${fonduFissure} aria-hidden="true">${ICO.fissure}${tr`Fissure +${Math.round(s.ennemi.fissure * 100)} % dégâts`}</span>` : ''}</span>`
       // la chaîne posée va le fissurer : la marque s'annonce déjà, en pointillés (12 novembre 2026)
       : fissurePrevue ? `<span class="etat fissure prevue" tabindex="0" title="${tr`Ta chaîne va le fissurer : il subira ${Math.round(fissurePrevue * 100)} % de dégâts en plus`}">${ICO.fissure}${tr`Fissure +${Math.round(fissurePrevue * 100)} % dégâts`}</span>` : '');
 
@@ -805,7 +830,7 @@ function htmlEcranCombat(e: Ecran): string {
     + `<span class="scene-voile" aria-hidden="true"></span>`
 
     + vignettesGroupe(e)
-    + plaqueIntention(s, classeIntention, iconeIntention, felureHtml)
+    + plaqueIntention(s, classeIntention, iconeIntention, felureHtml, plaqueAvant(e))
     + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[lig]}">${echap(e.x.fleche ? tr`GARDIENS · QUAI ${e.x.fleche.quai}` : e.x.pillage ? tr`GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}" tabindex="0" role="img" title="${tr`Point faible : les cartes ${NOM_LIGNEES[faible]} lui font +${Math.round((REGLES.bonusLignee - 1) * 100)} %`}" aria-label="${tr`Faible contre les ${NOM_LIGNEES[faible]}`}"><span class="faible-mot" aria-hidden="true">${tr`Faible`}</span>${sigle(faible)}</span>`
       // le Rôdeur (explorer.ts) : il s'enfuit à la fin de son dernier tour ; le compte à rebours reste sous les yeux
       // Épreuve « Avant l'extinction » : les tours qui restent pour abattre le gardien

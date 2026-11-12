@@ -140,6 +140,8 @@ export async function jouer(pas: Pas[], rapide = false) {
   f?.initImpacts(reduit, rapide);
   const vite = () => (app.rapide ? 0.35 : 1);
   let bonus = 0;
+  // les fondus (12 novembre 2026) : la pastille de Fissure et la plaque d'intention changent en douceur, sans effet par-dessus
+  K.fondus = {};
   for (let i = 0; i < pas.length; i++) {
     const p = pas[i]!;
     const avant = i ? pas[i - 1]!.etat : null;
@@ -171,6 +173,10 @@ export async function jouer(pas: Pas[], rapide = false) {
         K.traces[cible] = Math.max(0, Math.min(100, (100 * c.pv) / c.pvMax));
         setTimeout(() => { delete K.traces[cible]; }, 1100);
       }
+    }
+    if (avant && (avant.ennemi.rang ?? 0) === (p.etat.ennemi.rang ?? 0) && p.etat.ennemi.pv > 0) {
+      if (!avant.ennemi.fissure && p.etat.ennemi.fissure) K.fondus.fissure = Date.now();
+      if (!avant.ennemi.felureBrisee && p.etat.ennemi.felureBrisee) K.fondus.felure = { ne: Date.now(), avant };
     }
     K.etat = p.etat;
     if (p.ev.kind === 'carte') K.actif = p.ev.rang;
