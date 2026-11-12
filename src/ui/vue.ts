@@ -563,8 +563,11 @@ function bilanChaine(s: CombatEtat): string {
   return `<span class="bilan${fatal ? ' fatal' : ''}" role="status" aria-label="${echap(tr`Si tu lances : ${dire.join(', ')}`)}"><small aria-hidden="true">${fatal ? 'FATAL' : 'TOTAL'}</small>${morceaux.join('')}</span>`;
 }
 
-/** Le nom et le visage d'un ennemi : un garde d'archipel pillé prend ceux du Porteur de la garnison qu'il incarne */
-const nomBrut = (en: EnnemiEtat) => (en.porteur ? porteurDef(en.porteur).nom : ennemiDef(en.id).nom);
+/**
+ * Le nom d'un ennemi. Un garde de garnison (pillage, défi d'un quai) garde son nom de garde (« Garde résonant ») :
+ * 12 novembre 2026, Bryan : un garde au visage inconnu s'appelait « Véla », comme si l'héroïne avait changé de camp.
+ */
+const nomBrut = (en: EnnemiEtat) => ennemiDef(en.id).nom;
 /**
  * Deux ennemis du même nom dans un groupe (3 novembre 2026, Luc : « les deux Brigadiers portent le même nom tronqué,
  * impossible de savoir lequel est en grand ») : ils prennent un numéro, I, II, III, dans l'ordre du groupe.

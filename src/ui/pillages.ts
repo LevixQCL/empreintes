@@ -3,10 +3,9 @@
 // autour, reliés par les routes des passeurs ; toucher un archipel affiche sa fiche juste dessous (garnison, chances, butin).
 // Les règles sont dans src/core/partie/pillages.ts.
 
-import { porteurDef } from '../core/donnees';
 import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, difficulte, escouadeActive, escouadeDefense, escouadesDe, etatPillage, forceEscouade, majJetons, MISSIONS, barquesMax, MAREES, contratsDuMoment, mareesDe, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
 import { ageArchipel, vignetteArchipel, vignetteDistrict, visuel } from './art';
-import { avatar, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
+import { avatar, avatarGarde, gardesGarnison, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
 import { ICO, icone } from './icones';
 import { htmlMissions } from './district';
@@ -137,7 +136,7 @@ function ficheCible(j: Jeu, c: Cible, force: number, fait: boolean, jetons: numb
   return `<section class="pl-fiche d${d.niveau}" aria-label="${echap(c.nom)}">`
     + `<header><div><span class="surtitre">${t`${c.bot ? t('District sans directeur · un intendant le tient') : t('Directeur')} · Strate −${c.strate}`}</span><h2>${echap(c.nom)}</h2></div>`
     + `<span class="pl-badge">${d.nom}<small>${t`${chance < 1 ? '< 1' : chance > 99 ? '> 99' : chance} % de chances`}</small></span></header>`
-    + `<div class="pl-garnison"><span class="surtitre">${t`La garnison`}</span><ul>${c.porteurs.map((id) => `<li style="--c:${COULEUR[porteurDef(id).lignee]}">${avatar(id, 40)}<span><strong>${echap(porteurDef(id).nom)}</strong><small>${NOM_LIGNEE[porteurDef(id).lignee]}</small></span></li>`).join('')}</ul>`
+    + `<div class="pl-garnison"><span class="surtitre">${t`La garnison`}</span><ul>${gardesGarnison(c.porteurs).map((g) => `<li style="--c:${COULEUR[g.lignee]}">${avatarGarde(g, 40)}<span><strong>${echap(g.nom)}</strong><small>${NOM_LIGNEE[g.lignee]}</small></span></li>`).join('')}</ul>`
     + `<div class="pl-forces"><span>${t`Garnison`} <b>${Math.round(c.force * 100)}</b></span><span class="pl-jauge" aria-hidden="true"><i style="width:${Math.min(100, Math.round((50 * c.force) / force))}%"></i></span><span>${t`Escouade ${escouadeActive(j) + 1}`} <b>${Math.round(force * 100)}</b></span></div></div>`
     + `<dl class="pl-enjeu"><div class="pl-gain"><dt>${t`Si tu gagnes`}</dt><dd>${ICO.composants}<b>+${ent(butin.base + butin.vol)}</b><small>${butin.vol ? t`dont ${ent(butin.vol)} pris à son coffre` : 'composants'}</small></dd></div>`
     + `<div class="pl-perte"><dt>${t`Si tu perds`}</dt><dd>${ICO.composants}<b>${perte ? `−${ent(perte)}` : '0'}</b><small>${t`${Math.round(PILLAGE.perteDefaite * 100)} % de ton coffre`}</small></dd></div></dl>`
