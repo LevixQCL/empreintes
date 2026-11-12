@@ -28,9 +28,9 @@ export const PILLAGE = {
   /** un jeton de plus contre des cristaux (idée de Luc, 31 octobre 2026 ; prix fixe depuis le 9 novembre 2026), 2 fois par jour au plus */
   jetonCristaux: 30,
   achatsJour: 2,
-  /** les pillages s'ouvrent après le gardien de −3 (2 novembre 2026, Bryan : « par étapes douces » ; avant, dès −1) ;
+  /** les pillages s'ouvrent après le gardien de −4 (12 novembre 2026 ; −3 depuis le 2 novembre 2026, Bryan : « par étapes douces » ; avant, dès −1) ;
    *  le Port et ses missions en mer, eux, ouvrent toujours après −1 (`strateDuPort`) */
-  strateMin: 3,
+  strateMin: 4,
   strateDuPort: 1,
   /** butin de base d'une victoire : autant que ce nombre de combats de la Strate du défenseur (butinCombat) */
   combats: 2,
@@ -192,6 +192,9 @@ export function noterHistorique(j: Jeu, e: EntreeHistorique) {
   h.length = Math.min(h.length, HISTORIQUE_MAX);
 }
 
+/** Les pillages sont ouverts : après le gardien de −4 (12 novembre 2026, Bryan : « trop de systèmes pour un nouveau » : une seule nouveauté par Strate) ; une partie qui a déjà pillé ou défendu les garde */
+export const pillagesPermis = (j: Jeu) => strateVaincue(j) >= PILLAGE.strateMin || !!(j.pillage && (j.pillage.gagnes || j.pillage.perdus || j.pillage.historique?.length));
+
 export function etatPillage(j: Jeu): EtatPillage {
   j.pillage ??= { coffre: 0, jetons: PILLAGE.jetonsMax, jetonsLe: j.dernierTick, gagnes: 0, perdus: 0, aEnvoyer: [] };
   // on dépense le coffre en premier : il ne dépasse jamais les composants qu'on a
@@ -316,7 +319,7 @@ export function acheterJeton(j: Jeu, now: number): Resultat {
 }
 
 export function peutPiller(j: Jeu, now: number): Resultat {
-  if (strateVaincue(j) < PILLAGE.strateMin) return non(tr`Les pillages s’ouvrent quand le gardien de la Strate −${PILLAGE.strateMin} est vaincu.`);
+  if (!pillagesPermis(j)) return non(tr`Les pillages s’ouvrent quand le gardien de la Strate −${PILLAGE.strateMin} est vaincu.`);
   if (j.expedition) return non(tr('Une expédition est déjà en cours.'));
   majJetons(j, now);
   if (etatPillage(j).jetons < 1) return non(tr('Plus de jeton de pillage : le prochain revient bientôt.'));

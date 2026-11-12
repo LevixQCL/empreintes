@@ -23,7 +23,7 @@ let publieeLe = 0;
 let minuteur: number | undefined;
 
 export function planifierGarnison(delai = 5000) {
-  if (!app.compte || !app.uid || J.strateVaincue(app.jeu) < J.PILLAGE.strateMin) return;
+  if (!app.compte || !app.uid || !J.pillagesPermis(app.jeu)) return;
   clearTimeout(minuteur);
   minuteur = window.setTimeout(publierGarnison, Math.max(delai, publieeLe + PUBLIER_APRES - Date.now()));
 }

@@ -4,7 +4,7 @@
 
 import { BATIMENTS, CLE_LEGS, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef, deNom } from '../core/donnees';
 import { NIVEAU_METAL, composantsNiveau, doublonsRequis } from '../core/collection';
-import { LOT_RECITS, PRODUITS, aRecit, droitRecit, lotProposable, prixEuros, ACCORD_OUVERT, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, deckEscouade, enExpedition, gestesDe, enMission, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, NOMS_PALIER_MARQUE, PALIERS_MARQUE, porteursPresents, progresMarque, RECITS_ORIGINES, carteDuRecit, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
+import { LOT_RECITS, PRODUITS, aRecit, droitRecit, lotProposable, prixEuros, ACCORD_OUVERT, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, deckEscouade, enExpedition, gestesDe, enMission, escouadeActive, escouadeDe, escouadeDefense, pillagesPermis, escouadesDe, escouadeVerrouillee, niveauPorteur, NOMS_PALIER_MARQUE, PALIERS_MARQUE, porteursPresents, progresMarque, RECITS_ORIGINES, carteDuRecit, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
@@ -274,7 +274,7 @@ export const escouadeVue = (e: EcranDistrict) => (e.vueEscouade !== undefined &&
 function ongletsEscouades(j: Jeu, vue: number): string {
   const toutes = escouadesDe(j);
   const active = escouadeActive(j);
-  const garde = strateVaincue(j) >= PILLAGE.strateMin ? escouadeDefense(j) : -1;
+  const garde = pillagesPermis(j) ? escouadeDefense(j) : -1;
   return `<div class="eq-escouades" role="tablist" aria-label="${tr`Mes escouades`}">` + toutes.map((l, k) =>
     `<button type="button" role="tab" class="eq-esc${k === vue ? ' actif' : ''}${k === active ? ' descend' : ''}${l.length ? '' : ' vide'}" data-action="escouade-voir" data-index="${k}" aria-selected="${k === vue}">`
     + `<span class="eq-esc-nom">${tr`Escouade ${k + 1}`}</span>`
@@ -298,7 +298,7 @@ function monEscouade(e: EcranDistrict): string {
   // venu du départ ou du Port : le chemin du retour, bien en vue
   if (e.retourModif) h += `<button type="button" class="eq-revenir" data-action="escouade-revenir">${ICO.retour}<span><strong>${e.retourModif === 'pillages' ? tr('Revenir aux Pillages') : e.pillage ? tr('Revenir au pillage') : tr('Revenir au départ')}</strong>${e.retourModif === 'pillages' ? tr('Ta garnison est prise en compte tout de suite.') : tr('Avec l’escouade choisie ici.')}</span></button>`;
   h += voletsEscouade(e);
-  // une seule escouade avant −4 (2 novembre 2026) : pas d'onglets, une ligne qui dit quand viendront les autres
+  // une seule escouade avant −5 (12 novembre 2026) : pas d'onglets, une ligne qui dit quand viendront les autres
   if (escouadesOuvertes(j) > 1) h += ongletsEscouades(j, vue);
   else h += `<p class="tr-note">${ICO.verrou}${tr`Une seule escouade pour l’instant : tant que le gardien de la Strate −${ESCOUADES_STRATE} tient, le puits n’a d’étais que pour une équipe à la fois.`}</p>`;
   if (verrou) h += `<p class="me-verrou">${ICO.verrou}<span><strong>${tr`En descente`}</strong>${echap(verrou.replace(/^[^:]*:\s*/, '').replace(/^./, (c) => c.toUpperCase()))}</span></p>`;

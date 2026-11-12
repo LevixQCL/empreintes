@@ -29,12 +29,14 @@ function partie(niveau = 1) {
 }
 
 describe('Le bâtiment', () => {
-  it('ne se construit qu’après la Strate −2', () => {
+  it('ne se construit qu’après la Strate −5 (12 novembre 2026)', () => {
     const j = nouveauJeu(0, 7);
     j.chambre = true; j.energie = 99999; j.composants = 99999;
     expect(cercleOuvert(j)).toBe(false);
     expect(ameliorer(j, 'cercle').ok).toBe(false);
-    j.strate = 3;
+    j.strate = 5;
+    expect(cercleOuvert(j)).toBe(false);
+    j.strate = 6;
     j.batiments.noyau = 2;
     expect(cercleOuvert(j)).toBe(true);
     expect(ameliorer(j, 'cercle', 0).ok).toBe(true);
@@ -150,5 +152,25 @@ describe('Les duels', () => {
     const g = aArmesEgales(e);
     expect(g.porteurs[0]!.pv).not.toBe(999);
     expect(g.porteurs[0]!.cartes[0]!.niveau).toBe(COLLECTION.niveauDepart.fer);
+  });
+});
+
+describe('Une nouveauté par Strate (12 novembre 2026)', () => {
+  it('Vestiges à −2, Épreuves à −3, pillages à −4, Cercle et escouades à −5 ; ce qui était déjà ouvert le reste', async () => {
+    const J = await import('../src/core/jeu');
+    const a = (vaincue: number) => { const j = nouveauJeu(0, 7); j.chambre = true; j.strate = vaincue + 1; return j; };
+    expect([1, 2].map((n) => J.vestigesOuverts(a(n)))).toEqual([false, true]);
+    expect([2, 3].map((n) => J.epreuvesOuvertes(a(n)))).toEqual([false, true]);
+    expect([3, 4].map((n) => J.pillagesPermis(a(n)))).toEqual([false, true]);
+    expect([4, 5].map((n) => cercleOuvert(a(n)))).toEqual([false, true]);
+    expect([4, 5].map((n) => J.escouadesOuvertes(a(n)))).toEqual([1, J.NB_ESCOUADES]);
+    // une partie à −3 qui avait déjà son Cercle, ses escouades et ses pillages les garde
+    const v = a(3);
+    v.batiments.cercle = 1;
+    v.escouades = [[], ['doran'], []];
+    v.pillage = { coffre: 0, jetons: 5, jetonsLe: 0, gagnes: 2, perdus: 0, aEnvoyer: [] };
+    expect(cercleOuvert(v)).toBe(true);
+    expect(J.escouadesOuvertes(v)).toBe(J.NB_ESCOUADES);
+    expect(J.pillagesPermis(v)).toBe(true);
   });
 });

@@ -3,7 +3,7 @@
 // ils arrivent quand on les ouvre (app/differes.ts). Rien de lourd ici, et rien qui importe ces écrans.
 
 import { ennemiDef } from '../core/donnees';
-import { PILLAGE, ciblesDuJour, escouadePourDepart, faitsDuJour, forceEscouade, strateVaincue, type Cible, type Jeu } from '../core/jeu';
+import { PILLAGE, pillagesPermis, ciblesDuJour, escouadePourDepart, faitsDuJour, forceEscouade, strateVaincue, type Cible, type Jeu } from '../core/jeu';
 import { illustrationEnnemi } from './art';
 import type { CercleEcran } from './cercle';
 import { COULEUR } from './vue';
@@ -17,8 +17,8 @@ export function cartePillages(j: Jeu, now: number, enLigne: Cible[] = []) {
 
 /** Le Port est ouvert : la Strate −1 est vaincue, le bateau peut quitter le ponton */
 export const portOuvert = (j: Jeu) => j.chambre && strateVaincue(j) >= PILLAGE.strateDuPort;
-/** Les pillages (2 novembre 2026) : après le gardien de −3 ; avant, le Port ne sert qu'aux missions et aux marées */
-export const pillagesOuverts = (j: Jeu) => j.chambre && strateVaincue(j) >= PILLAGE.strateMin;
+/** Les pillages (2 novembre 2026) : après le gardien de −4 depuis le 12 novembre 2026 ; avant, le Port ne sert qu'aux missions et aux marées */
+export const pillagesOuverts = (j: Jeu) => j.chambre && pillagesPermis(j);
 
 /** Le visage rond d'un garde de la Flèche (même gabarit que l'avatar d'un Porteur) */
 export function visageGarde(id: string, taille = 40): string {

@@ -19,7 +19,7 @@ import { paroleDescente } from '../core/campagne';
 import { PV_GROUPE, estGardien, pvProfondeur } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from '../core/donnees';
 import { BATTU_PAR } from '../core/regles';
-import { CIBLES_FOUILLE, RENCONTRES, XP, etapeQueteTrouvee, halteEnCours, type Jeu } from '../core/jeu';
+import { vestigesOuverts, CIBLES_FOUILLE, RENCONTRES, XP, etapeQueteTrouvee, halteEnCours, type Jeu } from '../core/jeu';
 import { COLLECTION } from '../core/collection';
 import { REGLES } from '../core/regles';
 import { decorStrate, illustrationEnnemi, portrait, iconeCondition, portraitProvisoire } from './art';
@@ -395,7 +395,7 @@ function teteContenu(j: Jeu, x: Expedition): string {
       + `<span class="ex-points" aria-label="${tr`${n} étape${n > 1 ? 's' : ''} sur ${q.etapes.length}`}">${q.etapes.map((_, k) => `<i${k < n ? ' class="ok"' : ''}></i>`).join('')}</span></span>`;
   }
   // Explorer (31 octobre 2026) : les Vestiges de la Strate (◆ 2 / 5), le gardien éveillé
-  if (!x.fouille && vestigesDe(x.strate).length) {
+  if (!x.fouille && vestigesOuverts(j) && vestigesDe(x.strate).length) {
     const n = vestigesDe(x.strate).filter((v) => j.vestiges?.includes(v.id) || x.gains?.vestiges?.includes(v.id)).length;
     const poses = x.carte!.salles.filter((s) => s.vestige).length;
     if (poses || n < 5) h += `<span class="ex-vestiges${n >= 5 ? ' complet' : ''}" title="${tr`Vestiges de la Strate`}">${ICO.vestige}<b>${tr`Vestiges ${n} / 5`}</b>${x.gains?.vestiges?.length ? `<small>${tr`+${x.gains.vestiges.length} cette descente`}</small>` : ''}</span>`;

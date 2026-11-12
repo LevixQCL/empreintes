@@ -979,6 +979,9 @@ export function remonter(j: Jeu): Retour {
 export const vestigesTrouves = (j: Jeu, strate: number) => vestigesDe(strate).filter((v) => j.vestiges?.includes(v.id));
 export const vestigesManquants = (j: Jeu, strate: number) => vestigesDe(strate).filter((v) => !j.vestiges?.includes(v.id)).map((v) => v.id);
 /** La Strate est relevée : ses 5 Vestiges sont trouvés */
+/** les Vestiges apparaissent dans les salles après le gardien de −2 (12 novembre 2026, Bryan : « trop de systèmes pour un nouveau » : une seule nouveauté par Strate) ; ceux déjà trouvés restent */
+export const VESTIGES_STRATE = 2;
+export const vestigesOuverts = (j: Jeu) => strateVaincue(j) >= VESTIGES_STRATE || (j.vestiges?.length ?? 0) > 0;
 export const strateRelevee = (j: Jeu, strate: number) => vestigesDe(strate).length > 0 && !vestigesManquants(j, strate).length;
 /** Les étoiles d'une Strate : ★1 est acquise d'office dès qu'elle est vaincue (anciennes sauvegardes comprises) */
 export function etoilesDe(j: Jeu, strate: number): EtoileId[] {
@@ -1189,7 +1192,7 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1, semaine: semaineDe(j.dernierTick),
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
     ...(halte !== undefined ? { halte } : {}), quete: queteOuverte(j, strate),
-    vestiges: vestigesManquants(j, strate), eveille: gardienEveille(j, strate),
+    vestiges: vestigesOuverts(j) ? vestigesManquants(j, strate) : [], eveille: gardienEveille(j, strate),
     ...(remueeDe(j, strate) !== null ? { remuee: remueeDe(j, strate)! } : {}),
     ...(rodeur && tireur({ rng: (rng ^ 0x68e31da4) >>> 0 }).nombre() < EXPLORER.rodeur.chance ? { rodeur } : {}),
   });
@@ -1388,13 +1391,15 @@ export const EPREUVES_PROFONDES = { des: 4, force: 0.85, tresProfond: 8, forceTr
 const coefProfond = (strate: number) => strate >= EPREUVES_PROFONDES.fond ? EPREUVES_PROFONDES.forceFond
   : strate >= EPREUVES_PROFONDES.tresProfond ? EPREUVES_PROFONDES.forceTres : strate >= EPREUVES_PROFONDES.des ? EPREUVES_PROFONDES.force : 1;
 
-/** les Épreuves de la semaine s'ouvrent après le gardien de −2 (2 novembre 2026, Bryan : « par étapes douces » ; avant, dès −1) */
-export const EPREUVES_STRATE = 2;
+/** les Épreuves de la semaine s'ouvrent après le gardien de −3 (12 novembre 2026, Bryan : « trop de systèmes pour un nouveau » : une seule nouveauté par Strate ; −2 depuis le 2 novembre, avant dès −1) */
+export const EPREUVES_STRATE = 3;
+/** Les Épreuves sont ouvertes (une partie qui en a déjà réussi une cette semaine les garde) */
+export const epreuvesOuvertes = (j: Jeu) => strateVaincue(j) >= EPREUVES_STRATE || (j.epreuves?.faites?.length ?? 0) > 0;
 
 export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: number, rng = graine(), felee = false): Resultat {
   const ep = epreuveDef(id);
   if (!ep || !epreuvesDeLaSemaine(now, j).some((e) => e.id === id)) return non(tr('Cette Épreuve n’est pas au programme cette semaine.'));
-  if (strateVaincue(j) < EPREUVES_STRATE) return non(tr`Les Épreuves s’ouvrent quand le gardien de la Strate −${EPREUVES_STRATE} est vaincu.`);
+  if (!epreuvesOuvertes(j)) return non(tr`Les Épreuves s’ouvrent quand le gardien de la Strate −${EPREUVES_STRATE} est vaincu.`);
   if (ep.imposee) return partirRecrues(j, ep, now, rng, felee);
   const e = escouadePrete(j, escouade, undefined, EPREUVE_DECK_MIN, 'courte');
   if (!e.ok) return e;

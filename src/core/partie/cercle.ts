@@ -60,8 +60,8 @@ export interface EtatCercle {
 export const etatCercle = (j: Jeu): EtatCercle =>
   (j.cercle ??= { souhaits: [], vitrine: [], jour: 0, echanges: 0, enAttente: [], conclus: [], semaine: 0, battus: [], victoires: 0, defaites: 0 });
 
-/** Le Cercle peut être construit : la Strate −2 est vaincue */
-export const cercleOuvert = (j: Jeu) => strateVaincue(j) >= CERCLE_OUVERTURE;
+/** Le Cercle peut être construit : la Strate −5 est vaincue (ou il l'est déjà) */
+export const cercleOuvert = (j: Jeu) => strateVaincue(j) >= CERCLE_OUVERTURE || (j.batiments.cercle ?? 0) > 0;
 /** Le Cercle est construit (niveau 1 ou plus) */
 export const cercleConstruit = (j: Jeu) => (j.batiments.cercle ?? 0) >= 1;
 

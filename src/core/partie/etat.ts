@@ -478,8 +478,8 @@ export interface Resultat {
 
 export const non = (message: string): Resultat => ({ ok: false, message });
 
-/** Le Cercle des quais (3 novembre 2026) se construit une fois la Strate −2 vaincue (le reste : partie/cercle.ts) */
-export const CERCLE_OUVERTURE = 2;
+/** le Cercle des quais s'ouvre après le gardien de −5 (12 novembre 2026, Bryan : « trop de systèmes pour un nouveau » : une seule nouveauté par Strate ; avant, −2) */
+export const CERCLE_OUVERTURE = 5;
 /**
  * Les réglages du Cercle (index = niveau du bâtiment, 0 = pas encore construit). Leçons des autres jeux (3 novembre 2026) :
  * échanges seulement entre amis, de même métal, sans monnaie à part (Pokémon TCG Pocket a dû retirer la sienne) ;
@@ -839,11 +839,12 @@ export function escouadeDe(j: Jeu): string[] {
 /** Combien d'escouades on peut enregistrer */
 export const NB_ESCOUADES = 3;
 
-/** les 2ᵉ et 3ᵉ escouades s'ouvrent après le gardien de −4 (2 novembre 2026, Bryan : « par étapes douces ») ; avant, une seule */
-export const ESCOUADES_STRATE = 4;
+/** les 2ᵉ et 3ᵉ escouades s'ouvrent après le gardien de −5 (12 novembre 2026 ; −4 depuis le 2 novembre) ; avant, une seule */
+export const ESCOUADES_STRATE = 5;
 
-/** Combien d'escouades on peut composer maintenant : une, puis trois après le gardien de −4 */
-export const escouadesOuvertes = (j: Jeu): number => (strateVaincue(j) >= ESCOUADES_STRATE ? NB_ESCOUADES : 1);
+/** Combien d'escouades on peut composer maintenant : une, puis trois après le gardien de −5 */
+// 12 novembre 2026, Bryan : « trop de systèmes pour un nouveau » : une seule nouveauté par Strate : les 2ᵉ et 3ᵉ escouades passent à −5 ; une partie qui en avait déjà composé une les garde
+export const escouadesOuvertes = (j: Jeu): number => (strateVaincue(j) >= ESCOUADES_STRATE || (j.escouades ?? []).slice(1).some((e) => e?.length) ? NB_ESCOUADES : 1);
 
 /** L'indice de l'escouade qui descend (0 à 2) */
 export const escouadeActive = (j: Jeu): number => (Number.isInteger(j.escouadeActive) && j.escouadeActive >= 0 && j.escouadeActive < escouadesOuvertes(j) ? j.escouadeActive : 0);
@@ -861,7 +862,7 @@ export function escouadesDe(j: Jeu): string[][] {
   const presents = porteursPresents(j);
   const a = escouadeActive(j);
   const pris = new Set(escouadeDe(j));
-  // une seule escouade avant −4 : les autres restent enregistrées, mais pas montrées
+  // une seule escouade avant −5 : les autres restent enregistrées, mais pas montrées
   return Array.from({ length: escouadesOuvertes(j) }, (_, k) => {
     if (k === a) return escouadeDe(j);
     const liste = [...new Set(j.escouades?.[k] ?? [])].filter((id) => presents.includes(id) && !pris.has(id)).slice(0, 3);

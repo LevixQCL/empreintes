@@ -450,7 +450,7 @@ export const BATIMENTS: BatimentDef[] = [
     couts: [{ energie: 25, composants: 0 }, { energie: 35, composants: 0 }, { energie: 70, composants: 0, eclats: 2 }, { energie: 140, composants: 0, eclats: 5 }, { energie: 220, composants: 0, eclats: 8 },
       { energie: 315, composants: 0, eclats: 5 }, { energie: 490, composants: 0, eclats: 6 }, { energie: 740, composants: 0, eclats: 8 }, { energie: 1095, composants: 0, eclats: 10 }, { energie: 1580, composants: 0, eclats: 12 }], niveauMax: 10 },
   // 3 novembre 2026 (Bryan) : le bâtiment social, à la place du Labo génétique (mis en réserve). Il commence au niveau 0
-  // et ne se construit qu'après la Strate −2 (CERCLE_OUVERTURE) : amis, vitrines, duels entre directeurs, échanges de cartes.
+  // et ne se construit qu'après la Strate −5 (CERCLE_OUVERTURE, 12 novembre 2026) : amis, vitrines, duels entre directeurs, échanges de cartes.
   { id: 'cercle', nom: tr('Cercle des quais'), role: tr('Les directeurs des autres districts y accostent : on s’y fait des amis, on s’y défie en duel et on y échange ses cartes en double.'), affinite: null,
     couts: [{ energie: 30, composants: 0 }, { energie: 40, composants: 0 }, { energie: 80, composants: 0, eclats: 2 }, { energie: 145, composants: 0, eclats: 5 }, { energie: 230, composants: 0, eclats: 8 },
       { energie: 325, composants: 0, eclats: 5 }, { energie: 500, composants: 0, eclats: 6 }, { energie: 750, composants: 0, eclats: 8 }, { energie: 1105, composants: 0, eclats: 10 }, { energie: 1600, composants: 0, eclats: 12 }], niveauMax: 10 },

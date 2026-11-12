@@ -33,7 +33,7 @@ export const CONFIEE = {
   usure: 6,
 } as const;
 
-/** Les fouilles confiées s'ouvrent avec les 2ᵉ et 3ᵉ escouades (après le gardien de −4) */
+/** Les fouilles confiées s'ouvrent avec les 2ᵉ et 3ᵉ escouades (après le gardien de −5) */
 export const confieesOuvertes = (j: Jeu): boolean => !!j.chambre && escouadesOuvertes(j) > 1;
 
 /** La force qu'il faut pour fouiller seul cette Strate : la force « jouable » du départ */

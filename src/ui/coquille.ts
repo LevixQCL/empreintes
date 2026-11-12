@@ -11,7 +11,7 @@ import { vestigeDef } from '../core/explorer';
 import { faceCarte } from './carte';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
 import { blocMur } from './mur';
-import { CREUSE, finCreuse, heuresCreuse, CERCLE_OUVERTURE, MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, nbFoyers, nomConfiance, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, chapitresALire, porteursNouveaux, brutEnAttente, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
+import { CREUSE, finCreuse, heuresCreuse, cercleOuvert, MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, nbFoyers, nomConfiance, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, chapitresALire, porteursNouveaux, brutEnAttente, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { miniature, portrait, visageGarnison } from './art';
 import { feuilleGuide, trouveesDe } from './guide';
@@ -627,8 +627,8 @@ export function menu(e: EcranDistrict): string {
     + `<button type="button" class="btn-icone" data-action="menu" aria-label="${tr`Fermer`}">${ICO.fermer}</button></header><div class="feuille-corps">`;
   h += entreeFiche(e) + `<div class="liste-menu">`
     + `<button type="button" class="ligne-menu gt-menu" data-action="classements">${ICO.monter}<span><strong>${tr`Le Grand Tableau`}</strong><small>${tr`Les classements des directeurs : profondeur, Registre, Joutes et Flèche`}</small></span></button>`
-    // le Cercle des quais (3 novembre 2026) : un raccourci, une fois la Strate −2 vaincue (le bâtiment reste sur la Cuvette)
-    + (c.actif && strateVaincue(e.j) >= CERCLE_OUVERTURE ? `<button type="button" class="ligne-menu cr-menu" data-action="${e.j.batiments.cercle ? 'cercle' : 'cercle-batiment'}">${ICO.cercle}<span><strong>${tr`Le Cercle des quais`}</strong><small>${e.j.batiments.cercle ? tr('Tes amis, les duels entre directeurs et les échanges de cartes') : tr('À construire : amis, duels et échanges de cartes')}</small></span>${e.cercle?.aRepondre ? `<span class="pastille-n">${e.cercle.aRepondre}</span>` : ''}</button>` : '')
+    // le Cercle des quais (3 novembre 2026) : un raccourci, une fois la Strate −5 vaincue (le bâtiment reste sur la Cuvette)
+    + (c.actif && cercleOuvert(e.j) ? `<button type="button" class="ligne-menu cr-menu" data-action="${e.j.batiments.cercle ? 'cercle' : 'cercle-batiment'}">${ICO.cercle}<span><strong>${tr`Le Cercle des quais`}</strong><small>${e.j.batiments.cercle ? tr('Tes amis, les duels entre directeurs et les échanges de cartes') : tr('À construire : amis, duels et échanges de cartes')}</small></span>${e.cercle?.aRepondre ? `<span class="pastille-n">${e.cercle.aRepondre}</span>` : ''}</button>` : '')
     + (c.actif ? `<button type="button" class="ligne-menu rc-menu" data-action="recruter">${ICO.porteurs}<span><strong>${tr`Recruter des amis`}</strong><small>${tr`Ton code de parrainage : vous êtes récompensés tous les deux quand ton ami joue`}</small></span></button>` : '')
     + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>${tr`Compte`}</strong><small>${c.utilisateur?.anonyme ? tr('Protège ta partie : relie-la à Google ou à un e-mail') : c.utilisateur ? `${tr('Connecté')}${c.pseudo ? ` : ${echap(c.pseudo)}` : tr(' · choisis ton pseudo')}` : tr('Retrouver ta progression sur un autre appareil')}</small></span></button>` : '')
     + (e.j.chambre ? `<button type="button" class="ligne-menu" data-action="accueil">${icone('district')}<span><strong>${tr`Comment marche le district`}</strong><small>${tr`Les ressources, l’escouade et le but : creuser plus bas`}</small></span></button>` : '')

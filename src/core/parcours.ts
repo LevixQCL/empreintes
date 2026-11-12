@@ -19,7 +19,7 @@ import { envoyerBasses, libresPourBasses, prochainSecours, escouadeDe,
   contratsDuMoment, envoyerContrat, equipeConseillee, mareesDe, raisonHorsContrat, tauxContrat, sceneCampagne, voirScene,
 } from './jeu';
 import { jouerTour, jouerTourMoyen } from './robot';
-import { PILLAGE, achatsRestants, acheterJeton, ciblesDuJour, coutJeton, difficulte, forceEscouade, peutPiller, piller } from './partie/pillages';
+import { pillagesPermis, achatsRestants, acheterJeton, ciblesDuJour, coutJeton, difficulte, forceEscouade, peutPiller, piller } from './partie/pillages';
 import { strateVaincue, jourDe } from './partie/etat';
 import { strateRemuee } from './partie/descentes';
 import { chanceQuai, etatFleche, flecheOuverte, monterFleche, peutMonter } from './partie/fleche';
@@ -358,7 +358,7 @@ export function simulerParcours(
       }
       // les pillages (8 novembre 2026 : jusque-là absents de la simulation) : à chaque session, un archipel
       // à sa portée (« facile » ou « équilibré »), et deux jetons achetés par jour s'il reste de l'énergie aux chantiers
-      if (strateVaincue(j) >= PILLAGE.strateMin) {
+      if (pillagesPermis(j)) {
         while (achatsRestants(j, now) && j.energie >= coutJeton(j) + 400 && acheterJeton(j, now).ok);
         for (let k = 0; k < 1; k++) {
           const c = ciblesDuJour(j, escouade, now).find((x) => difficulte(x.force / Math.max(0.01, forceEscouade(j, escouade))).niveau <= 2);

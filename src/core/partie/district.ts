@@ -202,7 +202,7 @@ export function ameliorer(j: Jeu, b: BatimentId, now = j.dernierTick): Resultat 
   const cout = coutAmelioration(j, b);
   if (!cout) return non(tr('Niveau maximum atteint.'));
   if (chantierDe(j, b)) return non(tr('Un chantier est déjà en cours sur ce bâtiment.'));
-  if (b === 'cercle' && strateVaincue(j) < CERCLE_OUVERTURE) return non(tr`Aucun directeur n’accoste avant que la Strate −${CERCLE_OUVERTURE} soit vaincue.`);
+  if (b === 'cercle' && strateVaincue(j) < CERCLE_OUVERTURE && !j.batiments.cercle) return non(tr`Aucun directeur n’accoste avant que la Strate −${CERCLE_OUVERTURE} soit vaincue.`);
   if (b !== 'noyau' && j.batiments[b] >= j.batiments.noyau) return non(tr('Améliore d’abord la Tour du Noyau.'));
   if (b === 'noyau' && gardienPourTour(j)) return non(tr`Les nouvelles fondations de la Tour s’ancrent dans la roche de la Strate −${gardienPourTour(j)} : il faut d’abord vaincre son gardien.`);
   if (b === 'noyau' && j.chantiers.length) return non(tr('Termine d’abord les chantiers en cours avant d’agrandir la Tour du Noyau.'));

@@ -12,7 +12,7 @@ import { NOMS_EFFET, effetsDe, formuleEffet, texteEffet } from '../core/effets';
 import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe, deNom, ilElle } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, EVEIL_ORIGINE, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, EPREUVES_STRATE, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, chanceCreuseurFouille, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, EPREUVES_STRATE, epreuvesOuvertes, vestigesOuverts, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, chanceCreuseurFouille, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, gardienPourTour, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, plafondEntrainement, raffinageParHeure, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
@@ -77,7 +77,7 @@ const LIEUX_FUTURS: Record<LieuFutur, { nom: string; raison: string; promesse: s
 const COMPTOIR_FERME = tr('Ses volets sont cloués depuis que le dernier marchand a quitté le district, et la balance a rouillé sur le comptoir. Les fouilleurs remontent des Strates les poches pleines, mais personne n’est là pour leur racheter quoi que ce soit.');
 const estFutur = (id: string | null): id is LieuFutur => id === 'port';
 /**
- * Le Cercle des quais avant la Strate −2 (3 novembre 2026) : il a pris la place du Labo génétique, mis en réserve.
+ * Le Cercle des quais avant la Strate −5 (12 novembre 2026) : il a pris la place du Labo génétique, mis en réserve.
  * Sa raison d'être fermé, tirée du lore : aucun directeur ne traite avec un district qui n'a pas tenu son puits.
  */
 const CERCLE_FERME = tr`Les bancs de l’estrade attendent sous la bâche. Les directeurs des autres districts ne traitent pas avec un district qui n’a pas encore tenu son puits : ils accosteront quand le gardien de la Strate −${CERCLE_OUVERTURE} sera tombé.`;
@@ -936,7 +936,7 @@ function amelioration(j: Jeu, b: BatimentId) {
   const assez = !!cout && j.energie >= cout.energie && j.composants >= cout.composants && j.eclats >= (cout.eclats ?? 0);
   const plein = j.chantiers.length >= chantiersMax(j) || (b === 'noyau' && j.chantiers.length > 0);
   // les ressources manquantes se lisent déjà en rouge dans le coût : la phrase ne sert que pour les autres blocages
-  // le Cercle avant la Strate −2 (3 novembre 2026) : fermé, quelle que soit la Tour
+  // le Cercle avant la Strate −5 (12 novembre 2026) : fermé, quelle que soit la Tour
   const ferme = b === 'cercle' && !cercleOuvert(j);
   // la Tour retenue par un gardien (10 novembre 2026) : ses fondations s'ancrent dans la roche de la Strate
   const gardien = b === 'noyau' ? gardienPourTour(j) : 0;
@@ -1850,7 +1850,7 @@ export function htmlCoupe(e: EcranDistrict): string {
         + `<li>${ICO.cristal}<span>${tr`Fouille ciblée`}</span><b>${Math.round(chanceCreuseurFouille(j.strate) * 100)} %</b></li>`
         + `<li>${ICO.porteurs}<span>${auPort ? tr`Autre mission en mer` : tr`Mission`}</span><b>${Math.round(CREUSEURS.missionCourte * 100)} à ${Math.round(CREUSEURS.missionLongue * 100)} %</b></li>`
         // les Épreuves n'ouvrent qu'après la Strate −EPREUVES_STRATE : on ne les cite qu'à partir de là (test critique du 4 novembre 2026)
-        + (j.chambre && strateVaincue(j) >= EPREUVES_STRATE ? `<li>${ICO.boost}<span>${tr`Épreuve`} <em>${tr`(1re victoire de la semaine)`}</em></span><b>${tr`assuré`}</b></li>` : '') + `</ul>` : '')
+        + (j.chambre && epreuvesOuvertes(j) ? `<li>${ICO.boost}<span>${tr`Épreuve`} <em>${tr`(1re victoire de la semaine)`}</em></span><b>${tr`assuré`}</b></li>` : '') + `</ul>` : '')
       + `<div class="tr-boutons">${auPort ? `<button type="button" class="btn prim" data-action="batiment" data-id="port">${ICO.ouvrier}${tr`Aller au Port`}</button>` : ''}${manque.creuseurs ? `<button type="button" class="btn ${auPort ? 'sec' : 'prim'}" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.cristal}${tr`Fouiller la Strate −${j.strate}`}</button>` : ''}`
       + `${manque.noyau ? `<button type="button" class="btn ${manque.creuseurs ? 'sec' : 'prim'}" data-action="batiment" data-id="noyau" data-amelio>${ICO.tour}${tr`Améliorer la Tour`}</button>` : ''}</div>`;
   } else if (j.frontVaincu && (finCreuse(j) ?? 0) > e.now) {
@@ -1881,7 +1881,7 @@ export function htmlCoupe(e: EcranDistrict): string {
   if (j.chambre && e.grand) h += bandeauTableau(e, e.grand, e.uid ?? null);
 
   // deux volets : les Strates et les Épreuves (les missions partent du Port depuis le 28 octobre 2026)
-  const ouvert = j.chambre && strateVaincue(j) >= EPREUVES_STRATE;
+  const ouvert = j.chambre && epreuvesOuvertes(j);
   const volet = ouvert && e.ongletTour === 'epreuves' ? 'epreuves' : 'strates';
   if (ouvert) {
     const faites = epreuvesDeLaSemaine(e.now, j).filter((ep) => j.epreuves.faites.includes(ep.id)).length;
@@ -1930,7 +1930,7 @@ function contenuStrate(j: EcranDistrict['j'], n: number): string {
   const et = etoilesDe(j, n);
   const nv = vestigesTrouves(j, n).length;
   const explo = `<span class="tr-etoiles" title="${[1, 2, 3].map((k) => `${et.includes(k as 1) ? '★' : '☆'} ${ETOILES[k as 1].texte}`).join('\n')}" aria-label="${tr`${et.length} étoile${et.length > 1 ? 's' : ''} sur 3`}">${[1, 2, 3].map((k) => (et.includes(k as 1) ? ICO.etoile : ICO.etoileVide)).join('')}</span>`
-    + (vestigesDe(n).length ? `<button type="button" class="tr-vestiges${nv >= 5 ? ' complet' : ''}" data-action="vestiges-voir" data-strate="${n}" aria-label="${tr`Vestiges : ${nv} sur 5`}">${ICO.vestige}${tr`Vestiges ${nv} / 5`}</button>` : '');
+    + (vestigesOuverts(j) && vestigesDe(n).length ? `<button type="button" class="tr-vestiges${nv >= 5 ? ' complet' : ''}" data-action="vestiges-voir" data-strate="${n}" aria-label="${tr`Vestiges : ${nv} sur 5`}">${ICO.vestige}${tr`Vestiges ${nv} / 5`}</button>` : '');
   const faites = j.quetes?.[n] ?? 0;
   const vues = Math.min(nh, j.haltes?.[n] ?? 0);
   return `<span class="tr-contenu">${explo}`
