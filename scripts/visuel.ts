@@ -33,6 +33,8 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
   { nom: 'recompense-choix', sauvegarde: 'choix', faire: async (p) => { await p.click('.titre-go'); await p.waitForTimeout(600); } },
   { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="forge"]'); } },
+  // l'onglet du niveau suivant : les gains en tuiles (rien ne doit déborder d'une tuile sur téléphone)
+  { nom: 'forge-niveau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="forge"]'); await p.click('[data-action="onglet-bat"][data-id="niveau"]'); await p.waitForTimeout(300); } },
   { nom: 'generateur', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="generateur"]'); } },
   // le Comptoir (1er novembre 2026) : les étals du jour et le bouton pour les renouveler une fois par jour
   { nom: 'comptoir', sauvegarde: 'comptoir', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="comptoir"]'); await p.waitForTimeout(300); await p.$eval('.cp-renouveler', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
