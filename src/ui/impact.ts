@@ -12,6 +12,7 @@ import { echelleScene, ondeDeChoc } from './verre';
 import { annoncerPhase } from './bandeau';
 import { dissoudre } from './dissolution';
 import * as S from './son';
+import { AMPLE, ENTREE, NET, RESSORT, SORTIE, VIF } from './rythme';
 export { debloquerSon, sonActif, basculerSon } from './son';
 
 const TEINTE: Record<LigneeGeste, string> = { tech: '#8FDCFF', bio: '#FFB44A', reso: '#B98CFF', neutre: '#EBD9A8' };
@@ -65,8 +66,16 @@ const ms = (v: number) => v * cadence;
 // Chaque geste a sa texture ; tant qu'elle n'est pas chargée (ou si elle manque), le trait dessiné en code prend le relais.
 // Depuis le 4 novembre 2026, chaque effet existe en plusieurs variantes peintes par Bryan (3 ou 4) : chaque partie en charge
 // deux au hasard, et deux coups de suite ne prennent jamais la même. Les coups ennemis ont leurs propres textures (« e- »).
-type NomSprite = 'tech' | 'bio' | 'reso' | 'impact' | 'recu' | 'grand' | 'fissure' | 'e-tech' | 'e-bio' | 'e-reso';
-const VARIANTES: Record<NomSprite, number> = { tech: 4, bio: 3, reso: 3, impact: 4, recu: 4, grand: 4, fissure: 3, 'e-tech': 3, 'e-bio': 3, 'e-reso': 4 };
+type NomSprite = 'tech' | 'bio' | 'reso' | 'impact' | 'recu' | 'grand' | 'fissure' | 'e-tech' | 'e-bio' | 'e-reso'
+  | 'ecu' | 'rempart' | 'brise' | 'soin' | 'vague' | 'lance' | 'anneau' | 'cristal';
+// Les effets de défense, de soin et les effets de carte (12 novembre 2026) : ils étaient encore tracés en code, en traits fins,
+// à côté des attaques peintes. Chacun a maintenant sa texture prévue (docs/prompts-effets.md) : tant que Bryan ne l'a pas
+// peinte, le nombre de variantes reste à 0 et le tracé en code continue de servir. Une fois les images déposées dans
+// public/art/effets (scripts/effets.py), il suffit d'écrire ici le nombre de variantes.
+const VARIANTES: Record<NomSprite, number> = {
+  tech: 4, bio: 3, reso: 3, impact: 4, recu: 4, grand: 4, fissure: 3, 'e-tech': 3, 'e-bio': 3, 'e-reso': 4,
+  ecu: 0, rempart: 0, brise: 0, soin: 0, vague: 0, lance: 0, anneau: 0, cristal: 0,
+};
 /** variantes chargées par partie : assez pour varier, sans charger toutes les images sur téléphone */
 const PAR_PARTIE = 2;
 interface Texture { im: HTMLImageElement; etapes?: HTMLCanvasElement[] }
@@ -194,6 +203,20 @@ function peinte(c: CanvasRenderingContext2D, t: Texture, x: number, y: number, l
 }
 /** la courbe de vie d'un geste peint : entier pendant `tient` (part de la durée), puis il se consume */
 const consume = (k: number, tient: number) => (k < tient ? 0 : (k - tient) / (1 - tient));
+
+/**
+ * Un effet peint qui jaillit (60 ms), tient un instant, puis se consume depuis ses bords : le geste commun des textures.
+ * Faux si la texture n'est pas (encore) là : le tracé en code prend alors le relais.
+ */
+function jaillir(nom: NomSprite, x: number, y: number, largeur: number, o: { hauteur?: number; angle?: number; tourne?: number; duree?: number; tient?: number; delai?: number; grandit?: number } = {}): boolean {
+  const tex = tirer(nom);
+  if (!tex) return false;
+  trait((c, k) => {
+    const pop = k < 0.16 ? 0.6 + (k / 0.16) * 0.5 : 1.1 + (k - 0.16) * (o.grandit ?? 0.1);
+    peinte(c, tex, x, y, largeur * pop, (o.angle ?? 0) + k * (o.tourne ?? 0), consume(k, o.tient ?? 0.3), o.hauteur !== undefined ? o.hauteur * pop : undefined);
+  }, ms(o.duree ?? AMPLE), o.delai ?? 0);
+  return true;
+}
 
 export function initImpacts(mouvementReduit: boolean, rapide = false): void {
   chargerSprites();
@@ -493,9 +516,9 @@ function bondCarte(carte: Element, vers: DOMPoint): { sommet: DOMPoint; ux: numb
   document.body.classList.add('carte-partie');
   const pen = Math.max(-9, Math.min(9, ux * 28));
   const a = cadre.animate([
-    { transform: `scale(${base})`, easing: 'cubic-bezier(.3,0,.3,1)' },
-    { transform: `translate(${-ux * 5}px,9px) rotate(${-pen * 0.6}deg) scale(${base * 1.05})`, offset: ELAN / GESTE, easing: 'cubic-bezier(.6,0,1,.6)' },
-    { transform: `translate(${dx * part}px,${dy * part}px) rotate(${pen}deg) scale(${base * 1.2},${base * 1.28})`, offset: (ELAN + BOND) / GESTE, easing: 'cubic-bezier(.2,.7,.3,1)' },
+    { transform: `scale(${base})`, easing: ENTREE },
+    { transform: `translate(${-ux * 5}px,9px) rotate(${-pen * 0.6}deg) scale(${base * 1.05})`, offset: ELAN / GESTE, easing: SORTIE },
+    { transform: `translate(${dx * part}px,${dy * part}px) rotate(${pen}deg) scale(${base * 1.2},${base * 1.28})`, offset: (ELAN + BOND) / GESTE, easing: ENTREE },
     { transform: `translate(${-ux * 3}px,4px) rotate(${-pen * 0.15}deg) scale(${base * 0.97})`, offset: 0.86 },
     { transform: `scale(${base})` },
   ], { duration: ms(GESTE) });
@@ -520,12 +543,14 @@ function pousser(el: Element | null, ux: number, uy: number, force: number) {
   const anim = (el as HTMLElement).animate([
     { transform: 'none' }, { transform: `translate(${ux * a}px,${uy * a}px)`, offset: 0.12 },
     { transform: `translate(${-ux * a * 0.3}px,${-uy * a * 0.3}px)`, offset: 0.45 }, { transform: 'none' },
-  ], { duration: 240 + force * 30, easing: 'ease-out' });
+  ], { duration: NET + force * 30, easing: ENTREE });
   animsGelables.add(anim);
   anim.finished.then(() => animsGelables.delete(anim), () => animsGelables.delete(anim));
 }
 
 function bouclierSur(p: DOMRect) {
+  // le mur de glace peint, dressé devant toute l'escouade
+  if (jaillir('rempart', p.left + p.width / 2, p.top + p.height / 2, p.width + 28, { hauteur: p.height + 26, duree: 520, tient: 0.45, grandit: 0.03 })) return;
   trait((c, k) => {
     c.globalAlpha = Math.sin(k * Math.PI) * 0.8;
     c.strokeStyle = BOUCLIER; c.shadowColor = '#9FD8FF'; c.shadowBlur = 18; c.lineWidth = 2;
@@ -563,6 +588,19 @@ function lance(de: DOMPoint, a: DOMPoint, couleur: string, force: number, delai 
   const long = Math.hypot(dx, dy) || 1;
   const ux = dx / long, uy = dy / long;
   const fin = new DOMPoint(a.x + ux * (90 + force * 20) * ech, a.y + uy * (90 + force * 20) * ech);
+  const sortie = () => setTimeout(() => eclats(fin.x - ux * 60, fin.y - uy * 60, 12 + force * 3, couleur, { vitesse: 320, taille: 2, trainee: true, gravite: 80, angle: Math.atan2(uy, ux), ouverture: 0.35 }), delai + 110);
+  const tex = tirer('lance');
+  if (tex) {
+    // la lance peinte se déroule de la carte jusqu'au-delà de l'ennemi, puis se consume
+    const l = Math.hypot(fin.x - de.x, fin.y - de.y), angle = Math.atan2(uy, ux);
+    trait((c, k) => {
+      const ouvert = Math.min(1, k * 4);
+      c.save(); c.beginPath(); c.translate(de.x, de.y); c.rotate(angle); c.rect(-10, -200, l * ouvert + 20, 400); c.restore(); c.clip();
+      peinte(c, tex, (de.x + fin.x) / 2, (de.y + fin.y) / 2, l, angle, consume(k, 0.35), (34 + force * 6) * Math.sqrt(ech));
+    }, ms(360), delai);
+    sortie();
+    return;
+  }
   trait((c, k) => {
     const t = Math.min(1, k * 2.4);
     const x = de.x + (fin.x - de.x) * t, y = de.y + (fin.y - de.y) * t;
@@ -573,7 +611,7 @@ function lance(de: DOMPoint, a: DOMPoint, couleur: string, force: number, delai 
     c.strokeStyle = '#fff'; c.lineWidth = 1.6; c.stroke();
   }, 300, delai);
   // la sortie : une gerbe d'étincelles dans le prolongement
-  setTimeout(() => eclats(fin.x - ux * 60, fin.y - uy * 60, 12 + force * 3, couleur, { vitesse: 320, taille: 2, trainee: true, gravite: 80, angle: Math.atan2(uy, ux), ouverture: 0.35 }), delai + 110);
+  sortie();
 }
 
 /**
@@ -594,7 +632,7 @@ function fissures(p: DOMPoint, pastille?: Element | null) {
       peinte(c, eclat, ici.x, ici.y, large * pop, angle, consume(k, 0.3));
     }, ms(620));
     eclats(ici.x, ici.y, 8, '#FFC56A', { vitesse: 160, taille: 2, gravite: 220, vie: 0.6 });
-    pastille?.animate([{ transform: 'scale(1.18)', filter: 'brightness(1.5)' }, { transform: 'none', filter: 'none' }], { duration: 420, easing: 'ease-out' });
+    pastille?.animate([{ transform: 'scale(1.18)', filter: 'brightness(1.5)' }, { transform: 'none', filter: 'none' }], { duration: AMPLE, easing: ENTREE });
     S.sonFissure();
     return;
   }
@@ -626,7 +664,7 @@ function desarme(el: Element | null) {
   if (p) eclats(p.x, p.y, 14, '#E8EEF5', { vitesse: 240, taille: 1.8, trainee: true, gravite: 260 });
   if (el && !reduit) (el as HTMLElement).animate([
     { transform: 'none', filter: 'none' }, { transform: 'translateX(-6px) rotate(-3deg)', filter: 'grayscale(.8) brightness(1.6)' },
-    { transform: 'translateX(5px) rotate(2deg)' }, { transform: 'none', filter: 'none' }], { duration: 420, easing: 'ease-out' });
+    { transform: 'translateX(5px) rotate(2deg)' }, { transform: 'none', filter: 'none' }], { duration: AMPLE, easing: ENTREE });
   S.sonDesarme();
 }
 
@@ -646,6 +684,8 @@ function elan(r: DOMRect) {
 
 /** Rempart : des pans hexagonaux qui se posent l'un après l'autre devant l'escouade */
 function remparts(r: DOMRect) {
+  // le Rempart : le même mur peint, plus haut et plus long à retomber
+  if (jaillir('rempart', r.left + r.width / 2, r.top + r.height * 0.45, r.width + 36, { hauteur: r.height * 1.6, duree: 720, tient: 0.55, grandit: 0.03 })) return;
   const n = 6;
   for (let i = 0; i < n; i++) {
     const cx = r.left + ((i + 0.5) / n) * r.width, cy = r.top + r.height * 0.55, t = Math.min(r.width / n, r.height) * 0.42;
@@ -663,6 +703,17 @@ function remparts(r: DOMRect) {
 
 /** Vague : une onde verte qui balaie toute l'escouade, de gauche à droite */
 function vague(r: DOMRect) {
+  const gouttes = () => { for (let i = 0; i < 4; i++) setTimeout(() => eclats(r.left + (i + 0.5) * (r.width / 4), r.bottom - 6, 6, SOIN, { vitesse: 60, gravite: -140, taille: 2.2, vie: 0.9, angle: -Math.PI / 2, ouverture: 0.8 }), i * 120); };
+  const tex = tirer('vague');
+  if (tex) {
+    // la vague peinte traverse l'escouade de gauche à droite et se défait en arrivant
+    trait((c, k) => {
+      const e = 1 - Math.pow(1 - k, 2);
+      peinte(c, tex, r.left + e * r.width, r.top + r.height / 2, r.width * 0.7, 0, consume(k, 0.55), r.height * 1.7);
+    }, ms(560));
+    gouttes();
+    return;
+  }
   trait((c, k) => {
     const x = r.left - 40 + k * (r.width + 80);
     const g = c.createLinearGradient(x - 70, 0, x + 20, 0);
@@ -670,11 +721,17 @@ function vague(r: DOMRect) {
     c.globalAlpha = Math.sin(k * Math.PI);
     c.fillStyle = g; c.fillRect(x - 70, r.top - 6, 90, r.height + 12);
   }, 560);
-  for (let i = 0; i < 4; i++) setTimeout(() => eclats(r.left + (i + 0.5) * (r.width / 4), r.bottom - 6, 6, SOIN, { vitesse: 60, gravite: -140, taille: 2.2, vie: 0.9, angle: -Math.PI / 2, ouverture: 0.8 }), i * 120);
+  gouttes();
 }
 
 /** Crescendo : un anneau doré qui grandit avec la place de la carte dans la chaîne */
 function crescendo(p: DOMPoint, rang: number) {
+  const tex = tirer('anneau');
+  if (tex) {
+    // l'anneau doré peint s'ouvre vite puis ralentit, plus grand à chaque carte
+    trait((c, k) => peinte(c, tex, p.x, p.y, (50 + rang * 26) * ech * (0.4 + (1 - Math.pow(1 - k, 3)) * 1.3), k * 0.6, consume(k, 0.25)), ms(480));
+    return;
+  }
   trait((c, k) => {
     c.globalAlpha = (1 - k) * 0.9;
     c.strokeStyle = '#F3D27A'; c.shadowColor = '#FFB44A'; c.shadowBlur = 16; c.lineWidth = 2 + rang;
@@ -687,7 +744,7 @@ function crescendo(p: DOMPoint, rang: number) {
 // Au dernier coup de la chaîne (ou quand l'ennemi tombe), tous plongent ensemble sur lui : un seul grand moment par chaîne,
 // d'autant plus fort que la chaîne a porté de coups. Une chaîne d'un seul coup n'en laisse aucun.
 
-interface Suspendu { de: DOMPoint; vers: DOMPoint; couleur: string; ne: number; phase: number }
+interface Suspendu { de: DOMPoint; vers: DOMPoint; couleur: string; ne: number; phase: number; tex: Texture | null }
 let suspendus: Suspendu[] = [];
 let filet = 0;
 const MAX_SUSPENDUS = 7;
@@ -702,7 +759,7 @@ function place(p: DOMPoint, i: number): DOMPoint {
 
 function suspendre(p: DOMPoint, couleur: string) {
   if (reduit || suspendus.length >= MAX_SUSPENDUS) return;
-  suspendus.push({ de: p, vers: place(p, suspendus.length), couleur, ne: maintenant(), phase: hasard(0, 6.28) });
+  suspendus.push({ de: p, vers: place(p, suspendus.length), couleur, ne: maintenant(), phase: hasard(0, 6.28), tex: tirer('cristal') });
   S.sonSuspendu(suspendus.length - 1);
   // filet de sécurité : si la chaîne s'arrête sans fin reconnue, les cristaux s'évanouissent d'eux-mêmes
   clearTimeout(filet);
@@ -719,8 +776,15 @@ function ou(s: Suspendu, t: number): [number, number, number] {
 }
 
 /** Un cristal de lumière : un losange effilé, un cœur blanc, un halo */
-function cristal(c: CanvasRenderingContext2D, x: number, y: number, taille: number, angle: number, couleur: string, alpha: number) {
+function cristal(c: CanvasRenderingContext2D, x: number, y: number, taille: number, angle: number, couleur: string, alpha: number, tex: Texture | null = null) {
   halo(c, x, y, taille * 3.2, couleur, alpha * 0.75);
+  if (tex) {
+    // l'éclat de cristal peint, dans le halo de sa lignée
+    c.save(); c.globalAlpha = alpha;
+    peinte(c, tex, x, y, taille * 2.6, angle, 0);
+    c.restore();
+    return;
+  }
   c.save();
   c.translate(x, y); c.rotate(angle);
   c.globalAlpha = alpha * 0.9;
@@ -737,7 +801,7 @@ function dessinerSuspendus(c: CanvasRenderingContext2D, t: number) {
   for (const s of suspendus) {
     const [x, y, k] = ou(s, t);
     const pulse = 0.85 + Math.sin((t / 1000) * 5 + s.phase) * 0.15;
-    cristal(c, x, y, 7 * Math.pow(ech, 0.8) * (0.5 + k * 0.5), Math.sin((t / 1000) * 1.3 + s.phase) * 0.25, s.couleur, pulse);
+    cristal(c, x, y, 7 * Math.pow(ech, 0.8) * (0.5 + k * 0.5), Math.sin((t / 1000) * 1.3 + s.phase) * 0.25, s.couleur, pulse, s.tex);
   }
 }
 
@@ -788,7 +852,7 @@ function converger(p: DOMPoint): number {
         const yj = (1 - ej) * (1 - ej) * y0 + 2 * (1 - ej) * ej * cy + ej * ej * p.y;
         halo(c, xj, yj, (10 - j * 2) * ech, s.couleur, 0.5 - j * 0.1);
       }
-      cristal(c, x, y, 7 * Math.pow(ech, 0.8), Math.atan2(p.y - y, p.x - x) + Math.PI / 2, s.couleur, 1);
+      cristal(c, x, y, 7 * Math.pow(ech, 0.8), Math.atan2(p.y - y, p.x - x) + Math.PI / 2, s.couleur, 1, s.tex);
     }, vol, i * ecart);
   });
   suspendus = [];
@@ -812,7 +876,7 @@ function converger(p: DOMPoint): number {
     touche(ennemi, OR, Math.min(5, force));
     const ecran = document.querySelector('.ecran-combat');
     pousser(ecran, 0, -1, Math.min(5, 1 + n));
-    if (!reduit && n >= 3) ecran?.animate([{ filter: 'brightness(1.5)' }, { filter: 'none' }], { duration: 260, easing: 'ease-out' });
+    if (!reduit && n >= 3) ecran?.animate([{ filter: 'brightness(1.5)' }, { filter: 'none' }], { duration: NET, easing: ENTREE });
     S.sonConvergence(n);
     vibrer(n >= 3 ? [25, 30, 70] : 30);
   }, arrivee);
@@ -848,9 +912,9 @@ function bond(src: Element | null, de: DOMPoint | null, p: DOMPoint) {
   const tx = (dx / l) * amp, ty = (dy / l) * amp;
   const T = ELAN_ENNEMI + 300;
   const a = (src as HTMLElement).animate([
-    { transform: 'none', filter: 'none', easing: 'cubic-bezier(.3,0,.3,1)' },
-    { transform: `translate(${-tx * 0.6}px, ${-ty * 0.6}px) scale(1.05)`, filter: 'brightness(1.12) sepia(.3) hue-rotate(-25deg) saturate(1.5)', offset: (ELAN_ENNEMI - 40) / T, easing: 'cubic-bezier(.7,0,1,.5)' },
-    { transform: `translate(${tx}px, ${ty}px) scale(1.06)`, filter: 'brightness(1.12) sepia(.3) hue-rotate(-25deg) saturate(1.5)', offset: (ELAN_ENNEMI + 20) / T, easing: 'cubic-bezier(.2,.7,.3,1)' },
+    { transform: 'none', filter: 'none', easing: ENTREE },
+    { transform: `translate(${-tx * 0.6}px, ${-ty * 0.6}px) scale(1.05)`, filter: 'brightness(1.12) sepia(.3) hue-rotate(-25deg) saturate(1.5)', offset: (ELAN_ENNEMI - 40) / T, easing: SORTIE },
+    { transform: `translate(${tx}px, ${ty}px) scale(1.06)`, filter: 'brightness(1.12) sepia(.3) hue-rotate(-25deg) saturate(1.5)', offset: (ELAN_ENNEMI + 20) / T, easing: ENTREE },
     { transform: 'none', filter: 'none' },
   ], { duration: ms(T) });
   animsGelables.add(a);
@@ -894,7 +958,9 @@ function parade(r: DOMRect, angle: number, delai: number, brise: boolean) {
     for (let i = 0; i <= 6; i++) { const a = (i / 6) * Math.PI * 2 + Math.PI / 6; c[i ? 'lineTo' : 'moveTo'](cx + Math.cos(a) * rx * ech2, cy + Math.sin(a) * ry * ech2); }
   };
   const duree = brise ? 340 : 560;
-  trait((c, k) => {
+  // la coque de glace peinte, dressée devant le Porteur ; brisée, elle disparaît vite
+  const peint = jaillir('ecu', cx, cy, r.width + 24 * e, { hauteur: r.height + 28 * e, duree, tient: brise ? 0.2 : 0.5, delai, grandit: 0.03 });
+  if (!peint) trait((c, k) => {
     // la coque se dresse (petit rebond), tient, puis s'efface ; brisée, elle disparaît vite
     const pop = k < 0.18 ? 0.86 + (k / 0.18) * 0.2 : 1.06 - Math.min(1, (k - 0.18) / 0.3) * 0.06;
     const a = k < 0.18 ? k / 0.18 : 1 - (k - 0.18) / 0.82;
@@ -921,7 +987,7 @@ function parade(r: DOMRect, angle: number, delai: number, brise: boolean) {
   if (brise) {
     // la coque se fend du point d'impact, puis vole en éclats
     const fentes = Array.from({ length: 5 }, () => ({ a: angle + Math.PI + hasard(-1.3, 1.3), l: hasard(0.5, 0.9) }));
-    trait((c, k) => {
+    if (!jaillir('brise', cx, cy, r.width * 1.25, { angle: hasard(0, 6.28), tourne: 0.3, duree: 420, tient: 0.25, delai: delai + 70, grandit: 0.5 })) trait((c, k) => {
       c.globalAlpha = 1 - k; c.strokeStyle = '#FFFFFF'; c.shadowColor = '#7FB8FF'; c.shadowBlur = 8; c.lineWidth = 1.4 * e;
       const o = Math.min(1, k * 5);
       for (const f of fentes) {
@@ -1025,6 +1091,8 @@ function coqueEnnemi(el: Element | null) {
   const r = el?.getBoundingClientRect();
   if (!r) return;
   const cx = r.left + r.width / 2, cy = r.top + r.height * 0.45, t = Math.min(r.width, r.height) * 0.38;
+  S.sonCoque();
+  if (jaillir('ecu', cx, cy, t * 2.4, { duree: 620, tient: 0.5, grandit: 0.04 })) return;
   trait((c, k) => {
     c.globalAlpha = Math.sin(k * Math.PI) * 0.85;
     c.strokeStyle = '#CFE6FF'; c.shadowColor = '#7FB8FF'; c.shadowBlur = 20; c.lineWidth = 2.5;
@@ -1032,7 +1100,6 @@ function coqueEnnemi(el: Element | null) {
     for (let j = 0; j <= 6; j++) { const a = (j / 6) * Math.PI * 2 + k * 0.4; c[j ? 'lineTo' : 'moveTo'](cx + Math.cos(a) * t, cy + Math.sin(a) * t); }
     c.stroke();
   }, 620);
-  S.sonCoque();
 }
 
 // ---------- Sons : voir son.ts (une seule tonalité, des instruments de cristal, une salle) ----------
@@ -1043,7 +1110,7 @@ function secouer(el: Element | null, force: number) {
   if (!el || reduit || force <= 0) return;
   const a = 2 + force * 2.2;
   const pas = Array.from({ length: 6 }, (_, i) => ({ transform: `translate(${hasard(-a, a) * (1 - i / 6)}px, ${hasard(-a, a) * 0.6 * (1 - i / 6)}px)` }));
-  (el as HTMLElement).animate([...pas, { transform: 'none' }], { duration: 180 + force * 40, easing: 'ease-out' });
+  (el as HTMLElement).animate([...pas, { transform: 'none' }], { duration: VIF + force * 40, easing: ENTREE });
 }
 
 /**
@@ -1054,10 +1121,13 @@ function secouer(el: Element | null, force: number) {
  */
 function touche(el: Element | null, couleur: string, force: number) {
   if (!el) return;
-  const flash = { filter: `brightness(${1.9 + force * 0.2}) saturate(.6) drop-shadow(0 0 12px ${couleur})` };
-  if (reduit) { (el as HTMLElement).animate([flash, { filter: 'none' }], { duration: 260, easing: 'ease-out' }); return; }
+  // l'illustration de l'ennemi couvre tout le haut de l'écran (7 novembre 2026) : un éclair trop fort blanchissait
+  // la moitié de l'écran à chaque coup. Sur l'ennemi, l'éclair reste léger ; sur une tuile de Porteur, il garde sa force.
+  const plein = el.classList.contains('ennemi-art');
+  const flash = { filter: plein ? `brightness(${1.28 + force * 0.06}) saturate(.9)` : `brightness(${1.9 + force * 0.2}) saturate(.6) drop-shadow(0 0 12px ${couleur})` };
+  if (reduit) { (el as HTMLElement).animate([flash, { filter: 'none' }], { duration: NET, easing: ENTREE }); return; }
   const fige = 50 + force * 14; // l'arrêt grandit avec la puissance du coup
-  const duree = fige + 300 + force * 30;
+  const duree = fige + NET + force * 30;
   const k = fige / duree;
   const recul = 4 + force * 2.2, dx = recul * hasard(-0.6, 0.6), tourne = hasard(-2.5, 2.5);
   const ecrase = `scale(${1 + 0.03 * force}, ${1 - 0.025 * force})`;
@@ -1067,7 +1137,7 @@ function touche(el: Element | null, couleur: string, force: number) {
     { filter: 'brightness(1.25)', transform: `translate(${dx}px, -${recul}px) rotate(${tourne}deg) scale(1.01)`, offset: k + (1 - k) * 0.3 },
     { filter: 'none', transform: `translate(${-dx * 0.25}px, ${recul * 0.2}px) rotate(${-tourne * 0.3}deg)`, offset: k + (1 - k) * 0.65 },
     { filter: 'none', transform: 'none' },
-  ], { duration: duree, easing: 'cubic-bezier(.25,.8,.35,1)' });
+  ], { duration: duree, easing: ENTREE });
 }
 
 const centre = (el: Element | null, dy = 0) => {
@@ -1092,12 +1162,13 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       dissiper();
       // dans un groupe, l'ennemi qui agit s'avance un instant
       const v = racine.querySelector(`.vignette-ennemi[data-id="${ev.rang}"]`);
-      if (v) { v.classList.remove('agit'); void (v as HTMLElement).offsetWidth; v.classList.add('agit'); }
+      // (une animation posée sur l'élément, pas une classe : l'écran se met à jour sur place et l'effacerait)
+      if (!reduit) v?.querySelector('img')?.animate([{}, { transform: 'scale(1.22)', boxShadow: '0 0 0 2px #ffb3a3,0 0 18px 4px rgba(255,90,70,.8)', filter: 'none', offset: 0.4 }, {}], { duration: AMPLE, easing: ENTREE });
       return 120;
     }
     case 'phase': {
       // le gardien change de phase : un éclair, la scène tremble, une note grave qui monte
-      if (ennemi && !reduit) (ennemi as HTMLElement).animate([{ filter: 'none' }, { filter: `brightness(2.2) drop-shadow(0 0 30px ${DANGER})`, transform: 'scale(1.05)' }, { filter: 'none', transform: 'none' }], { duration: 700, easing: 'ease-out' });
+      if (ennemi && !reduit) (ennemi as HTMLElement).animate([{ filter: 'none' }, { filter: 'brightness(1.5) saturate(1.2)', transform: 'scale(1.05)' }, { filter: 'none', transform: 'none' }], { duration: 2 * AMPLE, easing: ENTREE });
       secouer(ecran, 3);
       voileRouge(0.25);
       S.sonPhase();
@@ -1110,14 +1181,14 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       const v = racine.querySelector(`.vignette-ennemi[data-id="${ev.rang}"]`);
       const p = centre(v);
       if (p) eclats(p.x, p.y, 18, '#c9b8a0', { vitesse: 120, gravite: 120, taille: 2.4, vie: 0.8 });
-      if (v && !reduit) (v as HTMLElement).animate([{ opacity: 0, transform: 'translateY(-14px) scale(.6)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.3,1.3)' });
+      if (v && !reduit) (v as HTMLElement).animate([{ opacity: 0, transform: 'translateY(-14px) scale(.6)' }, { opacity: 1, transform: 'none' }], { duration: AMPLE, easing: RESSORT });
       S.sonRenfort();
       return 250;
     }
     case 'cible': {
       dissiper();
       // le visé est tombé : le suivant entre en scène
-      if (ennemi && !reduit) (ennemi as HTMLElement).animate([{ opacity: 0, transform: 'scale(1.06)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'ease-out' });
+      if (ennemi && !reduit) (ennemi as HTMLElement).animate([{ opacity: 0, transform: 'scale(1.06)' }, { opacity: 1, transform: 'none' }], { duration: NET, easing: ENTREE });
       return 80;
     }
     case 'carte': {
@@ -1209,7 +1280,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       const encaisser = () => {
         // paré : la jauge de bouclier s'illumine, le Porteur ne bronche presque pas
         if (bloque !== 'non') racine.querySelector('.ligne-escouade .etat.garde')?.animate(
-          [{ filter: 'brightness(2.2) drop-shadow(0 0 8px #7FB8FF)', transform: 'scale(1.08)' }, { filter: 'none', transform: 'none' }], { duration: 420, easing: 'ease-out' });
+          [{ filter: 'brightness(2.2) drop-shadow(0 0 8px #7FB8FF)', transform: 'scale(1.08)' }, { filter: 'none', transform: 'none' }], { duration: AMPLE, easing: ENTREE });
         if (bloque === 'tout') { if (el) { touche(el, '#7FB8FF', 0); secouer(el, 1); } vibrer(10); return; }
         if (el) { touche(el, DANGER, 1); secouer(el, 2); }
         if (!ev.net) return;
@@ -1223,7 +1294,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
           racine.querySelectorAll(sel).forEach((c, i) => {
             const a = 2 + part * 5;
             (c as HTMLElement).animate([{ transform: 'none' }, { transform: `translate(${hasard(-a, a)}px, ${a * 0.6}px) rotate(${hasard(-1.5, 1.5)}deg)` }, { transform: 'none' }],
-              { duration: 240, delay: i * 18, easing: 'ease-out' });
+              { duration: NET, delay: i * 18, easing: ENTREE });
           });
           if (part >= 0.3) secouer(ecran, 2);
         }
@@ -1236,14 +1307,14 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
     case 'resonance': {
       S.sonResonance(ev.suite);
       const zone = racine.querySelector('.zone-chaine');
-      if (zone) (zone as HTMLElement).animate([{ filter: 'brightness(1.9)', boxShadow: '0 0 40px rgba(216,180,101,.8)' }, { filter: 'none', boxShadow: 'none' }], { duration: 520, easing: 'ease-out' });
+      if (zone) (zone as HTMLElement).animate([{ filter: 'brightness(1.9)', boxShadow: '0 0 40px rgba(216,180,101,.8)' }, { filter: 'none', boxShadow: 'none' }], { duration: AMPLE, easing: ENTREE });
       // la salle derrière l'interface s'éclaire elle aussi, d'autant plus que la suite est longue
       racine.querySelector('.fond-lieu .fl-lueur')?.animate([{ opacity: 0 }, { opacity: Math.min(1, 0.45 + (ev.suite - 3) * 0.28), offset: 0.18 }, { opacity: 0 }],
-        { duration: 900 + ev.suite * 120, easing: 'ease-out' });
+        { duration: 2 * AMPLE + ev.suite * 120, easing: ENTREE });
       vibrer(ev.suite >= 5 ? [15, 30, 15, 30, 50] : 12);
       if (ev.suite >= 5) {
         // la grande suite : un arrêt sur image, un éclair blanc, puis tout part
-        if (!reduit) ecran?.animate([{ filter: 'brightness(2.2) saturate(.4)' }, { filter: 'none' }], { duration: 420, easing: 'ease-out' });
+        if (!reduit) ecran?.animate([{ filter: 'brightness(2.2) saturate(.4)' }, { filter: 'none' }], { duration: AMPLE, easing: ENTREE });
         const r = zone?.getBoundingClientRect();
         if (r) eclats(r.left + r.width / 2, r.top + r.height / 2, 40, '#F3D27A', { vitesse: 380, taille: 2.6, trainee: true, gravite: 0, vie: 0.6 });
         return 260;
@@ -1255,7 +1326,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       if (ev.cible === 'ennemi') {
         // l'ennemi se répare : une lueur verte qui remonte sur lui
         if (pEnnemi) eclats(pEnnemi.x, pEnnemi.y + 30, 14, SOIN, { vitesse: 70, gravite: -140, taille: 2.6, vie: 1, angle: -Math.PI / 2, ouverture: 0.9 });
-        if (ennemi) (ennemi as HTMLElement).animate([{ filter: `drop-shadow(0 0 0 ${SOIN})` }, { filter: `drop-shadow(0 0 18px ${SOIN})` }, { filter: 'none' }], { duration: 600 });
+        if (ennemi) (ennemi as HTMLElement).animate([{ filter: `drop-shadow(0 0 0 ${SOIN})` }, { filter: `drop-shadow(0 0 18px ${SOIN})` }, { filter: 'none' }], { duration: AMPLE, easing: ENTREE });
         S.sonSoinEnnemi();
         return 0;
       }
@@ -1280,7 +1351,9 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       } else {
         eclats(p.x, p.y, 8, SOIN, { vitesse: 60, gravite: -120, taille: 2.4, vie: 0.9 });
       }
-      if (el) (el as HTMLElement).animate([{ filter: `brightness(1.4) drop-shadow(0 0 10px ${SOIN})` }, { filter: 'none' }], { duration: 500 });
+      // l'éclosion verte peinte sur le Porteur soigné (en plus des lucioles)
+      jaillir('soin', p.x, p.y, 92 * Math.sqrt(ech), { angle: hasard(-0.3, 0.3), duree: 520, tient: 0.35 });
+      if (el) (el as HTMLElement).animate([{ filter: `brightness(1.4) drop-shadow(0 0 10px ${SOIN})` }, { filter: 'none' }], { duration: AMPLE, easing: ENTREE });
       S.sonSoin();
       return 0;
     }
@@ -1288,7 +1361,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       if (ev.texte === 'Fissure' && pEnnemi) fissures(pEnnemi, racine.querySelector('.scene-ennemi .etat.fissure:not(.prevue)'));
       else if (ev.texte === 'Troublé') desarme(racine.querySelector('.scene-ennemi .intention'));
       else if (ev.texte === 'Élan') { const r = racine.querySelector('.zone-chaine')?.getBoundingClientRect(); if (r) elan(r); }
-      else if (ev.texte === 'Dissonance' && !reduit) racine.querySelector('.zone-chaine')?.animate([{ filter: 'none' }, { filter: 'hue-rotate(70deg) blur(1px)', transform: 'translateX(3px)' }, { filter: 'hue-rotate(-50deg)', transform: 'translateX(-3px)' }, { filter: 'none', transform: 'none' }], { duration: 480 });
+      else if (ev.texte === 'Dissonance' && !reduit) racine.querySelector('.zone-chaine')?.animate([{ filter: 'none' }, { filter: 'hue-rotate(70deg) blur(1px)', transform: 'translateX(3px)' }, { filter: 'hue-rotate(-50deg)', transform: 'translateX(-3px)' }, { filter: 'none', transform: 'none' }], { duration: AMPLE });
       return 0;
     }
     case 'bouclier': {
@@ -1312,7 +1385,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
     }
     case 'boost': {
       const qui = (ev.rang !== undefined ? racine.querySelector(`.vignette-ennemi[data-id="${ev.rang}"]:not(.visee) img`) : null) ?? ennemi;
-      if (qui) (qui as HTMLElement).animate([{ filter: `drop-shadow(0 0 0 ${DANGER})` }, { filter: `drop-shadow(0 0 24px ${DANGER}) brightness(1.2)` }, { filter: 'none' }], { duration: 600 });
+      if (qui) (qui as HTMLElement).animate([{ filter: `drop-shadow(0 0 0 ${DANGER})` }, { filter: `drop-shadow(0 0 24px ${DANGER}) brightness(1.2)` }, { filter: 'none' }], { duration: AMPLE, easing: ENTREE });
       S.sonBoost();
       return 0;
     }
@@ -1331,7 +1404,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
           delai: finale, duree: 1500,
           surFront: (x, y) => eclats(x, y, 1, Math.random() < 0.6 ? '#CFF4FF' : TEINTE[lignee], { vitesse: 60, gravite: -110, taille: 2.2, vie: 1.1 }),
         });
-        if (ennemi && !reduit && !peinte) (ennemi as HTMLElement).animate([{ opacity: 1, filter: 'none' }, { opacity: 0, filter: 'blur(6px) brightness(2)', transform: 'translateY(-10px) scale(1.04)' }], { duration: 900, delay: finale, fill: 'both', easing: 'ease-in' });
+        if (ennemi && !reduit && !peinte) (ennemi as HTMLElement).animate([{ opacity: 1, filter: 'none' }, { opacity: 0, filter: 'blur(6px) brightness(2)', transform: 'translateY(-10px) scale(1.04)' }], { duration: 2 * AMPLE, delay: finale, fill: 'both', easing: SORTIE });
         setTimeout(S.sonVictoire, finale);
         vibrer([20, 60, 20, 60, 40]);
         return (peinte ? 1100 : 700) + finale;
@@ -1347,7 +1420,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       const el = [...racine.querySelectorAll('.combattant')].find((x) => x.getAttribute('data-porteur') === ev.cible);
       const p = centre(el ?? null);
       if (p) eclats(p.x, p.y, 16, '#8a8f99', { vitesse: 90, gravite: 160, taille: 2.4, vie: 1 });
-      if (el) (el as HTMLElement).animate([{ filter: 'brightness(1.6)' }, { filter: 'grayscale(1) brightness(.45)' }], { duration: 500, easing: 'ease-in' });
+      if (el) (el as HTMLElement).animate([{ filter: 'brightness(1.6)' }, { filter: 'grayscale(1) brightness(.45)' }], { duration: AMPLE, easing: SORTIE });
       voileRouge(0.35);
       S.sonATerre();
       vibrer([60, 50, 90]);

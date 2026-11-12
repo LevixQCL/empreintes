@@ -459,7 +459,6 @@ h1,h2,h3{font-weight:400}
    Son heure d'apparition (animation-delay négatif) le suit d'un rendu à l'autre : il ne rejaillit pas à chaque étape du combat. */
 .pop{position:absolute;z-index:5;left:50%;top:8px;transform:translateX(-50%);font-family:var(--mono);font-weight:700;font-size:20px;pointer-events:none;white-space:nowrap;
   animation:pop-tape 1s cubic-bezier(.25,.7,.35,1) both;color:var(--pc);-webkit-text-stroke:1px rgba(8,6,10,.85);paint-order:stroke fill;text-shadow:0 2px 0 rgba(0,0,0,.45),0 3px 8px #000,0 0 14px color-mix(in srgb,var(--pc) 55%,transparent)}
-.scene-ennemi .pop{top:40%}
 @keyframes pop-tape{
   0%{opacity:0;transform:translate(-50%,4px) scale(2.4) rotate(calc(var(--pr,0deg) * 1.8))}
   7%{opacity:1;transform:translate(-50%,0) scale(.86) rotate(var(--pr,0deg))}
@@ -472,7 +471,6 @@ h1,h2,h3{font-weight:400}
 .liste-regles .ico{width:14px;height:14px;color:var(--gold)}
 
 @media (prefers-reduced-motion: reduce){
-  .pop{animation-duration:.01s}
   .jauge>i,.jauge-pv .pv,.geste{transition:none}
   .ennemi-art,.intention.danger,.lancer.fort,.appel,.pastille-alerte,.toast.entre,.feuille.entre,.fenetre.entre,.toile .tableau.nouvel-age{animation:none}
   .replique,.appel-porte{opacity:1;transform:none;animation:none}

@@ -102,7 +102,7 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'strate', sauvegarde: 'combat', faire: ENTRER },
   // le brouillard des Strates profondes (30 octobre 2026) : les voisines ne montrent qu'un indice, la fiche d'une salle voilée
   { nom: 'strate-brume', sauvegarde: 'brume', faire: async (p) => { await ENTRER(p); await p.click('.ex-salle.accessible >> nth=0'); await p.waitForTimeout(300); } },
-  { nom: 'combat', sauvegarde: 'combat', faire: async (p) => { await ENTRER(p); await p.click('[data-action="salle"]'); await p.waitForTimeout(600); } },
+  { nom: 'combat', sauvegarde: 'combat', faire: async (p) => { await ENTRER(p); await p.click('[data-action="salle-voir"]'); await p.waitForTimeout(300); await p.click('[data-action="salle"]'); await p.waitForTimeout(600); } },
   { nom: 'debut', sauvegarde: 'debut', faire: ENTRER },
   // le Récit d'Ilka (Pack des origines, 11 novembre 2026) : la page scellée de sa fiche, le premier plan, le choix de la carte d'origine
   { nom: 'recit-fiche', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('[data-action="porteur"][data-id="ilka"] >> nth=0'); await p.waitForTimeout(300); await p.$eval('.fp-recit', (e) => e.scrollIntoView({ block: 'center' })); } },

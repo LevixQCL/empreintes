@@ -154,7 +154,8 @@
   .ecran-combat .vg-int .ico{width:14px;height:14px}
   .ecran-combat .vg-vie{width:66px;height:6px;margin-top:10px}
   .ecran-combat .scene-ennemi.en-groupe .intention{max-width:calc(100% - 40px - var(--ng,3) * 90px)}
-  .ecran-combat .scene-ennemi .pop{font-size:calc(42px * var(--ps,1))}
+  .pop.sur-ennemi{font-size:calc(42px * var(--ps,1))}
+  .pop.sur-ennemi.info{font-size:calc(22px * var(--ps,1))}
   .zone-chaine > .rail,.zone-main > .main{zoom:1}
   .zone-main > .main{justify-content:center;overflow:visible;padding-top:8px}
   .geste.main:not(:disabled){transition:transform .15s ease,filter .15s ease}

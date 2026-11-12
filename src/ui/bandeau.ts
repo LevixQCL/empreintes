@@ -8,6 +8,7 @@ import { artGardien, illustrationEnnemi } from './art';
 import { echap } from './outils';
 import { typoHtml } from './typo';
 import { t as tr } from '../core/i18n';
+import { ENTREE } from './rythme';
 
 let courant: HTMLElement | null = null;
 
@@ -25,7 +26,7 @@ function montrer(cls: string, html: string, duree: number, reduit: boolean) {
   const fond = el.querySelector('.bg-fond') as HTMLElement;
   const texte = el.querySelector('.bg-texte') as HTMLElement;
   const voile = el.querySelector('.bg-voile') as HTMLElement;
-  const t = { duration: duree, easing: 'cubic-bezier(.2,.7,.3,1)' };
+  const t = { duration: duree, easing: ENTREE };
   voile.animate([{ opacity: 0 }, { opacity: 1, offset: 0.12 }, { opacity: 1, offset: 0.78 }, { opacity: 0 }], t);
   fond.animate([
     { opacity: 0, transform: 'translate(-50%,-50%) scaleX(.15) scaleY(.6)' },
