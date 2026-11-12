@@ -13,7 +13,7 @@ import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
 import { blocMur } from './mur';
 import { CREUSE, finCreuse, heuresCreuse, CERCLE_OUVERTURE, MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, nbFoyers, nomConfiance, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, chapitresALire, porteursNouveaux, brutEnAttente, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
-import { miniature, portrait } from './art';
+import { miniature, portrait, visageGarnison } from './art';
 import { feuilleGuide, trouveesDe } from './guide';
 import { ICO, icone, type Icone } from './icones';
 import { feuilleNom } from './classements';
@@ -207,6 +207,27 @@ export function avatar(id: string, taille = 40, extra = ''): string {
   const p = taille <= 60 ? miniature(id) : portrait(id);
   return `<span class="avatar${p ? '' : ' sans-portrait'}${extra ? ' ' + extra : ''}" style="--c:${COULEUR[d.lignee]};--t:${taille}px" aria-hidden="true">`
     + (p ? `<img src="${p}" alt="" decoding="async" loading="lazy">` : `<b>${echap(d.nom.charAt(0))}</b>`) + `</span>`;
+}
+
+/**
+ * Les gardes d'une garnison (pillages) : un garde par Porteur, à son nom de garde et à son visage de garde
+ * (12 novembre 2026, Bryan : « ce n'est pas le portrait de Véla » : un garde au visage inconnu portait le nom de Véla).
+ * Les Porteurs du trio sont les héros du joueur : en face, on ne voit jamais leur nom ni leur visage.
+ * Deux gardes de même lignée prennent un numéro (I, II) et les deux visages, comme en combat.
+ */
+export function gardesGarnison(porteurs: string[]): { nom: string; lignee: Lignee; img: string | null }[] {
+  const lignees = porteurs.map((id) => porteurDef(id).lignee);
+  return lignees.map((l, k) => {
+    const memes = lignees.filter((x) => x === l).length;
+    const rang = lignees.slice(0, k).filter((x) => x === l).length;
+    const nom = ennemiDef(`garde-${l}`).nom + (memes > 1 ? ` ${['I', 'II', 'III'][rang]}` : '');
+    return { nom, lignee: l, img: visageGarnison(l, rang, porteurs[k]!) };
+  });
+}
+/** Le petit visage rond d'un garde de garnison, comme avatar() pour un Porteur */
+export function avatarGarde(g: { nom: string; lignee: Lignee; img: string | null }, taille = 40): string {
+  return `<span class="avatar${g.img ? '' : ' sans-portrait'}" style="--c:${COULEUR[g.lignee]};--t:${taille}px" aria-hidden="true">`
+    + (g.img ? `<img src="${g.img}" alt="" decoding="async" loading="lazy">` : `<b>${echap(g.nom.charAt(0))}</b>`) + `</span>`;
 }
 
 /** Une ressource : icône, valeur ; en rouge si on n'en a pas assez */

@@ -195,6 +195,8 @@ export function dissoudre(img: HTMLImageElement, o: Dissolution = {}): boolean {
   };
   dessiner(tMin);
   const debut = performance.now() + delai;
+  // d'ici là l'image reste visible (l'écran la marque déjà « dissoute ») : elle encaisse encore le dernier coup
+  if (delai) img.style.opacity = '1';
   window.setTimeout(() => { poser(); img.style.opacity = '0'; }, delai);
   const image = (maintenant: number) => {
     const k = Math.min(1, Math.max(0, (maintenant - debut) / duree));

@@ -258,6 +258,10 @@
    "en": "blocked"
   },
   {
+   "fr": "Fissure +{0} %",
+   "en": "Fissure +{0}%"
+  },
+  {
    "fr": "+{0} Flux",
    "en": "+{0} Flux"
   }

@@ -30,6 +30,9 @@ import { htmlPorteurs } from '../ui/porteurs';
 import { visuel as ageDistrict } from '../ui/art';
 import { htmlTitre, type TitreCompte } from '../ui/titre';
 import { glisser, horloge, noter } from '../ui/toucher';
+import { mettreAJour } from '../ui/sur-place';
+import { viderPops } from '../ui/pops';
+import { defiler } from '../ui/compteurs';
 import { htmlCombat, htmlDecouverte, panneauAge, panneauCompte } from '../ui/vue';
 import { annoncerGardien } from '../ui/bandeau';
 import { app, compteEtat, D, G, K, racine, reduit } from './etat';
@@ -67,6 +70,15 @@ function majTitre(h: string): boolean {
   if (nouveau.hasAttribute('data-action')) section.dataset.action = nouveau.getAttribute('data-action')!;
   racine.querySelectorAll(':scope > .titre-voile-feuille, :scope > .titre-feuille').forEach((el) => el.remove());
   racine.append(...[...neuf.content.children].filter((el) => el !== nouveau));
+  return true;
+}
+
+/** L'écran de combat déjà affiché : on ne change que ce qui diffère du nouvel écran (faux si ce n'est plus un écran de combat) */
+function majCombat(h: string): boolean {
+  const neuf = document.createElement('template');
+  neuf.innerHTML = h;
+  if (![...neuf.content.children].some((el) => el.classList.contains('ecran-combat'))) return false;
+  mettreAJour(racine, neuf.content);
   return true;
 }
 
@@ -155,7 +167,7 @@ function dessiner() {
       if (total > 1) page = { n: K.decouverteLot ?? 1, total };
     }
     const parole = paroleGardien(etat);
-    h = htmlCombat({ x: app.jeu.expedition, etat, parole, verrou: K.verrou, regles: K.regles, journal: K.journal, fuite: K.fuite, autoPermis: autoActif() && J.combatAutoPermis(app.jeu), auto: !!K.auto, viserAppris: (app.jeu.decouvertes ?? []).includes('viser'), eclats: K.eclats, ...(K.tuile ? { tuile: K.tuile } : {}), guide: K.guide, trouvees: trouveesDe(app.jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte, ...(page ? { decouvertePage: page } : {}) } : {}) });
+    h = htmlCombat({ x: app.jeu.expedition, etat, parole, verrou: K.verrou, regles: K.regles, journal: K.journal, fuite: K.fuite, autoPermis: autoActif() && J.combatAutoPermis(app.jeu), auto: !!K.auto, viserAppris: (app.jeu.decouvertes ?? []).includes('viser'), eclats: K.eclats, ...(K.tuile ? { tuile: K.tuile } : {}), guide: K.guide, trouvees: trouveesDe(app.jeu.collection), fondus: K.fondus, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte, ...(page ? { decouvertePage: page } : {}) } : {}) });
   } else {
     app.mode = 'district';
     voirNouveautes();
@@ -176,13 +188,20 @@ function dessiner() {
   // les volets dépliés (journal du combat…) restent dépliés d'un rendu à l'autre : ceux qui portent un id
   const deplies = new Set([...racine.querySelectorAll<HTMLDetailsElement>('details[id]')].map((d) => `${d.id}:${d.open}`));
   const places = noter(racine);
-  horloge(racine);
-  if (!(app.mode === 'intro' && majIntro(racine, h, reduit)) && !(app.mode === 'titre' && majTitre(h))) racine.innerHTML = h;
+  // l'écran de combat déjà affiché se met à jour sur place (sur-place.ts) : ses animations en cours ne sont plus coupées.
+  // L'horloge commune des boucles n'est posée qu'à la création de l'écran : la changer en route les ferait sauter.
+  const surPlace = app.mode === 'combat' && !!racine.querySelector(':scope > .ecran-combat') && majCombat(h);
+  if (!surPlace) {
+    horloge(racine);
+    if (app.mode !== 'combat') viderPops();
+    if (!(app.mode === 'intro' && majIntro(racine, h, reduit)) && !(app.mode === 'titre' && majTitre(h))) racine.innerHTML = h;
+  }
   for (const d of racine.querySelectorAll<HTMLDetailsElement>('details[id]')) {
     if (deplies.has(`${d.id}:true`)) d.open = true;
     else if (deplies.has(`${d.id}:false`)) d.open = false;
   }
   glisser(racine, places);
+  defiler(racine, !surPlace, reduit);
   DEFILANTS.forEach((sel, k) => racine.querySelectorAll<HTMLElement>(sel).forEach((el, i) => { const d = defile[k]?.[i]; if (d) { el.scrollTop = d[0]; el.scrollLeft = d[1]; } }));
   for (const [sel, cle] of Object.entries(cles())) if (cle && cle !== avant[sel]) racine.querySelector(sel)?.classList.add('entre');
   document.body.classList.toggle('fige', !!racine.querySelector('.feuille, .voile'));

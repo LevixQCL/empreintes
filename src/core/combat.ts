@@ -568,8 +568,8 @@ function masquerFelures(s: CombatEtat, copie: CombatEtat) {
  * une attaque ». La chaîne est jouée sur une copie du combat, avec exactement les règles du vrai lancer (Résonance, lignées,
  * Blindé, Fissure, bouclier de l'ennemi…) : le total affiché est celui qui tombera. Rien n'est modifié.
  */
-export function apercuChaine(s: CombatEtat): { degats: number; absorbe: number; bouclier: number; soin: number; vaincus: number } {
-  const r = { degats: 0, absorbe: 0, bouclier: 0, soin: 0, vaincus: 0 };
+export function apercuChaine(s: CombatEtat): { degats: number; absorbe: number; bouclier: number; soin: number; vaincus: number; fissure: number } {
+  const r = { degats: 0, absorbe: 0, bouclier: 0, soin: 0, vaincus: 0, fissure: 0 };
   if (s.issue !== 'en-cours' || !s.chaine.length) return r;
   const copie = photo(s);
   delete copie.historique;
@@ -583,6 +583,9 @@ export function apercuChaine(s: CombatEtat): { degats: number; absorbe: number; 
     },
   });
   r.vaincus = debout - ennemisDebout(copie).length;
+  // la Fissure que la chaîne posera sur l'ennemi visé (12 novembre 2026) : l'écran l'annonce avant de lancer
+  const vise = tousEnnemis(copie).find((en) => (en.rang ?? 0) === (s.ennemi.rang ?? 0));
+  if (vise && vise.pv > 0 && (vise.fissure ?? 0) > (s.ennemi.fissure ?? 0)) r.fissure = vise.fissure ?? 0;
   return r;
 }
 

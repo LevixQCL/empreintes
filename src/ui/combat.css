@@ -101,16 +101,46 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
   animation:fele-pulse 2.4s ease-in-out infinite}
 @keyframes fele-pulse{50%{opacity:.45}}
 @media (prefers-reduced-motion:reduce){.fele-trait{animation:none}}
+/* la Fissure (12 novembre 2026, Bryan : « ce n'est presque pas visible ») : sa pastille se lit de loin, en or plein ;
+   en pointillés tant que la chaîne posée ne fait que l'annoncer */
+@keyframes fissure-pulse{50%{opacity:.55}}
+#app[data-mode="combat"] .ecran-combat .etat.fissure{padding:4px 12px 4px 9px;font-size:13px;font-weight:700;letter-spacing:.02em;color:#2A1600;
+  background:linear-gradient(180deg,#FFE3A0,#E8A93A);box-shadow:inset 0 0 0 1px rgba(255,246,214,.9),0 0 14px rgba(255,170,60,.65),0 2px 6px rgba(0,0,0,.5)}
+#app[data-mode="combat"] .ecran-combat .etat.fissure .ico{width:16px;height:16px}
+#app[data-mode="combat"] .ecran-combat .etat.fissure.prevue{color:#FFE3A0;background:rgba(40,22,0,.72);box-shadow:inset 0 0 0 1px rgba(255,200,100,.25),0 0 10px rgba(255,170,60,.35);
+  outline:1.5px dashed #FFC24D;outline-offset:-1.5px;animation:fissure-pulse 1.2s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.ecran-combat .etat.fissure.prevue{animation:none}}
+/* les fondus (12 novembre 2026, Bryan : « moins kitsch ») : ce qui change pendant la chaîne se dissout, ce qui le remplace paraît */
+.fondu{position:relative;display:inline-flex}
+#app[data-mode="combat"] .ecran-combat .nait{animation:fondu-nait .65s ease-out both}
+#app[data-mode="combat"] .ecran-combat .part,#app[data-mode="combat"] .ecran-combat .etat.fissure.prevue.part{animation:fondu-part .65s ease-in both;pointer-events:none}
+.fondu > .part{position:absolute;inset:0;justify-content:center;white-space:nowrap}
+/* l'ancienne plaque couvre toute la nouvelle (fond plein, contenu calé à droite comme avant) : on ne lit jamais les deux à la fois */
+.plaque-fantome{position:absolute;z-index:1;inset:0;display:flex}
+#app[data-mode="combat"] .ecran-combat .plaque-fantome > .plaque-int{position:static;margin:0;width:100%;max-width:none;flex-wrap:nowrap;justify-content:flex-end;height:100%;box-sizing:border-box;background:#0b0e18}
+@keyframes fondu-nait{0%,40%{opacity:0;filter:blur(3px) brightness(1.6)}100%{opacity:1;filter:none}}
+@keyframes fondu-part{0%{opacity:1;filter:none;transform:none}70%,100%{opacity:0;filter:blur(6px) brightness(1.4);transform:translateY(-5px) scale(1.04)}}
+@media (prefers-reduced-motion:reduce){#app[data-mode="combat"] .ecran-combat .nait{animation:none}#app[data-mode="combat"] .ecran-combat .part{display:none}}
 /* la carte qui agit s'avance, dans la couleur de sa lignée ; celles déjà jouées s'éteignent */
-.zone-chaine .en-jeu{transform:translateY(-10px) scale(1.08);filter:brightness(1.25) drop-shadow(0 0 14px var(--c,var(--gold)));z-index:2;transition:transform .12s ease-out}
+.zone-chaine .en-jeu{transform:translateY(-10px) scale(1.08);filter:brightness(1.25) drop-shadow(0 0 14px var(--c,var(--gold)));z-index:2;transition:transform var(--vif) var(--entree)}
 .zone-chaine .jouee{filter:saturate(.35) brightness(.6);transform:scale(.96)}
 @media (prefers-reduced-motion:reduce){.zone-chaine .en-jeu{transform:none}}
 /* l'ennemi vaincu reste dissous (l'animation de dissolution vient du calque d'impacts) */
 .ennemi-art.dissous{opacity:0}
 .ennemi-dissolution{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 /* le chiffre des dégâts grossit avec la place dans la chaîne */
-.scene-ennemi .pop{font-size:calc(30px * var(--ps,1))}
-.scene-ennemi .pop.gros{color:#FFE2A8;text-shadow:0 2px 6px #000,0 0 18px rgba(255,140,60,.75)}
+/* le rythme commun du combat (rythme.ts, 12 novembre 2026) : trois durées, trois courbes */
+:root{--vif:140ms;--net:260ms;--ample:440ms;--entree:cubic-bezier(.2,.8,.3,1);--sortie:cubic-bezier(.55,0,.9,.45);--ressort:cubic-bezier(.3,1.45,.5,1)}
+/* une carte jouée qui file vers la défausse */
+.carte-volante.sortante{z-index:33}
+/* les chiffres vivent sur un calque à part (pops.ts, 12 novembre 2026) : ils ne redessinent plus l'écran et ne se recouvrent plus */
+.calque-pops{position:fixed;inset:0;z-index:36;pointer-events:none;overflow:hidden}
+.pop.sur-ennemi{font-size:calc(30px * var(--ps,1))}
+.pop.sur-ennemi.gros{color:#FFE2A8;text-shadow:0 2px 6px #000,0 0 18px rgba(255,140,60,.75)}
+/* ce qui n'est pas un coup (Fêlure, Fissure, Troublé) : plus petit, sur sa ligne, au-dessus du point d'impact */
+.pop.info{font-size:15px;letter-spacing:.03em}
+.pop.sur-ennemi.info{font-size:calc(17px * var(--ps,1))}
+.pop.sur-vignette{font-size:16px}
 /* la cible d'une carte de soin : sous la carte dans la chaîne, et une marque verte sur le Porteur */
 .cibler{display:inline-flex;align-items:center;gap:3px;max-width:100%;padding:2px 6px;border:none;border-radius:3px;cursor:pointer;
   font-size:var(--t-min);font-weight:600;color:#DFFBE8;background:linear-gradient(165deg,rgba(26,60,40,.92),rgba(9,24,16,.95));box-shadow:inset 0 0 0 1px rgba(124,227,160,.55)}
@@ -127,9 +157,9 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
    reprenait le dessus : il faut le préfixe #app pour passer devant cristal.css). Le rail garde maintenant de la place au-dessus des cartes ; la carte qui agit grandit,
    s'éclaire dans la couleur de sa lignée et un reflet la traverse ; les cartes jouées s'éteignent toutes. */
 .rail{padding-top:16px;margin-top:-13px}
-#app .ecran-combat .zone-chaine .rail > .en-jeu{transform:translateY(-12px) scale(1.1);z-index:2;transition:transform .14s cubic-bezier(.2,.9,.3,1.3);
+#app .ecran-combat .zone-chaine .rail > .en-jeu{transform:translateY(-12px) scale(1.1);z-index:2;transition:transform var(--vif) var(--ressort);
   filter:brightness(1.18) drop-shadow(0 0 10px var(--c,var(--gold))) drop-shadow(0 6px 10px rgba(0,0,0,.7))}
-#app .ecran-combat .zone-chaine .rail > .jouee{transform:translateY(5px) scale(.94);filter:saturate(.3) brightness(.5);transition:transform .2s ease,filter .2s ease}
+#app .ecran-combat .zone-chaine .rail > .jouee{transform:translateY(5px) scale(.94);filter:saturate(.3) brightness(.5);transition:transform var(--net) var(--entree),filter var(--net) var(--entree)}
 @keyframes carte-reflet{from{background-position:130% 0}to{background-position:-130% 0}}
 @media (prefers-reduced-motion:reduce){
   #app .ecran-combat .zone-chaine .rail > .en-jeu{transform:none}
@@ -167,11 +197,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 .vg-int.danger{box-shadow:inset 0 0 0 1px rgba(255,140,120,.9);color:#ffd2c8}
 .vg-int.garde{color:#cfe6ff}
 .vg-vie{width:40px;height:4px;margin-top:6px;border-radius:2px;background:rgba(0,0,0,.6);box-shadow:0 0 0 1px rgba(255,255,255,.18);overflow:hidden}
-.vg-vie i{display:block;height:100%;background:linear-gradient(90deg,#c9472e,#ff8c6a);transition:width .35s}
-.vignette-ennemi .pop{top:6px;font-size:16px}
-.vignette-ennemi.agit img{animation:vg-agit .5s ease-out}
-@keyframes vg-agit{40%{transform:scale(1.22);box-shadow:0 0 0 2px #ffb3a3,0 0 18px 4px rgba(255,90,70,.8);filter:none}}
-@media (prefers-reduced-motion:reduce){.vignette-ennemi.agit img{animation:none}}
+.vg-vie i{display:block;height:100%;background:linear-gradient(90deg,#c9472e,#ff8c6a);transition:width var(--net) var(--entree)}
 @media (min-width:900px){
   .groupe-ennemis{top:16px;right:16px;gap:10px}
   .vignette-ennemi{width:64px}
@@ -469,7 +495,6 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 .combattant.ko .cb-vie .chiffre{color:var(--quiet)}
 .combattant.ko .jauge-vie{opacity:.4}
 /* les pops partent du visage */
-.combattant .pop{top:18%}
 
 /* le Porteur soigné : une petite pastille en haut à droite */
 .combattant .marque-soin{position:absolute;z-index:4;top:4px;right:5px;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;
@@ -520,7 +545,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
   .ecran-jeu .combattant .marque-coups{left:10px;top:10px;height:24px;gap:4px;padding:0 9px 0 5px;border-radius:12px;font-size:15px}
   .ecran-jeu .combattant .marque-coups .ico{width:13px;height:13px}
   .ecran-jeu .mc-qui img{width:18px;height:18px}
-  .ecran-jeu .combattant .pop{font-size:26px}
+  .pop.sur-porteur,.pop.sur-escouade{font-size:26px}
 }
 
 /* Relance gratuite de la première main (27 octobre 2026) : un petit bouton de verre à côté de « MAIN », qui disparaît
@@ -637,7 +662,8 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 #app[data-mode="combat"] .ecran-combat .badge-reso{padding:3px 10px}
 #app[data-mode="combat"] .ecran-combat .bilan{padding:4px 12px 4px 11px;background:rgba(8,12,26,.72);box-shadow:inset 0 0 0 1px rgba(242,213,140,.45),0 0 14px rgba(242,213,140,.15)}
 #app[data-mode="combat"] .ecran-combat .bilan.fatal{box-shadow:inset 0 0 0 1.5px #ffcf7a,0 0 18px rgba(255,190,90,.45)}
-#app[data-mode="combat"] .ecran-combat .zone-chaine .conseil{font-size:13px;line-height:1.35;color:#b9c6d8}
+/* deux lignes réservées (12 novembre 2026) : le conseil passe d'une ligne à deux selon la chaîne, et tout l'écran bougeait avec lui */
+#app[data-mode="combat"] .ecran-combat .zone-chaine .conseil{font-size:13px;line-height:1.35;color:#b9c6d8;min-height:2.7em}
 
 /* ---------- Le Flux : trois cristaux, un par niveau, chacun de sa couleur ---------- */
 #app[data-mode="combat"] .ecran-combat .flux{gap:6px;padding:5px 5px 5px 12px;margin-top:2px;border-radius:999px;background:var(--verre-m);box-shadow:var(--bord-m)}
@@ -798,7 +824,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 
 /* le bouclier de l'escouade : sur le portrait du Porteur qu'il couvre en premier, plus de pastille à part */
 .ecran-combat .ligne-escouade .etat.garde{display:none}
-.ecran-combat .ligne-escouade.vide:not(:has(.pop)){display:none}
+.ecran-combat .ligne-escouade.vide{display:none}
 .ecu-tuile{position:absolute;z-index:3;right:5px;top:4px;display:flex;align-items:center;gap:3px;height:20px;padding:0 6px 0 4px;border-radius:999px;pointer-events:none;
   background:rgba(6,20,34,.82);box-shadow:inset 0 0 0 1px rgba(143,211,255,.55),0 0 8px rgba(143,211,255,.3)}
 .ecu-tuile svg{width:12px;height:14px;fill:#8fd3ff}
@@ -839,6 +865,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
   #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi > .ennemi-infos{order:1}
   #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi > .plaque-int{order:2;position:relative;top:auto;left:auto;align-self:flex-end;
     width:auto;max-width:100%;margin:4px 0 0;flex-wrap:nowrap;gap:6px;padding:3px 10px 3px 3px;border-radius:999px}
+  #app[data-mode="combat"] .ecran-combat .plaque-fantome > .plaque-int{gap:6px;padding:3px 10px 3px 3px;border-radius:999px}
   /* une seule ligne : icône, nom de l'attaque, cible, dégâts, et la Fêlure en petit (« ◆9 18 → 9 ») */
   #app[data-mode="combat"] .ecran-combat .plaque-int .int-ico{width:24px;height:24px;flex:none}
   #app[data-mode="combat"] .ecran-combat .plaque-int .int-ico .ico{width:13px;height:13px}

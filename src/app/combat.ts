@@ -17,6 +17,7 @@ export function prechargerImpacts(): Promise<typeof import('../ui/impact')> {
 import type { Fin } from '../ui/vue';
 import { app, K, pause, racine, reduit } from './etat';
 import { afficher } from './rendu';
+import { montrerPop, type Voie } from '../ui/pops';
 import { sauver } from './synchro';
 
 /** les effets que le moteur nomme par un mot fixe (impact.ts s'en sert pour choisir l'animation) : affichés traduits */
@@ -102,59 +103,89 @@ export function finPour(): Fin | null {
   return null;
 }
 
-let idPop = 0;
-function pop(cible: string, texte: string, couleur: string, echelle = 1) {
-  const id = ++idPop;
-  // l'heure d'apparition suit le chiffre d'un rendu à l'autre : il tape une seule fois, au lieu de rejaillir à chaque étape
-  K.pops.push({ id, cible, texte, couleur, echelle, ne: Date.now(), penche: Math.round((Math.random() * 2 - 1) * 8) });
-  setTimeout(() => {
-    K.pops = K.pops.filter((p) => p.id !== id);
-    if (app.mode === 'combat') afficher();
-  }, 1000);
-}
-
+/**
+ * Les chiffres qui jaillissent (pops.ts) : sur un calque à part, rangés autour de leur cible.
+ * Ils se posent après le redessin de l'étape : l'écu du portrait ou la jauge de Flux sont alors à leur place.
+ */
 function popsDe(ev: Evenement, etat?: CombatEtat) {
+  const pop = (cible: string, texte: string, couleur: string, o: { echelle?: number; voie?: Voie; ou?: string } = {}) => montrerPop(racine, { cible, texte, couleur, reduit, ...o });
   // dans un groupe, ce qui touche un ennemi qui n'est pas visé s'affiche sur sa vignette
   if ('rang' in ev && ev.rang !== undefined && 'cible' in ev && ev.cible === 'ennemi' && etat?.autres?.length && (etat.ennemi.rang ?? 0) !== ev.rang) {
     ev = { ...ev, cible: `ennemi-${ev.rang}` } as Evenement;
   }
   // un coup sur l'ennemi grossit avec sa place dans la chaîne et avec sa taille : la fin d'une suite se lit de loin
-  if (ev.kind === 'degats') pop(ev.cible, ev.net ? `−${ev.net}` : t('bloqué'), 'var(--danger)', ev.cible === 'ennemi' && ev.net ? Math.min(2, 1 + 0.18 * (K.actif ?? 0) + (ev.net >= 25 ? 0.25 : 0) + (ev.net >= 45 ? 0.2 : 0)) : 1);
-  else if (ev.kind === 'bouclier') pop(ev.cible, `+${ev.v}`, 'var(--ivory)');
+  if (ev.kind === 'degats') pop(ev.cible, ev.net ? `−${ev.net}` : t('bloqué'), 'var(--danger)', { echelle: ev.cible === 'ennemi' && ev.net ? Math.min(2, 1 + 0.18 * (K.actif ?? 0) + (ev.net >= 25 ? 0.25 : 0) + (ev.net >= 45 ? 0.2 : 0)) : 1 });
+  // le bouclier de l'escouade s'écrit sur l'écu du portrait qui le porte
+  else if (ev.kind === 'bouclier') pop(ev.cible, `+${ev.v}`, 'var(--ivory)', ev.cible === 'escouade' ? { ou: '.escouade-combat .ecu-tuile' } : { voie: 'info' });
   else if (ev.kind === 'soin' && ev.v) pop(ev.cible, `+${ev.v}`, 'var(--bio)');
-  else if (ev.kind === 'echo') pop('escouade', nomEcho(ev.n ?? 3), 'var(--gold)', (ev.n ?? 3) >= 5 ? 1.6 : (ev.n ?? 3) >= 4 ? 1.3 : 1);
-  else if (ev.kind === 'effet') pop(ev.cible, EFFETS_AFFICHES[ev.texte] ?? ev.texte, 'var(--gold)');
-  else if (ev.kind === 'flux') pop('escouade', t`+${ev.gain} Flux`, 'var(--gold)');
+  else if (ev.kind === 'echo') pop('escouade', nomEcho(ev.n ?? 3), 'var(--gold)', { echelle: (ev.n ?? 3) >= 5 ? 1.6 : (ev.n ?? 3) >= 4 ? 1.3 : 1 });
+  else if (ev.kind === 'effet' && ev.texte === 'Fissure') {
+    // la Fissure se lit de loin (12 novembre 2026, Bryan : « presque pas visible ») : en grand, avec ce qu'elle ajoute,
+    // sur la ligne au-dessus du point d'impact (elle ne passe plus sous les chiffres des dégâts)
+    const en = etat && C.tousEnnemis(etat).find((e) => (e.rang ?? 0) === (ev.rang ?? 0));
+    pop(ev.cible, en?.fissure ? t`Fissure +${Math.round(en.fissure * 100)} %` : t('Fissure'), 'var(--gold)', { echelle: 2, voie: 'info' });
+  } else if (ev.kind === 'effet') pop(ev.cible, EFFETS_AFFICHES[ev.texte] ?? ev.texte, 'var(--gold)', { voie: 'info' });
+  // le Flux gagné s'écrit sur sa jauge
+  else if (ev.kind === 'flux') pop('escouade', t`+${ev.gain} Flux`, 'var(--gold)', { ou: '.flux .jf-tube', voie: 'info' });
 }
+
+/** le temps laissé aux cartes jouées pour partir à la défausse, avant que l'ennemi ne réponde (ms) */
+const RANGEMENT = 420;
+
 export async function jouer(pas: Pas[], rapide = false) {
   K.verrou = true;
   app.rapide = rapide;
   // sans réseau et sans le module en cache, le combat se joue quand même, sans les animations
   const f = fx ?? await prechargerImpacts().catch(() => null);
   f?.initImpacts(reduit, rapide);
+  const vite = () => (app.rapide ? 0.35 : 1);
   let bonus = 0;
-  for (const p of pas) {
-    const base = p.ev.kind === 'carte' ? 130 : p.ev.kind === 'resonance' ? 250 : p.ev.kind === 'degats' && p.ev.cible === 'ennemi' ? 300 : 380;
-    await pause((base + bonus) * (app.rapide ? 0.35 : 1));
+  // les fondus (12 novembre 2026) : la pastille de Fissure et la plaque d'intention changent en douceur, sans effet par-dessus
+  K.fondus = {};
+  for (let i = 0; i < pas.length; i++) {
+    const p = pas[i]!;
+    const avant = i ? pas[i - 1]!.etat : null;
+    // la chaîne a fini de parler : ses cartes partent à la défausse, l'écran souffle un instant, puis l'ennemi répond
+    // (12 novembre 2026 : la riposte s'affichait alors que le dernier coup du joueur était encore à l'écran)
+    const range = !!avant && avant.chaine.length > 0 && !p.etat.chaine.length && p.ev.kind !== 'fin';
+    if (range) {
+      // le dernier coup a le temps de porter, puis la table se vide
+      await pause((420 + bonus) * vite());
+      K.etat = { ...avant!, chaine: p.etat.chaine, main: p.etat.main, pioche: p.etat.pioche, defausse: p.etat.defausse };
+      K.actif = undefined;
+      afficher();
+      await pause(RANGEMENT * vite());
+      bonus = 0;
+    }
+    const base = range ? 120 : p.ev.kind === 'carte' ? 130 : p.ev.kind === 'resonance' ? 250 : p.ev.kind === 'degats' && p.ev.cible === 'ennemi' ? 300 : 380;
+    await pause((base + bonus) * vite());
+    // le coup d'un ennemi met du temps à arriver (élan, trajet) : on lance son geste d'abord, et le résultat
+    // (chiffre, jauge, bouclier entamé) ne s'affiche qu'au moment où il porte
+    const tardif = !!f && p.ev.kind === 'degats' && p.ev.cible !== 'ennemi';
+    if (tardif) await pause(f!.impact(p.ev, racine));
     // la jauge touchée garde une traînée de ses PV d'avant le coup, qui se vide
     if (p.ev.kind === 'degats' && p.ev.net > 0) {
-      const avant = K.etat ?? app.jeu.expedition?.combat;
+      const etatAvant = K.etat ?? app.jeu.expedition?.combat;
       const cible = p.ev.cible;
       const ev = p.ev;
-      const c = cible === 'ennemi' ? (avant && C.tousEnnemis(avant).find((e) => (e.rang ?? 0) === (ev.rang ?? 0))) ?? avant?.ennemi : avant?.porteurs.find((x) => x.id === cible);
+      const c = cible === 'ennemi' ? (etatAvant && C.tousEnnemis(etatAvant).find((e) => (e.rang ?? 0) === (ev.rang ?? 0))) ?? etatAvant?.ennemi : etatAvant?.porteurs.find((x) => x.id === cible);
       if (c) {
         K.traces[cible] = Math.max(0, Math.min(100, (100 * c.pv) / c.pvMax));
         setTimeout(() => { delete K.traces[cible]; }, 1100);
       }
     }
+    if (avant && (avant.ennemi.rang ?? 0) === (p.etat.ennemi.rang ?? 0) && p.etat.ennemi.pv > 0) {
+      if (!avant.ennemi.fissure && p.etat.ennemi.fissure) K.fondus.fissure = Date.now();
+      if (!avant.ennemi.felureBrisee && p.etat.ennemi.felureBrisee) K.fondus.felure = { ne: Date.now(), avant };
+    }
     K.etat = p.etat;
     if (p.ev.kind === 'carte') K.actif = p.ev.rang;
     else if (p.ev.kind === 'fin' || (p.ev.kind === 'degats' && p.ev.cible !== 'ennemi' && !p.ev.source)) K.actif = undefined;
-    popsDe(p.ev, p.etat);
     afficher();
-    bonus = f ? f.impact(p.ev, racine) : 0;
+    popsDe(p.ev, p.etat);
+    bonus = tardif ? 0 : f ? f.impact(p.ev, racine) : 0;
   }
-  await pause(300 + bonus * (app.rapide ? 0.35 : 1));
+  await pause(300 + bonus * vite());
   K.actif = undefined;
   K.etat = null;
   if (app.jeu.expedition && app.jeu.expedition.combat.issue !== 'en-cours') J.finDeCombat(app.jeu);

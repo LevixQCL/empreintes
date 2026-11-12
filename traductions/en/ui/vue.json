@@ -1038,6 +1038,10 @@
    "en": "Fissure +{0}% damage"
   },
   {
+   "fr": "Ta chaîne va le fissurer : il subira {0} % de dégâts en plus",
+   "en": "Your chain will fissure it: it will take {0}% more damage"
+  },
+  {
    "fr": "Ennemi",
    "en": "Enemy"
   },

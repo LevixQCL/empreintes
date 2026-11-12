@@ -21,19 +21,6 @@ import { queteDef } from '../core/strates';
 import { feuilleJournal, type OngletJournal } from './journal';
 import { t as tr, locale, enumerer, pourCent } from '../core/i18n';
 
-interface Pop {
-  id: number;
-  cible: string;
-  texte: string;
-  /** taille du chiffre (1 = normale) : les coups de fin de chaîne s'affichent plus gros */
-  echelle?: number;
-  couleur: string;
-  /** quand le chiffre est apparu (ms) : l'écran se redessine à chaque étape, l'animation reprend là où elle en était */
-  ne?: number;
-  /** son inclinaison (degrés), tirée une fois pour toutes */
-  penche?: number;
-}
-
 export const ICONE_SON = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
 export const ICONE_MUET = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
 
@@ -79,7 +66,8 @@ export interface Ecran {
   etat: CombatEtat;
   verrou: boolean;
   regles: boolean;
-  pops: Pop[];
+  /** ce qui vient de changer pendant la chaîne et se fond (12 novembre 2026) : la Fissure posée, la Fêlure brisée (avec l'état d'avant) */
+  fondus?: { fissure?: number; felure?: { ne: number; avant: CombatEtat } };
   fin: Fin | null;
   /** consigne du combat guidé (chambre scellée) */
   lecon?: string;
@@ -120,11 +108,6 @@ const LIBELLE = { atk: 'attaque', bouclier: 'protection', soin: 'soin' };
 const FONDS: Record<string, string> = { ilka: '#3A4E63', doran: '#3B4D37', vela: '#44395C', coursier: '#33465A', docker: '#36462F', guetteur: '#3D3352', sasha: '#3D4752', nuit: '#2F3B2E', aurel: '#3A3050', remanent: '#2A2438', vigie: '#26313D', confluence: '#2E2B22', rampeur: '#2C3326', pilleur: '#2F2A24', brigadier: '#2E2A3E', 'echo-veilleur': '#252238', 'sentinelle-verre': '#22303A', 'gardien-registres': '#2B2533', double: '#2A2236', 'essaim-ambre': '#352A18', 'automate-graveur': '#29303A', tisseuse: '#33261F', 'premier-porteur': '#1E1C2A' };
 
 const pct = (v: number, max: number) => Math.max(0, Math.min(100, (100 * v) / max));
-
-function popsPour(e: Ecran, cible: string) {
-  return e.pops.filter((p) => p.cible === cible)
-    .map((p) => `<span class="pop${(p.echelle ?? 1) >= 1.5 ? ' gros' : ''}" style="--pc:${p.couleur};--ps:${p.echelle ?? 1};--pr:${p.penche ?? 0}deg${p.ne ? `;animation-delay:-${Math.max(0, Math.round(Date.now() - p.ne))}ms` : ''}" aria-hidden="true">${echap(p.texte)}</span>`).join('');
-}
 
 /**
  * Une carte en combat (décision du 22 octobre 2026 : la carte qu'on collectionne est celle qu'on joue).
@@ -211,7 +194,7 @@ export function jauge(classe: string, pv: number, max: number, o: { trace?: numb
   if (u > 0) max += u;
   const v = pct(pv, max);
   const usure = u > 0 ? `<i class="j-usure" style="width:${pct(u, max)}%"></i>` : '';
-  const trainee = o.trace !== undefined && o.trace > v ? `<i class="j-trainee" style="--de:${o.trace}%;--a:${v}%"></i>` : '';
+  const trainee = o.trace !== undefined && o.trace > v ? `<i class="j-trainee" data-cle="t${Math.round(o.trace)}-${Math.round(v)}" style="--de:${o.trace}%;--a:${v}%"></i>` : '';
   const bouclier = o.bouclier ? `<i class="j-bouclier" style="left:${Math.max(0, v - pct(o.bouclier, max))}%;width:${Math.min(v, pct(o.bouclier, max))}%"></i>` : '';
   const pas = o.pas ? pct(o.pas, max) : 10;
   // les PV que le prochain coup ennemi va retirer : un segment rouge qui bat au bout de la vie
@@ -460,7 +443,7 @@ export function htmlLieu(x: Expedition): string {
  * L'intention de l'ennemi visé, en plaque (26 octobre 2026) : ce qu'il prépare en petit, sur qui en clair (avec le portrait),
  * et la valeur en grand à droite. La phrase complète reste pour les lecteurs d'écran.
  */
-function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtml: string): string {
+function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtml: string, avant?: { html: string; delai: string }): string {
   const it = s.intention;
   let nom = '', quoi = '', val = '', unite = '', av = 1;
   // Brouillard : on sait ce que l'ennemi prépare, pas combien ni sur qui
@@ -490,11 +473,32 @@ function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtm
   else if (it.type === 'appel') { nom = it.nom; quoi = it.rompu ? tr('Appel rompu') : tr('Un renfort va surgir'); }
   else if (it.type === 'boost') { nom = tr('Se concentre'); quoi = tr('Prochaine attaque'); val = '×2'; unite = tr('dégâts'); }
   else { nom = it.nom; quoi = tr('Ni suite ni Écho au tour suivant'); }
-  return `<div class="intention plaque-int ${classe}" aria-live="polite" aria-label="${echap(texteIntention(s))}">`
+  return `<div class="intention plaque-int ${classe}${avant ? ' nait' : ''}"${avant ? avant.delai : ''} aria-live="polite" aria-label="${echap(texteIntention(s))}">`
     + `<span class="int-ico">${icone}</span>`
     + `<span class="int-corps" aria-hidden="true"><small class="int-nom">${echap(nom)}</small><span class="int-quoi">${it.type === 'atk' ? '<i class="int-fleche"></i>' : ''}${quoi}</span></span>`
     + (val ? `<span class="int-val${av > 1 ? ' alourdi' : ''}" aria-hidden="true"><b>${val}</b><small>${unite}</small></span>` : '')
-    + ensuite(s) + felureHtml + '</div>';
+    + ensuite(s) + felureHtml + (avant ? `<span class="plaque-fantome part"${avant.delai} aria-hidden="true">${avant.html}</span>` : '') + '</div>';
+}
+
+/** Un fondu en cours : le retard négatif qui garde l'animation à sa place d'un rendu à l'autre (comme les chiffres qui jaillissent) */
+const DUREE_FONDU = 650;
+function delaiFondu(ne: number | undefined): string {
+  if (!ne) return '';
+  const age = Date.now() - ne;
+  return age < 0 || age >= DUREE_FONDU ? '' : ` style="animation-delay:-${Math.round(age)}ms"`;
+}
+/**
+ * La Fêlure vient d'être brisée (12 novembre 2026, Bryan) : l'ancienne plaque de l'intention (« 17 ») se dissout par-dessus
+ * la nouvelle (« 9 »), qui paraît en même temps. Rien d'autre ne s'ajoute sur l'ennemi.
+ */
+function plaqueAvant(e: Ecran): { html: string; delai: string } | undefined {
+  const f = e.fondus?.felure;
+  const delai = delaiFondu(f?.ne);
+  if (!f || !delai || C_brume(f.avant)) return undefined;
+  const it = f.avant.intention;
+  const classe = it.type === 'atk' ? 'danger' : it.type === 'bouclier' || it.type === 'soin' ? 'garde' : 'boost';
+  const icone = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
+  return { delai, html: plaqueIntention(f.avant, classe, icone, f.avant.ennemi.felure === undefined ? '' : ligneFelure(f.avant, true, false)).replace(' aria-live="polite"', '') };
 }
 
 /**
@@ -559,8 +563,11 @@ function bilanChaine(s: CombatEtat): string {
   return `<span class="bilan${fatal ? ' fatal' : ''}" role="status" aria-label="${echap(tr`Si tu lances : ${dire.join(', ')}`)}"><small aria-hidden="true">${fatal ? 'FATAL' : 'TOTAL'}</small>${morceaux.join('')}</span>`;
 }
 
-/** Le nom et le visage d'un ennemi : un garde d'archipel pillé prend ceux du Porteur de la garnison qu'il incarne */
-const nomBrut = (en: EnnemiEtat) => (en.porteur ? porteurDef(en.porteur).nom : ennemiDef(en.id).nom);
+/**
+ * Le nom d'un ennemi. Un garde de garnison (pillage, défi d'un quai) garde son nom de garde (« Garde résonant ») :
+ * 12 novembre 2026, Bryan : un garde au visage inconnu s'appelait « Véla », comme si l'héroïne avait changé de camp.
+ */
+const nomBrut = (en: EnnemiEtat) => ennemiDef(en.id).nom;
 /**
  * Deux ennemis du même nom dans un groupe (3 novembre 2026, Luc : « les deux Brigadiers portent le même nom tronqué,
  * impossible de savoir lequel est en grand ») : ils prennent un numéro, I, II, III, dans l'ordre du groupe.
@@ -650,7 +657,6 @@ function vignettesGroupe(e: Ecran): string {
       // l'ennemi visé porte un bandeau « VISÉ » (3 novembre 2026) : le repère lumineux seul se perdait hors de l'écran
       + (vise && !tombe ? `<span class="vg-vise" aria-hidden="true">${tr`Visé`}</span>` : '')
       + `<span class="vg-vie"><i style="width:${Math.max(0, Math.round((100 * en.pv) / en.pvMax))}%"></i></span>`
-      + popsPour(e, `ennemi-${en.rang ?? 0}`)
       + '</button>';
   }).join('') + '</div>';
 }
@@ -680,7 +686,7 @@ function vieGardien(e: Ecran): string {
     : '';
   return `<div class="vie-ennemi vie-gardien"><span class="vg-barre" style="--cadre:url(${artGardien('barre')})">`
     + `<span class="vg-rainure">${jauge('je', en.pv, en.pvMax, { trace: e.traces?.ennemi, pas: 10, bouclier: en.bouclier })}</span>${cran}${cran3}</span>`
-    + `<span class="je-valeur"><b>${en.pv}</b><small>/ ${en.pvMax}</small></span></div>`;
+    + `<span class="je-valeur"><b data-compte="pv-ennemi-${en.rang ?? 0}" data-v="${en.pv}">${en.pv}</b><small>/ ${en.pvMax}</small></span></div>`;
 }
 
 export function htmlCombat(e: Ecran): string {
@@ -801,6 +807,8 @@ function htmlEcranCombat(e: Ecran): string {
     + `<button type="button" class="btn-icone" data-action="regles" aria-expanded="${e.regles}" aria-label="${tr`Règles`}">${ICO.aide}</button></div></header>`;
 
   const enJeuTraits = traitsEnJeu(s.ennemi);
+  const fonduFissure = delaiFondu(e.fondus?.fissure);
+  const fissurePrevue = !s.ennemi.fissure && s.ennemi.pv > 0 && s.chaine.some((g) => g.effet?.type === 'fissure' || g.effet2?.type === 'fissure') ? apercuChaine(s).fissure : 0;
   // l'Assimilation dit la lignée prise, dans sa couleur (28 octobre 2026) : on voit le changement sans lire le journal
   const marques = (enJeuTraits.length ? enJeuTraits.map((t) => {
     const x = texteTrait(t);
@@ -808,7 +816,10 @@ function htmlEcranCombat(e: Ecran): string {
     return `<span class="trait${pris ? ' assimile' : ''}" tabindex="0" title="${echap(x.texte)}" aria-label="${echap(`${x.nom}${pris ? ` (devenu ${pris})` : ''} : ${x.texte}`)}"${pris ? ` style="--c:${COULEUR[s.ennemi.assimile!]}"` : ''}>${echap(x.nom)}${pris ? ` · ${echap(pris)}` : ''}</span>`;
   }).join('') : '')
     + (s.ennemi.bouclier ? `<span class="etat garde">${ICO.bouclier}${s.ennemi.bouclier}</span>` : '')
-    + (s.ennemi.fissure ? `<span class="etat fissure" tabindex="0" title="${tr`Fissure : il subit ${Math.round(s.ennemi.fissure * 100)} % de dégâts en plus`}">${ICO.fele}${tr`Fissure +${Math.round(s.ennemi.fissure * 100)} % dégâts`}</span>` : '');
+    // la Fissure vient d'être posée : la pastille en pointillés se dissout, celle en or paraît (12 novembre 2026, Bryan : « moins kitsch »)
+    + (s.ennemi.fissure ? `<span class="fondu"><span class="etat fissure${fonduFissure ? ' nait' : ''}"${fonduFissure} tabindex="0" title="${tr`Fissure : il subit ${Math.round(s.ennemi.fissure * 100)} % de dégâts en plus`}">${ICO.fissure}${tr`Fissure +${Math.round(s.ennemi.fissure * 100)} % dégâts`}</span>${fonduFissure ? `<span class="etat fissure prevue part"${fonduFissure} aria-hidden="true">${ICO.fissure}${tr`Fissure +${Math.round(s.ennemi.fissure * 100)} % dégâts`}</span>` : ''}</span>`
+      // la chaîne posée va le fissurer : la marque s'annonce déjà, en pointillés (12 novembre 2026)
+      : fissurePrevue ? `<span class="etat fissure prevue" tabindex="0" title="${tr`Ta chaîne va le fissurer : il subira ${Math.round(fissurePrevue * 100)} % de dégâts en plus`}">${ICO.fissure}${tr`Fissure +${Math.round(fissurePrevue * 100)} % dégâts`}</span>` : '');
 
   // la scène de l'ennemi
   // un gardien (27 octobre 2026) : son nom dans une plaque peinte, sa vie dans une barre ornée avec le cran de sa seconde phase
@@ -819,10 +830,10 @@ function htmlEcranCombat(e: Ecran): string {
   h += `<section class="scene-ennemi l-${lig}${gardien ? ' gardien' : ''}${enGroupe(s) ? ' en-groupe' : ''}${s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? ' fele' : ''}" style="--fond:${FONDS[def.id] ?? '#2A2438'};--ng:${tousEnnemis(s).length}" aria-label="${tr`Ennemi`}">`
     + (ill ? `<img class="ennemi-art${portraitProvisoire(def.id) ? ' provisoire' : ''}${s.issue === 'victoire' && !s.enfui ? ' dissous' : ''}${s.ennemi.porteur ? ' garde' : ''}" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
     + (s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? '<span class="fele-trait" aria-hidden="true"></span>' : '')
-    + `<span class="scene-voile" aria-hidden="true"></span>${popsPour(e, 'ennemi')}`
+    + `<span class="scene-voile" aria-hidden="true"></span>`
 
     + vignettesGroupe(e)
-    + plaqueIntention(s, classeIntention, iconeIntention, felureHtml)
+    + plaqueIntention(s, classeIntention, iconeIntention, felureHtml, plaqueAvant(e))
     + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[lig]}">${echap(e.x.fleche ? tr`GARDIENS · QUAI ${e.x.fleche.quai}` : e.x.pillage ? tr`GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}" tabindex="0" role="img" title="${tr`Point faible : les cartes ${NOM_LIGNEES[faible]} lui font +${Math.round((REGLES.bonusLignee - 1) * 100)} %`}" aria-label="${tr`Faible contre les ${NOM_LIGNEES[faible]}`}"><span class="faible-mot" aria-hidden="true">${tr`Faible`}</span>${sigle(faible)}</span>`
       // le Rôdeur (explorer.ts) : il s'enfuit à la fin de son dernier tour ; le compte à rebours reste sous les yeux
       // Épreuve « Avant l'extinction » : les tours qui restent pour abattre le gardien
@@ -841,7 +852,7 @@ function htmlEcranCombat(e: Ecran): string {
     // les traits et les états passagers (bouclier, Fissure) sur la même ligne : la scène reste basse sur téléphone
     + (marques ? `<div class="traits">${marques}</div>` : '')
     + (gardien ? vieGardien(e)
-      : `<div class="vie-ennemi">${jauge('je', s.ennemi.pv, s.ennemi.pvMax, { trace: e.traces?.ennemi, pas: 10, bouclier: s.ennemi.bouclier })}<span class="je-valeur"><b>${s.ennemi.pv}</b><small>/ ${s.ennemi.pvMax}</small></span></div>`)
+      : `<div class="vie-ennemi">${jauge('je', s.ennemi.pv, s.ennemi.pvMax, { trace: e.traces?.ennemi, pas: 10, bouclier: s.ennemi.bouclier })}<span class="je-valeur"><b data-compte="pv-ennemi-${s.ennemi.rang ?? 0}" data-v="${s.ennemi.pv}">${s.ennemi.pv}</b><small>/ ${s.ennemi.pvMax}</small></span></div>`)
     + `</div></section>`;
 
   // l'escouade : construite à part, elle vient sous la table
@@ -873,10 +884,9 @@ function htmlEcranCombat(e: Ecran): string {
     TUILES.set(p.id, { nom: d.nom, lignee, couleur: COULEUR[d.lignee], img, cadre: cadragePortrait(d.id), pv: ko ? 0 : p.pv, pvMax: p.pvMax, usure: p.usure ?? 0, coups: cible ? texteCoups(s, recus, p.pv) : '' });
     h += `<div class="combattant${ko ? ' ko' : ''}${cible ? ' cible' : ''}${cible && perte >= p.pv ? ' fatal' : ''}${basPv ? ' bas' : ''}${soigne ? ' soigne' : ''}${couvert ? ' couvert' : ''}" data-porteur="${p.id}" data-pvmax="${p.pvMax}"${!ko && (zone || soins) ? ` data-action="${zone && soins ? 'tuile' : zone ? 'proteger' : 'soigner'}" data-id="${p.id}" role="button" tabindex="0"` : ' role="group"'} aria-label="${echap(dit + (couvert ? tr(', le bouclier le couvre en premier') : '') + (ko ? '' : zone && soins ? tr(', toucher pour le protéger ou le soigner') : zone && !couvert ? tr(', toucher pour que le bouclier le couvre en premier') : soins && !soigne ? tr(', toucher pour lui envoyer les soins') : ''))}" style="--c:${COULEUR[d.lignee]}">`
       + (img ? `<span class="cb-fond" style="background-image:url(${img});--cadre:${cadragePortrait(d.id)}%" aria-hidden="true"></span>` : `<span class="cb-fond sans-portrait" aria-hidden="true">${echap(d.nom.charAt(0))}</span>`)
-      + popsPour(e, p.id)
-      + `<div class="cb-vie" aria-hidden="true"><span class="chiffre">${ko ? '0' : p.pv}<small>/ ${p.pvMax}</small></span>${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5, ...(p.usure ? { usure: p.usure } : {}), ...(perte && !verrou ? { perte } : {}) })}</div>`
+      + `<div class="cb-vie" aria-hidden="true"><span class="chiffre"><span data-compte="pv-${p.id}" data-v="${ko ? 0 : p.pv}">${ko ? '0' : p.pv}</span><small>/ ${p.pvMax}</small></span>${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5, ...(p.usure ? { usure: p.usure } : {}), ...(perte && !verrou ? { perte } : {}) })}</div>`
       + (cible && !verrou ? marqueCoups(s, recus, p.pv) : '') + (soigne ? `<span class="marque-soin" aria-label="${tr`Sera soigné`}">${ICO.soin}</span>` : '')
-      + (!ko && p.id === porteBouclier ? `<span class="ecu-tuile${ajoutBouclier ? ' ajout' : ''}" aria-label="${echap(`Bouclier ${s.bouclier}${ajoutBouclier ? tr`, ${s.bouclier + ajoutBouclier} après la chaîne` : ''}`)}"><svg viewBox="0 0 24 28" aria-hidden="true"><path d="M12 1 L22 5 V13 C22 20 17 25 12 27 C7 25 2 20 2 13 V5 Z"/></svg><b>${s.bouclier}</b>${ajoutBouclier ? `<small>+${ajoutBouclier}</small>` : ''}</span>` : couvert ? `<span class="marque-protege" aria-hidden="true">${ICO.bouclier}</span>` : '')
+      + (!ko && p.id === porteBouclier ? `<span class="ecu-tuile${ajoutBouclier ? ' ajout' : ''}" aria-label="${echap(`Bouclier ${s.bouclier}${ajoutBouclier ? tr`, ${s.bouclier + ajoutBouclier} après la chaîne` : ''}`)}"><svg viewBox="0 0 24 28" aria-hidden="true"><path d="M12 1 L22 5 V13 C22 20 17 25 12 27 C7 25 2 20 2 13 V5 Z"/></svg><b data-compte="bouclier" data-v="${s.bouclier}">${s.bouclier}</b>${ajoutBouclier ? `<small>+${ajoutBouclier}</small>` : ''}</span>` : couvert ? `<span class="marque-protege" aria-hidden="true">${ICO.bouclier}</span>` : '')
       // le petit choix, quand il y a à la fois du bouclier et des soins à répartir
       + (!ko && zone && soins && e.tuile === p.id ? `<div class="tuile-choix" role="group" aria-label="${echap(d.nom)}">`
         + `<button type="button" data-action="proteger" data-id="${p.id}" aria-pressed="${couvert}"${couvert ? ' class="pris"' : ''}>${ICO.bouclier}<span>${tr`Protéger`}</span></button>`
@@ -884,7 +894,7 @@ function htmlEcranCombat(e: Ecran): string {
       + `</div>`;
   }
   // le bouclier se lit sur le portrait du Porteur qu'il couvre (7 novembre 2026) : la ligne ne garde que ce qui n'a pas d'autre place
-  h += `</section><div class="ligne-escouade${s.ombre ? '' : ' vide'}">${popsPour(e, 'escouade')}<span class="etat garde${s.bouclier ? ' actif' : ''}">${ICO.bouclier}${tr`Bouclier ${s.bouclier}`}</span>${s.ombre ? `<span class="etat ombre actif">${ICO.eclat}${tr`Ombre agissante`}</span>` : ''}</div>`;
+  h += `</section><div class="ligne-escouade${s.ombre ? '' : ' vide'}"><span class="etat garde${s.bouclier ? ' actif' : ''}">${ICO.bouclier}${tr`Bouclier ${s.bouclier}`}</span>${s.ombre ? `<span class="etat ombre actif">${ICO.eclat}${tr`Ombre agissante`}</span>` : ''}</div>`;
   const escouade = h.slice(avantEscouade);
   h = h.slice(0, avantEscouade);
   // les piles ouvrent le journal du combat (27 octobre 2026) : les cartes jouées tour par tour, la défausse et la pioche ;

@@ -310,6 +310,17 @@ hauteur (quais du bas, des nuages, des îles) ; un chef mène le combat qui pass
 Garde blanche, champion des Hauts). Mêmes forces qu'avant. Tant que le gardien de −10 n'est pas vaincu, « Ceux qui te suivent » rappellent sur l'écran de la Flèche
 que la solution pour l'eau est en bas (`voixDuQuartier`) : la Flèche reste ouverte dès −6, sans rien bloquer.
 
+**Les animations du combat** (12 novembre 2026, audit de Bryan : « ça fait bricolage »). L'écran de combat n'est plus reconstruit
+à chaque étape : `src/ui/sur-place.ts` compare l'écran affiché au nouvel écran et ne change que ce qui diffère, pour que les
+animations en cours aillent au bout (avant : 14 reconstructions et 19 animations coupées pour une chaîne de 3 cartes). Un élément
+garde son identité par `data-uid`, `data-porteur`, `data-id` ou `data-cle` ; une animation se pose sur l'élément (`animate`),
+jamais par une classe ajoutée à la main (le rendu suivant l'effacerait). Les chiffres (dégâts, bouclier, Flux) vivent sur un calque
+à part (`src/ui/pops.ts`) ; les PV et le bouclier défilent (`src/ui/compteurs.ts`, attributs `data-compte` et `data-v`) ; les cartes
+jouées filent vers la défausse et la pioche sort de la pile (`src/ui/toucher.ts`) ; le résultat d'un coup ennemi ne s'affiche qu'à
+son arrivée et la table se vide avant la riposte (`jouer` dans `src/app/combat.ts`). Tout partage trois durées et trois courbes
+(`src/ui/rythme.ts`, mêmes valeurs en CSS). Les effets encore tracés en code attendent leurs textures peintes : `docs/prompts-effets.md`,
+`scripts/effets.py`, puis le nombre de variantes dans `VARIANTES` (`src/ui/impact.ts`).
+
 **Le parrainage** (29 octobre 2026, `src/core/partie/parrainage.ts`, `src/net/parrainage.ts`, `src/app/parrainage.ts`, `src/ui/parrainage.ts`, `docs/prompts-parrainage.md`).
 Chaque directeur a un code (`EMP-` + 6 caractères tirés de son uid, réservé dans `parrains/{code}`) et un lien `?ref=CODE`, retenu sur l'appareil
 jusqu'à ce que la partie commence. Le filleul ne peut entrer un code qu'avant d'avoir vaincu la Strate −2 : il reçoit 100 cristaux, une carte au choix

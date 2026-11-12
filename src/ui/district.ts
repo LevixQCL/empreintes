@@ -40,7 +40,7 @@ import { avecMots } from './lexique';
 import { arriveeFuture, feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
 import { ICO, baseIcones, icone, type Icone } from './icones';
-import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, etapeVoyage, avatar, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
+import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, etapeVoyage, avatar, avatarGarde, gardesGarnison, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
 import { decimal, echap, mouvementReduit, virgule, texteReplie } from './outils';
 import { brancherHoule } from './houle';
@@ -2292,8 +2292,8 @@ export function htmlEscouade(e: EcranDistrict): string {
     const ecart = pi.force / Math.max(0.01, forceEscouade(j, e.escouade));
     const d = difficulte(ecart);
     const b = butinPillage(pi, ecart);
-    h += `<p class="es-but">${ICO.grappin}<span><strong>${tr`Pillage · ${echap(pi.nom)}`}</strong>${tr`Un seul combat contre sa garnison : ${pi.porteurs.map((id) => echap(porteurDef(id).nom)).join(', ')}.`}</span></p>`
-      + `<div class="es-pillage d${d.niveau}"><span class="es-pillage-visages">${pi.porteurs.map((id) => avatar(id, 34)).join('')}</span>`
+    h += `<p class="es-but">${ICO.grappin}<span><strong>${tr`Pillage · ${echap(pi.nom)}`}</strong>${tr`Un seul combat contre sa garnison : ${gardesGarnison(pi.porteurs).map((g) => echap(g.nom)).join(', ')}.`}</span></p>`
+      + `<div class="es-pillage d${d.niveau}"><span class="es-pillage-visages">${gardesGarnison(pi.porteurs).map((g) => avatarGarde(g, 34)).join('')}</span>`
       + `<span><b>${d.nom}</b><small>${e.escouade.length === 3 ? tr`${Math.round(chanceVictoire(ecart) * 100)} % de chances avec cette escouade` : tr('Choisis 3 Porteurs')}</small></span>`
       + `<span class="es-pillage-butin">${ICO.composants}<b>+${ent(b.base + b.vol)}</b></span></div>`;
   } else if (ep) {

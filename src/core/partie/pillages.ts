@@ -6,7 +6,7 @@
 // On dépense le coffre en premier : il ne dépasse jamais les composants qu'on a.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { porteurDef } from '../donnees';
+import { ennemiDef, porteurDef } from '../donnees';
 import { creerCombat } from '../combat';
 import { doublonsRequis, puissanceCarte } from '../collection';
 import { forceStrate, nouvelleExpedition } from '../expedition';
@@ -342,7 +342,7 @@ export function piller(j: Jeu, escouade: string[], cible: Cible, now: number, rn
   });
   x.combat.ennemi.porteur = cible.porteurs[0];
   x.combat.autres?.forEach((en, k) => { en.porteur = cible.porteurs[k + 1]; });
-  x.combat.journal = [tr`La garnison de ${cible.nom} sort à ta rencontre : ${cible.porteurs.slice(0, 3).map((id) => porteurDef(id).nom).join(', ')}.`];
+  x.combat.journal = [tr`La garnison de ${cible.nom} sort à ta rencontre : ${gardes.map((id) => ennemiDef(id).nom).join(', ')}.`];
   payerRatelier(j, escouade, 'courte');
   quitterPostes(j, escouade);
   faits.push(cible.id);
