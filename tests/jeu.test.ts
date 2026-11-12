@@ -148,7 +148,7 @@ describe('Premier lancement', () => {
 
   it('les objectifs guidés se remplissent et se récupèrent dans l’ordre', () => {
     const j = ouvert();
-    expect(objectifCourant(j)!.titre).toBe('Allumer le district');
+    expect(objectifCourant(j)!.titre).toBe('Mettre le district au travail');
     expect(reclamer(j).ok).toBe(false);
     // un Porteur de l'escouade au Générateur ne compte pas : il ne pourrait plus descendre
     poster(j, 'ilka', 'generateur');

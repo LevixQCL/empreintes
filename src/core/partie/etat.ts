@@ -873,6 +873,9 @@ export function escouadesDe(j: Jeu): string[][] {
 
 /** La Strate vaincue la plus profonde (le front compte s'il a été vaincu) */
 export const strateVaincue = (j: Jeu) => (j.frontVaincu ? j.strate : j.strate - 1);
+/** Les premiers pas (12 novembre 2026, audit du début) : la chambre ouverte, le gardien de −1 pas encore vaincu.
+ *  Le jeu n'y montre que ce qui sert tout de suite : ni cartes du district au départ, ni Marques, ni volets de la Tour */
+export const premiersPas = (j: Jeu) => !!j.chambre && strateVaincue(j) < 1;
 
 /** lieu : l'id du lieu choisi (src/core/lieux.ts) ; absent sur les missions parties avant le 28 octobre 2026 */
 export interface Mission { porteur: string; strate: number; duree: DureeMission; debut: number; fin: number; lieu?: string; butin?: 'cargaison' | 'pierre' | 'naufrages' | 'eclats';

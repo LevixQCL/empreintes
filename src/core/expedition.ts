@@ -200,6 +200,9 @@ export const FORCE = {
    *  sous les « 4 à 6 tours » refusés par Bryan. Les ennemis seuls (ni groupes ni gardiens) y ont plus de PV ; à −1, ils frappent un peu moins fort
    *  pour que la Strate d'accueil reste un peu plus facile. Robot (parcours d'un joueur moyen) : 3 / 5 / 6 tours → 5 / 6 / 6-7. */
   debut: { pv: [1.6, 1.35, 1.2], coups: [0.8, 1, 1] } as { pv: number[]; coups: number[] },
+  /** le combat guidé de la chambre (12 novembre 2026, audit du début) : il héritait des PV ×1,6 de −1 (120 PV, 9 tours dont 6 sans leçon).
+   *  Sans ce bonus, le Rémanent affaibli a ses 75 PV : 5 à 6 tours, les trois leçons puis deux ou trois tours pour finir */
+  tutoPv: 1,
 };
 export const forceStrate = (strate: number) => {
   const t = FORCE.table;
@@ -229,6 +232,8 @@ export function nouvelleExpedition(opts: {
       porteurs: opts.porteurs, ennemiId: sequence[0]!, rng: opts.rng, deck: opts.deck,
       force: opts.force ?? forceStrate(opts.strate) * (opts.facteur ?? 1), ordonne: opts.tutoriel, bonus: opts.bonus,
       ...mecaniques(opts.strate), ...(opts.combat ?? {}),
+      // le combat guidé : pas le bonus de PV de −1 (FORCE.tutoPv)
+      ...(opts.tutoriel ? { pvMult: FORCE.tutoPv } : {}),
     }),
     butin: 0,
     terminee: false,

@@ -273,6 +273,8 @@
 .rencontre-bas{position:absolute;left:16px;right:16px;bottom:16px;display:grid;gap:10px;justify-items:center}
 .indice-bulle{font-family:var(--mono);font-size:var(--t-min);letter-spacing:.06em;opacity:.8;animation:indice 2.4s ease-in-out 1.5s infinite}
 .appel-porte.discrete{opacity:.55}
+.scene-rencontre .compte-repliques{margin-left:10px;font-family:var(--mono);font-size:12px;opacity:.7;letter-spacing:.06em}
+.scene-rencontre .lien-passer{background:none;border:0;color:inherit;font-size:13px;opacity:.6;padding:6px 14px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .scene-rencontre.finie .appel-porte{animation:appel-rencontre 1.6s ease-in-out infinite}
 @keyframes appel-rencontre{0%,100%{box-shadow:0 0 0 0 rgba(232,194,90,0)}50%{box-shadow:0 0 0 5px rgba(232,194,90,.4)}}
 .scene-rencontre .appel-porte{width:100%;opacity:1;transform:none}

@@ -123,7 +123,7 @@ export const ETAPES_DISTRICT: Etape[] = [
   },
   {
     qui: 'vela', titre: tr('Un pas à la fois'),
-    texte: tr('Tu n’as pas à tout retenir. Suis l’objectif en haut du district : il te montre la prochaine chose à faire. On commence par allumer le Générateur.'),
+    texte: tr('Tu n’as pas à tout retenir. Suis l’objectif en haut du district : il te montre la prochaine chose à faire. On commence par mettre une recrue au travail au Générateur.'),
     demo: demoRepere,
   },
 ];
@@ -139,7 +139,7 @@ const SUITES = {
   chambre: { etapes: ETAPES, nom: tr('Avant d’ouvrir'), passer: 'ouvrir-chambre', action: 'briefing',
     fin: `<button type="button" class="btn prim large appel-porte" data-action="ouvrir-chambre">${ICO.porte}${tr`Ouvrir la porte`}</button>` },
   district: { etapes: ETAPES_DISTRICT, nom: tr('Ton district'), passer: 'accueil-fin', action: 'accueil',
-    fin: `<button type="button" class="btn prim large appel-porte" data-action="accueil-fin" data-id="generateur">${ICO.energie}${tr`Allumer le Générateur`}</button>` },
+    fin: `<button type="button" class="btn prim large appel-porte" data-action="accueil-fin" data-id="generateur">${icone('ouvrier')}${tr`Poster une recrue`}</button>` },
 };
 export type Suite = keyof typeof SUITES;
 export const nbEtapes = (s: Suite) => SUITES[s].etapes.length;

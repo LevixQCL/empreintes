@@ -310,6 +310,10 @@
    "en": ", leaves {0}"
   },
   {
+   "fr": "Conseillé",
+   "en": "Advised"
+  },
+  {
    "fr": "Le district change d’âge",
    "en": "The district enters a new age"
   },
@@ -1756,6 +1760,14 @@
   {
    "fr": "Une porte ronde, scellée depuis les années 2060, luit faiblement. Trois personnes t’attendent devant.",
    "en": "A round door, sealed since the 2060s, glows faintly. Three people are waiting in front of it."
+  },
+  {
+   "fr": "Écouter la suite",
+   "en": "Listen on"
+  },
+  {
+   "fr": "Les écouter",
+   "en": "Listen to them"
   },
   {
    "fr": "STRATE −{0} · HALTE {1}",

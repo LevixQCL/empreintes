@@ -4,7 +4,8 @@
 // - les gardiens parlent en combat (à l'entrée et au passage de phase) : la Confluence fuit deux fois avant de tomber à −3,
 //   le Gardien des registres recule jusqu'à −6, la Tisseuse jusqu'à −9, le Premier Porteur attend à −10 ;
 // - les Porteurs de l'escouade parlent pendant la descente (à l'entrée de la Strate et devant le gardien) ;
-// - des visages qui reviennent : la capitaine Hald (Brigades du Serment de Veyr), Tobin (Veilleurs de Sédime),
+// - des visages qui reviennent : la capitaine Hald (Brigades du Serment de Veyr, nommées plus tard : à −2 et −3 elle n'est que « la garde
+//   des Hauts », audit du 12 novembre 2026 : trop de noms propres au début), Tobin (Veilleurs de Sédime),
 //   Brac (pilleur), Dame Isaure Orsève (les Hauts), et Ysé.
 // Les trois décisions (nouvelle.ts) arrivent au bout de ce qu'on a vu ; les scènes suivantes en tiennent compte.
 // Ce fichier ne contient que les textes et les conditions, sans DOM : l'écran affiche la scène que renvoie `sceneEnAttente`.
@@ -29,7 +30,7 @@ export interface ContexteCampagne {
 /** Ceux qui parlent et ne sont pas des Porteurs (les Porteurs et les gardiens ont déjà leur nom et leur portrait) */
 export const PERSONNAGES: Record<string, { nom: string; role: string; couleur: string }> = {
   yse: { nom: t('Ysé'), role: t('Archiviste des Veilleurs'), couleur: 'var(--or)' },
-  hald: { nom: t('Capitaine Hald'), role: t('Brigades du Serment de Veyr'), couleur: 'var(--reso)' },
+  hald: { nom: t('Capitaine Hald'), role: t('Garde des Hauts'), couleur: 'var(--reso)' },
   tobin: { nom: t('Tobin'), role: t('Fouilleur des Veilleurs'), couleur: 'var(--ivory)' },
   brac: { nom: t('Brac'), role: t('Pilleur de Strates'), couleur: 'var(--tech)' },
   isaure: { nom: t('Dame Isaure Orsève'), role: t('Maison Orsève, les Hauts'), couleur: 'var(--reso)' },
@@ -130,9 +131,9 @@ export const SCENES: Scene[] = [
       { qui: 'brac', texte: t('Elles répétaient un mot. « Ossyra. » J’ai cru que c’était un endroit, quelque part en dessous. Je voulais seulement les y conduire.'), charniere: 2 },
       { qui: 'vela', texte: t('Il dit vrai. Les empreintes de la chambre veulent descendre. Je ne sais pas pourquoi. Ce mot, je l’entends aussi, et je ne le comprends pas mieux que lui. Je sais seulement qu’elles ont peur de rester en haut.') },
       { qui: 'vela', texte: t('Le petit cristal qu’on a laissé rouler dans l’abri de 2060. Il est là, avec les autres. Il est arrivé avant nous.'), ...souv('cristal-libre') },
-      { qui: 'hald', texte: t('Capitaine Hald, Brigades du Serment de Veyr. Au nom de la Maison Orsève, cette fouille est suspendue. Ce qui brille ici relève de la garde des Hauts.') },
+      { qui: 'hald', texte: t('Capitaine Hald, de la garde des Hauts. Cette fouille est suspendue. Ce qui brille ici relève des Hauts.') },
       { qui: 'ilka', texte: t('On vient de se battre pour ça, capitaine. Vous, vous venez d’arriver.') },
-      { qui: 'hald', texte: t('Votre directeur décidera. En attendant, mes Brigades suivent la Confluence. Avec ou sans vous.') },
+      { qui: 'hald', texte: t('Votre directeur décidera. En attendant, mes soldats suivent la Confluence. Avec ou sans vous.') },
       { qui: 'hald', texte: t('Les Hauts ont leurs raisons d’être pressés. Depuis la nuit où vous avez ouvert la chambre, deux des leurs ne savent plus leur propre nom.') },
       { qui: 'ilka', texte: t('Encore. Quand Véla a touché les cristaux de Brac, mes jambes se sont arrêtées net. Pas une panne : elles ont attendu. Comme on attend la fin d’une phrase.'), ecran: { v: '' } },
     ]),
@@ -153,7 +154,7 @@ export const SCENES: Scene[] = [
       { qui: 'doran', texte: t('Tu as laissé la lanterne à son clou, là-haut. Les fouilleurs l’apprendront. Chez nous, ça vaut plus qu’un Éclat.'), ...souv('clou-respecte') },
       { qui: 'hald', texte: t('Mes patrouilles ont trouvé une flèche à la craie, la bonne, avec une date. C’était vous. Je ne l’oublierai pas, directeur.'), ...souv('craie-hald') },
       { qui: 'hald', texte: t('Quelqu’un a dégagé le haut de notre éboulis. On a entendu qu’on venait. C’est ce qui a tenu mes hommes.'), si: (c) => !!c.drapeaux?.includes('eboulis') && !c.drapeaux.includes('craie-hald'), souvenir: 'eboulis' },
-      { qui: 'hald', texte: t('La Maison Orsève vous remercie, directeur. Elle vous demande à présent de lui confier la chambre.') },
+      { qui: 'hald', texte: t('Les Hauts vous remercient, directeur. La Maison Orsève, que je sers, vous demande à présent de lui confier la chambre.') },
       { qui: 'tobin', texte: t('Tobin, des Veilleurs de Sédime. Directeur, ne la donnez à personne avant qu’on ait compris ce qu’elle contient. Je vous en prie.') },
       { qui: 'ilka', texte: t('Et le quartier attend que tu dises qu’elle est à nous. À toi de trancher, l’Élu.') },
     ]),

@@ -123,14 +123,15 @@ describe('La fouille confiée', () => {
 });
 
 describe('Moins de répétition au parcours simulé', () => {
-  it('un joueur assidu refouille bien moins souvent la même Strate, et ouvre −10 au même rythme (médiane de 5 parties)', () => {
+  it('un joueur assidu refouille bien moins souvent la même Strate, et ouvre −10 au même rythme (médiane de 7 parties)', () => {
     const compter = (ancien: boolean) => {
       let fouilles = 0, total = 0;
-      const jours = [1, 2, 3, 4, 5].map((g) => simulerParcours(PROFILS.assidu, 14, g, { joueur: 'moyen', ancien, sorte: (s) => { total++; if (s === 'fouille') fouilles++; } }).ouverture[10] ?? 99);
+      // 7 parties (12 novembre 2026) : sur 5, une seule partie bloquée avant −10 en mode ancien faisait bouger la médiane de 2 jours
+      const jours = [1, 2, 3, 4, 5, 6, 7].map((g) => simulerParcours(PROFILS.assidu, 14, g, { joueur: 'moyen', ancien, sorte: (s) => { total++; if (s === 'fouille') fouilles++; } }).ouverture[10] ?? 99);
       return { part: fouilles / total, j10: mediane(jours) };
     };
     const avant = compter(true), apres = compter(false);
     expect(apres.part).toBeLessThan(avant.part / 2);
     expect(Math.abs(apres.j10 - avant.j10)).toBeLessThanOrEqual(1);
-  }, 120_000);
+  }, 240_000);
 });

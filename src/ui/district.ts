@@ -20,12 +20,12 @@ import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, album, carteNivea
 import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
 import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront, finCreuse, gainCreuseurs } from '../core/jeu';
-import { CONFIEE, REMUEE, apercuConfiee, confieesOuvertes, flecheOuverte, peutConfier, strateRemuee } from '../core/jeu';
+import { bassesOuvertes, CONFIEE, REMUEE, apercuConfiee, confieesOuvertes, flecheOuverte, peutConfier, strateRemuee } from '../core/jeu';
 import { particularite } from '../core/strates';
 import { FAMILLES, FRAGMENTS } from '../core/fragments';
 import { CONFIANCE, CERCLE, CERCLE_OUVERTURE, cercleOuvert, echangesParJour, metalMax, ouvertesMax, vitrineMax, niveauConfiance, nbFoyers } from '../core/jeu';
 import { blocSecours } from './secours';
-import { LECTURE_PROFONDE } from '../core/partie/etat';
+import { LECTURE_PROFONDE, premiersPas } from '../core/partie/etat';
 import { RANG_METAL, loreCarte } from '../core/lore-cartes';
 import { rumeurDuJour } from '../core/rumeurs';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
@@ -314,7 +314,9 @@ function balises(e: EcranDistrict): string {
     if (ferme) {
       const nom = estFutur(id) ? LIEUX_FUTURS[id].nom : batimentDef(id).nom;
       h += `<button type="button" class="balise fermee${choisie}" ${pos(b.pied)} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${tr`${echap(nom)}, pas encore ouvert`}">`
-        + `<b class="bal-cristal glace">${ICO.verrou}</b><span class="bal-nom">${echap(nom)}</span></button>`;
+        // fermé : le cadenas seul, sans nom (12 novembre 2026, audit du début : 8 noms à la première seconde) ;
+        // le nom et la raison s'affichent en le touchant
+        + `<b class="bal-cristal glace">${ICO.verrou}</b></button>`;
       continue;
     }
     const d = batimentDef(id);
@@ -346,7 +348,8 @@ function balises(e: EcranDistrict): string {
     }
   }
   // les habitations : pas un bâtiment à monter, donc pas de niveau ni de poste, seulement le palier de Confiance et la population
-  if (CUVETTE) {
+  // les habitations n'ont leur nom qu'avec les secours (après −2), comme la roue de la barre du haut
+  if (CUVETTE && bassesOuvertes(j)) {
     const f = nbFoyers(j);
     const n = niveauConfiance(f);
     h += `<button type="button" class="balise habitants" ${pos(BALISE_HABITANTS)} data-action="ressource" data-id="confiance" data-lieu="habitants" aria-label="${tr`Habitations : ${f} familles sur ${CONFIANCE.population} te suivent, palier ${n.niveau}`}">`
@@ -531,16 +534,16 @@ const multPoste = (b: Exclude<Poste, 'noyau'>, id: string) => {
 const badgePris = (j: Jeu, id: string) => { const b = j.porteurs[id]!.poste; return b ? `<span class="te-pris" title="${tr`Au travail : ${echap(batimentDef(b).nom)}`}">${ICO.marteau}</span>` : ''; };
 
 /** Un Porteur qu'on peut poster : son portrait, ce que donnerait le poste avec lui (et l'écart), un marteau s'il travaille ailleurs */
-function candidat(j: Jeu, id: string, poste: Exclude<Poste, 'noyau'>, actuel: number): string {
+function candidat(j: Jeu, id: string, poste: Exclude<Poste, 'noyau'>, actuel: number, conseille = false): string {
   const d = porteurDef(id);
   const ailleurs = j.porteurs[id]!.poste;
   const r = rendement(j, poste, id);
   const ecart = Math.round((r.v - actuel) * 10) / 10;
   const signe = ecart > 0 ? 'plus' : ecart < 0 ? 'moins' : 'egal';
   const delta = poste === 'forge' || poste === 'generateur' || ecart === 0 ? '' : `<i>${ecart > 0 ? '+' : '−'}${virgule(Math.abs(ecart))}</i>`;
-  return `<button type="button" class="fb-cand ${signe}" style="--c:${COULEUR[d.lignee]}" data-action="poster" data-id="${id}" data-poste="${poste}" aria-label="${tr`Poster ${echap(d.nom)} : ${r.long}${ailleurs ? tr`, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}`}">`
+  return `<button type="button" class="fb-cand ${signe}${conseille ? ' conseille' : ''}" style="--c:${COULEUR[d.lignee]}" data-action="poster" data-id="${id}" data-poste="${poste}" aria-label="${tr`Poster ${echap(d.nom)} : ${r.long}${ailleurs ? tr`, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}`}">`
     + `<span class="fb-cand-portrait">${avatar(id, 52)}${badgePris(j, id)}</span>`
-    + `<strong>${echap(d.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">${r.court}${delta}</span></button>`;
+    + `<strong>${echap(d.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">${r.court}${delta}</span>${conseille ? `<span class="fb-conseil">${tr`Conseillé`}</span>` : ''}</button>`;
 }
 
 const ICONE_GAIN: Record<GainNiveau['quoi'] | 'apparence', Icone> = {
@@ -856,6 +859,8 @@ function feuilleBatiment(e: EcranDistrict): string {
   else if (b === 'cercle' && !cercleOuvert(j)) h += `<p class="fb-role">${echap(CERCLE_FERME)}</p>`;
   else h += `<p class="fb-role">${echap(d.role)}${pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span>${tr`Nouvelle apparence au niveau ${pv}.`}</span>` : ''}</p>`;
 
+  // le poste vide passe avant les chiffres (12 novembre 2026, audit du début : l'objectif 1 était caché sous la barre du bas)
+  const avantChiffres = h.length;
   // ce que le bâtiment rapporte
   if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>${ent(j.energie)}</b><small>${tr`cristaux`}</small></div><div class="fb-chiffre">${ICO.chrono}<b>${brutEnAttente(j).brut ? `${brutEnAttente(j).heures} h` : '—'}</b><small>${tr`pour tailler ce qui attend`}</small></div></div>${taille(j)}`;
   if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>${tr`Usure soignée par heure`}</small></div>`
@@ -875,7 +880,8 @@ function feuilleBatiment(e: EcranDistrict): string {
     const actuel = rendement(j, poste, occupant);
     const vide = rendement(j, poste, null);
     const ouvert = !occupant || !!e.posteChanger;
-    h += `<section class="fb-bloc"><h3 class="titre-bloc">${icone('ouvrier')}${tr`Au travail`}</h3>`;
+    const debutTravail = h.length;
+    h += `<section class="fb-bloc fb-travail${occupant ? '' : ' vide'}"><h3 class="titre-bloc">${icone('ouvrier')}${tr`Au travail`}</h3>`;
     if (occupant) {
       const o = porteurDef(occupant);
       const apport = poste === 'forge' ? (actuel.v === 1 ? tr('vitesse normale') : tr`fabrique ${virgule(actuel.v)} fois plus vite`)
@@ -895,7 +901,8 @@ function feuilleBatiment(e: EcranDistrict): string {
       // en place, seuls ceux qui feraient mieux ; poste vide, tout le monde (le meilleur en premier)
       const utiles = occupant ? libres.filter((x) => x.v > actuel.v) : libres;
       if (utiles.length) {
-        h += `<div class="fb-rangee">${utiles.map((x) => candidat(j, x.p.id, poste, actuel.v)).join('')}</div>`;
+        // poste vide : le premier (la recrue la mieux placée) est mis en avant, c'est lui que l'objectif demande
+        h += `<div class="fb-rangee">${utiles.map((x, i) => candidat(j, x.p.id, poste, actuel.v, !occupant && i === 0)).join('')}</div>`;
         if (utiles.some((x) => j.porteurs[x.p.id]!.poste)) h += `<p class="te-note">${ICO.marteau}${tr`quitte son poste au district`}</p>`;
       } else if (occupant) {
         h += `<p class="te-note">${tr`Personne de disponible ne ferait mieux que ${echap(porteurDef(occupant).nom)}.`}</p>`;
@@ -903,6 +910,7 @@ function feuilleBatiment(e: EcranDistrict): string {
       if (occupant) h += `<button type="button" class="te-fermer" data-action="poste-changer" aria-expanded="true">${tr`Fermer`}</button>`;
     }
     h += `</section>`;
+    if (!occupant) { const bloc = h.slice(debutTravail); h = h.slice(0, avantChiffres) + bloc + h.slice(avantChiffres, debutTravail); }
   }
   // les gestes en plus du bâtiment, sous le Porteur au travail (qui, lui, change ce que le bâtiment rapporte)
   if (niv && b === 'clinique') h += blocSoinsIntensifs(j);
@@ -1652,8 +1660,14 @@ export function htmlRencontre(n = 0): string {
     const d = porteurDef(r.id);
     h += `<div class="bulle ${BULLES[r.id]}${i === n - 1 ? ' neuve' : ''}" style="--c:${COULEUR[d.lignee]}"><strong>${echap(d.nom)}</strong><p>${echap(r.texte.replace(/^« | »$/g, ''))}</p></div>`;
   });
-  h += `<footer class="rencontre-bas">${fini ? '' : `<span class="indice-bulle">${tr`Touche l’écran pour les écouter`}</span>`}`
-    + `<button type="button" class="btn prim large appel-porte${fini ? '' : ' discrete'}" data-action="briefing">${ICO.porte}${tr`Ouvrir la porte`}</button></footer></section>`;
+  // 12 novembre 2026 (audit du début) : « Ouvrir la porte » n'arrive qu'après les répliques, qui disent pourquoi ces trois-là.
+  // Avant, le gros bouton faisait passer la seule explication du trio. Un petit « Passer » reste pour qui rejoue.
+  h += `<footer class="rencontre-bas">`
+    + (fini
+      ? `<button type="button" class="btn prim large appel-porte" data-action="briefing">${ICO.porte}${tr`Ouvrir la porte`}</button>`
+      : `<button type="button" class="btn prim large appel-porte" data-action="rencontre-suite">${n ? tr`Écouter la suite` : tr`Les écouter`}<small class="compte-repliques">${n} / ${REPLIQUES.length}</small></button>`
+        + `<button type="button" class="lien-passer" data-action="briefing">${tr`Passer`}</button>`)
+    + `</footer></section>`;
   return h;
 }
 
@@ -1876,6 +1890,12 @@ export function htmlCoupe(e: EcranDistrict): string {
       + (derniere ? `<button type="button" class="tr-revoir" data-action="scene-revoir" data-id="${derniere}" aria-label="${tr`Revoir la dernière scène`}">${ICO.film}${tr`Revoir`}</button>` : '')
       + `<p>${echap(chap.texte)}</p></div>` : '')
     + `<span class="surtitre tr-prochaine">${tr`Prochaine étape`}</span>${etape}</section>`;
+  // avant le premier gardien (12 novembre 2026, audit du début) : la Tour n'a qu'une chose à dire, « Descendre à −1 ».
+  // Fouiller, Explorer, Vestiges, étoiles, Rôdeurs, Grand Tableau et Épreuves arrivent une fois −1 vaincue.
+  if (premiersPas(j)) {
+    h += `</div></div>` + feuilleBatiment(e);
+    return coquille(e, h, 'ecran-coupe tr');
+  }
   h += blocAutour(e, off);
   // le Grand Tableau : ton rang en profondeur, et l'entrée vers les classements
   if (j.chambre && e.grand) h += bandeauTableau(e, e.grand, e.uid ?? null);
@@ -2409,7 +2429,8 @@ export function htmlEscouade(e: EcranDistrict): string {
     const p = porteurDef(id);
     const img = portrait(id);
     const nCartes = j.porteurs[id]!.modules.length;
-    const m = progresMarque(j, id);
+    // les Marques (0 / 30 expéditions…) attendent le premier gardien vaincu
+    const m = premiersPas(j) ? null : progresMarque(j, id);
     const pv = pvMaxCombat(j, id);
     const blesse = !!tropBlesse(j, id);
     return `<div class="es-place${blesse ? ' blesse' : ''}" style="--c:${COULEUR[p.lignee]}">`

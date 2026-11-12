@@ -11,7 +11,7 @@ import { vestigeDef } from '../core/explorer';
 import { faceCarte } from './carte';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
 import { blocMur } from './mur';
-import { CREUSE, finCreuse, heuresCreuse, cercleOuvert, MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, nbFoyers, nomConfiance, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, chapitresALire, porteursNouveaux, brutEnAttente, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
+import { CREUSE, finCreuse, heuresCreuse, cercleOuvert, MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, nbFoyers, nomConfiance, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, chapitresALire, porteursNouveaux, brutEnAttente, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, strateVaincue, bassesOuvertes, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { miniature, portrait, visageGarnison } from './art';
 import { feuilleGuide, trouveesDe } from './guide';
@@ -260,7 +260,8 @@ function hud(j: Jeu, ouverte: Ressource | null = null): string {
  * le nombre de familles au centre d'une roue qui se remplit vers le palier suivant, le palier dessous. Elle ne fait que monter.
  */
 function roueConfiance(j: Jeu, b: (r: Ressource, extra: string, label: string) => string): string {
-  if (!j.chambre) return '';
+  // la roue n'arrive qu'avec les secours (après −2) : avant, un hexagone « 2 » sans légende (audit du 12 novembre 2026)
+  if (!j.chambre || !bassesOuvertes(j)) return '';
   const f = nbFoyers(j);
   const n = niveauConfiance(f);
   const p = n.requis ? Math.round((100 * n.dans) / n.requis) : 100;

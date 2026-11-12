@@ -12,7 +12,7 @@ import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
 import { REGLES } from '../regles';
-import { nbFoyers, ACCORD_OUVERT, chanceCreuseurDuJour, fouilleursDuJour, facteurXp, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
+import { nbFoyers, ACCORD_OUVERT, chanceCreuseurDuJour, fouilleursDuJour, facteurXp, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, strateVaincue, premiersPas, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
 import { barquesMax, gardienPourTour, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { KIT_RECRUES, donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -76,6 +76,8 @@ export function gesteCommun(j: Jeu, c: CarteCommuneDef): GesteDef {
  * Une escouade qui n'a jamais rien choisi garde l'ancien Râtelier commun (ou celui de départ).
  */
 export function ratelierDe(j: Jeu, k = escouadeActive(j)): string[] {
+  // avant le premier gardien, l'escouade part avec ses seules cartes : rien à payer, rien à comprendre encore
+  if (premiersPas(j)) return [];
   const ids = (j.rateliers?.[k] ?? j.ratelier ?? RATELIER_DEPART).filter((id) => { const c = communeDef(id); return !!c && communeOuverte(j, c); });
   return [...new Set(ids)].slice(0, placesRatelier(j));
 }

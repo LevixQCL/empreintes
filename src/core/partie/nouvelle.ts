@@ -19,9 +19,9 @@ import { t } from '../i18n';
 
 const DECISION_CHAMBRE: { titre: string; texte: string; options: { id: GardeChambre; nom: string; phrase: string; effet: string }[] } = {
   titre: t('Qui garde la chambre ?'),
-  texte: t('La Confluence est tombée, et tout Vertiga parle de la chambre aux empreintes mêlées. Les Brigades du Serment de Veyr sont au pied de la Tour, les Veilleurs de Sédime demandent à l’étudier, et le quartier attend ta décision.'),
+  texte: t('La Confluence est tombée, et tout Vertiga parle de la chambre aux empreintes mêlées. Les soldats de la capitaine Hald, les Brigades du Serment de Veyr, sont au pied de la Tour, les Veilleurs de Sédime demandent à l’étudier, et le quartier attend ta décision.'),
   options: [
-    { id: 'orseve', nom: t('La Maison Orsève'), phrase: t('Nous n’héritons pas du pouvoir. Nous héritons de la responsabilité de le contenir.'),
+    { id: 'orseve', nom: t('La Maison Orsève, des Hauts'), phrase: t('Nous n’héritons pas du pouvoir. Nous héritons de la responsabilité de le contenir.'),
       effet: t('Les Brigades sécurisent la chambre et ne te barrent plus la route dans les Strates. Les Hauts paient : +1 Éclat sur chaque gardien vaincu.') },
     { id: 'district', nom: t('Le district seul'), phrase: t('Ce qui est sous notre digue est à nous.'),
       effet: t('Le quartier se mobilise : +20 % de minerai à chaque expédition. Mais les Brigades contestent, et tu les croiseras dans les salles closes.') },

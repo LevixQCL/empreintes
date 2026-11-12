@@ -26,7 +26,7 @@ export interface Objectif {
 // produire sans bloquer l'escouade, construire le deck, descendre, puis comprendre ce qui ouvre l'étage suivant.
 export const OBJECTIFS: Objectif[] = [
   {
-    id: 'district', titre: t('Allumer le district'), pilier: 'generateur', onglet: 'archipel',
+    id: 'district', titre: t('Mettre le district au travail'), pilier: 'generateur', onglet: 'archipel',
     consigne: t('Touche le Générateur et postes-y le Coursier, une recrue augmentée : il y produit deux fois plus. Garde Ilka, Doran et Véla pour l’escouade : en descendant, ils quitteraient leur poste.'),
     recompense: { energie: 15 },
     fait: (j) => { const p = posteDe(j, 'generateur'); return !!p && !escouadeDe(j).includes(p); },
