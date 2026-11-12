@@ -801,6 +801,7 @@ function htmlEcranCombat(e: Ecran): string {
     + `<button type="button" class="btn-icone" data-action="regles" aria-expanded="${e.regles}" aria-label="${tr`Règles`}">${ICO.aide}</button></div></header>`;
 
   const enJeuTraits = traitsEnJeu(s.ennemi);
+  const fissurePrevue = !s.ennemi.fissure && s.ennemi.pv > 0 && s.chaine.some((g) => g.effet?.type === 'fissure' || g.effet2?.type === 'fissure') ? apercuChaine(s).fissure : 0;
   // l'Assimilation dit la lignée prise, dans sa couleur (28 octobre 2026) : on voit le changement sans lire le journal
   const marques = (enJeuTraits.length ? enJeuTraits.map((t) => {
     const x = texteTrait(t);
@@ -808,7 +809,9 @@ function htmlEcranCombat(e: Ecran): string {
     return `<span class="trait${pris ? ' assimile' : ''}" tabindex="0" title="${echap(x.texte)}" aria-label="${echap(`${x.nom}${pris ? ` (devenu ${pris})` : ''} : ${x.texte}`)}"${pris ? ` style="--c:${COULEUR[s.ennemi.assimile!]}"` : ''}>${echap(x.nom)}${pris ? ` · ${echap(pris)}` : ''}</span>`;
   }).join('') : '')
     + (s.ennemi.bouclier ? `<span class="etat garde">${ICO.bouclier}${s.ennemi.bouclier}</span>` : '')
-    + (s.ennemi.fissure ? `<span class="etat fissure" tabindex="0" title="${tr`Fissure : il subit ${Math.round(s.ennemi.fissure * 100)} % de dégâts en plus`}">${ICO.fele}${tr`Fissure +${Math.round(s.ennemi.fissure * 100)} % dégâts`}</span>` : '');
+    + (s.ennemi.fissure ? `<span class="etat fissure" tabindex="0" title="${tr`Fissure : il subit ${Math.round(s.ennemi.fissure * 100)} % de dégâts en plus`}">${ICO.fissure}${tr`Fissure +${Math.round(s.ennemi.fissure * 100)} % dégâts`}</span>`
+      // la chaîne posée va le fissurer : la marque s'annonce déjà, en pointillés (12 novembre 2026)
+      : fissurePrevue ? `<span class="etat fissure prevue" tabindex="0" title="${tr`Ta chaîne va le fissurer : il subira ${Math.round(fissurePrevue * 100)} % de dégâts en plus`}">${ICO.fissure}${tr`Fissure +${Math.round(fissurePrevue * 100)} % dégâts`}</span>` : '');
 
   // la scène de l'ennemi
   // un gardien (27 octobre 2026) : son nom dans une plaque peinte, sa vie dans une barre ornée avec le cran de sa seconde phase

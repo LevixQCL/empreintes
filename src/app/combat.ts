@@ -123,7 +123,11 @@ function popsDe(ev: Evenement, etat?: CombatEtat) {
   else if (ev.kind === 'bouclier') pop(ev.cible, `+${ev.v}`, 'var(--ivory)');
   else if (ev.kind === 'soin' && ev.v) pop(ev.cible, `+${ev.v}`, 'var(--bio)');
   else if (ev.kind === 'echo') pop('escouade', nomEcho(ev.n ?? 3), 'var(--gold)', (ev.n ?? 3) >= 5 ? 1.6 : (ev.n ?? 3) >= 4 ? 1.3 : 1);
-  else if (ev.kind === 'effet') pop(ev.cible, EFFETS_AFFICHES[ev.texte] ?? ev.texte, 'var(--gold)');
+  else if (ev.kind === 'effet' && ev.texte === 'Fissure') {
+    // la Fissure se lit de loin (12 novembre 2026, Bryan : « presque pas visible ») : en grand, avec ce qu'elle ajoute
+    const en = etat && C.tousEnnemis(etat).find((e) => (e.rang ?? 0) === (ev.rang ?? 0));
+    pop(ev.cible, en?.fissure ? t`Fissure +${Math.round(en.fissure * 100)} %` : t('Fissure'), 'var(--gold)', 1.5);
+  } else if (ev.kind === 'effet') pop(ev.cible, EFFETS_AFFICHES[ev.texte] ?? ev.texte, 'var(--gold)');
   else if (ev.kind === 'flux') pop('escouade', t`+${ev.gain} Flux`, 'var(--gold)');
 }
 export async function jouer(pas: Pas[], rapide = false) {
