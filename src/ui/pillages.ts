@@ -3,7 +3,7 @@
 // autour, reliés par les routes des passeurs ; toucher un archipel affiche sa fiche juste dessous (garnison, chances, butin).
 // Les règles sont dans src/core/partie/pillages.ts.
 
-import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, difficulte, escouadeActive, escouadeDefense, escouadesDe, etatPillage, forceEscouade, majJetons, MISSIONS, barquesMax, MAREES, contratsDuMoment, mareesDe, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
+import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, difficulte, escouadeActive, escouadeDefense, escouadesDe, etatPillage, forceEscouade, majJetons, MISSIONS, barquesMax, MAREES, bulleBasses, contratsDuMoment, mareesDe, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
 import { ageArchipel, vignetteArchipel, vignetteDistrict, visuel } from './art';
 import { avatar, avatarGarde, gardesGarnison, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
@@ -41,7 +41,7 @@ export function htmlPillages(e: EcranDistrict): string {
   const gabare = mareesDe(j).contrat;
   h += `<div class="segments-choix trois pl-volets" role="tablist" aria-label="${t`Pillages, missions en mer ou contrats de marée`}">`
     + seg('pillages', t('Pillages'), pillOk ? t`${etatPillage(j).jetons} / ${PILLAGE.jetonsMax} jetons` : t`dès la Strate −${PILLAGE.strateMin}`)
-    + seg('missions', t('Missions'), t`${enMer} / ${barquesMax(j)} en mer`)
+    + seg('missions', t('Missions'), bulleBasses(j, e.now).aFaire ? t('une famille attend') : t`${enMer} / ${barquesMax(j)} en mer`)
     + seg('marees', t('Marées'), gabare ? t('gabare en mer') : marees.some((c) => c.ouvert) ? t`${aRemplir} à remplir` : t`dès la Strate −${MAREES.montante.strate}`) + `</div>`;
   if (volet === 'missions') return coquille(e, h + htmlMissions(e), 'pl');
   if (volet === 'marees') return coquille(e, h + htmlMarees(e), 'pl');

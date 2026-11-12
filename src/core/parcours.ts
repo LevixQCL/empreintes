@@ -9,7 +9,7 @@ import { CHAPITRES, chapitreOuvert } from './chroniques';
 import { niveauRequis, poidsCarte, puissanceCarte } from './collection';
 import { DEPART_PORTEURS, MODULES, moduleDe, moduleDef, porteurDef } from './donnees';
 import { accessibles, mainAccordable, reperentPassage, salleCourante, typeApparent } from './expedition';
-import { bassesOuvertes, dresserBatardeau, envoyerBasses, libresPourBasses, ramasserDepot, raisonLieu, restantsSecteur, secteurASec, secteursOuverts, escouadeDe,
+import { envoyerBasses, libresPourBasses, prochainSecours, escouadeDe,
   acheterEclat, prixEclatComptoir, choisirLegs, choisirHalte, ouvrirPorte, passerPorte, relancerPorte, suivrePassage, acheter, garnirComptoir, prixComptoir,
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
@@ -167,18 +167,11 @@ function gerer(j: Jeu, now: number): void {
   const libre = () => j.energie - reserve;
   // des Éclats au Comptoir (audit du 7 novembre 2026), s'il reste de quoi faire le reste (trois fois le prix)
   while (j.batiments.comptoir && libre() >= 3 * prixEclatComptoir(j) && acheterEclat(j, now).ok);
-  // les Basses (7 novembre 2026) : il ramasse les dépôts, garde à sec un secteur où des familles attendent, et y envoie un Porteur
-  if (bassesOuvertes(j)) {
-    while (ramasserDepot(j, now).ok);
-    const sec = secteurASec(j);
-    if (!sec || !restantsSecteur(j, sec)) {
-      const cible = secteursOuverts(j).find((x) => restantsSecteur(j, x) > 0);
-      if (cible) dresserBatardeau(j, cible.id, now);
-    }
-    const s2 = secteurASec(j);
-    const lieu = s2?.lieux.find((l) => !raisonLieu(j, l.id));
+  // les secours en mer (12 novembre 2026) : il envoie un Porteur hors escouade chercher la prochaine famille
+  {
+    const secours = prochainSecours(j);
     const qui = libresPourBasses(j).find((id) => !escouadeDe(j).includes(id));
-    if (lieu && qui) envoyerBasses(j, lieu.id, qui, now);
+    if (secours && qui) envoyerBasses(j, secours.lieu.id, qui, now);
   }
   // le Comptoir : il achète les doublons des cartes de son deck, et une carte neuve si elle vaut mieux que la plus faible,
   // en gardant de quoi monter ses niveaux (une réserve de 2 fois le prix)

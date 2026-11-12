@@ -50,8 +50,8 @@
    "en": "The pumps held"
   },
   {
-   "fr": "Des familles ramenées des Basses",
-   "en": "Families brought back from the Lows"
+   "fr": "Des familles secourues en mer",
+   "en": "Families rescued at sea"
   },
   {
    "fr": "Des naufragés recueillis",
@@ -322,12 +322,12 @@
    "en": " · {0} more for tier {1}"
   },
   {
-   "fr": "Aller les chercher dans les Basses",
-   "en": "Go and find them in the Lows"
+   "fr": "Secourir une famille",
+   "en": "Rescue a family"
   },
   {
-   "fr": "À l’écluse, garde un secteur à sec avec le batardeau et envoie un Porteur : chaque lieu cache une famille restée en bas.",
-   "en": "At the Sluice, keep a sector dry with the cofferdam and send a Bearer: each place hides a family left below."
+   "fr": "Au Port, dans les missions : un Porteur libre part 3 h et ramène une famille restée dans les quartiers noyés.",
+   "en": "At the Port, under Missions: a free Bearer leaves for 3 h and brings back a family left in the drowned quarters."
   },
   {
    "fr": "Recueillir des naufragés",
@@ -660,6 +660,10 @@
   {
    "fr": "manqué",
    "en": "failed"
+  },
+  {
+   "fr": "Famille secourue",
+   "en": "Family rescued"
   },
   {
    "fr": "Mission en mer",

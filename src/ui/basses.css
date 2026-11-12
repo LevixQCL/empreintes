@@ -1,41 +1,14 @@
-/* EMPREINTES — Les Basses et le Mur des empreintes (7 novembre 2026).
-   Même matière que le reste : verre fumé, arêtes de glace, or pour la valeur. Textes à 12 px minimum, cibles de 44 px.
-   Le flanc de la digue en coupe porte la ligne d'eau de la vraie marée (ambiance seulement). */
+/* OSSYRA — Secourir une famille (au Port, 12 novembre 2026) et le Mur des empreintes (7 novembre 2026).
+   Même matière que le reste : verre fumé, arêtes de glace, or pour la valeur. Textes à 12 px minimum, cibles de 44 px. */
 
-/* ---------- La feuille de l'écluse ---------- */
-.bs-feuille .feuille-corps>*{flex-shrink:0}
-.bs-feuille .fb-bloc{display:grid;gap:10px;margin:4px 0 14px;padding:12px;background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.14)}
-.bs-feuille .fb-bloc .titre-bloc{margin:0}
-.bs-feuille .fb-vide{margin:0;font-size:13px;line-height:1.45;color:#C9D6E6}
-.bs-feuille .fb-note{display:block;font-size:12px;line-height:1.4;color:#93A3B8}
-.bs-feuille .mur-compte,.mur-empreintes .mur-compte{margin-left:auto;font:600 13px/1 var(--mono);color:var(--gold,#F2D58C)}
-.bs-feuille>.feuille-corps>.titre-bloc,.mur-empreintes .titre-bloc{display:flex;align-items:center;gap:8px}
+/* ---------- La carte des secours, en tête des missions en mer ---------- */
+.sc-bloc{display:grid;gap:8px;margin:0 0 14px;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(18,40,60,.7),rgba(8,16,26,.85));box-shadow:inset 0 0 0 1px rgba(205,239,255,.16)}
+.sc-titre{display:flex;align-items:center;gap:8px;margin:0}
+.sc-note{margin:0;font-size:12px;line-height:1.45;color:#93A3B8}
+.mur-compte{margin-left:auto;font:600 13px/1 var(--mono);color:var(--gold,#F2D58C)}
+.mur-empreintes .titre-bloc{display:flex;align-items:center;gap:8px}
 
-/* le flanc et sa ligne d'eau : le tableau entier, un repère par secteur à sa hauteur */
-.bs-flanc{--eau:20%;position:relative;margin:0 0 12px;aspect-ratio:720/1285;overflow:hidden;border-radius:14px;isolation:isolate;box-shadow:inset 0 0 0 1px rgba(205,239,255,.18),0 6px 18px rgba(0,0,0,.35)}
-.bs-flanc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 100%;z-index:-2}
-.bs-eau{position:absolute;left:0;right:0;bottom:0;height:var(--eau);z-index:-1;
-  background:linear-gradient(180deg,rgba(90,180,220,.38),rgba(20,70,100,.55) 35%,rgba(6,22,36,.78));
-  box-shadow:0 -1px 0 rgba(220,245,255,.65);transition:height 1.2s ease}
-.bs-ecume{position:absolute;left:-10%;right:-10%;top:-5px;height:10px;opacity:.75;
-  background:radial-gradient(10px 4px at 50% 100%,rgba(235,250,255,.85),transparent 70%) 0 0/36px 10px repeat-x;
-  animation:bs-houle 7s ease-in-out infinite alternate}
-@keyframes bs-houle{from{transform:translateX(0)}to{transform:translateX(18px)}}
-.bs-flanc figcaption{position:absolute;left:10px;bottom:8px;right:10px;display:grid;gap:1px;padding:6px 10px;border-radius:10px;background:rgba(6,14,22,.62);text-shadow:0 1px 3px #000}
-.bs-flanc figcaption b{display:inline-flex;align-items:center;gap:5px;font-family:var(--display);font-size:16px;font-weight:400;color:#fff4dc}
-.bs-flanc figcaption b .ico{width:15px;height:15px;color:#FFD86B}
-.bs-flanc figcaption small{font:12px/1.3 var(--mono);color:#CDEFFF}
-.bs-repere{position:absolute;left:8px;transform:translateY(-50%);display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:5px 10px 5px 12px;border:none;border-radius:999px;cursor:pointer;color:#fff;
-  background:rgba(6,14,22,.72);box-shadow:inset 0 0 0 1px rgba(205,239,255,.35),0 2px 8px rgba(0,0,0,.5);backdrop-filter:blur(3px)}
-.bs-repere b{font-family:var(--display);font-size:14px;font-weight:400;color:#fff4dc}
-.bs-repere em{display:inline-flex;align-items:center;gap:3px;font:600 12px/1 var(--mono);font-style:normal;color:#9FD8FF}
-.bs-repere em .ico{width:12px;height:12px}
-.bs-repere.sec{box-shadow:inset 0 0 0 1.5px #F2D58C,0 0 14px rgba(242,213,140,.35)}
-.bs-repere.sec em{color:#F2D58C}
-.bs-repere.ferme{background:rgba(6,14,22,.6)}
-.bs-repere.ferme b,.bs-repere.ferme em{color:#9FB3C8}
-
-/* l'expédition en cours */
+/* l'équipe partie */
 .bs-expe{display:grid !important;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px}
 .bs-expe>span{display:grid;gap:2px;min-width:0}
 .bs-expe strong{font-size:14px;font-weight:600;color:#fff}
@@ -43,28 +16,8 @@
 .bs-expe .jauge{display:block;height:4px;margin-top:4px;border-radius:2px;background:rgba(205,239,255,.12);overflow:hidden}
 .bs-expe .jauge i{display:block;height:100%;background:linear-gradient(90deg,#4C8FD0,#9FD8FF)}
 
-/* les secteurs, du haut vers le bas du flanc */
-.bs-secteurs{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:10px}
-.bs-secteur{display:grid;gap:8px;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(18,40,60,.7),rgba(8,16,26,.85));box-shadow:inset 0 0 0 1px rgba(205,239,255,.16)}
-.bs-secteur header{display:flex;align-items:center;gap:10px}
-.bs-secteur header>span{display:grid;gap:1px;min-width:0;flex:1}
-.bs-secteur strong{font-family:var(--display);font-size:16px;font-weight:400;color:#fff4dc}
-.bs-secteur header small{font-size:12px;color:#93A3B8}
-.bs-secteur header em{display:inline-flex;align-items:center;gap:4px;font:600 12px/1.2 var(--mono);font-style:normal;color:#9FD8FF;white-space:nowrap}
-.bs-secteur header em .ico{width:13px;height:13px}
-.bs-secteur.sec{box-shadow:inset 0 0 0 1px rgba(242,213,140,.55),0 0 16px rgba(242,213,140,.12)}
-.bs-secteur.sec header em{color:#F2D58C}
-.bs-secteur.ferme{opacity:.72}
-.bs-secteur.ferme header em{color:#9FB3C8}
-.bs-ambiance{margin:0;font-family:var(--lecture);font-style:italic;font-size:13px;line-height:1.45;color:#C9D6E6}
-.bs-secteur>.btn{justify-self:start;min-height:44px}
-.bs-secteur>.btn .prix{margin-left:6px}
-
-/* les lieux du secteur à sec */
-.bs-lieux{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+/* la famille qui attend, et le Porteur qu'on lui envoie */
 .bs-lieu{display:grid;gap:6px}
-.bs-lieu.fait{grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:rgba(184,227,168,.06)}
-.bs-lieu.fait>.ico{width:18px;height:18px;color:#B8E3A8}
 .bs-lieu>span,.bs-lieu-btn>span{display:grid;gap:1px;min-width:0}
 .bs-lieu strong{font-family:inherit;font-size:14px;font-weight:600;color:#fff}
 .bs-lieu small{font-size:12px;line-height:1.3;color:#93A3B8}
@@ -81,9 +34,6 @@
 .bs-choix .mr-cand em{grid-row:span 2;font:600 12px/1 var(--mono);font-style:normal;color:#F2D58C}
 .bs-choix .mr-cand.indispo{opacity:.55;cursor:default}
 .bs-raison{margin:0}
-
-/* la balise de l'écluse, sur la Cuvette */
-.toile .balise.ecluse.fermee .bal-nom{opacity:.7}
 
 /* ---------- Le Mur des empreintes ---------- */
 .mur-rumeur{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;font-size:13px;color:#C9D6E6}
@@ -128,8 +78,3 @@
 .mur-tuile.ouverte .mur-main,.mur-tuile.gravee .mur-main{box-shadow:inset 0 0 0 1.5px rgba(242,213,140,.85),0 0 10px rgba(242,213,140,.35)}
 .mur-fiche header .mur-main{width:48px}
 
-/* la présentation des Basses (8 novembre 2026) : à la première ouverture, puis à la demande */
-.bs-pres{display:grid;gap:12px;margin-top:12px}
-.bs-aide{margin:0 0 4px}
-/* 8 novembre 2026 (après-midi) : « Descendre le flanc » reste au bas de l'écran pendant qu'on lit (avant : deux écrans de défilement en 360 px) */
-.bs-pres>[data-action="basses-entrer"]{position:sticky;bottom:10px;z-index:3;box-shadow:0 0 0 8px var(--bg-2,#0d1118),0 -14px 28px 6px var(--bg-2,#0d1118)}

@@ -1,0 +1,33 @@
+{
+ "source": "src/ui/secours.ts",
+ "entrees": [
+  {
+   "fr": " · dans ton escouade",
+   "en": " · in your squad"
+  },
+  {
+   "fr": "Envoyer",
+   "en": "Send"
+  },
+  {
+   "fr": "Famille à secourir",
+   "en": "Family to rescue"
+  },
+  {
+   "fr": "{0} est parti secourir une famille",
+   "en": "{0} is out rescuing a family"
+  },
+  {
+   "fr": "Toutes les familles à portée de barque sont rentrées. D’autres attendent plus bas sur le flanc de la digue : vaincs le gardien de la Strate −{0}.",
+   "en": "Every family within reach of a boat is home. Others wait further down the Dike slope: defeat the guardian of Stratum −{0}."
+  },
+  {
+   "fr": "{0} · {1} h · la famille, du minerai et de l’XP",
+   "en": "{0} · {1} h · the family, some ore and XP"
+  },
+  {
+   "fr": "Derrière la digue, des familles vivent encore dans les quartiers noyés. Un Porteur libre va en chercher une et la ramène au district : elle te suit désormais.",
+   "en": "Behind the Dike, families still live in the drowned quarters. A free Bearer fetches one and brings it back to the district: it follows you from then on."
+  }
+ ]
+}

@@ -61,15 +61,9 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'ameliorer': resultat(J.ameliorer(app.jeu, id as BatimentId, Date.now())); break;
     case 'poster': resultat(J.poster(app.jeu, id, (b.dataset.poste as J.Poste) ?? null)); D.posteChanger = false; D.tourChanger = false; break;
     case 'liberer': resultat(J.poster(app.jeu, id, null)); break;
-    // les Basses, à l'écluse (7 novembre 2026)
-    case 'basses-entrer': app.jeu.bassesVu = true; D.bassesAide = false; sauver(); break;
-    case 'basses-aide': D.bassesAide = !D.bassesAide; break;
-    case 'basses': D.basses = !D.basses; D.bassesAide = false; D.bassesLieu = null; D.selection = null; D.ressource = null; D.menu = false; break;
-    case 'basses-depot': { const r = J.ramasserDepot(app.jeu, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
-    case 'basses-batardeau': { const r = J.dresserBatardeau(app.jeu, id, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; D.bassesLieu = null; break; }
-    case 'basses-voir': requestAnimationFrame(() => document.getElementById(`bs-s-${id}`)?.scrollIntoView({ block: 'start', behavior: reduit ? 'auto' : 'smooth' })); break;
+    // secourir une famille, au Port (12 novembre 2026)
     case 'basses-lieu': D.bassesLieu = D.bassesLieu === id ? null : id; break;
-    case 'basses-envoyer': if (D.bassesLieu) { const r = J.envoyerBasses(app.jeu, D.bassesLieu, id, Date.now()); resultat(r); if (r.ok) { D.bassesLieu = null; D.message = t`${porteurDef(id).nom} descend dans les Basses.`; } } break;
+    case 'basses-envoyer': if (D.bassesLieu) { const r = J.envoyerBasses(app.jeu, D.bassesLieu, id, Date.now()); resultat(r); if (r.ok) { D.bassesLieu = null; D.message = t`${porteurDef(id).nom} part secourir une famille.`; } } break;
     // le Mur des empreintes : ouvrir une famille, confier son souvenir à une carte
     case 'famille': D.famille = D.famille === id ? null : id; break;
     case 'souvenir-confier': if (D.famille && J.confierSouvenir(app.jeu, id, D.famille)) { D.message = t('Le souvenir est gravé dans le journal de la carte.'); sauver(); } break;

@@ -21,9 +21,8 @@ import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/ty
 import type { CibleFouille } from '../core/expedition';
 import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront, finCreuse, gainCreuseurs } from '../core/jeu';
 import { FAMILLES, FRAGMENTS } from '../core/fragments';
-import { CONFIANCE, CERCLE, CERCLE_OUVERTURE, cercleOuvert, echangesParJour, metalMax, ouvertesMax, vitrineMax, niveauConfiance, nbFoyers, bassesOuvertes, bulleBasses } from '../core/jeu';
-import { feuilleBasses } from './basses';
-import { etatMaree } from '../core/digue';
+import { CONFIANCE, CERCLE, CERCLE_OUVERTURE, cercleOuvert, echangesParJour, metalMax, ouvertesMax, vitrineMax, niveauConfiance, nbFoyers } from '../core/jeu';
+import { blocSecours } from './secours';
 import { LECTURE_PROFONDE } from '../core/partie/etat';
 import { RANG_METAL, loreCarte } from '../core/lore-cartes';
 import { rumeurDuJour } from '../core/rumeurs';
@@ -146,21 +145,12 @@ if (CUVETTE) for (const a of [1, 2, 3, 4] as const) ZONES[a] = ZONES_CUVETTE;
  */
 const ZONE_HABITANTS = '318,40 356,0 400,0 400,200 372,214 330,192 300,150 304,90';
 const BALISE_HABITANTS = { x: 356, y: 200 };
-/**
- * L'écluse (7 novembre 2026) : au pied de la digue, côté mer, sous le Générateur (le sas peint tout à gauche est coupé sur
- * téléphone). Elle mène aux Basses, de l'autre côté de la digue. Pas un bâtiment à monter : une bulle quand la mer a laissé
- * un dépôt ou qu'une famille attend.
- */
-const ZONE_ECLUSE = '112,478 186,478 192,532 150,546 108,530';
-const BALISE_ECLUSE = { x: 150, y: 514 };
-
 function zonesBatiments(age: 1 | 2 | 3 | 4, selection: string | null, p: Record<string, PalierCuvette> | null = null): string {
   // un bâtiment au palier haut a grandi : sa zone suit la silhouette peinte
   const zone = (id: Lieu) => (p?.[id] === 'haut' ? CALQUES_CUVETTE.find((c) => c.lieu === id)?.zoneHaut : null) ?? ZONES[age][id];
   return '<svg class="zones-bat" viewBox="0 0 400 600" preserveAspectRatio="none" aria-hidden="true">'
     + ORDRE.map((id) => `<polygon class="zone-bat${selection === id ? ' choisie' : ''}" points="${zone(id)}" data-action="batiment" data-id="${id}" data-lieu="${id}"/>`).join('')
-    + (CUVETTE ? `<polygon class="zone-bat" points="${ZONE_HABITANTS}" data-action="ressource" data-id="confiance" data-lieu="habitants"/>`
-      + `<polygon class="zone-bat" points="${ZONE_ECLUSE}" data-action="basses" data-lieu="ecluse"/>` : '')
+    + (CUVETTE ? `<polygon class="zone-bat" points="${ZONE_HABITANTS}" data-action="ressource" data-id="confiance" data-lieu="habitants"/>` : '')
     + '</svg>';
 }
 
@@ -357,23 +347,6 @@ function balises(e: EcranDistrict): string {
     const n = niveauConfiance(f);
     h += `<button type="button" class="balise habitants" ${pos(BALISE_HABITANTS)} data-action="ressource" data-id="confiance" data-lieu="habitants" aria-label="${tr`Habitations : ${f} familles sur ${CONFIANCE.population} te suivent, palier ${n.niveau}`}">`
       + `<b class="bal-cristal glace">${ICO.porteurs}</b><span class="bal-nom">${tr`Familles · ${f}`}</span></button>`;
-    // l'écluse et les Basses (7 novembre 2026) : la bulle dit ce qui attend ; la marée réelle n'est que de l'ambiance
-    if (j.chambre) {
-      const ouverte = bassesOuvertes(j);
-      const m = etatMaree(e.now);
-      h += `<button type="button" class="balise ecluse${ouverte ? ' ouverte' : ' fermee'}${e.basses ? ' choisie' : ''}" ${pos(BALISE_ECLUSE)} data-action="basses" data-lieu="ecluse" aria-label="${tr`L’écluse : les Basses${ouverte ? `, ${m.montante ? tr('marée montante') : tr('marée descendante')}` : ', fermée'}`}">`
-        + `<b class="bal-cristal glace">${ouverte ? ICO.mur : ICO.verrou}</b><span class="bal-nom">${tr`Écluse`}</span></button>`;
-      if (ouverte) {
-        const bb = bulleBasses(j, e.now);
-        // la bulle à droite du repère, pas au-dessus : au-dessus, elle tomberait sur le nom de la Clinique
-        const pb = { x: BALISE_ECLUSE.x + 40, y: BALISE_ECLUSE.y - 14 };
-        const bulle = (classe: string, contenu: string, label: string) =>
-          `<button type="button" class="bulle-bat ${classe}" ${pos(pb)} data-action="basses" data-lieu="ecluse" aria-label="${label}">${contenu}</button>`;
-        if (bb.depots) h += bulle('info', `${ICO.coffre}<em>${bb.depots}</em>`, tr`La mer a laissé ${bb.depots > 1 ? tr`${bb.depots} dépôts` : tr('un dépôt')} sur la grève`);
-        else if (bb.aFaire) h += bulle('alerte', `${ICO.porteurs}<em>?</em>`, tr('Une famille attend dans les Basses'));
-        else if (bb.expedition) h += bulle('info', `${ICO.chrono}<em>${decompte(j.basses!.expedition!.fin, e.now)}</em>`, tr('Un Porteur est dans les Basses'));
-      }
-    }
   }
   return h;
 }
@@ -1041,7 +1014,7 @@ export function htmlArchipel(e: EcranDistrict): string {
     + bulles(e)
     + (e.bulle ? `<button type="button" class="bulle-voile" data-action="bulle" data-id="" aria-label="${tr`Replier`}"></button>` : '')
     + `<div class="archipel-haut"${e.bulle ? ` data-bulle="${e.bulle}"` : ''}${!e.j.chambre ? ' data-porte' : ''}>${mission(e)}${appel(e)}</div></section>`;
-  h += feuilleBatiment(e) + feuilleBasses(e);
+  h += feuilleBatiment(e);
   const acte = decisionEnAttente(j);
   // le rapport d'expédition passe d'abord : la carte au choix s'ouvre une fois qu'il est lu
   if (e.expedition) { /* rien d'autre par-dessus */ }
@@ -2104,6 +2077,8 @@ export function htmlMissions(e: EcranDistrict): string {
   let h = `<section class="bloc tr-volet pl-missions">`
     + texteReplie(tr`Choisis une destination, puis le Porteur libre qui y part : il revient chargé, même jeu fermé. Chaque jour, le passeur connaît de 2 à 5 ruines et ce qu’on y trouvera (une cargaison, une pierre oubliée, des naufragés ou des Éclats). Plus tu retournes au même endroit, plus tu descends : la Surface, puis les Cales (+25 %), puis le Cœur de la ruine (+60 % et une carte en plus). Le bon Porteur au bon endroit rapporte plus (sa lignée, son niveau). Une barque ne coûte rien : seulement le temps du Porteur.`, 'missions', 'aide');
   if (j.missions.length) h += `<div class="voyages">${j.missions.map((m) => voyage(e, m)).join('')}</div>`;
+  // secourir une famille (12 novembre 2026) : une mission comme les autres, en tête de liste
+  h += blocSecours(e);
 
   // les destinations du jour : de 2 à 5, chacune avec son butin annoncé ; on y retourne autant qu'on veut (28 octobre 2026)
   const offre = destinationsDuJour(e.now);

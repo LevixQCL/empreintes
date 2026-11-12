@@ -42,8 +42,7 @@ La barre du haut montre les cristaux (et « ⛏ +N » quand du minerai attend) e
 | Soins intensifs | 1 cristal par point d'Usure |
 | Cartes du Râtelier | 10 par exploration, 5 par sortie courte |
 | Jeton de pillage | 30 (2 par jour au plus) |
-| Déplacer le batardeau | 20 × Strate vaincue |
-| Missions en mer, marées, expéditions des Basses | **gratuites** : le prix, c'est le temps et le Porteur immobilisé |
+| Missions en mer, marées, secours des familles | **gratuites** : le prix, c'est le temps et le Porteur immobilisé |
 | Convertisseur, cristallisation | **supprimés** |
 
 ## Anciennes sauvegardes (version 10)

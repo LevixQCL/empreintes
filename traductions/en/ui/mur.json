@@ -10,12 +10,16 @@
    "en": "Came by word of mouth"
   },
   {
-   "fr": "Ramenée des Basses · {0}",
-   "en": "Brought back from the Lows · {0}"
+   "fr": "Secourue en mer · {0}",
+   "en": "Rescued at sea · {0}"
   },
   {
-   "fr": "Ramenée des Basses",
-   "en": "Brought back from the Lows"
+   "fr": "Secourue en mer",
+   "en": "Rescued at sea"
+  },
+  {
+   "fr": "Le Mur des empreintes",
+   "en": "The Wall of Imprints"
   },
   {
    "fr": "Chaque famille qui te suit pose sa main sur le mur des habitations. Touche une famille pour lire son souvenir.",
@@ -42,8 +46,8 @@
    "en": "A family that doesn’t follow you yet"
   },
   {
-   "fr": "Basses",
-   "en": "Lows"
+   "fr": "En mer",
+   "en": "At sea"
   },
   {
    "fr": "Quartier",

@@ -385,7 +385,7 @@ joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `gard
   `npx tsx scripts/durees.ts` mesure au parcours : normaux ~8 tours, groupes ~10, gardiens ~15 (cible 6-9 / 9-13 / 12-18).
   Les pillages gardent leurs PV (`pvPleins`).
 - *La Confiance du quartier* (30 octobre puis 7 novembre 2026) : ce sont les familles qui te suivent (48 familles, paliers de 6)
-  (`niveauConfiance`, `CONFIANCE` dans `etat.ts`). On les ramène des Basses et du Mur des empreintes (`familles.ts`, `fragments.ts`) ;
+  (`niveauConfiance`, `CONFIANCE` dans `etat.ts`). On les secourt en mer depuis le Port (12 novembre 2026 : les Basses, leur écluse et leur batardeau sont fondus dans les missions, `partie/basses.ts`) ou elles viennent du quartier (`familles.ts`, `fragments.ts`) ;
   chaque palier amène un creuseur volontaire et un souvenir pour les Archives ; l’Accord ouvert de Joss demande le palier 2.
 - *Cristal unique* (9 novembre 2026, `docs/economie-cristal.md`) : plus d'énergie. Tout ce qu'on rapporte en jouant arrive en minerai
   (`Jeu.composants`), le Générateur le taille en cristaux (`Jeu.energie`, `raffiner` dans `partie/etat.ts`), et les cristaux paient tout.

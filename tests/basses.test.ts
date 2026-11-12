@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { nouveauJeu, tick, BASSES, bulleBasses, coutBatardeau, dresserBatardeau, envoyerBasses, nbFoyers, ramasserDepot, raisonLieu, secteursOuverts } from '../src/core/jeu';
+import { nouveauJeu, tick, BASSES, bulleBasses, envoyerBasses, nbFoyers, prochainSecours, raisonLieu, secteurSuivant, secteursOuverts } from '../src/core/jeu';
 import { MAREE_REELLE, SECTEURS, coefMaree, etatMaree, indexBasse } from '../src/core/digue';
 import { FAMILLES_DISTRICT, familleDef } from '../src/core/familles';
 
 const H = 3_600_000;
-const JOUR = 24 * H;
 
 function partie(strate = 2) {
   const j = nouveauJeu(0, 1);
@@ -33,8 +32,8 @@ describe('La marée réelle (ambiance)', () => {
   });
 });
 
-describe('Les Basses (7 novembre 2026)', () => {
-  it('48 familles : 20 dans les Basses, une par lieu, toutes différentes', () => {
+describe('Secourir une famille (12 novembre 2026 : les Basses fondues dans le Port)', () => {
+  it('48 familles : 20 à secourir, une par lieu, toutes différentes', () => {
     const lieux = SECTEURS.flatMap((s) => s.lieux);
     expect(lieux).toHaveLength(20);
     expect(new Set(lieux.map((l) => l.famille)).size).toBe(20);
@@ -42,53 +41,51 @@ describe('Les Basses (7 novembre 2026)', () => {
     expect(FAMILLES_DISTRICT.filter((f) => f.arrivee === 'basses')).toHaveLength(20);
   });
 
-  it('l’écluse s’ouvre après la Strate −2 (8 novembre 2026), un secteur tous les deux Strates', () => {
-    expect(ramasserDepot(partie(1), 0).ok).toBe(false);
+  it('les secours partent après la Strate −2, un quartier noyé de plus tous les deux Strates', () => {
+    expect(prochainSecours(partie(1))).toBeNull();
     expect(secteursOuverts(partie(2)).map((s) => s.id)).toEqual(['lavoirs']);
     expect(secteursOuverts(partie(5))).toHaveLength(3);
+    expect(secteurSuivant(partie(2))?.id).toBe('treuils');
   });
 
-  it('chaque marée basse laisse un dépôt, deux au plus, et ils attendent sans limite', () => {
+  it('plus de batardeau : la prochaine famille se propose toute seule, dans l’ordre du flanc', () => {
     const j = partie();
-    const t = MAREE_REELLE.epoque + 10 * MAREE_REELLE.periode;
-    tick(j, t);
-    expect(j.basses!.depots).toBe(1);
-    tick(j, t + 30 * JOUR);
-    expect(j.basses!.depots).toBe(BASSES.depotsMax);
-    const avant = j.composants;
-    expect(ramasserDepot(j, t + 30 * JOUR).ok).toBe(true);
-    expect(ramasserDepot(j, t + 30 * JOUR).ok).toBe(true);
-    expect(ramasserDepot(j, t + 30 * JOUR).ok).toBe(false);
-    expect(j.composants).toBeGreaterThan(avant);
-  });
-
-  it('le batardeau : le premier est gratuit, puis un déplacement par semaine pour six heures de production', () => {
-    const j = partie(3);
-    const e = j.energie;
-    expect(dresserBatardeau(j, 'lavoirs', 0).ok).toBe(true);
-    expect(j.energie).toBe(e);
-    expect(dresserBatardeau(j, 'ecole', 0).ok).toBe(false);
-    const cout = coutBatardeau(j);
-    expect(dresserBatardeau(j, 'treuils', 0).ok).toBe(true);
-    expect(j.energie).toBe(e - cout);
-    expect(dresserBatardeau(j, 'lavoirs', 0).ok).toBe(false);
-    expect(dresserBatardeau(j, 'lavoirs', 8 * JOUR).ok).toBe(true);
-  });
-
-  it('un Porteur va chercher la famille d’un lieu à sec : elle rejoint le district, une seule fois', () => {
-    const j = partie();
-    const lieu = SECTEURS[0]!.lieux[0]!;
-    expect(raisonLieu(j, lieu.id)).toContain('batardeau');
-    dresserBatardeau(j, 'lavoirs', 0);
+    const [premier, second] = SECTEURS[0]!.lieux;
+    expect(prochainSecours(j)?.lieu.id).toBe(premier!.id);
+    expect(raisonLieu(j, premier!.id)).toBeNull();
     expect(bulleBasses(j, 0).aFaire).toBe(true);
     const foyers = nbFoyers(j);
-    expect(envoyerBasses(j, lieu.id, 'ilka', 0).ok).toBe(true);
-    expect(envoyerBasses(j, SECTEURS[0]!.lieux[1]!.id, 'doran', 0).ok).toBe(false);
+    expect(envoyerBasses(j, premier!.id, 'ilka', 0).ok).toBe(true);
+    // une seule équipe de secours à la fois
+    expect(envoyerBasses(j, second!.id, 'doran', 0).ok).toBe(false);
+    expect(bulleBasses(j, 0)).toEqual({ expedition: true, aFaire: false });
     tick(j, BASSES.heures * H + 1);
-    expect(j.foyers).toContain(lieu.famille);
+    expect(j.foyers).toContain(premier!.famille);
     expect(nbFoyers(j)).toBe(foyers + 1);
-    expect(j.rapports?.at(-1)?.basses).toEqual({ lieu: lieu.id, famille: lieu.famille });
-    expect(raisonLieu(j, lieu.id)).toContain('déjà');
+    expect(j.rapports?.at(-1)?.basses).toEqual({ lieu: premier!.id, famille: premier!.famille });
+    expect(raisonLieu(j, premier!.id)).toContain('déjà');
+    expect(prochainSecours(j)?.lieu.id).toBe(second!.id);
+  });
+
+  it('un quartier trop bas sur le flanc attend sa Strate ; tout le flanc vidé, plus rien à proposer', () => {
+    const j = partie();
+    expect(raisonLieu(j, SECTEURS[1]!.lieux[0]!.id)).toContain('−3');
+    j.basses = { batardeau: null, semaine: -1, vu: -1, depots: 0, expedition: null, faits: SECTEURS[0]!.lieux.map((l) => l.id) };
+    expect(prochainSecours(j)).toBeNull();
+    const fin = partie(10);
+    fin.basses = { batardeau: null, semaine: -1, vu: -1, depots: 0, expedition: null, faits: SECTEURS.flatMap((s) => s.lieux.map((l) => l.id)) };
+    expect(prochainSecours(fin)).toBeNull();
+    expect(secteurSuivant(fin)).toBeNull();
+  });
+
+  it('une sauvegarde d’avant : le batardeau est oublié, les dépôts qui attendaient sont rendus en minerai', () => {
+    const j = partie(3);
+    j.basses = { batardeau: 'treuils', semaine: 3, vu: 12, depots: 2, expedition: null, faits: ['bac-cordes'] };
+    const avant = j.composants;
+    tick(j, H);
+    expect(j.basses.depots).toBe(0);
+    expect(j.composants).toBe(avant + 2 * Math.round(BASSES.depot * 1.5));
+    expect(prochainSecours(j)?.lieu.id).toBe('maison-eclusier');
   });
 });
 
@@ -108,13 +105,5 @@ describe('Les souvenirs confiés aux cartes (fusion avec le vécu)', () => {
     expect(confierSouvenir(j, b!, 'ruel')).toBe(false);
     expect(souvenirsLibres(j)).toEqual(['abady']);
     expect(journalCarte(j.vecu[a!]).at(-1)).toContain('Porte le souvenir des Ruel');
-  });
-});
-
-describe('La suite des Basses (8 novembre 2026)', () => {
-  it('après −10, chaque dépôt laisse aussi des Éclats de colonne', async () => {
-    const { eclatsDepot } = await import('../src/core/jeu');
-    expect(eclatsDepot(partie(9), 0)).toBe(0);
-    expect(eclatsDepot(partie(10), 0)).toBeGreaterThanOrEqual(1);
   });
 });

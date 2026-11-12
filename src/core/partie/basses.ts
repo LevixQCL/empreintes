@@ -1,130 +1,72 @@
-// Couche 5 — les Basses (7 novembre 2026) : le flanc extérieur de la digue, ses secteurs noyés et les familles restées en bas.
-// Remplace les pompes du Générateur. Réglé avec un game designer externe (voir digue.ts) :
-// - la marée réelle ne fait que l'ambiance ; chaque marée basse laisse un dépôt qui attend sans limite (deux au plus) ;
-// - le batardeau garde UN secteur à sec : le premier est gratuit, puis on le déplace une fois par semaine (6 h de production) ;
-// - dans le secteur à sec, chaque lieu cache une famille : un Porteur va la chercher (3 h), une expédition à la fois ;
-// - un nouveau secteur tous les deux Strates (−1, −3, −5, −7, −9) : 20 familles en tout, les autres viennent du quartier.
-// Rien ne se perd : un secteur pas encore choisi attend, un dépôt pas ramassé attend.
+// Couche 5 — les secours en mer (12 novembre 2026) : les familles restées dans les quartiers noyés, derrière la digue.
+// Bryan : « trop de systèmes pour un nouveau », « pour le pompage j'avoue n'avoir rien compris ». Les Basses du 7 novembre
+// (écluse, batardeau à déplacer chaque semaine, dépôts de la marée) sont fondues dans le Port : secourir une famille est
+// une mission en mer comme les autres.
+// - au Port, volet Missions : une famille à secourir à la fois, dans l'ordre, du haut du flanc vers le bas ;
+// - un Porteur libre part 3 h et la ramène, avec un peu de minerai et de l'XP ; une seule équipe de secours à la fois ;
+// - un nouveau quartier noyé tous les deux Strates (−2, −3, −5, −7, −9) : 20 familles en tout, les autres viennent du quartier.
+// Plus de batardeau, plus de secteur à choisir, plus de dépôts : rien à apprendre, rien qui se perde.
 
 import { porteurDef } from '../donnees';
-import { SECTEURS, etatMaree, indexBasse, lieuBassesDef, secteurDef, secteurDuLieu, type LieuBasses, type SecteurBasses } from '../digue';
+import { SECTEURS, lieuBassesDef, secteurDuLieu, type LieuBasses, type SecteurBasses } from '../digue';
 import { familleDef } from '../familles';
-import { XP, accueillirFamille, coutBatardeau, facteurXp, gagnerXp, log, nbFoyers, niveauConfiance, non, progresMarque, semaineDe, strateVaincue, usureMax, type EtatBasses, type Jeu, type RapportMission, type Resultat } from './etat';
+import { XP, accueillirFamille, facteurXp, gagnerXp, log, nbFoyers, niveauConfiance, non, progresMarque, strateVaincue, usureMax, type EtatBasses, type Jeu, type RapportMission, type Resultat } from './etat';
 import { rangerRapport } from './descentes';
 import { raisonHorsContrat } from './marees';
 import { t as tr } from '../i18n';
 
 export const BASSES = {
-  /** la Strate qu'il faut avoir vaincue pour ouvrir l'écluse (8 novembre 2026, audit du soir : à −1, Port, missions, Basses,
-   *  batardeau et familles arrivaient le même jour ; les Basses passent à −2, un jour après le Port) */
+  /** la Strate qu'il faut avoir vaincue pour que les secours partent (un jour après le Port) */
   ouverture: 2,
-  /** les dépôts de la marée qui attendent, au plus */
-  depotsMax: 2,
-  /** composants d'un dépôt (×2 à grande marée), +25 % par Strate vaincue */
-  depot: 20,
-  /** une expédition : sa durée, l'Usure, les composants trouvés en plus de la famille (gratuite depuis le 9 novembre 2026) */
+  /** un secours : sa durée, l'Usure, le minerai trouvé en plus de la famille */
   heures: 3,
   usure: 4,
   composants: 30,
-  /**
-   * La suite des Basses (8 novembre 2026, audit du soir : les 48 familles rentrées vers le jour 35, il ne restait qu'un dépôt
-   * de ~110 composants). Une fois −10 vaincue, l'eau du Fond remonte jusqu'à la grève : chaque dépôt laisse aussi des éclats
-   * de colonne (1 Éclat, 2 à grande marée). Au plus 2 dépôts en attente : 2 à 4 Éclats par jour pour qui passe à l'écluse.
-   */
-  eclatsDes: 10,
+  /** un ancien dépôt de la marée qui attendait encore dans une sauvegarde (rendu d'un coup, +25 % par Strate vaincue) */
+  depot: 20,
 } as const;
-
-/** Les Éclats d'un dépôt (0 avant −10) */
-export const eclatsDepot = (j: Jeu, now: number) => (strateVaincue(j) >= BASSES.eclatsDes ? (etatMaree(now).grande ? 2 : 1) : 0);
 
 /** Les gains suivent la Strate, comme les missions en mer (+25 % par Strate vaincue) */
 const parStrate = (j: Jeu) => 1 + 0.25 * (Math.max(1, strateVaincue(j)) - 1);
 
-/** L'état des Basses dans la sauvegarde (créé à la première ouverture) */
+/** L'état des secours dans la sauvegarde (créé à la première ouverture) ; batardeau, semaine, vu et dépôts ne servent plus */
 export function bassesDe(j: Jeu): EtatBasses {
   return (j.basses ??= { batardeau: null, semaine: -1, vu: -1, depots: 0, expedition: null, faits: [] });
 }
 
 export const bassesOuvertes = (j: Jeu) => strateVaincue(j) >= BASSES.ouverture
   // une partie qui les avait déjà commencées (ouverture à −1, avant le 8 novembre 2026) les garde
-  || !!(j.basses && (j.basses.batardeau || j.basses.faits.length || j.basses.expedition));
+  || !!(j.basses && (j.basses.faits.length || j.basses.expedition));
 export const secteurOuvert = (j: Jeu, s: SecteurBasses) => strateVaincue(j) >= s.strate;
 export const secteursOuverts = (j: Jeu) => SECTEURS.filter((s) => secteurOuvert(j, s));
 export const lieuFait = (j: Jeu, id: string) => !!j.basses?.faits.includes(id);
-/** Les familles qui attendent encore dans un secteur */
+/** Les familles qui attendent encore dans un quartier noyé */
 export const restantsSecteur = (j: Jeu, s: SecteurBasses) => s.lieux.filter((l) => !lieuFait(j, l.id)).length;
-/** Le secteur à sec */
-export const secteurASec = (j: Jeu) => (j.basses?.batardeau ? secteurDef(j.basses.batardeau) ?? null : null);
 
-/** Ce qu'un dépôt rapporte maintenant */
-export const valeurDepot = (j: Jeu, now: number) => Math.round(BASSES.depot * parStrate(j) * (etatMaree(now).grande ? 2 : 1));
-
-/** Compte les marées basses passées depuis la dernière visite : chacune laisse un dépôt (deux au plus). Appelé par tick. */
-export function compterDepots(j: Jeu, now: number) {
-  if (!bassesOuvertes(j)) return;
-  const b = bassesDe(j);
-  const i = indexBasse(now);
-  // la première fois, on part de la marée en cours : un dépôt tout de suite pour faire découvrir
-  if (b.vu < 0) { b.vu = i; b.depots = 1; return; }
-  if (i > b.vu) b.depots = Math.min(BASSES.depotsMax, b.depots + (i - b.vu));
-  b.vu = Math.max(b.vu, i);
+/** La prochaine famille à secourir : le premier lieu pas encore visité, du haut du flanc vers le bas (null : personne pour l'instant) */
+export function prochainSecours(j: Jeu): { lieu: LieuBasses; secteur: SecteurBasses } | null {
+  if (!bassesOuvertes(j)) return null;
+  for (const s of secteursOuverts(j)) {
+    const lieu = s.lieux.find((l) => !lieuFait(j, l.id));
+    if (lieu) return { lieu, secteur: s };
+  }
+  return null;
 }
 
-/** Ramasse un dépôt laissé par la marée */
-export function ramasserDepot(j: Jeu, now: number): Resultat {
-  if (!bassesOuvertes(j)) return non(tr`L’écluse reste fermée tant que le gardien de la Strate −${BASSES.ouverture} tient le puits.`);
-  compterDepots(j, now);
-  const b = bassesDe(j);
-  if (b.depots < 1) return non(tr`Rien sur la grève pour l’instant : la mer laissera quelque chose à la prochaine marée basse.`);
-  const n = valeurDepot(j, now);
-  const e = eclatsDepot(j, now);
-  b.depots--;
-  j.composants += n;
-  j.eclats += e;
-  const grande = etatMaree(now).grande;
-  if (e) return { ok: true, message: tr`${grande ? tr('La grande marée a tout découvert') : tr('L’eau du Fond est remontée jusqu’à la grève')} : +${n} minerai et ${e} Éclat${e > 1 ? 's' : ''} de colonne.` };
-  return { ok: true, message: tr`${grande ? tr('La grande marée a tout découvert') : tr('La mer a laissé de quoi faire')} : +${n} minerai.` };
-}
-
-/** Pourquoi on ne peut pas dresser le batardeau sur ce secteur (null = on peut) ; le coût en cristaux (0 : gratuit) */
-export function peutDresser(j: Jeu, id: string, now: number): { raison: string | null; cout: number } {
-  const s = secteurDef(id);
-  if (!s) return { raison: tr('Secteur inconnu.'), cout: 0 };
-  if (!secteurOuvert(j, s)) return { raison: tr`Trop bas sur le flanc : il faut avoir vaincu la Strate −${s.strate}.`, cout: 0 };
-  const b = bassesDe(j);
-  if (b.batardeau === id) return { raison: tr('Le batardeau garde déjà ce secteur à sec.'), cout: 0 };
-  if (!b.batardeau) return { raison: null, cout: 0 };
-  if (b.expedition && secteurDuLieu(b.expedition.lieu)?.id === b.batardeau) return { raison: tr('Un Porteur est encore dans le secteur à sec : on attend son retour.'), cout: 0 };
-  if (b.semaine === semaineDe(now)) return { raison: tr('Le batardeau a déjà été déplacé cette semaine : il pourra bouger lundi.'), cout: 0 };
-  const cout = coutBatardeau(j);
-  return { raison: j.energie < cout ? tr`Il faut ${cout} cristaux pour pomper un nouveau secteur.` : null, cout };
-}
-
-/** Dresse le batardeau : ce secteur reste à sec, l'ancien se remplit (ses familles attendent, rien n'est perdu) */
-export function dresserBatardeau(j: Jeu, id: string, now: number): Resultat {
-  const { raison, cout } = peutDresser(j, id, now);
-  if (raison) return non(raison);
-  const b = bassesDe(j);
-  const premier = !b.batardeau;
-  j.energie -= cout;
-  b.batardeau = id;
-  if (!premier) b.semaine = semaineDe(now);
-  const s = secteurDef(id)!;
-  log(j, tr`Le batardeau est dressé : ${s.nom} restent à sec.`);
-  return { ok: true, message: tr`${s.nom} : les pompes vident le secteur. ${restantsSecteur(j, s) ? tr('Des familles y attendent encore.') : tr('Plus personne n’y attend.')}` };
-}
+/** Le prochain quartier noyé, pas encore à portée (null : ils le sont tous) */
+export const secteurSuivant = (j: Jeu) => SECTEURS.find((s) => !secteurOuvert(j, s)) ?? null;
 
 /** Pourquoi on ne peut pas envoyer quelqu'un dans ce lieu (null = on peut) */
 export function raisonLieu(j: Jeu, lieu: string): string | null {
   const s = secteurDuLieu(lieu);
-  if (!s || !bassesOuvertes(j)) return tr('L’écluse est fermée.');
+  if (!s || !bassesOuvertes(j)) return tr`Les secours partiront quand le gardien de la Strate −${BASSES.ouverture} sera vaincu.`;
   if (lieuFait(j, lieu)) return tr('Sa famille vit déjà au district.');
-  if (j.basses?.batardeau !== s.id) return tr('Ce secteur est sous l’eau : il faut y dresser le batardeau.');
-  if (j.basses?.expedition) return tr('Un Porteur est déjà dans les Basses.');
+  if (!secteurOuvert(j, s)) return tr`Trop bas sur le flanc de la digue : il faut avoir vaincu la Strate −${s.strate}.`;
+  if (j.basses?.expedition) return tr('Une équipe de secours est déjà partie : attends son retour.');
   return null;
 }
 
-/** Les Porteurs qui peuvent descendre dans les Basses (les mêmes que pour la gabare) */
+/** Les Porteurs qui peuvent partir secourir une famille (les mêmes que pour la gabare) */
 export const libresPourBasses = (j: Jeu) => Object.keys(j.porteurs).filter((id) => !raisonHorsContrat(j, id));
 
 /** Envoie un Porteur chercher la famille d'un lieu */
@@ -134,11 +76,11 @@ export function envoyerBasses(j: Jeu, lieu: string, porteur: string, now: number
   const pourquoi = raisonHorsContrat(j, porteur);
   if (pourquoi) return non(`${porteurDef(porteur)?.nom ?? tr('Ce Porteur')} : ${pourquoi.toLowerCase()}`);
   bassesDe(j).expedition = { lieu, porteur, debut: now, fin: now + BASSES.heures * 3_600_000, strate: strateVaincue(j) };
-  log(j, tr`${porteurDef(porteur).nom} descend le flanc de la digue : ${lieuBassesDef(lieu)!.nom}.`);
+  log(j, tr`${porteurDef(porteur).nom} part secourir une famille : ${lieuBassesDef(lieu)!.nom}.`);
   return { ok: true };
 }
 
-/** Le retour d'une expédition dans les Basses (appelé par tick) : la famille rejoint le district */
+/** Le retour d'un secours (appelé par tick) : la famille rejoint le district */
 export function retourDesBasses(j: Jeu): string {
   const b = bassesDe(j);
   const x = b.expedition!;
@@ -164,7 +106,7 @@ export function retourDesBasses(j: Jeu): string {
   const Nom = `${fam.nom.charAt(0).toUpperCase()}${fam.nom.slice(1)}`;
   const palier = niveauConfiance(nbFoyers(j)).niveau > avantPalier;
   const recit = [
-    tr`${p.nom} descend jusqu’à ${lieu.nom.charAt(0).toLowerCase()}${lieu.nom.slice(1)}, à la lampe, pendant que les pompes tiennent l’eau.`,
+    tr`${p.nom} longe le flanc de la digue en barque jusqu’à ${lieu.nom.charAt(0).toLowerCase()}${lieu.nom.slice(1)}, à la lampe.`,
     lieu.trace,
     tr`${Nom} attendaient là. ${fam.qui} Ils remontent avec ${p.nom} : ils vivent désormais au district.`,
     ...(palier ? [tr`${nbFoyers(j)} familles te suivent : un nouveau palier.`] : []),
@@ -174,34 +116,37 @@ export function retourDesBasses(j: Jeu): string {
     usure: Math.round((q.usure - usureAvant) * 10) / 10, marque, lu: false, basses: { lieu: lieu.id, famille: fam.id },
   };
   rangerRapport(j, rapport);
-  const texte = tr`${p.nom} remonte des Basses avec ${fam.nom} : +${composants} minerai, +${xp} XP.`;
+  const texte = tr`${p.nom} rentre au Port avec ${fam.nom} : +${composants} minerai, +${xp} XP.`;
   log(j, texte);
   return texte;
 }
 
-/** Les Basses dans le tick : les dépôts de la marée, le retour de l'expédition */
-export function avancerBasses(j: Jeu, now: number): string[] {
+/** Les secours dans le tick : l'annonce à l'ouverture, les anciens dépôts rendus, le retour de l'équipe */
+export function avancerBasses(j: Jeu, _now: number): string[] {
   const n: string[] = [];
   // la première fois : on explique (Bryan, 31 octobre 2026 : chaque nouveauté doit être expliquée aux nouveaux joueurs)
   if (!j.basses && bassesOuvertes(j)) {
-    const t = tr('L’écluse s’ouvre : de l’autre côté de la digue, des familles vivent encore dans les quartiers noyés. Touche l’écluse, au pied de la digue, pour dresser le batardeau et aller les chercher.');
+    bassesDe(j);
+    const t = tr('Au Port, une nouvelle mission : des familles vivent encore dans les quartiers noyés, derrière la digue. Envoie un Porteur les chercher, une famille à la fois.');
     log(j, t);
     n.push(t);
   }
-  compterDepots(j, now);
-  if (j.basses?.expedition && now >= j.basses.expedition.fin) n.push(retourDesBasses(j));
+  // une sauvegarde d'avant le 12 novembre 2026 : les dépôts de la marée qui attendaient sont rendus, rien ne se perd
+  if (j.basses?.depots) {
+    j.composants += Math.round(BASSES.depot * parStrate(j)) * j.basses.depots;
+    j.basses.depots = 0;
+  }
+  if (j.basses?.expedition && _now >= j.basses.expedition.fin) n.push(retourDesBasses(j));
   return n;
 }
 
-/** Ce qui attend dans les Basses (pour la bulle de l'écluse) */
-export function bulleBasses(j: Jeu, now: number): { depots: number; expedition: boolean; aFaire: boolean } {
-  if (!bassesOuvertes(j)) return { depots: 0, expedition: false, aFaire: false };
-  const b = bassesDe(j);
-  const s = secteurASec(j);
-  const aFaire = !b.expedition && (!s ? secteursOuverts(j).some((x) => restantsSecteur(j, x) > 0) : restantsSecteur(j, s) > 0 && libresPourBasses(j).length > 0);
-  return { depots: b.depots, expedition: !!b.expedition && now < b.expedition.fin, aFaire };
+/** Ce qui attend au Port pour les secours (pastille du volet Missions) */
+export function bulleBasses(j: Jeu, now: number): { expedition: boolean; aFaire: boolean } {
+  if (!bassesOuvertes(j)) return { expedition: false, aFaire: false };
+  const x = bassesDe(j).expedition;
+  return { expedition: !!x && now < x.fin, aFaire: !x && !!prochainSecours(j) && libresPourBasses(j).length > 0 };
 }
 
-/** Les familles des Basses déjà au district, sur combien */
+/** Les familles secourues déjà au district, sur combien */
 export const famillesDesBasses = (j: Jeu) => ({ faites: j.basses?.faits.length ?? 0, total: SECTEURS.reduce((n, s) => n + s.lieux.length, 0) });
 

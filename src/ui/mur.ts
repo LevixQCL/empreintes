@@ -24,7 +24,7 @@ function provenance(f: FamilleDef): string {
   if (f.arrivee === 'depart') return tr('Là depuis ton arrivée');
   if (f.arrivee === 'quartier') return tr('Venue par le bouche-à-oreille');
   const lieu = SECTEURS.flatMap((s) => s.lieux.map((l) => ({ s, l }))).find((x) => x.l.famille === f.id);
-  return lieu ? tr`Ramenée des Basses · ${lieu.s.nom}` : tr('Ramenée des Basses');
+  return lieu ? tr`Secourue en mer · ${lieu.s.nom}` : tr('Secourue en mer');
 }
 
 /** Une carte, lue « Nom (Métal) » */
@@ -57,7 +57,7 @@ export function blocMur(j: Jeu, ouverte: string | null | undefined): string {
     const porte = ici && !!carteDuSouvenir(j, f.id);
     h += ici
       ? `<li><button type="button" class="mur-tuile ${f.arrivee}${ouverte === f.id ? ' ouverte' : ''}${porte ? ' gravee' : ''}" data-action="famille" data-id="${f.id}" aria-expanded="${ouverte === f.id}" aria-label="${echap(majuscule(f.nom))}${porte ? tr(', souvenir confié') : ''}">${main}<span>${echap(court(f))}</span></button></li>`
-      : `<li><span class="mur-tuile vide" aria-label="${tr`Une famille qui ne te suit pas encore`}">${main}<span>${f.arrivee === 'basses' ? tr('Basses') : tr('Quartier')}</span></span></li>`;
+      : `<li><span class="mur-tuile vide" aria-label="${tr`Une famille qui ne te suit pas encore`}">${main}<span>${f.arrivee === 'basses' ? tr('En mer') : tr('Quartier')}</span></span></li>`;
   });
   h += `</ul>`;
   const f = ouverte ? familleDef(ouverte) : null;

@@ -86,42 +86,6 @@
    "en": "Families · {0}"
   },
   {
-   "fr": "L’écluse : les Basses{0}",
-   "en": "The Sluice: the Lows{0}"
-  },
-  {
-   "fr": "marée montante",
-   "en": "rising tide"
-  },
-  {
-   "fr": "marée descendante",
-   "en": "falling tide"
-  },
-  {
-   "fr": "Écluse",
-   "en": "Sluice"
-  },
-  {
-   "fr": "La mer a laissé {0} sur la grève",
-   "en": "The sea has left {0} on the shore"
-  },
-  {
-   "fr": "{0} dépôts",
-   "en": "{0} deposits"
-  },
-  {
-   "fr": "un dépôt",
-   "en": "a deposit"
-  },
-  {
-   "fr": "Une famille attend dans les Basses",
-   "en": "A family is waiting in the Lows"
-  },
-  {
-   "fr": "Un Porteur est dans les Basses",
-   "en": "A Bearer is in the Lows"
-  },
-  {
    "fr": "Objectif",
    "en": "Objective"
   },
@@ -2316,6 +2280,10 @@
   {
    "fr": "rentre au district",
    "en": "heading back to the district"
+  },
+  {
+   "fr": "retour dans ",
+   "en": "back in "
   },
   {
    "fr": "{0}, vers {1}",

@@ -357,7 +357,7 @@ export interface Jeu {
   pillage?: import('./pillages').EtatPillage;
   /** la présentation du Port a été lue (28 octobre 2026) : elle s'affiche à la première visite */
   portVu?: boolean;
-  /** la présentation des Basses a été vue (8 novembre 2026, audit : un paragraphe ne suffisait pas) */
+  /** reste des Basses (plus utilisé depuis le 12 novembre 2026) */
   bassesVu?: boolean;
   /** les premiers soins intensifs ont été offerts par la Clinique (4 novembre 2026) */
   soinOffert?: boolean;
@@ -725,13 +725,9 @@ export function nuitDesLignes(j: Jeu, now: number): string | null {
   return t;
 }
 
-/** Ce que coûte un déplacement du batardeau des Basses : six heures de ce que produit le Générateur (les anciennes pompes) */
-/** Déplacer le batardeau : un prix fixe en cristaux (9 novembre 2026 : plus aucun prix ne suit le Générateur) */
-export const coutBatardeau = (j: Jeu) => 20 * Math.max(1, strateVaincue(j));
-
-/** Une expédition dans les Basses : un Porteur va chercher la famille d'un lieu */
+/** Un secours en mer (les anciennes Basses) : un Porteur va chercher la famille d'un lieu */
 export interface ExpeditionBasses { lieu: string; porteur: string; debut: number; fin: number; strate: number }
-/** L'état des Basses dans la sauvegarde */
+/** L'état des secours dans la sauvegarde (batardeau, semaine, vu et depots : restes des Basses du 7 novembre 2026, plus utilisés) */
 export interface EtatBasses {
   /** le secteur gardé à sec (null : pas encore dressé) */
   batardeau: string | null;

@@ -111,11 +111,8 @@ export interface EcranDistrict {
   ressource?: Ressource | null;
   /** le Mur des empreintes : la famille ouverte (7 novembre 2026) */
   famille?: string | null;
-  /** les Basses : la feuille de l'écluse est ouverte, et le lieu dont on choisit le Porteur */
-  basses?: boolean;
+  /** secourir une famille (au Port) : le lieu dont on choisit le Porteur */
   bassesLieu?: string | null;
-  /** la présentation des Basses rouverte à la demande (« ? ») */
-  bassesAide?: boolean;
   /** onglet Escouade : le volet « Porteurs » (tous les Porteurs) est affiché au lieu de l’escouade */
   reserve?: boolean;
   /** onglet Escouade : la place de l'escouade (0 à 2) dont on choisit le Porteur, volet ouvert */
@@ -273,7 +270,7 @@ function roueConfiance(j: Jeu, b: (r: Ressource, extra: string, label: string) =
 
 /** D'où viennent les familles, pour le bilan de la Nuit des lignes (points de bouche-à-oreille) */
 const NOMS_SOURCE: Record<SourceHabitants, string> = {
-  pompes: tr('Les pompes ont tenu'), basses: tr('Des familles ramenées des Basses'), naufrages: tr('Des naufragés recueillis'), gardiens: tr('Des gardiens vaincus'), rencontres: tr('Des choix justes en bas'),
+  pompes: tr('Les pompes ont tenu'), basses: tr('Des familles secourues en mer'), naufrages: tr('Des naufragés recueillis'), gardiens: tr('Des gardiens vaincus'), rencontres: tr('Des choix justes en bas'),
   defense: tr('Des pillages repoussés'), fleche: tr('Des quais gagnés sur la Flèche'), histoire: tr('L’histoire du district'),
 };
 
@@ -339,7 +336,7 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined, famille: stri
     surtitre = tr('LE DISTRICT'); titre = tr('Ceux qui te suivent');
     resume = tr('L’eau monte, et tout le district le sait. Chaque famille que tu protèges décide de te suivre, et ne te quitte plus. Le jour où tu réclameras l’île, elles monteront avec toi.');
     etat = `<b>${f}</b> ${tr`/ ${CONFIANCE.population} familles`}<small>${nomConfiance(n.niveau)}${n.requis ? tr` · encore ${n.requis - n.dans} pour le palier ${n.niveau + 1}` : ''}</small>`;
-    gagner = [ligne('district', tr('Aller les chercher dans les Basses'), tr('À l’écluse, garde un secteur à sec avec le batardeau et envoie un Porteur : chaque lieu cache une famille restée en bas.')),
+    gagner = [ligne('porteurs', tr('Secourir une famille'), tr('Au Port, dans les missions : un Porteur libre part 3 h et ramène une famille restée dans les quartiers noyés.')),
       ligne('porteurs', tr('Recueillir des naufragés'), tr('Une mission « Naufragés » depuis le Port : le quartier voit la barque rentrer.')),
       ligne('porte', tr('Vaincre les gardiens'), tr('Chaque gardien vaincu de −1 à −10 : l’espoir de l’Écluse grandit.')),
       ligne('cristal', tr('Les choix justes en bas'), tr('Aider ceux qu’on croise se sait au quartier.')),
@@ -513,7 +510,7 @@ function feuilleRapport(e: EcranDistrict): string {
   const ct = r.contrat;
   const tete = ct
     ? `<span class="rm-equipe">${ct.porteurs.map((x) => avatar(x, 36)).join('')}</span><div class="titres"><span class="surtitre">${tr`${MAREES[ct.rang].nom} · ${ct.taux} % de chances`}</span><h2 id="rm-titre">${echap(ct.titre)} : ${ct.reussi ? tr('réussi') : tr('manqué')}</h2></div>`
-    : `${avatar(r.porteur, 48)}<div class="titres"><span class="surtitre">${r.basses ? tr('Les Basses') : tr('Mission en mer')}</span><h2 id="rm-titre">${tr`Retour ${echap(deNom(p.nom))}`}</h2></div>`;
+    : `${avatar(r.porteur, 48)}<div class="titres"><span class="surtitre">${r.basses ? tr('Famille secourue') : tr('Mission en mer')}</span><h2 id="rm-titre">${tr`Retour ${echap(deNom(p.nom))}`}</h2></div>`;
   return `<div class="voile-feuille" data-action="rapport-lu" aria-hidden="true"></div><section class="feuille rapport-mission${ct ? ` rm-contrat${ct.reussi ? ' reussi' : ' manque'}` : ''}" role="dialog" aria-modal="true" aria-labelledby="rm-titre" style="--c:${COULEUR[p.lignee]}">`
     + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete">${tete}`
     + `<button type="button" class="btn-icone" data-action="rapport-lu" aria-label="${tr`Fermer`}">${ICO.fermer}</button></header><div class="feuille-corps">`
