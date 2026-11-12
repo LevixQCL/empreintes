@@ -1633,7 +1633,7 @@ function carteCle(j: Jeu): string {
 // ---------- La rencontre, avant la chambre scellée ----------
 
 const REPLIQUES: { id: string; texte: string }[] = [
-  { id: 'ilka', texte: tr('« On attend quoi, l’Élu ? Qu’elle s’ouvre toute seule ? »') },
+  { id: 'ilka', texte: tr('« On attend quoi, directeur ? Qu’elle s’ouvre toute seule ? »') },
   { id: 'doran', texte: tr('« Mon père a travaillé dans ce puits, avant qu’on le mure. Il n’a jamais aimé son silence. »') },
   { id: 'vela', texte: tr('« Quelque chose a peur, derrière cette porte. Et ce n’est pas moi. »') },
   // pourquoi ces trois-là : chacun dit ce qui l'amène (22 octobre 2026, Bryan : « c'est à expliquer dans le jeu »)

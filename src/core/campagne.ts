@@ -156,7 +156,7 @@ export const SCENES: Scene[] = [
       { qui: 'hald', texte: t('Quelqu’un a dégagé le haut de notre éboulis. On a entendu qu’on venait. C’est ce qui a tenu mes hommes.'), si: (c) => !!c.drapeaux?.includes('eboulis') && !c.drapeaux.includes('craie-hald'), souvenir: 'eboulis' },
       { qui: 'hald', texte: t('Les Hauts vous remercient, directeur. La Maison Orsève, que je sers, vous demande à présent de lui confier la chambre.') },
       { qui: 'tobin', texte: t('Tobin, des Veilleurs de Sédime. Directeur, ne la donnez à personne avant qu’on ait compris ce qu’elle contient. Je vous en prie.') },
-      { qui: 'ilka', texte: t('Et le quartier attend que tu dises qu’elle est à nous. À toi de trancher, l’Élu.') },
+      { qui: 'ilka', texte: t('Et le quartier attend que tu dises qu’elle est à nous. À toi de trancher, directeur.') },
     ]),
 
   // ---------- Acte II · Les salles closes (le Gardien des registres) ----------

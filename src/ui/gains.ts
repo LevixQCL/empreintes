@@ -159,6 +159,8 @@ let file: Promise<void> = Promise.resolve();
 const NE_PAS_COUVRIR = [
   '#app .scene-campagne', '#app .scene-rencontre', '#app .scene-briefing', '#app .intro-pas',
   '#app .gt-feuille', '#app .options-decision', '#app .legs-carte',
+  // un poste à pourvoir (12 novembre 2026, audit du début : « Nouvelle carte » couvrait le titre du Générateur pendant l'objectif 1)
+  '#app .fiche-bat .fb-travail.vide',
 ].join(', ');
 function calme(): boolean {
   if (document.querySelector(NE_PAS_COUVRIR)) return false;
