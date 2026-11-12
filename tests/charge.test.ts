@@ -8,7 +8,7 @@ import { mesurer } from '../src/core/robot';
 
 describe('La Charge', () => {
   it('une carte pèse selon sa force : la plus forte pèse le plus', () => {
-    expect(poidsCarte('tir-vif@fer')).toBe(1);
+    expect(poidsCarte('morsure@fer')).toBe(1);
     expect(poidsCarte('ruee@fer')).toBe(2);
     expect(poidsCarte('coeur-reprise@or')).toBeGreaterThan(poidsCarte('coeur-reprise@fer'));
     expect(poidsCarte('coeur-reprise@or')).toBeGreaterThanOrEqual(9);

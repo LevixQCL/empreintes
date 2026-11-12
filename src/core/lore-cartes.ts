@@ -135,7 +135,7 @@ export const LORE_CARTES: Record<string, string> = {
   'servo-bras': t('Un bras d’appoint vissé à l’épaule, qui porte la moitié de tout ce qu’on soulève. « Ce n’est pas toi qui deviens plus fort, dit Sasha. C’est la charge qui devient plus polie. »'),
   'marteau-piston': t('Le marteau des poseurs de pilotis, monté sur l’avant-bras. Un coup, et la poutre est enfoncée ; un coup, et ce qui se tenait en face ne se tient plus aussi droit.'),
   verin: t('Un vérin de grue démonté sur un chantier abandonné de la Cuvette. Il ne pousse pas plus fort qu’un autre : il pousse au bon moment, et le reste suit.'),
-  'exo-chantier': t('L’armature que portaient les équipes de la digue, quand il fallait tenir un mur le temps qu’on coule le béton derrière. Elle encaisse, et elle garde en réserve tout ce qu’elle a encaissé.'),
+  'exo-chantier': t('L’armature que portaient les équipes de la digue pour enfoncer les pieux dans la vase. Elle frappe lourd, et chaque coup donne de l’élan au suivant.'),
   foreuse: t('La tête de forage qui a ouvert le premier puits du district. Elle n’a jamais été conçue pour combattre. Elle a seulement été conçue pour ne pas s’arrêter.'),
   // L’Harmonie (Véla) : la suite qui passe d’une lignée à l’autre
   'contre-chant': t('Une note posée sous la mélodie des autres, jamais à l’unisson. Véla l’apprend aux recrues en premier : « Ne chante pas avec eux. Chante entre eux. »'),

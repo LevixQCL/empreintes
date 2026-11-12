@@ -92,9 +92,9 @@ export const MODULES: ModuleDef[] = [
   // ---------- Les 15 cartes de base : 5 par Porteur nommé, qu'il porte dès le départ ----------
   c('ruee', tr('Plastron de choc'), 'tech', 'fer', 'atk', 8, [3, 4, 2], { type: 'percant' }),
   c('bond', tr('Talon de cristal'), 'tech', 'fer', 'atk', 6, [4, 5, 3], { type: 'elan' }),
-  c('esquive', tr('Bracelet de déviation'), 'tech', 'fer', 'bouclier', 6, [5, 6, 4], { type: 'elan' }),
+  c('esquive', tr('Bracelet de déviation'), 'tech', 'fer', 'bouclier', 7, [5, 6, 4], { type: 'elan' }),
   c('tir', tr('Canon à cristal'), 'tech', 'fer', 'atk', 10, [6, 7, 5], { type: 'percant' }),
-  c('tir-vif', tr('Pistolet à faisceau'), 'tech', 'fer', 'atk', 5, [3, 2, 4], { type: 'flux', v: 1 }),
+  c('tir-vif', tr('Pistolet à faisceau'), 'tech', 'fer', 'atk', 6, [3, 2, 4], { type: 'flux', v: 1 }),
   c('morsure', tr('Pince de récif'), 'bio', 'fer', 'atk', 5, [2, 3, 1], { type: 'siphon', part: 0.5 }),
   c('carapace', tr('Carapace'), 'bio', 'fer', 'bouclier', 8, [1, 2, 3], { type: 'rempart', part: 0.5 }),
   c('regenerer', tr('Bol de sève'), 'bio', 'fer', 'soin', 9, [4, 5, 3], { type: 'vague' }),
@@ -103,20 +103,20 @@ export const MODULES: ModuleDef[] = [
   c('murmure', tr('Voile du murmure'), 'reso', 'fer', 'atk', 5, [7, 6, 8], { type: 'desarmer', part: 0.3 }),
   c('echo', tr('Cristal d’écho'), 'reso', 'fer', 'atk', 8, [9, 8, 7], { type: 'accord' }),
   c('souffle', tr('Cor de brume'), 'reso', 'fer', 'atk', 20, [8, 9, 7], { type: 'fissure', part: 0.25 }, true),
-  c('apaiser', tr('Cœur d’améthyste'), 'reso', 'fer', 'soin', 7, [6, 7, 5], { type: 'vague' }),
+  c('apaiser', tr('Cœur d’améthyste'), 'reso', 'fer', 'soin', 9, [6, 7, 5], { type: 'vague' }),
   c('eclat', tr('Éclat'), 'reso', 'fer', 'atk', 11, [8, 7, 9], { type: 'crescendo', part: 0.3 }),
 
   // ---------- Augmentés : Fréquences moyennes (zone 3 à 7, ZONES_FREQUENCES) ----------
   c('jambes-ressort', tr('Jambes à ressort'), 'tech', 'fer', 'atk', 11, [7, 8, 6], { type: 'elan' }),
-  c('gant-arc', tr('Gant à arc'), 'tech', 'fer', 'atk', 13, [7, 6, 8], { type: 'crescendo', part: 0.3 }),
+  c('gant-arc', tr('Gant à arc'), 'tech', 'fer', 'atk', 12, [7, 6, 8], { type: 'crescendo', part: 0.3 }),
   c('oeil-relais', tr('Œil-relais'), 'tech', 'fer', 'atk', 12, [5, 3, 6], { type: 'curee', part: 0.6 }),
-  c('grappin-cable', tr('Grappin à câble'), 'tech', 'fer', 'bouclier', 8, [4, 5, 3], { type: 'amorce', part: 0.5 }),
+  c('grappin-cable', tr('Grappin à câble'), 'tech', 'fer', 'bouclier', 12, [4, 5, 3], { type: 'amorce', part: 0.5 }),
   c('coeur-turbine', tr('Cœur-turbine'), 'tech', 'cuivre', 'atk', 13, [6, 8, 7], { type: 'elan' }),
   c('oeil-brouilleur', tr('Œil-brouilleur'), 'tech', 'cuivre', 'atk', 11, [6, 7, 5], { type: 'desarmer', part: 0.3, zone: true }),
   c('bras-grue', 'Bras-grue', 'tech', 'argent', 'atk', 40, [6, 8, 4], { type: 'percant' }, true),
   c('dorsale', tr('Dorsale renforcée'), 'tech', 'argent', 'bouclier', 20, [3, 4, 7], { type: 'elan' }),
   c('lames-orbitales', tr('Lames orbitales'), 'tech', 'or', 'atk', 40, [7, 3, 2], { type: 'crescendo', part: 0.3 }, true),
-  c('coeur-reprise', tr('Cœur de reprise'), 'tech', 'or', 'atk', 28, [6, 2, 5], { type: 'secours', part: 0.5 }),
+  c('coeur-reprise', tr('Cœur de reprise'), 'tech', 'or', 'atk', 25, [6, 2, 5], { type: 'secours', part: 0.5 }),
 
   // ---------- Génés : Fréquences basses ----------
   c('glande-ambre', tr('Glande d’ambre'), 'bio', 'fer', 'soin', 7, [3, 2, 4], { type: 'vague', mot: 'ouverture' }),
@@ -128,7 +128,7 @@ export const MODULES: ModuleDef[] = [
   c('carapace-mere', tr('Carapace-mère'), 'bio', 'argent', 'bouclier', 14, [5, 6, 1], { type: 'rempart', part: 0.5, mot: 'ouverture' }),
   c('sang-ambre', tr('Sang d’ambre'), 'bio', 'argent', 'soin', 8, [3, 2, 5], { type: 'vague', mot: 'final' }),
   c('coeur-meute', tr('Cœur de meute'), 'bio', 'or', 'atk', 12, [5, 4, 3], { type: 'siphon', part: 0.5, mode: 'meute' }),
-  c('mue-totale', tr('Mue totale'), 'bio', 'or', 'soin', 16, [1, 2, 4], { type: 'vague' }),
+  c('mue-totale', tr('Mue totale'), 'bio', 'or', 'soin', 14, [1, 2, 4], { type: 'vague' }),
 
   // ---------- Résonants : Fréquences hautes ----------
   c('eclat-chant', tr('Éclat qui chante'), 'reso', 'fer', 'atk', 11, [7, 9, 8], { type: 'diapason' }),
@@ -138,9 +138,9 @@ export const MODULES: ModuleDef[] = [
   c('plume-givre', tr('Plume de givre'), 'reso', 'cuivre', 'atk', 11, [9, 8, 7], { type: 'desarmer', part: 1, total: true }),
   c('ombre-serpent', tr('Ombre de serpent'), 'reso', 'cuivre', 'atk', 17, [9, 6, 8], { type: 'fissure', part: 0.25, zone: true }),
   c('ombre-ailee', tr('Ombre ailée'), 'reso', 'argent', 'atk', 32, [9, 7, 8], { type: 'fissure', part: 0.25, tours: 3 }, true),
-  c('pressentiment', tr('Sablier inversé'), 'reso', 'argent', 'atk', 8, [6, 8, 7], { type: 'sourdine', part: 0.35 }),
+  c('pressentiment', tr('Sablier inversé'), 'reso', 'argent', 'atk', 10, [6, 8, 7], { type: 'sourdine', part: 0.35 }),
   c('chant-abysses', tr('Chant des abysses'), 'reso', 'or', 'atk', 14, [7, 8, 9], { type: 'accord' }),
-  c('souffle-wyrm', tr('Souffle du wyrm'), 'reso', 'or', 'atk', 22, [9, 8, 7], { type: 'crescendo', part: 0.3, zone: true }),
+  c('souffle-wyrm', tr('Souffle du wyrm'), 'reso', 'or', 'atk', 19, [9, 8, 7], { type: 'crescendo', part: 0.3, zone: true }),
 
   // ---------- Les voies, étape 1 (27 octobre 2026, docs/familles-de-decks.md) : une voie par lignée ----------
   // Le Moteur (Liane) : remplir le Flux, puis tout vider d'un coup
@@ -148,10 +148,10 @@ export const MODULES: ModuleDef[] = [
   c('condensateur', tr('Condensateur'), 'tech', 'cuivre', 'atk', 12, [5, 4, 6], { type: 'flux', v: 1, mot: 'ouverture' }),
   c('decharge-arc', tr('Décharge d’arc'), 'tech', 'cuivre', 'atk', 16, [6, 7, 5], { type: 'decharge', part: 0.5 }),
   c('eclair-captif', tr('Éclair captif'), 'tech', 'argent', 'atk', 16, [4, 5, 7], { type: 'decharge', part: 0.9, max: 1 }),
-  c('noyau-instable', tr('Noyau instable'), 'tech', 'or', 'atk', 38, [7, 6, 2], { type: 'decharge', part: 0.65, recharge: 2 }, true),
+  c('noyau-instable', tr('Noyau instable'), 'tech', 'or', 'atk', 31, [7, 6, 2], { type: 'decharge', part: 0.65, recharge: 2 }, true),
   // La Carapace (Doran) : parer, puis frapper avec tout le bouclier accumulé
   c('coup-epaule', tr('Épaulière de roche'), 'bio', 'fer', 'bouclier', 10, [3, 2, 4], { type: 'riposte', part: 0.5 }),
-  c('queue-massue', 'Queue-massue', 'bio', 'cuivre', 'bouclier', 11, [4, 5, 3], { type: 'riposte', part: 0.5 }),
+  c('queue-massue', 'Queue-massue', 'bio', 'cuivre', 'bouclier', 9, [4, 5, 3], { type: 'riposte', part: 0.5 }),
   c('belier-os', tr('Bélier d’os'), 'bio', 'argent', 'bouclier', 20, [5, 4, 1], { type: 'riposte', part: 0.5 }, true),
   c('retour-maree', tr('Coquille de marée'), 'bio', 'or', 'bouclier', 18, [2, 3, 5], { type: 'riposte', part: 1.3, vide: true }),
   // Le Chœur (Joss) : répéter une même Fréquence (Écho)
@@ -166,7 +166,7 @@ export const MODULES: ModuleDef[] = [
   c('bond-predateur', tr('Bond du prédateur'), 'bio', 'fer', 'atk', 8, [4, 3, 5], { type: 'curee', part: 0.6 }),
   c('crocs-verre', tr('Crocs de verre'), 'bio', 'cuivre', 'atk', 9, [3, 4, 2], { type: 'fissure', part: 0.25, mot: 'final' }),
   c('chasse-aveugle', tr('Chasse à l’aveugle'), 'bio', 'argent', 'atk', 13, [5, 4, 2], { type: 'curee', part: 0.6, aveugle: 0.3 }),
-  c('hallali', tr('Hallali'), 'bio', 'or', 'atk', 14, [4, 5, 1], { type: 'curee', part: 2, deux: true }),
+  c('hallali', tr('Hallali'), 'bio', 'or', 'atk', 16, [4, 5, 1], { type: 'curee', part: 2, deux: true }),
   // La Lecture (Aurel) : briser la Fêlure à coup sûr, puis frapper dans la faille
   c('regard-biais', tr('Regard en biais'), 'reso', 'fer', 'bouclier', 11, [6, 7, 9], { type: 'lecture' }),
   c('lame-doute', tr('Lame de doute'), 'reso', 'fer', 'atk', 13, [7, 8, 6], { type: 'faille', part: 0.5 }),
@@ -174,14 +174,14 @@ export const MODULES: ModuleDef[] = [
   c('verdict', tr('Verdict'), 'reso', 'argent', 'atk', 15, [6, 8, 7], { type: 'amorce', part: 0.5 }),
   c('sentence-muette', tr('Sentence muette'), 'reso', 'or', 'atk', 20, [8, 6, 9], { type: 'faille', part: 0.5 }),
   // La Sève (Kessa) : soigner en continu, le surplus devient bouclier
-  c('pollen-ambre', tr('Pollen d’ambre'), 'bio', 'fer', 'soin', 6, [2, 1, 3], { type: 'debord' }),
+  c('pollen-ambre', tr('Pollen d’ambre'), 'bio', 'fer', 'soin', 5, [2, 1, 3], { type: 'debord' }),
   c('seve-piliers', tr('Sève des piliers'), 'bio', 'cuivre', 'soin', 7, [4, 3, 5], { type: 'debord', mot: 'ouverture' }),
   c('mue-verre', tr('Mue de verre'), 'bio', 'argent', 'soin', 8, [3, 4, 1], { type: 'debord', mot: 'final' }),
-  c('floraison', tr('Floraison des Fondations'), 'bio', 'or', 'soin', 13, [5, 4, 2], { type: 'debord', x: 2 }),
+  c('floraison', tr('Floraison des Fondations'), 'bio', 'or', 'soin', 11, [5, 4, 2], { type: 'debord', x: 2 }),
   // La Cadence (Ilka) : les longues chaînes, chaque coup doublé
   c('pas-chasse', tr('Pas chassé'), 'tech', 'fer', 'atk', 10, [3, 2, 4], { type: 'elan', mot: 'final' }),
   c('lames-jumelles', tr('Lames jumelles'), 'tech', 'fer', 'atk', 11, [4, 5, 3], { type: 'rafale' }),
-  c('poings-pistons', 'Poings-pistons', 'tech', 'cuivre', 'atk', 12, [5, 4, 6], { type: 'rafale', min: 3 }),
+  c('poings-pistons', 'Poings-pistons', 'tech', 'cuivre', 'atk', 10, [5, 4, 6], { type: 'rafale', min: 3 }),
   c('mitraille', tr('Mitraille de clous'), 'tech', 'argent', 'atk', 14, [6, 5, 7], { type: 'rafale', zone: true }),
   c('cadence-folle', tr('Cadence folle'), 'tech', 'or', 'atk', 15, [3, 4, 5], { type: 'rafale', cadence: true }),
 
@@ -189,19 +189,19 @@ export const MODULES: ModuleDef[] = [
   // Bryan : sortir le jeu avec une centaine de cartes, équilibrées, qui respectent les voies ; « une carte +14 et une +15 se valent,
   // on prendra toujours +15 » : les nouvelles se distinguent par ce qu'elles font, pas par un point de force en plus.
   // Les Machines (Sasha) : la dernière voie de docs/familles-de-decks.md. Des cartes lourdes, rendues légères par le Servo.
-  c('servo-bras', 'Servo-bras', 'tech', 'fer', 'bouclier', 8, [4, 5, 3], { type: 'servo' }),
+  c('servo-bras', 'Servo-bras', 'tech', 'fer', 'bouclier', 12, [4, 5, 3], { type: 'servo' }),
   c('marteau-piston', 'Marteau-piston', 'tech', 'fer', 'atk', 21, [5, 6, 4], { type: 'desarmer', part: 0.3 }, true),
-  c('verin', tr('Vérin hydraulique'), 'tech', 'cuivre', 'bouclier', 12, [3, 4, 2], { type: 'servo' }),
-  c('exo-chantier', tr('Exo de chantier'), 'tech', 'argent', 'bouclier', 38, [5, 7, 4], { type: 'flux', v: 2 }, true),
+  c('verin', tr('Vérin hydraulique'), 'tech', 'cuivre', 'atk', 12, [3, 4, 2], { type: 'servo' }),
+  c('exo-chantier', tr('Exo de chantier'), 'tech', 'argent', 'atk', 20, [5, 7, 4], { type: 'flux', v: 1 }, true),
   c('foreuse', tr('Foreuse des Strates'), 'tech', 'or', 'atk', 36, [5, 4, 6], { type: 'elan' }, true),
   // L’Harmonie (Véla) : le Contrepoint récompense les suites qui passent par les trois lignées (plus dures à faire qu'une suite d'une seule)
   c('contre-chant', 'Contre-chant', 'reso', 'cuivre', 'atk', 14, [7, 6, 8], { type: 'contrepoint', part: 0.25 }),
   c('fil-accord', tr('Fil d’accord'), 'reso', 'argent', 'atk', 15, [8, 7, 6], { type: 'contrepoint', part: 0.25, mot: 'final' }),
-  c('nuee-chorale', tr('Nuée chorale'), 'reso', 'or', 'atk', 20, [6, 8, 7], { type: 'contrepoint', part: 0.5, exige: true }),
+  c('nuee-chorale', tr('Nuée chorale'), 'reso', 'or', 'atk', 22, [6, 8, 7], { type: 'contrepoint', part: 0.5, exige: true }),
   // Des cartes qui comblent un trou (une Fréquence ou un effet absent d'un métal). Chiffres réglés au robot : docs/nouvelles-rapport.md
   c('riveteuse', tr('Riveteuse'), 'tech', 'cuivre', 'atk', 15, [4, 3, 5], { type: 'percant' }),
   c('suture-vive', tr('Suture vive'), 'bio', 'cuivre', 'soin', 11, [5, 1, 4], { type: 'rempart', part: 0.5 }),
-  c('lamproie', tr('Lamproie des piliers'), 'bio', 'argent', 'atk', 11, [2, 4, 1], { type: 'siphon', part: 0.5, mode: 'trop' }),
+  c('lamproie', tr('Lamproie des piliers'), 'bio', 'argent', 'atk', 10, [2, 4, 1], { type: 'siphon', part: 0.5, mode: 'trop' }),
   c('berceuse', tr('Berceuse des Strates'), 'reso', 'or', 'atk', 19, [7, 9, 6], { type: 'sourdine', part: 0.35 }),
 
   // ---------- Les exclusives (28 octobre 2026) : une carte, un seul métal ----------
