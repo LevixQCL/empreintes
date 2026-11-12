@@ -1,0 +1,57 @@
+{
+ "source": "src/core/partie/confiees.ts",
+ "entrees": [
+  {
+   "fr": "Les fouilles confiées s’ouvrent avec la 2ᵉ escouade, quand le gardien de la Strate −{0} est vaincu.",
+   "en": "Entrusted digs open with the 2nd squad, once the guardian of Stratum −{0} is beaten."
+  },
+  {
+   "fr": "Une escouade fouille déjà seule la Strate −{0} : une seule fouille confiée à la fois.",
+   "en": "A squad is already digging Stratum −{0} on its own: one entrusted dig at a time."
+  },
+  {
+   "fr": "Cible inconnue.",
+   "en": "Unknown target."
+  },
+  {
+   "fr": "On ne fouille que les Strates déjà vaincues.",
+   "en": "You can only dig Strata you’ve already beaten."
+  },
+  {
+   "fr": "Cette escouade est trop juste pour fouiller seule la Strate −{0} (force {1} sur {2}) : renforce-la, ou confie-lui une Strate moins profonde.",
+   "en": "This squad is too weak to dig Stratum −{0} on its own (strength {1} out of {2}): make it stronger, or send it to a shallower Stratum."
+  },
+  {
+   "fr": "L’escouade {0} part fouiller seule la Strate −{1} ({2}, {3} h).",
+   "en": "Squad {0} sets off to dig Stratum −{1} on its own ({2}, {3} h)."
+  },
+  {
+   "fr": "{0} et {1} sont descendus seuls dans la Strate −{2}. Personne pour choisir le chemin à leur place : ils ont pris le plus sûr, et l’ont tenu.",
+   "en": "{0} and {1} went down into Stratum −{2} on their own. With no one to pick the path for them, they took the safest one, and held it."
+  },
+  {
+   "fr": "Au filon, la roche tenait encore une carte : {0}. Ils l’ont dégagée au couteau, sans l’abîmer.",
+   "en": "At the seam, the rock still held a card: {0}. They worked it free with a knife, without a scratch."
+  },
+  {
+   "fr": "Au fond du filon, un Éclat brillait dans sa gangue. Il a fallu le reste de la journée pour l’en sortir entier.",
+   "en": "Deep in the seam, a Shard glinted in its matrix. It took the rest of the day to get it out whole."
+  },
+  {
+   "fr": "Ils ont vidé le filon veine après veine, et remonté le minerai à dos, en trois voyages.",
+   "en": "They emptied the seam vein by vein, and carried the ore up on their backs, in three trips."
+  },
+  {
+   "fr": "{0} en revient au niveau {1}.",
+   "en": "{0} comes back at level {1}."
+  },
+  {
+   "fr": "Ils rentrent fourbus : la Clinique s’en occupe.",
+   "en": "They come home worn out: the Clinic will see to them."
+  },
+  {
+   "fr": "L’escouade {0} rentre de la Strate −{1} : +{2} minerai, +{3} XP chacun{4}{5}.",
+   "en": "Squad {0} is back from Stratum −{1}: +{2} ore, +{3} XP each{4}{5}."
+  }
+ ]
+}

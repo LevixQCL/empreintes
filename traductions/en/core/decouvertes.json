@@ -190,6 +190,26 @@
    "en": "The guardian of the Deep pays better: a choice of silver cards and {0} more Shards with every victory, a gold card the first time."
   },
   {
+   "fr": "STRATE −{0} · REMUÉE",
+   "en": "STRATUM −{0} · SHIFTED"
+  },
+  {
+   "fr": "La roche a bougé cette nuit",
+   "en": "The rock shifted overnight"
+  },
+  {
+   "fr": "Chaque jour, une Strate que tu as déjà vaincue se réveille autrement : pour la journée, elle emprunte la façon d’être d’une autre.{0}",
+   "en": "Every day, a Stratum you have already beaten wakes up changed: for the day, it borrows the nature of another.{0}"
+  },
+  {
+   "fr": " Ici, aujourd’hui : {0}{1} (Strate −{2}).",
+   "en": " Here, today: {0}{1} (Stratum −{2})."
+  },
+  {
+   "fr": "La première sortie réussie du jour dans la Strate remuée laisse une prime : des Éclats et une carte au choix. Une fouille facile ne suffit pas.",
+   "en": "Your first successful outing of the day in the shifted Stratum leaves a bonus: Shards and a card of your choice. An easy dig is not enough."
+  },
+  {
    "fr": "STRATE −{0} · SA PARTICULARITÉ",
    "en": "STRATUM −{0} · ITS PECULIARITY"
   },

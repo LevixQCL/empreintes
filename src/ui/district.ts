@@ -20,6 +20,8 @@ import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, carteNiveau, comp
 import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
 import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront, finCreuse, gainCreuseurs } from '../core/jeu';
+import { CONFIEE, REMUEE, apercuConfiee, confieesOuvertes, flecheOuverte, peutConfier, strateRemuee } from '../core/jeu';
+import { particularite } from '../core/strates';
 import { FAMILLES, FRAGMENTS } from '../core/fragments';
 import { CONFIANCE, CERCLE, CERCLE_OUVERTURE, cercleOuvert, echangesParJour, metalMax, ouvertesMax, vitrineMax, niveauConfiance, nbFoyers, bassesOuvertes, bulleBasses } from '../core/jeu';
 import { feuilleBasses } from './basses';
@@ -1157,7 +1159,7 @@ function fenetreLegs(e: EcranDistrict): string {
 
 function fenetreChoix(j: Jeu): string {
   const c = j.choix[0]!;
-  const titre = c.source === 'releve' ? tr('La Strate est complète') : c.source === 'etoiles' ? tr('Les étoiles des Strates') : c.source === 'rodeur' ? tr('Le trophée du Rôdeur') : c.source === 'boss' ? tr('Le boss laisse des empreintes') : c.source === 'quotidien' ? tr('Objectif du jour') : c.source === 'ravitaillement' ? tr('Le septième colis') : c.source === 'fouille' ? tr('Le filon de la fouille') : c.source === 'epreuve' ? tr('Épreuve réussie') : c.source === 'parrainage' ? tr('Le parrainage') : c.source === 'maree' ? tr('La prise de la marée') : c.source === 'fleche' ? tr('Un quai gravé de la Flèche') : tr('Butin de la semaine');
+  const titre = c.source === 'releve' ? tr('La Strate est complète') : c.source === 'etoiles' ? tr('Les étoiles des Strates') : c.source === 'rodeur' ? tr('Le trophée du Rôdeur') : c.source === 'boss' ? tr('Le boss laisse des empreintes') : c.source === 'quotidien' ? tr('Objectif du jour') : c.source === 'ravitaillement' ? tr('Le septième colis') : c.source === 'fouille' ? tr('Le filon de la fouille') : c.source === 'epreuve' ? tr('Épreuve réussie') : c.source === 'parrainage' ? tr('Le parrainage') : c.source === 'maree' ? tr('La prise de la marée') : c.source === 'remuee' ? tr('La prime de la Strate remuée') : c.source === 'fleche' ? tr('Un quai gravé de la Flèche') : tr('Butin de la semaine');
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">${tr`RÉCOMPENSE${j.choix.length > 1 ? tr` · ENCORE ${j.choix.length - 1} APRÈS` : ''}`}</span><h2 id="choix-titre">${titre}</h2><p>${tr`Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.`}</p><small class="aide choix-loupe">${tr`Reste appuyé sur une carte pour lire son effet.`}</small><div class="cartes-choix">`
     + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}" data-carte="${id}"`, true)).join('')
     + `</div>${aVenir(c.options, j)}${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">${tr`Prendre ${prix('eclats', c.eclats)} à la place`}</button>` : ''}</div></div>`;
@@ -1897,6 +1899,7 @@ export function htmlCoupe(e: EcranDistrict): string {
       + (derniere ? `<button type="button" class="tr-revoir" data-action="scene-revoir" data-id="${derniere}" aria-label="${tr`Revoir la dernière scène`}">${ICO.film}${tr`Revoir`}</button>` : '')
       + `<p>${echap(chap.texte)}</p></div>` : '')
     + `<span class="surtitre tr-prochaine">${tr`Prochaine étape`}</span>${etape}</section>`;
+  h += blocAutour(e, off);
   // le Grand Tableau : ton rang en profondeur, et l'entrée vers les classements
   if (j.chambre && e.grand) h += bandeauTableau(e, e.grand, e.uid ?? null);
 
@@ -1963,6 +1966,7 @@ function contenuStrate(j: EcranDistrict['j'], n: number): string {
 function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof manquePourCreuser>): string {
   const j = e.j;
   const cible = j.strate + 1;
+  const remuee = strateRemuee(j, e.now);
   let h = `<section class="tr-strates" aria-label="${tr`Les Strates`}">`
     + `<ul class="tr-legende"><li>${ICO.cristal}<span><b>${tr`Fouiller`}</b>${tr` : une descente courte, sans gardien, vers un filon (cartes, minerai ou Éclats).`}</span></li>`
     + `<li>${ICO.descendre}<span><b>${tr`Explorer`}</b>${tr` : toute la Strate jusqu’à son gardien, éveillé s’il est déjà vaincu (meilleures cartes). Seul endroit où trouver les Vestiges, les étoiles et les Rôdeurs.`}</span></li></ul>`
@@ -1980,6 +1984,7 @@ function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof m
       + (fin ? `<button type="button" class="tr-deplier" data-action="tr-etage" data-strate="${n}" aria-expanded="${ouvert}" aria-label="${ouvert ? tr`Replier la Strate −${n}` : tr`Déplier la Strate −${n}`}"></button>` : '')
       + `<span class="tr-vignette">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}<b>−${n}</b></span>`
       + `<div class="tr-infos"><strong>${nom}</strong><small>${echap(zone.nom)}${vaincue ? tr` · ${ICO.ok}vaincue` : ` · <em>${tr`front : son gardien t’attend`}</em>`}</small>`
+      + (remuee?.strate === n ? `<small class="tr-remuee">${ICO.strate}${tr`Remuée aujourd’hui`}${particularite(remuee.modele) ? ` : ${echap(particularite(remuee.modele)!.nom.charAt(0).toLowerCase() + particularite(remuee.modele)!.nom.slice(1))}` : ''}</small>` : '')
       + contenuStrate(j, n)
       + `<div class="tr-actions">${vaincue ? `<button type="button" class="btn sec" data-action="fouiller-choix" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.cristal}${tr`Fouiller`}</button>` : ''}`
       + `<button type="button" class="btn ${front && !j.frontVaincu ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.descendre}${tr`Explorer`}</button></div></div></li>`;
@@ -2169,12 +2174,51 @@ export function htmlMissions(e: EcranDistrict): string {
     h += `<h3 class="titre-bloc rm-histo-titre">${icone('journal')}${tr`Derniers rapports`}</h3><div class="rm-histo">`;
     for (const r of lus) {
       const p = porteurDef(r.porteur);
-      h += `<details class="rm-ligne" style="--c:${COULEUR[p.lignee]}"><summary>${avatar(r.porteur, 32)}<span><strong>${echap(p.nom)} · ${echap(lieuMission(r))}</strong><small>${tr`+${r.composants} minerai${r.cartes.length ? tr` · ${r.cartes.length} carte${r.cartes.length > 1 ? 's' : ''}` : ''}${r.creuseurs ? tr` · +${r.creuseurs} creuseur${r.creuseurs > 1 ? 's' : ''}` : ''}`}</small></span></summary>`
+      h += `<details class="rm-ligne" style="--c:${COULEUR[p.lignee]}"><summary>${avatar(r.porteur, 32)}<span><strong>${r.confiee ? tr`Escouade ${r.confiee.escouade + 1} · fouille confiée, Strate −${r.confiee.strate}` : `${echap(p.nom)} · ${echap(lieuMission(r))}`}</strong><small>${tr`+${r.composants} minerai${r.cartes.length ? tr` · ${r.cartes.length} carte${r.cartes.length > 1 ? 's' : ''}` : ''}${r.creuseurs ? tr` · +${r.creuseurs} creuseur${r.creuseurs > 1 ? 's' : ''}` : ''}`}</small></span></summary>`
         + `<div class="rm-recit">${r.recit.map((l) => `<p>${echap(l)}</p>`).join('')}</div>${gainsRapport(r)}</details>`;
     }
     h += `</div>`;
   }
   return h + `</section>`;
+}
+
+// ---------- Autour du front (12 novembre 2026) ----------
+
+/**
+ * Ce qu'il y a à faire d'autre que retenter le front ou refouiller la même Strate (12 novembre 2026, Bryan : « deux séances sur
+ * trois se passent à refouiller du contenu déjà vaincu ») : la Strate remuée du jour, la fouille confiée, et la Flèche.
+ * Trois lignes au plus, chacune avec son bouton ; rien tant que la Strate −3 n'est pas vaincue.
+ */
+function blocAutour(e: EcranDistrict, off: boolean): string {
+  const j = e.j;
+  const rem = strateRemuee(j, e.now);
+  if (!rem) return '';
+  const lignes: string[] = [];
+  const p = particularite(rem.modele);
+  lignes.push(`<li class="tr-autour-ligne${rem.faite ? ' faite' : ''}">${ICO.strate}<span><strong>${tr`Strate remuée du jour · −${rem.strate}`}</strong>`
+    + `<small>${p ? `${echap(p.nom)} ${tr`(empruntée à −${rem.modele})`}. ` : ''}${rem.faite ? tr('Prime prise aujourd’hui.') : tr`Première sortie réussie : ${REMUEE.eclats} Éclats et une carte au choix.`}</small></span>`
+    + `<button type="button" class="btn ${rem.faite ? 'sec' : 'prim'}" data-action="fouiller-choix" data-strate="${rem.strate}"${off ? ' disabled' : ''}>${tr`Y aller`}</button></li>`);
+  if (j.confiee) {
+    const f = j.confiee;
+    lignes.push(`<li class="tr-autour-ligne en-cours">${ICO.porteurs}<span><strong>${tr`L’escouade ${f.escouade + 1} fouille seule la Strate −${f.strate}`}</strong>`
+      + `<small>${tr`Retour dans`} <b>${decompte(f.fin, e.now)}</b></small><span class="jauge or" aria-hidden="true">${jaugeTemps(f.debut, f.fin, e.now)}</span></span></li>`);
+  } else if (confieesOuvertes(j)) {
+    lignes.push(`<li class="tr-autour-ligne">${ICO.porteurs}<span><strong>${tr`Fouille confiée`}</strong>`
+      + `<small>${tr`Une escouade fouille seule une Strate vaincue (${CONFIEE.heures} h) pendant que tu joues avec une autre.`}</small></span>`
+      + `<button type="button" class="btn sec" data-action="fouiller-choix" data-strate="${strateVaincue(j)}"${off ? ' disabled' : ''}>${tr('§fouille§Confier')}</button></li>`);
+  }
+  if (flecheOuverte(j)) {
+    const f = etatFleche(j);
+    const esc = escouadesDe(j)[escouadeActive(j)] ?? [];
+    const c = esc.length === 3 ? Math.round(chanceQuai(forceEscouade(j, esc), f.quai) * 100) : null;
+    // trop haut pour l'escouade (moins d'une chance sur cinq) : on le dit, plutôt que d'inviter à un combat perdu d'avance
+    const tropHaut = c !== null && c < 20;
+    lignes.push(`<li class="tr-autour-ligne${tropHaut ? ' faite' : ''}">${ICO.fleche}<span><strong>${tr`La Flèche · quai ${f.quai}`}</strong>`
+      + `<small>${c === null ? tr('Un seul combat contre les gardiens des Hauts.') : tropHaut ? tr('Trop haut pour ton escouade pour l’instant : renforce-la d’abord.') : tr`Un seul combat : ${c} % de chances avec ton escouade.`}</small></span>`
+      + `<button type="button" class="btn sec" data-action="fleche">${tropHaut ? tr('Voir') : tr('Monter')}</button></li>`);
+  }
+  const creuse = j.frontVaincu && (finCreuse(j) ?? 0) > e.now;
+  return `<section class="tr-autour" aria-label="${tr`Autour du front`}"><span class="surtitre">${creuse ? tr('En attendant la galerie') : tr('Aujourd’hui en bas')}</span><ul>${lignes.join('')}</ul></section>`;
 }
 
 // ---------- Choix de l'escouade ----------
@@ -2251,6 +2295,35 @@ function blocForce(j: Jeu, escouade: string[], strate: number): string {
     + `</section>`;
 }
 
+/** La Strate choisie est la Strate remuée du jour : ce qu'elle emprunte, et sa prime */
+function noteRemuee(e: EcranDistrict): string {
+  const rem = strateRemuee(e.j, e.now);
+  if (!rem || rem.strate !== e.strateChoisie) return '';
+  const p = particularite(rem.modele);
+  return `<p class="es-remuee${rem.faite ? ' faite' : ''}">${ICO.strate}<span><strong>${tr`Strate remuée aujourd’hui`}</strong>`
+    + `${p ? `${echap(p.nom)} : ${echap(p.texte.charAt(0).toLowerCase() + p.texte.slice(1))} ` : ''}`
+    + `${rem.faite ? tr('La prime du jour est déjà prise.') : tr`Première sortie réussie du jour : ${REMUEE.eclats} Éclats et une carte au choix (pas en fouille facile).`}</span></p>`;
+}
+
+/** Confier la fouille à l'escouade choisie : ce qu'elle rapportera, et pourquoi elle ne peut pas partir s'il manque quelque chose */
+function blocConfier(e: EcranDistrict, cible: CibleFouille): string {
+  const j = e.j;
+  if (j.confiee) {
+    return `<section class="es-confier en-cours"><div class="es-confier-tete"><span class="surtitre">${tr`Fouille confiée`}</span><b>${decompte(j.confiee.fin, e.now)}</b></div>`
+      + `<p>${tr`L’escouade ${j.confiee.escouade + 1} fouille déjà seule la Strate −${j.confiee.strate}. Une seule fouille confiée à la fois.`}</p></section>`;
+  }
+  const a = apercuConfiee(e.strateChoisie, cible);
+  const r = e.escouade.length === 3 ? peutConfier(j, e.escouade, e.strateChoisie, cible) : { ok: false as const, message: tr('Choisis 3 Porteurs.') };
+  const gains = [`<b>+${a.minerai}</b> ${tr`minerai`}`,
+    ...(a.metal ? [`<b>${tr`une carte en ${NOMS_RARETE[a.metal].toLowerCase()}`}</b>`] : []),
+    ...(a.eclats ? [`<b>${a.eclats > 1 ? tr`${a.eclats} Éclats` : tr('un Éclat')}</b>`] : []),
+    `<b>+${a.xp} XP</b> ${tr`chacun`}`];
+  return `<section class="es-confier"><div class="es-confier-tete"><span class="surtitre">${tr`Ou la confier à cette escouade`}</span><b>${a.heures} h</b></div>`
+    + `<p>${tr`Elle part seule et rapporte`} ${gains.join(', ')}. ${tr`Pendant ce temps, tu joues avec une autre escouade. C’est moins qu’une fouille jouée : ni creuseur, ni prime de Strate remuée.`}</p>`
+    + (r.ok ? '' : `<p class="es-confier-non">${ICO.verrou}<span>${echap(r.message ?? '')}</span></p>`)
+    + `<button type="button" class="btn sec" data-action="confier-fouille"${r.ok ? '' : ' disabled'}>${ICO.porteurs}${tr`Confier la fouille (${a.heures} h)`}</button></section>`;
+}
+
 export function htmlEscouade(e: EcranDistrict): string {
   const j = e.j;
   const ep = e.epreuve ? epreuveDef(e.epreuve) ?? null : null;
@@ -2310,9 +2383,11 @@ export function htmlEscouade(e: EcranDistrict): string {
       + `<p class="es-cible-texte">${echap(CIBLES_FOUILLE[fouille].texte)}</p>`
       + `<h3 class="es-cibles-titre">${tr`Difficulté`}</h3>`
       + `<div class="es-cibles-grille es-niveaux" role="radiogroup" aria-label="${tr`Difficulté de la fouille`}">`
-      + (Object.keys(DIFFICULTES_FOUILLE) as DifficulteFouille[]).map((n) => tuileNiveau(n, e.niveauFouille ?? 'normale', fouille)).join('') + `</div>`;
+      + (Object.keys(DIFFICULTES_FOUILLE) as DifficulteFouille[]).map((n) => tuileNiveau(n, e.niveauFouille ?? 'normale', fouille)).join('') + `</div>`
+      + noteRemuee(e);
   } else {
-    h += `<p class="es-but">${ICO.strate}<span><strong>${echap(zone.nom)}</strong>${tr`Une carte à explorer salle par salle : combats, caches, rencontres, campement, puis le gardien : ${echap(ennemiDef(zone.boss).nom)}.`}</span></p>`;
+    h += `<p class="es-but">${ICO.strate}<span><strong>${echap(zone.nom)}</strong>${tr`Une carte à explorer salle par salle : combats, caches, rencontres, campement, puis le gardien : ${echap(ennemiDef(zone.boss).nom)}.`}</span></p>`
+      + noteRemuee(e);
   }
   h += `</section>`;
 
@@ -2366,6 +2441,9 @@ export function htmlEscouade(e: EcranDistrict): string {
       + (posteQuitte(j, id) ? `<span class="es-quitte">${ICO.ouvrier}<span>${echap(textePosteQuitte(j, id)!)}</span></span>` : '')
       + `</div>`;
   }).join('') + `</section>`;
+
+  // la fouille confiée (12 novembre 2026) : la même fouille, sans la jouer, par l'escouade choisie ci-dessus
+  if (fouille && confieesOuvertes(j)) h += blocConfier(e, fouille);
 
   // la force de l'escouade face à la Strate (12 novembre 2026) : on voit avant de partir si on est prêt, et quoi faire sinon
   if (!ep && !fouille && !fl && !pi && e.escouade.length === 3) h += blocForce(j, e.escouade, e.strateChoisie);

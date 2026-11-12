@@ -292,6 +292,14 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       if (r.ok) { app.mode = 'combat'; K.fin = null; K.etat = null; window.scrollTo(0, 0); }
       break;
     }
+    // la fouille confiée (12 novembre 2026) : l'escouade choisie part seule, on revient à la Tour
+    case 'confier-fouille': {
+      if (!D.fouille) break;
+      const r = J.confierFouille(app.jeu, D.escouade, D.strateChoisie, D.fouille, Date.now());
+      resultat(r);
+      if (r.ok) { ouvrir('coupe'); D.message = t`L’escouade est partie fouiller seule la Strate −${D.strateChoisie} : retour dans ${J.CONFIEE.heures} h.`; window.scrollTo(0, 0); }
+      break;
+    }
     case 'reprendre': app.mode = 'combat'; K.fin = finPour(); break;
     case 'rencontre': D.vue = 'rencontre'; D.bulles = 0; break;
     case 'rencontre-suite': D.bulles = Math.min(D.bulles + 1, NB_REPLIQUES); break;

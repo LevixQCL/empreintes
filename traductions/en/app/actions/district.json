@@ -62,6 +62,10 @@
    "en": "Can’t reach {0} right now: try again in a moment."
   },
   {
+   "fr": "L’escouade est partie fouiller seule la Strate −{0} : retour dans {1} h.",
+   "en": "The squad has gone to dig Stratum −{0} on its own: back in {1} h."
+  },
+  {
    "fr": "Ysé glisse une carte entre les pages : un doublon {0} ({1}).",
    "en": "Ysé slips a card between the pages: a duplicate {0} ({1})."
   },

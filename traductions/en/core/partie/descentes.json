@@ -62,6 +62,10 @@
    "en": "leaves their post: {0} will be left empty"
   },
   {
+   "fr": "L’escouade {0} fouille seule la Strate −{1} : elle se recompose à son retour.",
+   "en": "Squad {0} is digging Stratum −{1} on its own: it can be changed when it returns."
+  },
+  {
    "fr": "Place inconnue.",
    "en": "Unknown slot."
   },
@@ -590,6 +594,10 @@
    "en": "with the guardian beaten, diggers join the works"
   },
   {
+   "fr": "La Strate remuée du jour est faite : {0} Éclats et une carte au choix.",
+   "en": "Today’s shifted Stratum is done: {0} Shards and a card of your choice."
+  },
+  {
    "fr": "L’escouade remonte victorieuse avec {0} minerai.{1}",
    "en": "The squad comes back up victorious with {0} ore.{1}"
   },
@@ -756,14 +764,6 @@
   {
    "fr": "Difficulté inconnue.",
    "en": "Unknown difficulty."
-  },
-  {
-   "fr": "Cible inconnue.",
-   "en": "Unknown target."
-  },
-  {
-   "fr": "On ne fouille que les Strates déjà vaincues.",
-   "en": "You can only dig Strata you’ve already beaten."
   },
   {
    "fr": "L’escouade part fouiller la Strate −{0} ({1}, {2}).",

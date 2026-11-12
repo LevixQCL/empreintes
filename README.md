@@ -51,6 +51,8 @@ src/
       partie/pillages.ts     les pillages : garnison, jetons, coffre, cuvettes voisines, attaques subies
       partie/fleche.ts       la Flèche : quais, gardiens des Hauts, montée et descente, quais gravés
       partie/cercle.ts       le Cercle des quais : échanges entre amis (mise de côté, même métal, prix), souhaits, vitrine, duels de la semaine
+      partie/confiees.ts     la fouille confiée (12 novembre 2026) : une escouade fouille seule une Strate vaincue (8 h, moins qu'une fouille jouée) ;
+                             la Strate remuée du jour (REMUEE, dans descentes.ts) emprunte la particularité d'une autre et laisse une prime
       partie/temps.ts        le temps qui passe
       partie/nouvelle.ts     nouvelle partie, décisions de la campagne, mise à jour des anciennes sauvegardes
     expedition.ts  une suite de combats ; c'est ce qui est sauvegardé

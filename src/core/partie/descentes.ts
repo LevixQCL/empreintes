@@ -235,6 +235,8 @@ function retenirDepart(j: Jeu, escouade: string[], sortie: Sortie = 'explorer'):
 export function placerDansEscouade(j: Jeu, place: number, id: string, n = escouadeActive(j)): Resultat {
   const verrou = escouadeVerrouillee(j);
   if (verrou) return non(verrou);
+  // la fouille confiée (12 novembre 2026) : l'escouade partie ne change pas tant qu'elle n'est pas rentrée
+  if (j.confiee && (j.confiee.porteurs.includes(id) || n === j.confiee.escouade)) return non(tr`L’escouade ${j.confiee.escouade + 1} fouille seule la Strate −${j.confiee.strate} : elle se recompose à son retour.`);
   if (!Number.isInteger(place) || place < 0 || place > 2) return non(tr('Place inconnue.'));
   if (!Number.isInteger(n) || n < 0 || n >= escouadesOuvertes(j)) return non(n >= 0 && n < NB_ESCOUADES ? tr`Les autres escouades se forment quand le gardien de la Strate −${ESCOUADES_STRATE} est vaincu.` : tr('Escouade inconnue.'));
   const toutes = escouadesDe(j).map((l) => [...l]);
@@ -789,6 +791,8 @@ export interface Retour {
   quete?: EtapeQuete;
   /** Explorer (explorer.ts) : Vestiges trouvés, Strate relevée, étoiles et paliers gagnés, Rôdeur affronté, gardien éveillé */
   explorer?: RetourExplorer;
+  /** la prime de la Strate remuée, prise à cette sortie (REMUEE) : ses Éclats, déjà comptés dans `eclats` */
+  remuee?: { eclats: number };
 }
 
 export interface RetourExplorer {
@@ -911,6 +915,15 @@ export function remonter(j: Jeu): Retour {
     cartes.push(tirerTrouvaille(j, x.strate, estFond(x.strate) ? 'or' : metalTranche(x.strate)));
     eclats += 2;
   }
+  // la Strate remuée (12 novembre 2026) : la première sortie réussie du jour y laisse une prime, hors fouille facile
+  let primeRemuee = 0;
+  if (victoire && x.remuee && !x.epreuve && x.difficulte !== 'facile' && j.remueeFaite !== jourDe(j.dernierTick)) {
+    j.remueeFaite = jourDe(j.dernierTick);
+    primeRemuee = REMUEE.eclats;
+    eclats += primeRemuee;
+    j.choix.push({ source: 'remuee', options: tirerChoix(j, x.strate, metalDessus(x.strate), undefined, porteursPresents(j)) });
+    log(j, tr`La Strate remuée du jour est faite : ${REMUEE.eclats} Éclats et une carte au choix.`);
+  }
   // 31 octobre 2026 (Luc : « 6 / 6 creuseurs, tout est prêt » mais la Strate −6 ne s'ouvrait pas) : les creuseurs gagnés
   // en fouille ou à une Épreuve ne perçaient pas la roche ; on creuse dès qu'ils suffisent, quelle que soit leur source
   if (!nouvelleStrate && creuser(j)) nouvelleStrate = true;
@@ -957,7 +970,7 @@ export function remonter(j: Jeu): Retour {
     ? tr`L’escouade remonte victorieuse avec ${butin} minerai.${nouvelleStrate ? tr` Un nouvel étage est creusé : la Strate −${j.strate} est ouverte.` : ''}`
     : x.fuite ? tr`L’escouade a fui et remonte avec ${butin} minerai. Elle rentre épuisée.`
     : tr`L’escouade remonte avec ${butin} minerai. Elle a besoin de repos.`);
-  return { butin: butin + butinFilon + (quete?.composants ?? 0) + (explo?.composants ?? 0), nouvelleStrate, victoire, fragment, cartes, eclats, ...(x.fuite ? { fuite: true } : {}), ...(brutXp ? { xp } : {}), ...(quete ? { quete } : {}), ...(explo ? { explorer: explo.retour } : {}) };
+  return { butin: butin + butinFilon + (quete?.composants ?? 0) + (explo?.composants ?? 0), nouvelleStrate, victoire, fragment, cartes, eclats, ...(x.fuite ? { fuite: true } : {}), ...(brutXp ? { xp } : {}), ...(quete ? { quete } : {}), ...(explo ? { explorer: explo.retour } : {}), ...(primeRemuee ? { remuee: { eclats: primeRemuee } } : {}) };
 }
 
 // ---------- Explorer ou fouiller (31 octobre 2026, explorer.ts, docs/strates-explorer.md) ----------
@@ -1102,6 +1115,36 @@ export function resumeAbsence(avant: Jeu, apres: Jeu, nouvelles: string[]): stri
 export { BATIMENTS, MODULES };
 export type { Rarete };
 
+// ---------- La Strate remuée (12 novembre 2026) ----------
+// Bryan : deux séances sur trois se passaient à refouiller une Strate déjà vaincue, toujours la même. Chaque jour, une des
+// Strates vaincues les plus profondes « bouge » : pour la journée elle emprunte la particularité d'une autre (la mécanique du
+// Fond, strates.ts), en fouille comme en exploration, et la première sortie réussie du jour y laisse une prime. Rejouer n'est
+// plus obligatoire (la fouille confiée, confiees.ts), et quand on rejoue, ce n'est pas le combat de la veille.
+export const REMUEE = {
+  /** s'ouvre quand la Strate −3 est vaincue (comme les pillages) */
+  des: 3,
+  /** on tire parmi les Strates vaincues les plus profondes : assez près du front pour que le butin compte */
+  parmi: 3,
+  /** la prime du jour : des Éclats, et une carte au choix parmi trois, au métal du dessus de la tranche */
+  eclats: 2,
+} as const;
+
+/** La Strate remuée du jour, et la Strate dont elle emprunte la particularité ; null avant −3. La même toute la journée (elle change à 4 h). */
+export function strateRemuee(j: Jeu, now: number): { strate: number; modele: number; faite: boolean } | null {
+  const fond = Math.min(strateVaincue(j), FOND.des - 1);
+  if (!j.chambre || fond < REMUEE.des) return null;
+  const jour = jourDe(now);
+  const candidates = Array.from({ length: Math.min(REMUEE.parmi, fond - 1) }, (_, k) => fond - k);
+  // à tour de rôle (jamais la même deux jours de suite), dans un ordre qui dépend de la profondeur atteinte
+  const ordreStrates = candidates.slice().sort((x, y) => ((Math.imul(x + fond, 2654435761) >>> 0) % 97) - ((Math.imul(y + fond, 2654435761) >>> 0) % 97));
+  const strate = ordreStrates[((jour % ordreStrates.length) + ordreStrates.length) % ordreStrates.length]!;
+  const ordre = FOND.ordre.filter((m) => m !== strate);
+  const modele = ordre[((jour % ordre.length) + ordre.length) % ordre.length]!;
+  return { strate, modele, faite: j.remueeFaite === jour };
+}
+/** La particularité qu'emprunte cette Strate aujourd'hui si c'est la Strate remuée (null sinon) */
+const remueeDe = (j: Jeu, strate: number): number | null => { const r = strateRemuee(j, j.dernierTick); return r && r.strate === strate ? r.modele : null; };
+
 // ---------- Les départs : expédition, fouille ciblée, Épreuve ----------
 
 export function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef) => boolean, min: number = DISTRICT.deckMin, sortie: Sortie = 'explorer'):
@@ -1147,6 +1190,7 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
     ...(halte !== undefined ? { halte } : {}), quete: queteOuverte(j, strate),
     vestiges: vestigesManquants(j, strate), eveille: gardienEveille(j, strate),
+    ...(remueeDe(j, strate) !== null ? { remuee: remueeDe(j, strate)! } : {}),
     ...(rodeur && tireur({ rng: (rng ^ 0x68e31da4) >>> 0 }).nombre() < EXPLORER.rodeur.chance ? { rodeur } : {}),
   });
   // la première exploration du front de la journée (8 novembre 2026) : ses combats rapportent double
@@ -1199,6 +1243,7 @@ export function fouiller(j: Jeu, escouade: string[], strate: number, cible: Cibl
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: (j.actes.fin === 'scellement' ? 0.9 : 1) * d.force, fouille: cible, semaine: semaineDe(j.dernierTick),
     difficulte, rangs: d.rangs,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}), quete: queteOuverte(j, strate), releve: strateRelevee(j, strate),
+    ...(remueeDe(j, strate) !== null ? { remuee: remueeDe(j, strate)! } : {}),
   });
   retenirDepart(j, escouade, 'courte');
   log(j, tr`L’escouade part fouiller la Strate −${strate} (${CIBLES_FOUILLE[cible].nom.toLowerCase()}, ${d.nom.toLowerCase()}).`);

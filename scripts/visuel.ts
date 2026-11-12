@@ -28,7 +28,7 @@ const ENTRER = async (p: Page) => {
     await p.waitForTimeout(300);
   }
 };
-const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer' | 'comptoir' | 'creuse'; faire: (p: Page) => Promise<void> }[] = [
+const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer' | 'comptoir' | 'creuse' | 'autour' | 'confier'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
   { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="forge"]'); } },
@@ -45,6 +45,10 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'panneau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.objectif:visible').first(); if (await d.count()) await d.click(); } },
   { nom: 'bulle-appel', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.appel-bulle:visible').first(); if (await d.count()) await d.click(); } },
   { nom: 'tour', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); } },
+  // autour du front (12 novembre 2026) : Strate remuée, fouille confiée en cours, Flèche ; puis l'écran de départ qui confie une fouille
+  { nom: 'tour-autour', sauvegarde: 'autour', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); await p.$eval('.tr-autour', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
+  { nom: 'depart-remuee', sauvegarde: 'confier', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); await p.click('.tr-autour [data-action="fouiller-choix"] >> nth=0'); await p.waitForTimeout(300); await p.$eval('.es-remuee', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
+  { nom: 'depart-confier', sauvegarde: 'confier', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); await p.click('.tr-autour [data-action="fouiller-choix"] >> nth=0'); await p.waitForTimeout(300); await p.$eval('.es-confier', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
   { nom: 'tour-creuse', sauvegarde: 'creuse', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); await p.$eval('.tr-etape', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
   // la liste des Strates (9 novembre 2026) : front mis en avant, boutons près du nom sur PC
   { nom: 'tour-strates', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); await p.waitForTimeout(300); await p.$eval('.tr-strates ol', (e) => e.scrollIntoView({ block: 'center' })); } },
@@ -254,6 +258,17 @@ async function main() {
     cr.data.frontVaincu = true;
     cr.data.creuseDebut = T - 2 * 3_600_000;
     (saves as Record<string, unknown>).creuse = cr;
+    // autour du front (12 novembre 2026) : la creuse en cours, la Flèche ouverte, et une escouade partie fouiller seule la Strate −2
+    const au = JSON.parse(JSON.stringify(cr));
+    au.data.scenes = [...(au.data.scenes ?? []), 'convocation'];
+    au.data.fleche = { quai: 23, record: 31, recordLe: T - 86_400_000, recus: [20], cartes: [20], victoires: 9, defaites: 3 };
+    au.data.missions = [];
+    const ailleurs = Object.keys(au.data.porteurs).filter((id) => !(au.data.escouade ?? []).includes(id)).slice(0, 3);
+    au.data.confiee = { porteurs: ailleurs, escouade: 1, strate: 2, cible: 'composants', debut: T - 3 * 3_600_000, fin: T + 5 * 3_600_000 };
+    (saves as Record<string, unknown>).autour = au;
+    const co = JSON.parse(JSON.stringify(saves.district));
+    co.data.missions = [];
+    (saves as Record<string, unknown>).confier = co;
     // la même expédition, mais à la Strate −6 : le brouillard ne laisse voir que des indices (30 octobre 2026)
     const br = JSON.parse(JSON.stringify(saves.combat));
     if (br.data.expedition) br.data.expedition.strate = 6;

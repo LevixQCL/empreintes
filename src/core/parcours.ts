@@ -16,11 +16,14 @@ import { bassesOuvertes, dresserBatardeau, envoyerBasses, libresPourBasses, rama
   enMission, envoyerMission, destinationsDuJour, secoursPossible, epreuvesDeLaSemaine, fouiller, partirEpreuve,
   chargeMax, brutEnAttente, coutAmelioration, niveauPorteur, porteursPresents, posteDe, poster, prendre, pvMaxCombat, quotidienFait, reclamerQuotidien, remonter, repondre, retraite, tick as tickJeu,
   coutRefabrication, soignerVite, placesEntrainement, seancesDe, type Jeu, type Poste,
-  contratsDuMoment, envoyerContrat, equipeConseillee, mareesDe, raisonHorsContrat, tauxContrat,
+  contratsDuMoment, envoyerContrat, equipeConseillee, mareesDe, raisonHorsContrat, tauxContrat, sceneCampagne, voirScene,
 } from './jeu';
 import { jouerTour, jouerTourMoyen } from './robot';
 import { PILLAGE, achatsRestants, acheterJeton, ciblesDuJour, coutJeton, difficulte, forceEscouade, peutPiller, piller } from './partie/pillages';
-import { strateVaincue } from './partie/etat';
+import { strateVaincue, jourDe } from './partie/etat';
+import { strateRemuee } from './partie/descentes';
+import { chanceQuai, etatFleche, flecheOuverte, monterFleche, peutMonter } from './partie/fleche';
+import { confieesOuvertes, confierFouille, peutConfier } from './partie/confiees';
 // (les creuseurs se gagnent par les fouilles, missions et Épreuves que joue déjà ce joueur simulé)
 import type { CombatEtat, Lignee } from './types';
 import { t as tr } from './i18n';
@@ -70,7 +73,9 @@ function valeurCarte(id: string, niveau: number): number { return puissanceCarte
  */
 function meilleures(j: Jeu, l: Lignee, charge: number, niveau: number): string[] {
   const parBase = new Map<string, string[]>();
-  for (const id of Object.keys(j.collection)) if (moduleDef(id).lignee === l && niveauRequis(id) <= niveau) parBase.set(moduleDe(id), [...(parBase.get(moduleDe(id)) ?? []), id]);
+  // les cartes parties avec un Porteur absent (mission, fouille confiée) ne se reprennent pas
+  const parties = new Set(Object.entries(j.porteurs).filter(([id]) => enMission(j, id)).flatMap(([, p]) => p.modules));
+  for (const id of Object.keys(j.collection)) if (moduleDef(id).lignee === l && niveauRequis(id) <= niveau && !parties.has(id)) parBase.set(moduleDe(id), [...(parBase.get(moduleDe(id)) ?? []), id]);
   // etat[n][d][w] : meilleure valeur avec n cartes, d défenses (plafonnées), w de Charge
   type Case = { v: number; pris: string[] } | null;
   const D = DEFENSES[l];
@@ -101,7 +106,7 @@ function meilleures(j: Jeu, l: Lignee, charge: number, niveau: number): string[]
 }
 
 /** Choisit l'escouade (un Porteur par lignée, le plus solide), lui confie les meilleures cartes et poste les autres */
-function preparer(j: Jeu, duree: 'courte' | 'longue' = 'longue'): string[] {
+function preparer(j: Jeu, duree: 'courte' | 'longue' = 'longue', ancien = false): string[] {
   const forgeron = j.forge ? posteDe(j, 'forge') : null;
   const presents = porteursPresents(j).filter((id) => !enMission(j, id));
   for (const id of presents) if (id !== forgeron) poster(j, id, null);
@@ -120,6 +125,29 @@ function preparer(j: Jeu, duree: 'courte' | 'longue' = 'longue'): string[] {
     const k = libres.findIndex((id) => porteurDef(id).lignee === l);
     const id = libres.splice(k >= 0 ? k : 0, 1)[0];
     if (id) poster(j, id, b);
+  }
+  // la fouille confiée (12 novembre 2026) : une deuxième escouade (un Porteur par lignée, les cartes que personne ne porte)
+  // part fouiller seule la Strate vaincue la plus profonde qu'elle peut tenir ; la lignée cherchée change chaque jour
+  if (!ancien && confieesOuvertes(j) && !j.confiee) {
+    const seconde = LIGNEES.map((l) => libres.filter((id) => porteurDef(id).lignee === l).sort((a, b) => pvMaxCombat(j, b) - pvMaxCombat(j, a))[0]!).filter(Boolean);
+    if (seconde.length === 3) {
+      const portees = new Set(Object.values(j.porteurs).flatMap((p) => p.modules));
+      for (const id of seconde) {
+        const l = porteurDef(id).lignee, niveau = niveauPorteur(j, id).niveau;
+        const vues = new Set(j.porteurs[id]!.modules.map(moduleDe));
+        for (const k of Object.keys(j.collection).filter((c) => moduleDef(c).lignee === l && !portees.has(c) && niveauRequis(c) <= niveau)
+          .sort((a, b) => valeurCarte(b, j.collection[b]!.niveau) - valeurCarte(a, j.collection[a]!.niveau))) {
+          if (vues.has(moduleDe(k))) continue;
+          if (greffer(j, k, id).ok) { vues.add(moduleDe(k)); portees.add(k); }
+        }
+      }
+      const cible = LIGNEES[jourDe(j.dernierTick) % 3]!;
+      for (let st = strateVaincue(j); st >= 1; st--) {
+        if (!peutConfier(j, seconde, st, cible).ok) continue;
+        if (confierFouille(j, seconde, st, cible, j.dernierTick).ok) for (const id of seconde) libres.splice(libres.indexOf(id), 1);
+        break;
+      }
+    }
   }
   // les contrats de marée (31 octobre 2026) : la gabare emmène les Porteurs de réserve, si l'équipe a au moins une chance sur deux
   if (!mareesDe(j).contrat) {
@@ -142,6 +170,8 @@ function preparer(j: Jeu, duree: 'courte' | 'longue' = 'longue'): string[] {
 function gerer(j: Jeu, now: number): void {
   const acte = decisionEnAttente(j);
   if (acte) decider(j, acte, DECISIONS[acte].options[0]!.id);
+  // les scènes de la campagne se regardent au district : la convocation des Hauts ouvre la Flèche (12 novembre 2026)
+  for (let sc = sceneCampagne(j); sc && voirScene(j, sc.id); sc = sceneCampagne(j));
   for (const c of CHAPITRES) if (chapitreOuvert(c, j.strate) && !j.luesRecompensees.includes(c.id)) lireChapitre(j, c.id);
   while (colisDisponible(j)) ouvrirColis(j);
   if (quotidienFait(j)) reclamerQuotidien(j);
@@ -276,7 +306,11 @@ export function simulerParcours(
     /** appelé après chaque tentative au front : la Strate, la force de l'escouade au départ (forceEscouade) et l'issue */
     tentative?: (strate: number, force: number, victoire: boolean, j: Jeu) => void;
     /** faut-il tenter le front à cette session ? (sinon : une fouille juste au-dessus) ; par défaut, le joueur le tente toujours */
-    oser?: (j: Jeu, strate: number, force: number) => boolean } = {},
+    oser?: (j: Jeu, strate: number, force: number) => boolean;
+    /** le jeu d'avant le 12 novembre 2026 (ni fouille confiée, ni Strate remuée, ni Flèche pendant les paliers) : pour comparer */
+    ancien?: boolean;
+    /** appelé à chaque séance : ce que le joueur y a fait (front, fouille d'une Strate vaincue, Strate remuée du jour, Flèche) */
+    sorte?: (sorte: 'front' | 'fouille' | 'remuee' | 'fleche', jour: number, strate: number) => void } = {},
 ): Parcours {
   const debut = Date.UTC(2026, 9, 5, 6); // un lundi matin
   const j = nouveauJeu(debut, graine);
@@ -321,7 +355,7 @@ export function simulerParcours(
       tick(j, now);
       gerer(j, now);
       if (noter(d, [])) return r;
-      const escouade = preparer(j, opts.duree);
+      const escouade = preparer(j, opts.duree, opts.ancien);
       const front = j.strate;
       const jouer = opts.joueur === 'robot' ? jouerTour : jouerTourMoyen;
       // une fois par jour, les Épreuves de la semaine pas encore réussies
@@ -352,7 +386,15 @@ export function simulerParcours(
       // un joueur moyen paie les soins intensifs avant de retenter le front, si l'énergie ne manque pas aux chantiers
       if (cible === front && !attente) for (const id of escouade) if (j.energie >= 150) soignerVite(j, id);
       const g = suivant();
-      const victoire = jouerExpedition(j, () => (cible === front && !attente ? partir(j, escouade, cible, g) : fouiller(j, escouade, cible, faible, g)).ok, jouer, opts.tours);
+      // 12 novembre 2026 : quand il ne tente pas le front, il ne refouille plus la même Strate par défaut. D'abord la Strate
+      // remuée du jour (une fois), puis la Flèche tant qu'il a une chance sur deux d'y monter, sinon la fouille d'avant.
+      const auFront = cible === front && !attente;
+      const rem = auFront || opts.ancien ? null : strateRemuee(j, now);
+      const monte = !auFront && !opts.ancien && !(rem && !rem.faite) && flecheOuverte(j) && peutMonter(j).ok && chanceQuai(forceEscouade(j, escouade), etatFleche(j).quai) >= 0.5;
+      const sorte = auFront ? 'front' : rem && !rem.faite ? 'remuee' : monte ? 'fleche' : 'fouille';
+      opts.sorte?.(sorte, d + 1, front);
+      const victoire = jouerExpedition(j, () => (sorte === 'front' ? partir(j, escouade, cible, g) : sorte === 'remuee' ? fouiller(j, escouade, rem!.strate, faible, g)
+        : sorte === 'fleche' ? monterFleche(j, escouade, g) : fouiller(j, escouade, cible, faible, g)).ok, jouer, opts.tours);
       depuis++;
       if (attente) { /* fouille d'attente : ne compte pas comme une tentative au front */ } else if (cible === front) {
         r.front.tentatives++;

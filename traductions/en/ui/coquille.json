@@ -634,6 +634,10 @@
    "en": "digger{0}"
   },
   {
+   "fr": "Éclat{0}",
+   "en": "Shard{0}"
+  },
+  {
    "fr": "3 cartes",
    "en": "3 cards"
   },
@@ -648,6 +652,14 @@
   {
    "fr": "pour la prochaine tentative",
    "en": "for the next attempt"
+  },
+  {
+   "fr": "Fouille confiée · Strate −{0}",
+   "en": "Entrusted dig · Stratum −{0}"
+  },
+  {
+   "fr": "Retour de l’escouade {0}",
+   "en": "Squad {0} returns"
   },
   {
    "fr": "{0} · {1} % de chances",
@@ -696,10 +708,6 @@
   {
    "fr": "Rapport · {0}",
    "en": "Report · {0}"
-  },
-  {
-   "fr": "Éclat{0}",
-   "en": "Shard{0}"
   },
   {
    "fr": "fragment d’archives",
