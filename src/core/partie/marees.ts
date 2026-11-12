@@ -11,7 +11,7 @@
 // Apport mesuré au robot (tous les contrats réussis) : ≈ +29 % de cartes argent et +18 % d'or pour un occasionnel.
 
 import { moduleDef, porteurDef, tirablesEn, carteId } from '../donnees';
-import { COLLECTION, ajouterCarte, tirerChoix } from '../collection';
+import { COLLECTION, ajouterCarte, auMoins, metalDessus, metalTranche, tirerChoix } from '../collection';
 import { tireur } from '../rng';
 import { LIEUX, affinite, lieuDef, type Affinite, type LieuDef } from '../lieux';
 import type { Lignee, Rarete } from '../types';
@@ -242,7 +242,7 @@ function minimumGrande(j: Jeu, strate: number, lignee: Lignee, prise: Prise): Ra
   if (prise === 'or') return 'or';
   const x = tireur(j).nombre();
   if (strate >= CONTRAT.strateNacre && x < CONTRAT.chanceNacre && tirablesEn('nacre').some((m) => m.lignee === lignee)) return 'nacre';
-  return 'argent';
+  return auMoins('argent', metalDessus(strate));
 }
 
 /** Les lignées, pour la prise « au choix » : une carte de chaque */
@@ -269,7 +269,8 @@ export function retourDeContrat(j: Jeu): string {
   if (reussi) {
     m.reussis = [...m.reussis.filter((x) => x !== c.id), c.id].slice(-12);
     delete m.indices[c.id];
-    const metal: Rarete = c.rang === 'montante' ? 'cuivre' : 'argent';
+    // 12 novembre 2026 : la marée suit la tranche de sa Strate (montante : la tranche, cuivre au moins ; vive-eau : le dessus, argent au moins)
+    const metal: Rarete = c.rang === 'montante' ? auMoins('cuivre', metalTranche(c.strate)) : auMoins('argent', metalDessus(c.strate));
     if (c.rang === 'grande') { j.choix.push({ source: 'maree', options: tirerChoix(j, c.strate, minimumGrande(j, c.strate, lieu.lignee, prise), lieu.lignee, porteursPresents(j)) }); choix = true; }
     else if (prise === 'choix') { j.choix.push({ source: 'maree', options: LIGNEES.map((l) => carteFixe(j, metal, l)) }); choix = true; }
     else if (prise === 'lignee') { const id = carteFixe(j, metal, lieu.lignee); cartes.push({ id, nouvelle: ajouterCarte(j, id) }); }

@@ -7,7 +7,7 @@ import { FOND, RECIT_CARTE, estFond, halteDef, queteDef, type HalteDef } from '.
 import { ETOILES, EXPLORER, PALIERS_ETOILES, RODEURS, metalEveille, rodeurDeZone, type EtoileId, vestigesDe } from '../explorer';
 import { ZONES, sequenceStrate, gesteDeCarte, GESTES_SPECIAUX, carteId } from '../donnees';
 import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
-import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, paliersForce, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
+import { COLLECTION, NIVEAU_METAL, ajouterCarte, auMoins, cartesEnJeu, metalDessus, metalTranche, niveauRequis, paliersForce, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
@@ -502,12 +502,12 @@ export function retourDeMission(j: Jeu, m: Mission): string {
     // une ruine déjà fouillée n'a plus toujours sa pierre : la carte devient une chance égale au rendement
     if (m.butin === 'pierre' && (rd >= 1 || t.nombre() < rd)) {
       // une carte à coup sûr : nouvelle (fer, ou cuivre en mission longue) ou un doublon de sa lignée
-      if (!possedees.length || t.nombre() < chanceNouvelleMission(b.mult, m.duree)) cartes.push(tirerTrouvaille(j, m.strate, m.duree === 'longue' ? 'cuivre' : 'fer', p.lignee));
+      if (!possedees.length || t.nombre() < chanceNouvelleMission(b.mult, m.duree)) cartes.push(tirerTrouvaille(j, m.strate, m.duree === 'longue' ? metalDessus(m.strate) : metalTranche(m.strate), p.lignee));
       else cartes.push(possedees[t.entier(possedees.length)]!);
     }
     // le Cœur de la ruine (2 novembre 2026) : une trouvaille en plus, quel que soit le butin annoncé
     if (m.profondeur === COEUR) {
-      if (!possedees.length || t.nombre() < chanceNouvelleMission(b.mult, m.duree)) cartes.push(tirerTrouvaille(j, m.strate, m.duree === 'longue' ? 'cuivre' : 'fer', p.lignee));
+      if (!possedees.length || t.nombre() < chanceNouvelleMission(b.mult, m.duree)) cartes.push(tirerTrouvaille(j, m.strate, m.duree === 'longue' ? metalDessus(m.strate) : metalTranche(m.strate), p.lignee));
       else cartes.push(possedees[t.entier(possedees.length)]!);
     }
     if (secours) { const c = bt.naufrages.creuseurs[m.duree]; recrues = Math.floor(c) + (t.nombre() < c % 1 ? 1 : 0); }
@@ -856,7 +856,9 @@ export function remonter(j: Jeu): Retour {
     // la difficulté (1er novembre 2026) : le filon d'une lignée offre 1, 2 ou 3 cartes au choix, et le difficile part du cuivre
     const d = DIFFICULTES_FOUILLE[x.difficulte ?? 'normale'];
     const ordre: Rarete[] = ['fer', 'cuivre', 'argent', 'or', 'nacre'];
-    const metal = x.releve && ordre.indexOf(EXPLORER.releve.metal) > ordre.indexOf(d.metal) ? EXPLORER.releve.metal : d.metal;
+    // 12 novembre 2026 : le filon donne le métal de la tranche (celui du dessus en difficile), jamais moins qu'avant
+    const avant = x.releve && ordre.indexOf(EXPLORER.releve.metal) > ordre.indexOf(d.metal) ? EXPLORER.releve.metal : d.metal;
+    const metal = auMoins(avant, x.difficulte === 'difficile' ? metalDessus(x.strate) : metalTranche(x.strate));
     if (lignee && t.nombre() >= d.carte) { /* filon vide : la fouille facile ne trouve pas toujours sa carte */ }
     else if (lignee && d.choix <= 1) cartes.push(tirerTrouvaille(j, x.strate, metal, lignee));
     else if (lignee) j.choix.push({ source: 'fouille', options: tirerChoix(j, x.strate, metal, lignee, porteursPresents(j)).slice(0, d.choix) });
@@ -873,7 +875,7 @@ export function remonter(j: Jeu): Retour {
     if (!j.epreuves.faites.includes(x.epreuve)) {
       j.epreuves.faites.push(x.epreuve);
       gagnerCreuseurs(j, CREUSEURS.epreuve, tr('l’Épreuve réussie fait des émules'));
-      j.choix.push({ source: 'epreuve', options: tirerChoix(j, x.strate, 'argent', undefined, porteursPresents(j)) });
+      j.choix.push({ source: 'epreuve', options: tirerChoix(j, x.strate, auMoins('argent', metalDessus(x.strate)), undefined, porteursPresents(j)) });
     }
     // le palier Fêlé, une fois par semaine : un second choix (en or à partir de FELEE.orDes) et des Éclats
     const cle = cleEpreuve(x.epreuve, true);
@@ -889,7 +891,7 @@ export function remonter(j: Jeu): Retour {
     // le gardien éveillé d'une Strate déjà vaincue (explorer.ts) monte d'un cran : cuivre, argent dès −3, or à −9
     // le gardien d'une Strate du Fond (strates.ts, FOND) paie en Éclats et en cartes : un choix en argent au moins, et des Éclats
     const fond = estFond(x.strate);
-    j.choix.push({ source: 'boss', options: tirerChoix(j, x.strate, x.eveille ? metalEveille(x.strate) : fond ? 'argent' : x.strate >= 3 ? 'cuivre' : 'fer', undefined, porteursPresents(j)) });
+    j.choix.push({ source: 'boss', options: tirerChoix(j, x.strate, x.eveille ? auMoins(metalEveille(x.strate), metalDessus(x.strate)) : metalDessus(x.strate), undefined, porteursPresents(j)) });
     eclats += (x.strate >= 5 ? 2 : 1) + (j.actes.chambre === 'orseve' ? 1 : 0) + (x.eveille ? EXPLORER.eveille.eclats : 0) + (fond ? FOND.eclatsGardien : 0);
     progresser(j, 'expedition');
   }
@@ -905,7 +907,7 @@ export function remonter(j: Jeu): Retour {
     if (x.strate <= 3) ajouterFragment(j);
     j.energie += 20; // déjà taillés : une récompense, pas du brut (9 novembre 2026)
     // le premier gardien vaincu d'une Strate du Fond laisse une carte en or (strates.ts, FOND)
-    cartes.push(tirerTrouvaille(j, x.strate, estFond(x.strate) ? 'or' : 'fer'));
+    cartes.push(tirerTrouvaille(j, x.strate, estFond(x.strate) ? 'or' : metalTranche(x.strate)));
     eclats += 2;
   }
   // 31 octobre 2026 (Luc : « 6 / 6 creuseurs, tout est prêt » mais la Strate −6 ne s'ouvrait pas) : les creuseurs gagnés
@@ -913,14 +915,14 @@ export function remonter(j: Jeu): Retour {
   if (!nouvelleStrate && creuser(j)) nouvelleStrate = true;
   // les trouvailles de l'exploration : une carte par salle scellée, les cartes offertes en route, Éclats et archives
   if (x.gains) {
-    for (let k = 0; k < x.gains.elites; k++) cartes.push(tirerTrouvaille(j, x.strate, 'cuivre'));
-    for (let k = 0; k < x.gains.cartes; k++) cartes.push(tirerTrouvaille(j, x.strate, 'fer', lignee));
+    for (let k = 0; k < x.gains.elites; k++) cartes.push(tirerTrouvaille(j, x.strate, auMoins('cuivre', metalTranche(x.strate))));
+    for (let k = 0; k < x.gains.cartes; k++) cartes.push(tirerTrouvaille(j, x.strate, metalTranche(x.strate), lignee));
     eclats += x.gains.eclats;
     if (x.gains.fragment) fragment = ajouterFragment(j) ?? fragment;
   }
   // la quête de la Strate (strates.ts) : l'étape trouvée en route compte même si la descente a mal fini (aucune punition)
   const quete = x.gains?.etape ? avancerQuete(j, x.strate) : null;
-  if (quete?.finie) cartes.push(tirerTrouvaille(j, x.strate, x.strate >= 5 ? 'argent' : 'cuivre'));
+  if (quete?.finie) cartes.push(tirerTrouvaille(j, x.strate, metalDessus(x.strate)));
   // Explorer (explorer.ts) : Vestiges, étoiles et Rôdeur ; aucune punition, ce qui est trouvé compte même après une défaite
   const explo = x.carte && !x.fouille && !x.epreuve ? remonterExplorer(j, x, victoire, etoilesAvant) : null;
   if (explo) { eclats += explo.eclats; j.composants += explo.composants; }
@@ -998,7 +1000,7 @@ function remonterExplorer(j: Jeu, x: Expedition, victoire: boolean, avant: Etoil
   xp += nouveaux.length * XP.combat;
   const releve = !releveAvant && strateRelevee(j, x.strate);
   if (releve) {
-    j.choix.push({ source: 'releve', options: tirerChoix(j, x.strate, x.strate >= 5 ? 'argent' : 'cuivre', undefined, porteursPresents(j)) });
+    j.choix.push({ source: 'releve', options: tirerChoix(j, x.strate, metalDessus(x.strate), undefined, porteursPresents(j)) });
     xp += XP.gardien / 2;
     log(j, tr`La Strate −${x.strate} est complète : ses cinq Vestiges sont au district. Tes fouilles y verront tout le plan.`);
   }

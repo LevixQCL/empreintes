@@ -185,7 +185,10 @@ export const FORCE = {
   // Épreuves profondes s'allègent, la Strate −10 tombait au jour 22 ; c'est le front qui freine désormais, pas l'attente.
   // −8 à −14 relevés de 4 à 5 % le 8 novembre 2026 : avec les Éclats en plus (Comptoir, Générateur), on attendait encore 6 sessions sur 9
   // à −9 ; le front freine à nouveau (1 session d'attente), sans changer le jour de −10 (j25).
-  table: [0.85, 1.39, 1.818, 2.139, 2.46, 2.781, 2.98, 3.34, 3.58, 3.78, 3.88, 4.05, 4.2, 4.35] as number[],
+  // 12 novembre 2026 (révision complète, chantier 2) : réglée Strate par Strate sur le deck des nouvelles règles (métal par tranche,
+  // sans Charge, sans verrou) pour des victoires régulières au front (avant : 2.46, 2.781, 2.98, 3.34, 3.58, 3.78 de −5 à −10 ;
+  // le front de −8 demandait 16 expéditions et −10 se gagnait une fois sur dix). `npx tsx scripts/progression.ts` donne les chiffres.
+  table: [0.85, 1.39, 1.818, 2.139, 2.583, 2.92, 2.771, 3.006, 3.15, 3.024, 3.88, 4.05, 4.2, 4.35] as number[],
   /** hausse par Strate au-delà de la table */
   ensuite: 1.04,
   /** hausse par Strate pour suivre les niveaux des Porteurs. À 0 depuis les traits, phases et conditions (22 octobre 2026), qui

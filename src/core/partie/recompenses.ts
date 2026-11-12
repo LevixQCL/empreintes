@@ -3,7 +3,7 @@
 
 import { batimentDef, porteurDef, MODULES, tirablesEn, NOMS_LIGNEE, moduleDe, moduleDef, carteId, deNom } from '../donnees';
 import type { Rarete } from '../types';
-import { COLLECTION, NIVEAU_METAL, ajouterCarte, tirerChoix, NOMS_RARETE } from '../collection';
+import { COLLECTION, NIVEAU_METAL, ajouterCarte, auMoins, metalDessus, metalTranche, tirerChoix, NOMS_RARETE } from '../collection';
 import { tireur } from '../rng';
 import { CHAPITRES, chapitreOuvert } from '../chroniques';
 import { ARCHIVE, DISTRICT, log, niveauPorteur, non, porteursPresents, strateVaincue, type Jeu, type Resultat, typeDuJour } from './etat';
@@ -63,13 +63,16 @@ export function recompenserLecture(j: Jeu, chapitreId: string): string | null {
   if (j.luesRecompensees.includes(chapitreId)) return null;
   j.luesRecompensees.push(chapitreId);
   const lignee = ligneeLaMoinsFournie(j);
-  const pool = tirablesEn('fer').filter((m) => m.lignee === lignee);
-  // d'abord une carte qu'on n'a pas encore en fer ; sinon un doublon
-  const neuves = pool.filter((m) => !j.collection[carteId(m.id, 'fer')]);
+  // 12 novembre 2026 : le métal est celui de la tranche de la Strate qui ouvre le chapitre, pas celle du jour où on le lit
+  // (Bryan : « si j'attends la fin du jeu avant de lire les Chroniques, je n'aurai que des bonnes cartes ? »)
+  const metal = metalTranche(CHAPITRES.find((c) => c.id === chapitreId)?.strate ?? 1);
+  const pool = tirablesEn(metal).filter((m) => m.lignee === lignee);
+  // d'abord une carte qu'on n'a pas encore dans ce métal ; sinon un doublon
+  const neuves = pool.filter((m) => !j.collection[carteId(m.id, metal)]);
   const liste = neuves.length ? neuves : pool;
-  const id = carteId(liste[tireur(j).entier(liste.length)]!.id, 'fer');
+  const id = carteId(liste[tireur(j).entier(liste.length)]!.id, metal);
   const neuve = ajouterCarte(j, id);
-  log(j, t`Lecture des Chroniques : ${moduleDef(id).nom} (Fer)${neuve ? '' : t(', un doublon')}.`);
+  log(j, t`Lecture des Chroniques : ${moduleDef(id).nom} (${NOMS_RARETE[metal]})${neuve ? '' : t(', un doublon')}.`);
   return id;
 }
 
@@ -103,11 +106,14 @@ export function ouvrirColis(j: Jeu): Resultat & { colis?: Colis } {
   const composants = (RAVITAILLEMENT.composants + RAVITAILLEMENT.composantsParStrate * j.strate) * (double ? 2 : 1);
   // les récompenses arrivent déjà taillées (9 novembre 2026) : des cristaux, pas du brut
   j.energie += composants;
-  const enFer = Object.keys(j.collection).filter((id) => moduleDef(id).rarete === 'fer');
-  const doublon = enFer.length ? enFer[tireur(j).entier(enFer.length)]! : null;
+  // 12 novembre 2026 : le doublon est celui d'une carte portée par un Porteur, quel que soit son métal (avant : une carte en fer,
+  // qui ne servait plus dès que le deck avait changé de métal) ; à défaut, une carte de la collection
+  const portees = [...new Set(Object.values(j.porteurs).flatMap((p) => p.modules))].filter((id) => j.collection[id] && !moduleDef(id).legs && !moduleDef(id).origine);
+  const possibles = portees.length ? portees : Object.keys(j.collection).filter((id) => !moduleDef(id).legs && !moduleDef(id).origine);
+  const doublon = possibles.length ? possibles[tireur(j).entier(possibles.length)]! : null;
   if (doublon) ajouterCarte(j, doublon);
   const choix = r.ouverts % RAVITAILLEMENT.cycle === 0;
-  if (choix) j.choix.push({ source: 'ravitaillement', options: tirerChoix(j, j.strate, RAVITAILLEMENT.minimumCycle, undefined, porteursPresents(j)) });
+  if (choix) j.choix.push({ source: 'ravitaillement', options: tirerChoix(j, j.strate, auMoins(RAVITAILLEMENT.minimumCycle, metalDessus(j.strate)), undefined, porteursPresents(j)) });
   log(j, t`Ravitaillement : +${composants} cristaux${doublon ? t`, un doublon ${deNom(moduleDef(doublon).nom)}` : ''}${choix ? t(', et une carte au choix') : ''}.`);
   return { ok: true, colis: { composants, doublon, choix } };
 }
@@ -135,7 +141,7 @@ export const QUOTIDIEN_ECLATS = 2;
 /** Récupère l'objectif du jour : une carte au choix parmi 3, ou 2 Éclats */
 export function reclamerQuotidien(j: Jeu): Resultat {
   if (!quotidienFait(j)) return non(t('Objectif du jour pas encore rempli.'));
-  j.choix.push({ source: 'quotidien', options: tirerChoix(j, j.strate, undefined, undefined, porteursPresents(j)), eclats: QUOTIDIEN_ECLATS });
+  j.choix.push({ source: 'quotidien', options: tirerChoix(j, j.strate, metalTranche(j.strate), undefined, porteursPresents(j)), eclats: QUOTIDIEN_ECLATS });
   progresser(j, 'quotidien');
   const q = j.quotidien;
   q.reserve--;
@@ -150,10 +156,10 @@ export function ouvrirArchive(j: Jeu): Resultat {
   const n = j.archive.aOuvrir;
   if (!n) return non(t('Le Butin de la semaine n’est pas encore prêt.'));
   j.energie += ARCHIVE.composants;
-  j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, undefined, undefined, porteursPresents(j)) });
+  j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, metalTranche(j.strate), undefined, porteursPresents(j)) });
   if (n >= 2) j.eclats += ARCHIVE.eclatsPalier2;
-  if (n >= 3) j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, 'argent', undefined, porteursPresents(j)) });
-  if (n >= 4) { j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, 'argent', undefined, porteursPresents(j)) }); j.eclats += ARCHIVE.eclatsPalier4; }
+  if (n >= 3) j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, auMoins('argent', metalDessus(j.strate)), undefined, porteursPresents(j)) });
+  if (n >= 4) { j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, auMoins('argent', metalDessus(j.strate)), undefined, porteursPresents(j)) }); j.eclats += ARCHIVE.eclatsPalier4; }
   // le Butin suivant, s'il y en a un qui attend
   j.archive.aOuvrir = j.archive.enAttente?.shift() ?? 0;
   if (j.archive.enAttente && !j.archive.enAttente.length) delete j.archive.enAttente;

@@ -394,7 +394,8 @@ export const logementCreuseurs = (j: Pick<Jeu, 'batiments'>) => CREUSEURS.logeme
  * s'atteignait au jour 10, à −6 ; avec les Éclats du Comptoir et du Générateur, −10 tombait au jour 24) :
  * Noyau 8 pour −9, 9 pour −10 et le Fond. Les Éclats en trop ont enfin un but : monter la Tour.
  */
-export const NOYAU_MIN: Record<number, number> = { 9: 8, 10: 9 };
+// 12 novembre 2026 : plus de niveau de Tour demandé pour −9 et −10 (avant : { 9: 8, 10: 9 })
+export const NOYAU_MIN: Record<number, number> = {};
 export const noyauRequis = (strate: number) => Math.max(1, CREUSEURS.logement.findIndex((n) => n >= creuseursRequis(strate)),
   NOYAU_MIN[Math.min(10, strate)] ?? 0);
 

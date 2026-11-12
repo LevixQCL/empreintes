@@ -766,7 +766,9 @@ export const CREUSEURS = {
   logement: [0, 3, 4, 5, 6, 7, 8, 9, 10, 12, 60],
   /** creuseurs qu'il faut pour ouvrir la Strate −n, qui y restent (au-delà de la table : +1 par Strate, au plus le logement) */
   // −8 à −10 : 8, 8, 9 au lieu de 9, 11, 13 (3 novembre 2026, validé par Bryan) : moins d'attente, plus de défi (FORCE.table relevée).
-  requis: [0, 0, 2, 3, 4, 5, 6, 7, 8, 8, 9] as number[],
+  // 12 novembre 2026 (Bryan : « je roule sur tout le monde, mais je dois attendre mes creuseurs ») : plus de verrou après le gardien,
+  // la Strate suivante s'ouvre dès qu'il est vaincu (avant : 0, 0, 2, 3, 4, 5, 6, 7, 8, 8, 9)
+  requis: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as number[],
   parStrateEnsuite: 1,
   gardien: 1,
   /** chances de ramener un fouilleur perdu : fouille ciblée, mission courte, mission longue */

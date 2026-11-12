@@ -55,11 +55,27 @@ export const COLLECTION = {
 
 /** Chances de rareté selon la profondeur (en %) */
 export const TABLES_RARETE: { jusqua: number; table: Record<Rarete, number> }[] = [
+  // 12 novembre 2026 (révision complète, Bryan : « des cartes forcément de plus en plus fortes qui permettent de réussir les Strates ») :
+  // le métal suit la Strate, un métal dominant par tranche (avant : du fer à 64-88 % à toutes les profondeurs)
   { jusqua: 2, table: { fer: 88, cuivre: 11, argent: 1, or: 0, nacre: 0 } },
-  { jusqua: 4, table: { fer: 78, cuivre: 18, argent: 3.5, or: 0.5, nacre: 0 } },
-  { jusqua: 9, table: { fer: 70, cuivre: 22, argent: 6.6, or: 1.4, nacre: 0 } },
-  { jusqua: Infinity, table: { fer: 64, cuivre: 25, argent: 8.4, or: 2.4, nacre: 0.2 } },
+  { jusqua: 4, table: { fer: 60, cuivre: 34, argent: 5.5, or: 0.5, nacre: 0 } },
+  { jusqua: 6, table: { fer: 35, cuivre: 48, argent: 15, or: 2, nacre: 0 } },
+  { jusqua: 8, table: { fer: 20, cuivre: 45, argent: 30, or: 5, nacre: 0 } },
+  { jusqua: 10, table: { fer: 10, cuivre: 35, argent: 42, or: 12, nacre: 1 } },
+  { jusqua: Infinity, table: { fer: 5, cuivre: 30, argent: 45, or: 18, nacre: 2 } },
 ];
+/**
+ * Le métal d'une tranche de Strates (12 novembre 2026) : fer de −1 à −2, cuivre de −3 à −6, argent de −7 à −10, or au Fond.
+ * Une récompense ordinaire donne le métal de la tranche ; une récompense de prestige, celui du dessus (l'or au plus :
+ * la nacre ne se donne jamais d'office).
+ */
+export const TRANCHES: { jusqua: number; metal: Rarete }[] = [
+  { jusqua: 2, metal: 'fer' }, { jusqua: 6, metal: 'cuivre' }, { jusqua: 10, metal: 'argent' }, { jusqua: Infinity, metal: 'or' },
+];
+export const metalTranche = (strate: number): Rarete => (TRANCHES.find((t) => strate <= t.jusqua) ?? TRANCHES[TRANCHES.length - 1]!).metal;
+export const metalDessus = (strate: number): Rarete => RARETES[Math.min(RARETES.indexOf('or'), RARETES.indexOf(metalTranche(strate)) + 1)]!;
+/** le plus haut de deux métaux */
+export const auMoins = (a: Rarete, b: Rarete): Rarete => (RARETES.indexOf(a) >= RARETES.indexOf(b) ? a : b);
 export function tableRarete(strate: number): Record<Rarete, number> {
   return { ...(TABLES_RARETE.find((t) => strate <= t.jusqua) ?? TABLES_RARETE[TABLES_RARETE.length - 1]!).table };
 }
@@ -212,7 +228,9 @@ export const CHARGE = {
   /** une carte pèse sa puissance divisée par ce nombre (1 au moins) */
   diviseur: 4,
   /** Charge d'un Porteur au niveau 1, et ce qu'il gagne par niveau */
-  base: 16,
+  // 12 novembre 2026 (Bryan : « ça complique quand même bien le jeu ») : la Charge ne limite plus le deck, seuls les places
+  // et le niveau demandé par le métal comptent (avant : 16). L'affichage de la Charge reste à retirer (chantier 5).
+  base: 150,
   parNiveau: 1,
 };
 export const poidsCarte = (cle: string): number =>
@@ -223,7 +241,8 @@ export const chargeNiveau = (niveau: number): number => CHARGE.base + CHARGE.par
  * Le niveau de Porteur qu'un métal demande (27 octobre 2026, Bryan : « un niveau 1 ne devrait pas pouvoir porter d'or »).
  * Une carte trouvée trop tôt entre quand même dans la collection et y monte avec ses doublons : on sait quel Porteur faire monter.
  */
-export const NIVEAU_METAL: Record<Rarete, number> = { fer: 1, cuivre: 1, argent: 4, or: 7, nacre: 10 };
+// 12 novembre 2026 : sans la Charge, ce niveau est la seule limite avec les places : seuils étalés (avant : argent 4, or 7, nacre 10)
+export const NIVEAU_METAL: Record<Rarete, number> = { fer: 1, cuivre: 1, argent: 5, or: 9, nacre: 13 };
 /** une carte d'origine se porte dès le niveau 1 : elle est là pour aider au début (11 novembre 2026) */
 export const niveauRequis = (cle: string): number => (moduleDef(cle).origine ? 1 : NIVEAU_METAL[moduleDef(cle).rarete]);
 
