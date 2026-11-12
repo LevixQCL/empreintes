@@ -193,3 +193,12 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 
 /* en combat, un appui long sur une carte n'ouvre ni menu ni sélection de texte */
 #app[data-mode="combat"] .geste{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+
+/* La Flèche dans la barre du haut (12 novembre 2026, à la place des familles) : le quai tenu, comme la Strate en face,
+   et une fine jauge d'or vers le prochain quai gravé ; un verrou tant que les Hauts n'ont pas convié le district */
+.hud .res.hauts{position:relative;--lueur:rgba(240,200,120,.42)}
+.hud .res.hauts .cadenas{align-self:end;display:flex;height:17px;color:#A9BEDF;opacity:.85}
+.hud .res.hauts .cadenas svg{width:15px;height:15px;fill:none}
+.hud .res.hauts.fermee .ico.peinte{filter:grayscale(.6) brightness(.75)}
+.hud .res.hauts .jauge-hauts{position:absolute;left:12px;right:12px;bottom:3px;height:2px;border-radius:1px;pointer-events:none;
+  background:linear-gradient(90deg,#F0C878 var(--p),rgba(205,239,255,.12) 0);box-shadow:0 0 4px rgba(240,200,120,.35)}

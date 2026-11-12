@@ -50,12 +50,16 @@
    "en": "Stratum −{0}. Details"
   },
   {
-   "fr": "{0} familles sur {1} te suivent, palier {2}. Détails",
-   "en": "{0} of {1} families follow you, tier {2}. Details"
+   "fr": "La Flèche s’ouvrira après le gardien de la Strate −6",
+   "en": "The Spire opens after the guardian of Stratum −6"
   },
   {
-   "fr": "palier {0}",
-   "en": "tier {0}"
+   "fr": "Flèche : quai {0} sur {1}, prochain quai gravé : {2}",
+   "en": "Spire: quay {0} of {1}, next engraved quay: {2}"
+  },
+  {
+   "fr": "Flèche : quai {0}, le sommet",
+   "en": "Spire: quay {0}, the summit"
   },
   {
    "fr": "Les pompes ont tenu",

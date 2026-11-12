@@ -11,7 +11,7 @@ import { vestigeDef } from '../core/explorer';
 import { faceCarte } from './carte';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
 import { blocMur } from './mur';
-import { CREUSE, finCreuse, heuresCreuse, cercleOuvert, MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, nbFoyers, nomConfiance, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, chapitresALire, porteursNouveaux, brutEnAttente, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, strateVaincue, bassesOuvertes, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
+import { CREUSE, finCreuse, heuresCreuse, cercleOuvert, MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, nbFoyers, nomConfiance, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, chapitresALire, porteursNouveaux, brutEnAttente, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, strateVaincue, PILLAGE, flecheOuverte, etatFleche, prochainPalier, FLECHE, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { miniature, portrait, visageGarnison } from './art';
 import { feuilleGuide, trouveesDe } from './guide';
@@ -295,22 +295,28 @@ function hud(j: Jeu, ouverte: Ressource | null = null): string {
     + `<small${taille ? ' class="taille"' : ''}>${taille ? `${ICO.composants}+${ent(taille)}` : 'cristaux'}</small></button>`
     + b('eclats', '', tr`Éclats : ${ent(j.eclats)}. Détails`) + `${icone('eclats')}<span class="v">${ent(j.eclats)}</span><small>${tr`Éclats`}</small></button>`
     + b('strate', ' abysse', tr`Strate −${j.strate}. Détails`) + `${icone('strate')}<span class="v">−${j.strate}</span><small>${tr`Strate`}</small></button>`
-    + roueConfiance(j, b)
+    + roueFleche(j)
     + `</header>`;
 }
 
 /**
- * Les familles qui te suivent, dans la barre du haut (30 octobre 2026 ; des familles nommées depuis le 7 novembre 2026) :
- * le nombre de familles au centre d'une roue qui se remplit vers le palier suivant, le palier dessous. Elle ne fait que monter.
+ * La Flèche, dans la barre du haut (12 novembre 2026, Bryan : « beaucoup plus logique que ce 12 » des familles) : le dessus
+ * en face de la Strate. Le quai tenu au centre de l'écrin, la jauge dessous se remplit vers le prochain quai gravé ;
+ * tant que la Flèche est fermée (de −3 à −6), un verrou. Un toucher ouvre l'onglet de la Flèche.
+ * Les familles restent sur la carte, aux Habitations.
  */
-function roueConfiance(j: Jeu, b: (r: Ressource, extra: string, label: string) => string): string {
-  // la roue n'arrive qu'avec les secours (après −2) : avant, un hexagone « 2 » sans légende (audit du 12 novembre 2026)
-  if (!j.chambre || !bassesOuvertes(j)) return '';
-  const f = nbFoyers(j);
-  const n = niveauConfiance(f);
-  const p = n.requis ? Math.round((100 * n.dans) / n.requis) : 100;
-  return b('confiance', '', tr`${f} familles sur ${CONFIANCE.population} te suivent, palier ${n.niveau}. Détails`)
-    + `<span class="roue-confiance" style="--p:${p}%" aria-hidden="true"><b>${f}</b></span><small>${tr`palier ${n.niveau}`}</small></button>`;
+function roueFleche(j: Jeu): string {
+  const ouv = flecheOuverte(j);
+  if (!ouv && !(j.chambre && strateVaincue(j) >= FLECHE_VISIBLE)) return '';
+  const att = `type="button" class="res hauts${ouv ? '' : ' fermee'}" data-action="fleche"`;
+  if (!ouv) return `<button ${att} aria-label="${tr`La Flèche s’ouvrira après le gardien de la Strate −6`}">`
+    + `${icone('fleche')}<span class="cadenas">${ICO.verrou}</span><small>${tr`Flèche`}</small></button>`;
+  const q = etatFleche(j).quai;
+  const avant = [...FLECHE.paliers].filter((x) => x <= q).pop() ?? 1;
+  const apres = prochainPalier(q);
+  const p = apres ? Math.round((100 * (q - avant)) / (apres - avant)) : 100;
+  return `<button ${att} aria-label="${apres ? tr`Flèche : quai ${q} sur ${FLECHE.quais}, prochain quai gravé : ${apres}` : tr`Flèche : quai ${q}, le sommet`}">`
+    + `${icone('fleche')}<span class="v">${q}</span><small>${tr`Flèche`}</small><i class="jauge-hauts" style="--p:${p}%" aria-hidden="true"></i></button>`;
 }
 
 /** D'où viennent les familles, pour le bilan de la Nuit des lignes (points de bouche-à-oreille) */

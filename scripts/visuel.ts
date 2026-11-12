@@ -42,9 +42,9 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'noyau-places', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="noyau"]'); await p.locator('.fb-bloc.te').scrollIntoViewIfNeeded(); } },
   // le Butin de la semaine (28 octobre 2026) : sur téléphone, on déplie d'abord la bulle de l'objectif, puis on touche le bandeau
   { nom: 'butin', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.objectif:visible').first(); if (await d.count()) { await d.click(); await p.waitForTimeout(250); } await p.click('.mission.jour .archive'); } },
-  // ceux qui te suivent (30 octobre 2026) : la roue de la barre du haut ouvre la fiche des habitants, avec les pompes
-  { nom: 'habitants', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.hud button.res.confiance'); } },
-  { nom: 'habitants-paliers', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.hud button.res.confiance'); await p.$eval('.ressource-fiche .res-liste:last-of-type li:nth-child(3)', (e) => e.scrollIntoView({ block: 'center' })); } },
+  // ceux qui te suivent (30 octobre 2026) : les Habitations de la carte ouvrent la fiche des habitants (la barre du haut montre la Flèche depuis le 12 novembre 2026)
+  { nom: 'habitants', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('[data-action="ressource"][data-id="confiance"]', { force: true }); } },
+  { nom: 'habitants-paliers', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('[data-action="ressource"][data-id="confiance"]', { force: true }); await p.$eval('.ressource-fiche .res-liste:last-of-type li:nth-child(3)', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'panneau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.objectif:visible').first(); if (await d.count()) await d.click(); } },
   { nom: 'bulle-appel', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.appel-bulle:visible').first(); if (await d.count()) await d.click(); } },
   { nom: 'tour', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); } },
@@ -105,6 +105,8 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'port-secours', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('.sc-bloc', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'port-secours-ouvert', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.click('.sc-lieu'); await p.waitForTimeout(300); await p.$eval('.sc-carte', (e) => e.scrollIntoView({ block: 'start' })); } },
   { nom: 'port-destinations', sauvegarde: 'port', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('.ds-lieux', (e) => e.scrollIntoView({ block: 'center' })); } },
+  // la barre du haut avec la Flèche ouverte (12 novembre 2026) : le quai tenu et la jauge vers le prochain quai gravé
+  { nom: 'hud-fleche', sauvegarde: 'fleche', faire: ENTRER },
   { nom: 'onglet-fleche', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); } },
   { nom: 'onglet-fleche-bas', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.$eval('.fl-paliers', (e) => e.scrollIntoView({ block: 'end' })); } },
   { nom: 'fleche-garde', sauvegarde: 'flecheGarde', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.$eval('.fl-compet', (e) => { e.scrollIntoView({ block: 'start' }); const s = document.scrollingElement; s?.scrollBy(0, -150); (e.closest('.contenu') as HTMLElement | null)?.scrollBy?.(0, -150); }); } },
@@ -224,7 +226,7 @@ async function main() {
     // la Flèche ouverte, en pleine montée (record plus haut que le quai)
     const fl = JSON.parse(JSON.stringify(saves.district));
     fl.data.scenes = [...(fl.data.scenes ?? []), 'convocation'];
-    fl.data.fleche = { quai: 23, record: 31, recordLe: T - 86_400_000, recus: [20], victoires: 9, defaites: 3 };
+    fl.data.fleche = { quai: 23, record: 31, recordLe: T - 86_400_000, recus: [20], cartes: [20], victoires: 9, defaites: 3 }; // la carte du quai 20 déjà prise : pas de choix qui couvre l'écran
     (saves as Record<string, unknown>).fleche = fl;
     // la Flèche, l'escouade tenant son quai depuis un jour et demi (29 octobre 2026)
     const fg = JSON.parse(JSON.stringify(fl));
@@ -376,7 +378,7 @@ async function main() {
           }, photos.map((x) => `data:image/png;base64,${x.toString('base64')}`));
           await page.close();
           resultats.push({ nom, differents });
-          if (differents !== 0) {
+          if (differents !== 0 || process.env.VISUEL_TOUT) {
             writeFileSync(resolve(sortie, `${nom}-avant.png`), photos[0]!);
             writeFileSync(resolve(sortie, `${nom}-apres.png`), photos[1]!);
           }
