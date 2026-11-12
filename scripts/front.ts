@@ -19,10 +19,13 @@ const creuseurs = texte('creuseurs', '').split(',').filter(Boolean).map(Number);
 creuseurs.forEach((n, i) => { CREUSEURS.requis[8 + i] = n; });
 
 console.log(`${PROFILS[PROFIL].nom}, ${GRAINES} parties de ${JOURS} jours, force changée à partir de −${DES}${creuseurs.length ? `, creuseurs pour −8, −9, −10 : ${creuseurs.join(', ')} (au lieu de ${requis.slice(8, 11).join(', ')})` : ''}\n`);
-console.log('Force   front   −10 (médiane, de… à…)   plus long blocage avant −10 (médiane, pire)   expéditions passées au front (médiane)');
+console.log('Force   front   −10 (médiane, de… à…)   plus long blocage avant −10 (médiane, pire)   expéditions passées au front (médiane)   sessions à attendre des creuseurs (avant −10)');
 for (const k of FORCES) {
   FORCE.table.splice(0, origine.length, ...origine.map((f, i) => (i + 1 >= DES ? Math.round(f * k * 1000) / 1000 : f)));
-  const runs = Array.from({ length: GRAINES }, (_, i) => simulerParcours(PROFILS[PROFIL], JOURS, 1000 + i * 7919, { joueur: 'moyen', jusqua: JUSQUA }));
+  // ce qui retient le joueur avant −10 : les sessions passées à attendre des creuseurs (le gardien du front est déjà vaincu)
+  let sessions = 0, attentes = 0;
+  const runs = Array.from({ length: GRAINES }, (_, i) => simulerParcours(PROFILS[PROFIL], JOURS, 1000 + i * 7919, { joueur: 'moyen', jusqua: JUSQUA,
+    session: (j, _jour, attente) => { if (j.strate < 10) { sessions++; if (attente) attentes++; } } }));
   const t = runs.reduce((n, r) => n + r.front.tentatives, 0), v = runs.reduce((n, r) => n + r.front.victoires, 0);
   const j10 = runs.map((r) => r.ouverture[10] ?? Infinity);
   const fini = j10.filter(Number.isFinite);
@@ -32,7 +35,7 @@ for (const k of FORCES) {
   console.log(
     `×${k}`.padEnd(7), `${Math.round((100 * v) / Math.max(1, t))} %`.padEnd(7),
     `${f(mediane(j10))} (${fini.length ? f(Math.min(...fini)) : '—'} à ${f(Math.max(...j10))})`.padEnd(25),
-    `${mediane(blocage)} (pire : ${Math.max(...blocage)})`.padEnd(35), parStrate,
+    `${mediane(blocage)} (pire : ${Math.max(...blocage)})`.padEnd(35), parStrate.padEnd(28), `${Math.round((100 * attentes) / Math.max(1, sessions))} %`,
   );
 }
 FORCE.table.splice(0, origine.length, ...origine);

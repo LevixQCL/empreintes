@@ -272,7 +272,11 @@ export function simulerParcours(
     /** appelé avant chaque expédition (attente : le gardien du front est vaincu, il manque des creuseurs) */
     session?: (j: Jeu, jour: number, attente: boolean) => void;
     /** les cristaux taillés, et le brut qui attendait à chaque session (en heures de taille) */
-    energie?: { produite: number; attente: number[] }; joueur?: 'robot' | 'moyen'; tours?: ToursCombat; duree?: 'courte' | 'longue'; fin?: (j: Jeu) => void } = {},
+    energie?: { produite: number; attente: number[] }; joueur?: 'robot' | 'moyen'; tours?: ToursCombat; duree?: 'courte' | 'longue'; fin?: (j: Jeu) => void;
+    /** appelé après chaque tentative au front : la Strate, la force de l'escouade au départ (forceEscouade) et l'issue */
+    tentative?: (strate: number, force: number, victoire: boolean, j: Jeu) => void;
+    /** faut-il tenter le front à cette session ? (sinon : une fouille juste au-dessus) ; par défaut, le joueur le tente toujours */
+    oser?: (j: Jeu, strate: number, force: number) => boolean } = {},
 ): Parcours {
   const debut = Date.UTC(2026, 9, 5, 6); // un lundi matin
   const j = nouveauJeu(debut, graine);
@@ -340,7 +344,9 @@ export function simulerParcours(
       // le gardien du front est vaincu, mais il manque des creuseurs : on fouille le front pour en retrouver
       const attente = j.frontVaincu;
       opts.session?.(j, d + 1, attente);
-      const cible = attente ? front : echecs >= 2 && front > 1 ? front - 1 : front;
+      const forceDepart = opts.tentative || opts.oser ? forceEscouade(j, escouade) : 0;
+      const prudent = !!opts.oser && !attente && front > 1 && !opts.oser(j, front, forceDepart);
+      const cible = attente ? front : prudent || (echecs >= 2 && front > 1) ? front - 1 : front;
       const faible = LIGNEES.map((l) => ({ l, v: meilleures(j, l, Math.max(...escouade.filter((id) => porteurDef(id).lignee === l).map((id) => chargeMax(j, id)), chargeMax(j, NOMME[l])), Math.max(...escouade.filter((id) => porteurDef(id).lignee === l).map((id) => niveauPorteur(j, id).niveau), niveauPorteur(j, NOMME[l]).niveau)).reduce((n, id) => n + valeurCarte(id, j.collection[id]!.niveau), 0) / DEFENSES_POIDS[l] }))
         .sort((a, b) => a.v - b.v)[0]!.l;
       // un joueur moyen paie les soins intensifs avant de retenter le front, si l'énergie ne manque pas aux chantiers
@@ -351,6 +357,7 @@ export function simulerParcours(
       if (attente) { /* fouille d'attente : ne compte pas comme une tentative au front */ } else if (cible === front) {
         r.front.tentatives++;
         if (victoire) r.front.victoires++;
+        opts.tentative?.(front, forceDepart, victoire, j);
         echecs = victoire ? 0 : echecs + 1;
       } else echecs = 1;
       if (noter(d, escouade)) return r;

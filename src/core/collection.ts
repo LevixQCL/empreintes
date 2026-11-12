@@ -54,11 +54,14 @@ export const COLLECTION = {
 } as const;
 
 /** Chances de rareté selon la profondeur (en %) */
+export const TABLES_RARETE: { jusqua: number; table: Record<Rarete, number> }[] = [
+  { jusqua: 2, table: { fer: 88, cuivre: 11, argent: 1, or: 0, nacre: 0 } },
+  { jusqua: 4, table: { fer: 78, cuivre: 18, argent: 3.5, or: 0.5, nacre: 0 } },
+  { jusqua: 9, table: { fer: 70, cuivre: 22, argent: 6.6, or: 1.4, nacre: 0 } },
+  { jusqua: Infinity, table: { fer: 64, cuivre: 25, argent: 8.4, or: 2.4, nacre: 0.2 } },
+];
 export function tableRarete(strate: number): Record<Rarete, number> {
-  if (strate <= 2) return { fer: 88, cuivre: 11, argent: 1, or: 0, nacre: 0 };
-  if (strate <= 4) return { fer: 78, cuivre: 18, argent: 3.5, or: 0.5, nacre: 0 };
-  if (strate <= 9) return { fer: 70, cuivre: 22, argent: 6.6, or: 1.4, nacre: 0 };
-  return { fer: 64, cuivre: 25, argent: 8.4, or: 2.4, nacre: 0.2 };
+  return { ...(TABLES_RARETE.find((t) => strate <= t.jusqua) ?? TABLES_RARETE[TABLES_RARETE.length - 1]!).table };
 }
 
 export interface CarteCollection {
