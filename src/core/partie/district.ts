@@ -3,7 +3,7 @@
 
 import { batimentDef, porteurDef, PORTEURS, BATIMENTS, tirablesEn, moduleDe, moduleDef, carteId, CARTES_COMMUNES, forceCommune, deNom } from '../donnees';
 import type { BatimentId, Rarete } from '../types';
-import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
+import { COLLECTION, RARETES, ajouterCarte, auMoins, NOMS_RARETE, composantsNiveau, doublonsRequis, metalDessus, metalTranche, niveauRequis, poidsCarte } from '../collection';
 import { tireur } from '../rng';
 import { partPvClinique, CERCLE, CERCLE_OUVERTURE, CONFIANCE, accueillirFamille, nbFoyers, ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, heuresDeTaille, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, strateVaincue, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
 import { OBJECTIFS, objectifCourant } from './objectifs';
@@ -571,7 +571,9 @@ export const COMPTOIR = {
     ['fer', 'fer', 'cuivre', 'cuivre', 'cuivre', 'argent', 'argent', 'argent'], ['fer', 'cuivre', 'cuivre', 'cuivre', 'cuivre', 'argent', 'argent', 'argent'],
     ['fer', 'cuivre', 'cuivre', 'cuivre', 'argent', 'argent', 'argent', 'argent']] as Rarete[][],
   /** prix fixes : environ 1,5 fois la refabrication à la Forge (qui, elle, ne refait qu'une carte déjà trouvée) */
-  prix: { fer: { composants: 40, eclats: 0 }, cuivre: { composants: 120, eclats: 0 }, argent: { composants: 300, eclats: 3 } } as Partial<Record<Rarete, { composants: number; eclats: number }>>,
+  prix: { fer: { composants: 40, eclats: 0 }, cuivre: { composants: 120, eclats: 0 }, argent: { composants: 300, eclats: 3 },
+    // l'or n'était jamais vendu ; son prix suit la même règle (environ 1,5 fois la refabrication : 535 cristaux et 5 Éclats)
+    or: { composants: 800, eclats: 7 } } as Partial<Record<Rarete, { composants: number; eclats: number }>>,
   strateArgent: 4,
   partDoublons: 0.5,
   /** renouveler les étals encore en vente, une fois par jour (1er novembre 2026, Bryan) : la moitié d'une carte en cuivre */
@@ -616,7 +618,12 @@ export function comptoirVide(now: number, rng: number): Comptoir {
 
 /** Les métaux des étals du jour (l'argent n'arrive qu'une fois la Strate −4 vaincue ; avant, du cuivre à sa place) */
 export function etalsDuComptoir(j: Jeu): Rarete[] {
-  const etals = (COMPTOIR.etals[j.batiments.comptoir] ?? []).map((r) => (r === 'argent' && strateVaincue(j) < COMPTOIR.strateArgent ? 'cuivre' : r));
+  // 12 novembre 2026 (révision complète, chantier 4) : les étals suivent la tranche de la Strate la plus profonde ouverte.
+  // Un étal « fer » vend le métal sous la tranche, un étal « cuivre » celui de la tranche, un étal « argent » celui du dessus
+  // (jamais moins qu'avant, jamais de nacre) : à −8, le Comptoir vend du cuivre, de l'argent et de l'or au lieu de fer.
+  const tranche = metalTranche(j.strate), sous = RARETES[Math.max(0, RARETES.indexOf(tranche) - 1)]!;
+  const etals = (COMPTOIR.etals[j.batiments.comptoir] ?? []).map((r) => (r === 'argent' && strateVaincue(j) < COMPTOIR.strateArgent ? 'cuivre' : r))
+    .map((r): Rarete => (r === 'fer' ? auMoins('fer', sous) : r === 'cuivre' ? auMoins('cuivre', tranche) : auMoins(r, metalDessus(j.strate))));
   // 18 familles qui te suivent (30 octobre 2026) : un marchand du quartier rouvre son étal
   return etals.length && niveauConfiance(nbFoyers(j)).niveau >= CONFIANCE.comptoir ? [...etals, 'cuivre'] : etals;
 }

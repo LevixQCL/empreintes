@@ -36,8 +36,13 @@ export const ASCENSION = {
    *  mi-parcours (cuivre et argent niveau 5, Porteurs niveau 8) 5,3 à 6 ; la meilleure (or niveau 10, Porteurs niveau 20) 8,4.
    *  Au pied 3,4 : juste au-dessus de l’escouade de départ ; celle qui arrive à la Flèche (après la Strate −6) y grimpe vite.
    *  Au sommet 8,8 : un peu au-dessus de la meilleure escouade, il faut aussi bien jouer. */
-  forcePied: 3.4,
-  forceSommet: 8.8,
+  // 12 novembre 2026 (révision complète, chantier 4, Bryan : « il doit rester du challenge dans la Flèche ») : sans la Charge et
+  // avec le métal par tranche, l'escouade est plus forte (mesurée : 6,2 au jour 10, 7,3 au jour 20, 8,1 au jour 30, 8,5 au jour 45,
+  // 9,0 au jour 60, 9,7 au jour 90 ; la meilleure possible, nacre niveau 5 et Porteurs niveau 20, vers 11,5). Avec l'ancienne
+  // échelle (3,4 à 8,8), on arrivait au quai 64 dès le jour 10 et au sommet vers le jour 60. Au pied 5,5 : l'escouade qui sort
+  // de −6. Au sommet 11,5 : la meilleure escouade, bien jouée.
+  forcePied: 5.5,
+  forceSommet: 11.5,
   /** les récompenses des quais gravés, une seule fois chacune */
   recompenses: {
     20: { composants: 150, eclats: 3 },
@@ -55,7 +60,8 @@ export const ASCENSION = {
   /** 10 novembre 2026 (Bryan : « vu le peu de nacre qu'on reçoit, le bon endroit pour en donner ») : chaque quai gravé donne
    *  aussi une carte au choix parmi trois, toutes de ce métal. Avant, la Flèche ne donnait aucune carte, et un joueur moyen
    *  trouvait une seule nacre en 100 jours (0,2 % des tirages, et seulement sous −10). Au sommet : 2 argent, 3 or, 6 nacre. */
-  cartes: { 20: 'argent', 40: 'argent', 50: 'or', 60: 'or', 70: 'or', 75: 'nacre', 80: 'nacre', 85: 'nacre', 90: 'nacre', 95: 'nacre', 101: 'nacre' } as Record<number, Rarete>,
+  // 12 novembre 2026 : l'argent est devenu le métal courant de −7 à −10 ; les quais 20 et 40 donnent de l'or (avant : argent)
+  cartes: { 20: 'or', 40: 'or', 50: 'or', 60: 'or', 70: 'or', 75: 'nacre', 80: 'nacre', 85: 'nacre', 90: 'nacre', 95: 'nacre', 101: 'nacre' } as Record<number, Rarete>,
   /** tenir un quai : le gage par jour (composants = base + parQuai × quai ; Éclats à partir de certains quais) */
   // un Éclat par jour dès le quai 10 (audit du 7 novembre 2026 : avant le quai 40, la garde ne payait qu'en composants, sans valeur)
   gage: { base: 30, parQuai: 3, eclats: [{ des: 10, n: 1 }, { des: 40, n: 2 }, { des: 80, n: 3 }] },

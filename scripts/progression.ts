@@ -24,6 +24,8 @@ import { FORCE, forceStrate } from '../src/core/expedition';
 import { CREUSEURS, chargeMax, chargePortee, niveauPorteur } from '../src/core/partie/etat';
 import { NOYAU_MIN } from '../src/core/partie/district';
 import { PROFILS, mediane, simulerParcours, type Profil } from '../src/core/parcours';
+import { forceEscouade } from '../src/core/partie/pillages';
+import { forceQuai } from '../src/core/partie/fleche';
 import { moduleDe, moduleDef } from '../src/core/donnees';
 import type { Rarete } from '../src/core/types';
 
@@ -94,11 +96,15 @@ for (const e of ESSAIS) {
   regler(e.r);
   let sessions = 0, attentes = 0, prepa = 0;
   const parStrate: Record<number, [number, number]> = {};
+  // la force de l'escouade (échelle des pillages et de la Flèche) : la meilleure de chaque jour repère, et à l'ouverture de −7 et de −10
+  const JOURS_REPERES = [5, 10, 20, 30, 45, 60, 90].filter((d) => d <= JOURS);
+  const forceJour: Record<number, number[]> = {}, forceStrateOuverte: Record<number, number[]> = {};
   const jourNiveau: Record<number, number[]> = { 4: [], 7: [], 10: [], 13: [] }, metal: Record<number, number[]> = {};
   const niveaux: Record<number, number[]> = {}, porteurs: number[] = [], rares: number[] = [], charge: Record<number, number[]> = {};
   const runs = Array.from({ length: GRAINES }, (_, i) => {
     let vue = 1;
     const atteint = new Set<number>();
+    const maxJour: Record<number, number> = {};
     return simulerParcours(PROFIL, JOURS, 1000 + i * 7919, {
       joueur: 'moyen',
       tentative: (st, _f, v) => { const x = (parStrate[st] ??= [0, 0]); x[0]++; if (v) x[1]++; },
@@ -106,6 +112,8 @@ for (const e of ESSAIS) {
       session: (j, _jour, attente) => {
         if (e.r.niveaux) for (const c of Object.values(j.collection)) c.niveau = Math.max(c.niveau, e.r.niveaux);
         if (j.strate < 10) { sessions++; if (attente) attentes++; }
+        const fe = forceEscouade(j, j.escouade);
+        for (const d of JOURS_REPERES) if (_jour <= d && _jour > d - 3) maxJour[d] = Math.max(maxJour[d] ?? 0, fe);
         const nv = moy(j.escouade.map((id) => niveauPorteur(j, id).niveau));
         for (const n of [4, 7, 10, 13]) if (nv >= n && !atteint.has(n)) { atteint.add(n); jourNiveau[n]!.push(_jour); }
         while (vue < j.strate) {
@@ -114,12 +122,14 @@ for (const e of ESSAIS) {
           (niveaux[vue] ??= []).push(moy(deck.map((k) => j.collection[k]?.niveau ?? 1)));
           (metal[vue] ??= []).push(deck.filter((k) => ['argent', 'or', 'nacre'].includes(k.split('@')[1] ?? moduleDef(moduleDe(k)).rarete)).length / Math.max(1, deck.length));
           (charge[vue] ??= []).push(moy(j.escouade.map((id) => chargePortee(j, id) / Math.max(1, chargeMax(j, id)))));
+          if (vue === 7 || vue === 10) (forceStrateOuverte[vue] ??= []).push(fe);
           if (vue === 10) {
             porteurs.push(moy(j.escouade.map((id) => niveauPorteur(j, id).niveau)));
             rares.push(deck.filter((k) => ['argent', 'or', 'nacre'].includes(k.split('@')[1] ?? moduleDef(moduleDe(k)).rarete)).length / Math.max(1, deck.length));
           }
         }
       },
+      fin: () => { for (const d of JOURS_REPERES) if (maxJour[d]) (forceJour[d] ??= []).push(maxJour[d]!); },
     });
   });
   const t = runs.reduce((n, r) => n + r.front.tentatives, 0), v = runs.reduce((n, r) => n + r.front.victoires, 0);
@@ -133,7 +143,9 @@ for (const e of ESSAIS) {
     `${Math.round((100 * attentes) / Math.max(1, sessions))} %`.padEnd(8), `${Math.round((100 * prepa) / Math.max(1, sessions))} %`.padEnd(8), `${mediane(blocage)} (pire ${Math.max(...blocage)})`.padEnd(14),
     `${un(moy(niveaux[4] ?? []))} / ${un(moy(niveaux[7] ?? []))} / ${un(moy(niveaux[10] ?? []))}`.padEnd(42),
     `${Math.round(100 * moy(rares))} %`.padEnd(27), un(moy(porteurs)).padEnd(6),
-    `victoires par front −2…−10 : ${[2, 3, 4, 5, 6, 7, 8, 9, 10].map((x) => (parStrate[x] ? Math.round((100 * parStrate[x]![1]) / parStrate[x]![0]) : '—')).join(' ')}   force −4…−10 : ${FORCE.table.slice(3, 10).join(' ')}   ` + `Porteurs niveau 4 / 7 / 10 / 13 au jour ${[4, 7, 10, 13].map((n) => (jourNiveau[n]!.length >= GRAINES / 2 ? mediane(jourNiveau[n]!) : '—')).join(' / ')}   argent+ à −4 / −7 / −10 : ${[4, 7, 10].map((x) => Math.round(100 * moy(metal[x] ?? [])) + ' %').join(' / ')}   ` + `Charge remplie à −4 / −7 / −10 : ${[4, 7, 10].map((x) => Math.round(100 * moy(charge[x] ?? [])) + ' %').join(' / ')}   ` + 'expéditions par front −2…−9 : ' + [2, 3, 4, 5, 6, 7, 8, 9].map((x) => mediane(runs.map((r) => r.expeditions[x + 1] ?? 0))).join(' '),
+    `force de l'escouade aux jours ${JOURS_REPERES.join(' / ')} : ${JOURS_REPERES.map((d) => un(mediane(forceJour[d] ?? [0]))).join(' / ')} ; à l'ouverture de −7 : ${un(mediane(forceStrateOuverte[7] ?? [0]))}, de −10 : ${un(mediane(forceStrateOuverte[10] ?? [0]))}   ` + `victoires par front −2…−10 : ${[2, 3, 4, 5, 6, 7, 8, 9, 10].map((x) => (parStrate[x] ? Math.round((100 * parStrate[x]![1]) / parStrate[x]![0]) : '—')).join(' ')}   force −4…−10 : ${FORCE.table.slice(3, 10).join(' ')}   ` + `Porteurs niveau 4 / 7 / 10 / 13 au jour ${[4, 7, 10, 13].map((n) => (jourNiveau[n]!.length >= GRAINES / 2 ? mediane(jourNiveau[n]!) : '—')).join(' / ')}   argent+ à −4 / −7 / −10 : ${[4, 7, 10].map((x) => Math.round(100 * moy(metal[x] ?? [])) + ' %').join(' / ')}   ` + `Charge remplie à −4 / −7 / −10 : ${[4, 7, 10].map((x) => Math.round(100 * moy(charge[x] ?? [])) + ' %').join(' / ')}   ` + 'expéditions par front −2…−9 : ' + [2, 3, 4, 5, 6, 7, 8, 9].map((x) => mediane(runs.map((r) => r.expeditions[x + 1] ?? 0))).join(' '),
   );
 }
 regler({});
+// repères de la Flèche : la force des gardes de quelques quais
+console.log('\nGardes de la Flèche, force aux quais 1 / 20 / 40 / 60 / 80 / 101 : ' + [1, 20, 40, 60, 80, 101].map((q) => forceQuai(q)).join(' / '));
