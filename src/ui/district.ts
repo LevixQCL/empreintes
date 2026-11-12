@@ -40,7 +40,7 @@ import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { avecMots } from './lexique';
 import { arriveeFuture, feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
-import { ICO, baseIcones, icone, type Icone } from './icones';
+import { CHANTIER, ICO, baseIcones, icone, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, etapeVoyage, avatar, ongletsFiche, avatarGarde, gardesGarnison, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
 import { decimal, echap, mouvementReduit, virgule, texteReplie } from './outils';
@@ -335,7 +335,7 @@ function balises(e: EcranDistrict): string {
     // une seule bulle par bâtiment, la plus urgente
     if (prete) h += bulle('alerte', ICO.ok, tr('Forge : la carte est prête'));
     else if (vise) h += bulle('alerte objectif', ICO.objectif, tr`${echap(d.nom)} : l’objectif se fait ici`);
-    else if (ch) h += bulle('info', `${ICO.marteau}<em>${decompte(ch.fin, e.now)}</em>`, tr`${echap(d.nom)} : amélioration en cours`);
+    else if (ch) h += bulle('info', `${CHANTIER}<em>${decompte(ch.fin, e.now)}</em>`, tr`${echap(d.nom)} : amélioration en cours`);
     else if (j.forge && id === 'forge') h += bulle('info', `${ICO.chrono}<em>${decompte(j.forge.fin, e.now)}</em>`, tr('Forge : fabrication en cours'));
     else if (vacant) h += bulle('vacant', ICO.posteLibre, tr`${echap(d.nom)} : personne au poste`);
     else if (id === 'comptoir') {
@@ -920,7 +920,7 @@ function feuilleBatiment(e: EcranDistrict): string {
     const lib = a.ch ? tr('Chantier') : tr`Niveau ${niv + 1}`;
     h += `<div class="tb-onglets" role="tablist">`
       + `<button type="button" role="tab" aria-selected="${onglet === 'salle'}" data-action="onglet-bat" data-id="salle">${ongletSalle(b)}</button>`
-      + `<button type="button" role="tab" aria-selected="${onglet === 'niveau'}" data-action="onglet-bat" data-id="niveau">${a.ch ? ICO.marteau : ''}${lib}${a.pret && onglet !== 'niveau' ? `<i class="tb-pret" aria-label="${tr`possible`}"></i>` : ''}</button></div>`;
+      + `<button type="button" role="tab" aria-selected="${onglet === 'niveau'}" data-action="onglet-bat" data-id="niveau">${a.ch ? CHANTIER : ''}${lib}${a.pret && onglet !== 'niveau' ? `<i class="tb-pret" aria-label="${tr`possible`}"></i>` : ''}</button></div>`;
   }
 
   if (onglet === 'niveau') {
@@ -1037,7 +1037,7 @@ function barreAmelioration(e: EcranDistrict, b: BatimentId, a: ReturnType<typeof
   const j = e.j;
   const niv = j.batiments[b];
   if (a.ch) {
-    return `<div class="chantier-cours">${icone('marteau')}<div><strong>${!niv && b === 'comptoir' ? tr('Remise en état') : tr`Chantier vers le niveau ${niv + 1}`}</strong><small>${decompte(a.ch.fin, e.now, tr('Reste '), tr(' · avance même jeu fermé'))}</small><div class="jauge or">${jaugeTemps(a.ch.debut, a.ch.fin, e.now)}</div></div></div>`;
+    return `<div class="chantier-cours">${CHANTIER}<div><strong>${!niv && b === 'comptoir' ? tr('Remise en état') : tr`Chantier vers le niveau ${niv + 1}`}</strong><small>${decompte(a.ch.fin, e.now, tr('Reste '), tr(' · avance même jeu fermé'))}</small><div class="jauge or">${jaugeTemps(a.ch.debut, a.ch.fin, e.now)}</div></div></div>`;
   }
   if (!a.cout) return `<small class="raison">${tr`Niveau maximum pour cette version.`}</small>`;
   const c = a.cout;

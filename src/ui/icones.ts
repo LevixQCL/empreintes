@@ -130,3 +130,11 @@ export function sigle(l: Lignee, nom = false): string {
 export function icone(nom: Icone): string {
   return PEINTES.has(nom) ? `<img class="ico peinte" src="${baseIcones}${nom}.webp" alt="" aria-hidden="true" decoding="async">` : ICO[nom];
 }
+
+// ---------- Chantier en cours (12 novembre 2026, Bryan) ----------
+// Un marteau au trait qui frappe en boucle, avec une étincelle d'or à l'impact : on voit d'un coup d'œil que ça travaille.
+// Animation dans chantier.css (coupée si le joueur réduit les animations).
+export const CHANTIER = `<svg class="ico chantier-anime" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">`
+  + `<path class="ch-enclume" d="M9 20.5h11"/>`
+  + `<g class="ch-marteau"><path class="v" d="M13.5 3.5 20.5 10.5 17.5 13.5 10.5 6.5z"/><path d="M12 8 3.5 16.5l3 3L15 11" stroke-width="2"/></g>`
+  + `<g class="ch-etincelle"><path d="M19 17.2v-1.6M21.3 18.2l1.1-1.1M16.7 18.2l-1.1-1.1"/></g></svg>`;

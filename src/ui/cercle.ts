@@ -11,7 +11,7 @@ import type { Lignee, Rarete } from '../core/types';
 import { portrait } from './art';
 import { COULEUR_RARETE, faceCarte } from './carte';
 import { coquille, entete, type EcranDistrict } from './coquille';
-import { ICO, icone } from './icones';
+import { CHANTIER, ICO, icone } from './icones';
 import { echap } from './outils';
 import { cercleVide } from './acces';
 import { t } from '../core/i18n';
@@ -137,7 +137,7 @@ function boutonBatiment(j: J.Jeu, niv: number): string {
     && j.energie >= cout.energie && j.composants >= cout.composants && j.eclats >= (cout.eclats ?? 0);
   const texte = ch ? `${niv ? t`Niv. ${niv} · ` : ''}Chantier` : !niv ? t('Construire') : cout ? t`Niv. ${niv} · Améliorer` : t`Niv. ${niv} · Max`;
   return `<button type="button" class="cr-niveau${possible ? ' possible' : ''}" data-action="cercle-batiment" aria-label="${t`${texte} : la fiche du bâtiment`}">`
-    + `${ch ? ICO.chrono : possible ? ICO.monter : ICO.marteau}<span>${texte}</span></button>`;
+    + `${ch ? CHANTIER : possible ? ICO.monter : ICO.marteau}<span>${texte}</span></button>`;
 }
 
 export function htmlCercle(e: EcranDistrict): string {

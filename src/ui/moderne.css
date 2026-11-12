@@ -109,3 +109,5 @@ html #app :is(.gt-onglet,.btn-eclat,.btn-relance,.btn-fuir,.lien-guide){border-r
 html #app .feuille{border-radius:22px 22px 0 0;corner-shape:round;clip-path:none}
 /* les petites étiquettes en trapèze (« laiton » découpé) : des pastilles rondes */
 html #app :is(.chap-don,.pastille-n,.insigne-recruteur){border-radius:999px;clip-path:none}
+/* Plus de petite icône devant les titres de section (12 novembre 2026, Bryan) : le titre seul, plus net */
+html #app :is(.titre-bloc,.surtitre,.fp-h3,.rx-titre)>:is(svg.ico,img.ico):first-child{display:none}
