@@ -44,6 +44,7 @@ import { ICO, baseIcones, icone, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, etapeVoyage, avatar, avatarGarde, gardesGarnison, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
 import { decimal, echap, mouvementReduit, virgule, texteReplie } from './outils';
+import { ambianceLarge, ambianceTableau } from './ambiance';
 import { brancherHoule } from './houle';
 import { t as tr, locale, enumerer, minuscule } from '../core/i18n';
 
@@ -278,6 +279,7 @@ function tableau(j: Jeu): string {
     }).join('') : '')
     + (CUVETTE ? [...ECLATS.filter((e) => garde(e[4])), ...eclatsPaliers(p)].map(([x, y, pe, d]) => `<i class="eclat" style="left:${x / 4}%;top:${y / 6}%;--p:${pe}s;--d:${d}s" aria-hidden="true"></i>`).join('')
       + (garde('forge') ? ETINCELLES.map(([x, y, pe, d]) => `<i class="etincelle" style="left:${x / 4}%;top:${y / 6}%;--p:${pe}s;--d:${d}s" aria-hidden="true"></i>`).join('') : '') : '')
+    + (CUVETTE ? ambianceTableau(nbFoyers(j), s.nuit) : '')
     + `${s.nuit ? '<i class="nuit-voile" aria-hidden="true"></i>' : ''}`;
 }
 
@@ -1013,6 +1015,7 @@ export function htmlArchipel(e: EcranDistrict): string {
   let h = `<section class="archipel${CUVETTE ? ' cuvette' : ''}" aria-label="${tr`Ton district`}"><img class="tableau-fond" src="${scene.url}" alt="" aria-hidden="true">`
     + `<span class="mer-fond${scene.nuit ? ' nuit' : ''}" style="--mer:url(${scene.mer});--reflets:url(${reflets});--horizon:${scene.horizon}%" aria-hidden="true"><i class="mer-reflets"></i>${scene.merMasque && !mouvementReduit() ? `<i class="houle-large" data-image="${scene.mer}" data-masque="${scene.merMasque}"></i>` : ''}</span>`
     + `<div class="toile${j.batiments.noyau < 2 ? ' noms' : ''}">${tableau(j)}${zonesBatiments(visuel(j.batiments.noyau), e.selection, CUVETTE ? paliers(j) : null)}${balises(e)}</div>`
+    + (CUVETTE ? ambianceLarge(scene.nuit) : '')
     + bulles(e)
     + (e.bulle ? `<button type="button" class="bulle-voile" data-action="bulle" data-id="" aria-label="${tr`Replier`}"></button>` : '')
     + `<div class="archipel-haut"${e.bulle ? ` data-bulle="${e.bulle}"` : ''}${!e.j.chambre ? ' data-porte' : ''}>${mission(e)}${appel(e)}</div></section>`;

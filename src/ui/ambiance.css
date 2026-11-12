@@ -1,0 +1,57 @@
+/* La vie de la Cuvette (12 novembre 2026) : lueur chaude du quartier, fenêtres qui respirent, passants à la lanterne,
+   brume et feux du large. Tout est posé sous les repères des bâtiments et ne se touche pas (ambiance.ts). */
+.toile .ambiance{position:absolute;inset:0;pointer-events:none}
+
+/* la lueur du quartier habité, en haut à droite : elle déborde vers le ciel et réchauffe le haut de l'écran */
+.amb-halo{position:absolute;left:38%;top:-8%;width:92%;height:50%;mix-blend-mode:screen;opacity:.8;
+  background:radial-gradient(closest-side,rgba(255,176,96,.42),rgba(255,150,80,.2) 45%,transparent 100%);animation:ambRespire 9s ease-in-out infinite alternate}
+.ambiance.nuit .amb-halo{opacity:1}
+@keyframes ambRespire{from{opacity:.62}to{opacity:.95}}
+
+/* une fenêtre : un petit halo chaud qui s'avive puis se calme, chacune à son rythme */
+.amb-fenetre{position:absolute;aspect-ratio:1;transform:translate(-50%,-50%);mix-blend-mode:screen;opacity:.35;
+  background:radial-gradient(circle,rgba(255,214,150,.8),rgba(255,170,90,.38) 38%,transparent 70%);animation:ambFenetre var(--p,6s) ease-in-out var(--d,0s) infinite alternate}
+.ambiance.nuit .amb-fenetre{filter:brightness(1.25)}
+@keyframes ambFenetre{from{opacity:.12}to{opacity:.62}}
+
+/* un passant : une petite silhouette et sa lanterne. La boîte fait 1 % du tableau : ses déplacements (--a à --e, en % d'elle-même)
+   se lisent donc en centièmes de tableau, et seul ce petit carré bouge. Il sort d'une porte et rentre dans une autre (fondu aux bouts). */
+.amb-passant{position:absolute;left:0;top:0;width:1%;height:1%;opacity:0;animation:ambPasse 40s linear infinite alternate}
+/* la silhouette et sa lanterne sont mesurées sur la boîte (1 % du tableau) : elles grandissent avec l'écran */
+.amb-passant::before{content:"";position:absolute;left:-45%;top:-260%;width:90%;height:260%;border-radius:45% 45% 20% 20%;background:#1e120c;box-shadow:0 0 0 1px rgba(255,214,150,.18)}
+.amb-passant::after{content:"";position:absolute;left:55%;top:-170%;width:70%;aspect-ratio:1;border-radius:50%;background:#ffe2a8;
+  box-shadow:0 0 4px 1.5px rgba(255,196,110,.95),0 0 12px 4px rgba(255,170,80,.45)}
+.ambiance.nuit .amb-passant::after{box-shadow:0 0 4px 1.5px rgba(255,200,120,.95),0 0 13px 5px rgba(255,170,80,.5)}
+@keyframes ambPasse{
+  0%{transform:translate(var(--a));opacity:0}
+  5%{opacity:1}
+  33.3%{transform:translate(var(--b))}
+  66.6%{transform:translate(var(--c))}
+  95%{opacity:1}
+  100%{transform:translate(var(--e));opacity:0}
+}
+
+/* le large, au-dessus du tableau (téléphone seulement) */
+.amb-large{display:none}
+@media not all and (min-width:1100px) and (min-height:600px){
+  /* le fond sous le haut du tableau prend la lueur du quartier au lieu d'un bleu nuit uni */
+  .archipel.cuvette{background:radial-gradient(85% 30% at 92% 9%,rgba(255,164,88,.34),rgba(255,150,80,.12) 48%,transparent 74%),
+    radial-gradient(120% 60% at 55% 100%,#1d5552,#134144 60%,#0f333a)}
+  .amb-large{display:block;position:absolute;z-index:1;left:0;right:0;top:0;height:32%;overflow:hidden;pointer-events:none;
+    -webkit-mask-image:linear-gradient(to bottom,#000 55%,transparent);mask-image:linear-gradient(to bottom,#000 55%,transparent)}
+  .amb-brume{position:absolute;left:-60%;top:8%;width:220%;height:70%;opacity:.5;
+    background:radial-gradient(28% 34% at 22% 42%,rgba(170,232,224,.2),transparent 100%),radial-gradient(34% 30% at 62% 58%,rgba(255,206,160,.16),transparent 100%),radial-gradient(22% 26% at 86% 30%,rgba(170,232,224,.14),transparent 100%);
+    animation:ambBrume 70s ease-in-out infinite alternate}
+  .amb-brume.b2{top:30%;opacity:.4;animation-duration:95s;animation-direction:alternate-reverse}
+  @keyframes ambBrume{from{transform:translateX(-9%)}to{transform:translateX(9%)}}
+  /* le feu d'une barque au loin et son reflet sur l'eau */
+  .amb-feu{position:absolute;width:3px;height:3px;border-radius:50%;background:#ffdca0;box-shadow:0 0 4px 1px rgba(255,190,110,.85),0 0 12px 4px rgba(255,160,80,.3);
+    animation:ambFeu var(--p,7s) ease-in-out var(--d,0s) infinite alternate}
+  .amb-feu::after{content:"";position:absolute;left:.5px;top:5px;width:2px;height:5px;border-radius:1px;background:linear-gradient(rgba(255,190,110,.5),transparent)}
+  @keyframes ambFeu{from{opacity:.45}to{opacity:1}}
+}
+
+/* mouvement réduit ou graphismes légers : la lumière reste, elle ne bouge plus */
+@media (prefers-reduced-motion:reduce){ .amb-halo,.amb-fenetre,.amb-brume,.amb-feu{animation:none} .amb-passant{display:none} }
+html.leger :is(.amb-halo,.amb-fenetre,.amb-brume,.amb-feu){animation:none}
+html.leger .amb-passant{display:none}
