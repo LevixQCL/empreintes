@@ -1,0 +1,58 @@
+/* Le banc d'équilibrage : la matière de l'outil d'analyse (analyse.css), plus la liste des cartes et la barre d'avancement.
+   Les verdicts ont toujours un mot et un symbole, jamais la couleur seule. */
+#banc{max-width:1100px;margin:0 auto;padding:max(20px,env(safe-area-inset-top)) 16px 40px}
+.an-btn:disabled{opacity:.45;cursor:default}
+.bc-petit{min-height:40px;padding:0 14px}
+.bc-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.bc-mode{display:grid;gap:4px;padding:10px 12px;border:0;border-radius:12px;cursor:pointer;text-align:left;color:var(--txt);background:var(--verre-2);box-shadow:inset 0 0 0 1px var(--arete);font:inherit}
+.bc-mode b{font:600 15px/1.1 var(--body);color:var(--glace)}
+.bc-mode small{font:12px/1.3 var(--mono);color:var(--doux)}
+.bc-mode.actif{box-shadow:inset 0 0 0 2px var(--or)}
+.bc-mode.actif b{color:var(--or)}
+.bc-mode:focus-visible{outline:2px solid var(--glace);outline-offset:2px}
+.bc-lancer .an-btn{flex:1 1 220px}
+.bc-cours{display:grid;gap:10px}
+.bc-ligne{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}
+.bc-ligne b{font:600 15px/1.2 var(--body);color:var(--glace)}
+.bc-ligne span{font-size:14px;color:var(--txt)}
+.bc-ligne .bc-reste{margin-left:auto;font:600 13px/1 var(--mono);color:var(--or)}
+.bc-progres{height:10px;border-radius:999px;background:rgba(205,239,255,.08);overflow:hidden}
+.bc-progres i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--barre),var(--glace));transition:width .4s}
+.bc-cours .an-btn{justify-self:start}
+.bc-erreur{margin:10px 0 0;color:#F7C08A;font-size:14px}
+.bc-moyennes{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.bc-metal{display:grid;gap:2px;min-width:92px;padding:8px 12px;border-radius:10px;background:var(--verre-2);box-shadow:inset 0 0 0 1px var(--arete);font:600 12px/1.1 var(--mono);letter-spacing:.04em;color:var(--doux)}
+.bc-metal b{font:600 20px/1.1 var(--mono);color:var(--txt)}
+.bc-metal small{font:12px/1 var(--mono);color:var(--doux)}
+.bc-metal.m-cuivre{box-shadow:inset 3px 0 0 #C9895B,inset 0 0 0 1px var(--arete)}
+.bc-metal.m-argent{box-shadow:inset 3px 0 0 #C9D3DE,inset 0 0 0 1px var(--arete)}
+.bc-metal.m-or{box-shadow:inset 3px 0 0 var(--or),inset 0 0 0 1px var(--arete)}
+.bc-metal.m-nacre{box-shadow:inset 3px 0 0 #E8D9F5,inset 0 0 0 1px var(--arete)}
+.bc-metal.m-fer{display:none}
+.bc-filtres{display:flex;gap:6px;flex-wrap:wrap}
+.bc-filtres button{min-height:40px;padding:0 14px;border:0;border-radius:999px;cursor:pointer;color:var(--glace);background:transparent;box-shadow:inset 0 0 0 1px var(--arete);font:600 13px/1 var(--body)}
+.bc-filtres button[aria-selected="true"]{background:var(--verre-2);box-shadow:inset 0 0 0 2px var(--glace)}
+.bc-liste{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.bc-carte{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"coche nom mesure" "coche verdict verdict";gap:4px 12px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--verre-2);box-shadow:inset 3px 0 0 var(--arete),inset 0 0 0 1px var(--arete)}
+@media (min-width:800px){.bc-carte{grid-template-columns:auto 1fr 90px 280px;grid-template-areas:"coche nom mesure verdict"}}
+.bc-coche{grid-area:coche;display:grid;place-items:center;width:32px;height:44px;cursor:pointer}
+.bc-coche input{width:20px;height:20px;accent-color:#D9B55F;cursor:pointer}
+.bc-nom{grid-area:nom;display:grid;gap:2px;min-width:0}
+.bc-nom b{font:600 15px/1.25 var(--body);color:var(--txt)}
+.bc-nom small{font-size:12px;line-height:1.35;color:var(--doux);overflow-wrap:anywhere}
+.bc-nom .bc-est{color:#F7C08A}
+.bc-mesure{grid-area:mesure;display:grid;justify-items:end;gap:2px}
+.bc-pts{font:600 22px/1 var(--mono);font-variant-numeric:tabular-nums;color:var(--txt)}
+.bc-pts.vide{color:var(--doux)}
+.bc-mesure small{font:12px/1 var(--mono);color:var(--doux)}
+.bc-verdict{grid-area:verdict;display:grid;gap:2px}
+.bc-verdict span{font:600 13px/1.2 var(--mono);color:var(--doux)}
+.bc-verdict small{font-size:12px;line-height:1.35;color:var(--doux)}
+.bc-carte.forte{box-shadow:inset 3px 0 0 #F2A65A,inset 0 0 0 1px var(--arete)}
+.bc-carte.forte .bc-verdict span,.bc-carte.forte .bc-pts{color:#F7C08A}
+.bc-carte.faible{box-shadow:inset 3px 0 0 #9C8CF0,inset 0 0 0 1px var(--arete)}
+.bc-carte.faible .bc-verdict span,.bc-carte.faible .bc-pts{color:#C2B8FF}
+.bc-carte.ok .bc-verdict span{color:#9FE0C0}
+.bc-carte.perimee .bc-verdict span{color:var(--glace)}
+.bc-carte.perimee .bc-pts{color:var(--doux);text-decoration:line-through}
+.bc-carte.seule .bc-verdict span{color:var(--glace)}

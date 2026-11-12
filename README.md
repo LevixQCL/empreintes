@@ -20,6 +20,7 @@ Autres commandes :
 | `npm run visuel` | Compare les écrans avant / après une modification (téléphone et PC) : voir `.visuel/` ; compte aussi les textes sous 12 px, les coins coupés, les cibles sous 40 px et l’ancienne police (`.visuel/lisibilite.json`) |
 | `npm run css` | Repère le CSS inutile (déclarations toujours écrasées, règles en double) ; `-- --ecrire` le nettoie |
 | `analyse.html` | L'outil d'analyse (page à part, jamais chargée par le jeu, réservée au compte de Bryan) : points d'attention, activité, rétention par cohorte, progression et rythme, combats, Porteurs, cartes, économie, campagne, usage des fonctions, joueurs ; filtres ; exports JSON et CSV anonymisés |
+| `equilibrage.html` | Le banc d'équilibrage (page à part, jamais chargée par le jeu) : le robot des cartes tourne dans le navigateur, sur tous les cœurs, et signale les cartes trop fortes ou trop faibles pour leur métal ; mesures gardées dans le navigateur et refaites seulement si la carte ou les réglages changent (src/equilibrage/) |
 | `duel.html` | L'essai du duel en temps réel (page à part) : contre le robot ou un ami avec un code — voir `docs/duel.md`. Dans le jeu, le duel passe par le Cercle des quais |
 | `npm run robot` | Lance le robot d'équilibrage (quelques minutes) et écrit `docs/robot-rapport.md` |
 | `npm run voies` | Compare chaque voie à un deck classique de même Charge et écrit `docs/voies-rapport.md` |
@@ -82,6 +83,7 @@ src/
   save/          la sauvegarde sur l'appareil
   net/           Firebase : comptes et synchronisation (optionnel)
   analyse/       l'outil d'analyse (analyse.html) : calculs.ts (testé) et la page
+  equilibrage/   le banc d'équilibrage (equilibrage.html) : banc.ts (testé), les travailleurs du robot et la page
   app/           l'application : relie les règles (core) et l'affichage (ui)
     etat.ts        l'état partagé : la partie en cours (app.jeu), l'écran affiché, l'état du district, du combat, du Grand Tableau
     rendu.ts       redessine l'écran courant
