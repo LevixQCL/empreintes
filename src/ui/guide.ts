@@ -7,7 +7,7 @@
 // Attention aux imports circulaires (vue.ts importe ce fichier) : rien d'importé de ./vue, ./carte ou ./coquille
 // ne doit servir au chargement du module, seulement dans les fonctions.
 
-import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, chargeNiveau } from '../core/collection';
+import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES } from '../core/collection';
 import { DECK_DEPART, GESTES_SPECIAUX, METAL_FORCE, METAL_FREQ, METAL_RENFORT, MODULES_TIRABLES as MODULES, carteId, gesteDeCarte, moduleDe, moduleDef } from '../core/donnees';
 import { NOMS_EFFET } from '../core/effets';
 import { DISTRICT, EPREUVE_DECK_MIN } from '../core/jeu';
@@ -180,7 +180,7 @@ function ongletDeck(): string {
   h += `<section class="bloc">${titre(ICO.verrou, tr('Les règles du deck'))}<ul class="g-regles">`
     + `<li>${tr`Une carte va à un Porteur`} <b>${tr`de sa lignée`}</b> ${tr`: Augmenté, Géné ou Résonant.`}</li>`
     + `<li><b>${tr`${DISTRICT.cartesMax} cartes`}</b> ${tr`au plus par Porteur, et`} <b>${DISTRICT.deckMin}</b> ${tr`au moins dans le deck pour descendre (${EPREUVE_DECK_MIN} pour une Épreuve).`}</li>`
-    + `<li>${tr`Chaque carte`} <b>${tr`pèse`}</b> ${tr`selon sa force (le chiffre de glace sur sa tuile). Un Porteur porte une`} <b>${tr`Charge`}</b> ${tr`de ${chargeNiveau(1)} au niveau 1, +${CHARGE.parNiveau} par niveau : une très grosse carte laisse moins de place aux autres.`}</li>`
+    + `<li>${tr`Un métal demande un Porteur assez aguerri :`} <b>${tr`niveau ${NIVEAU_METAL.argent} pour l’argent, ${NIVEAU_METAL.or} pour l’or, ${NIVEAU_METAL.nacre} pour la nacre`}</b>${tr`. Le fer et le cuivre se portent dès le niveau 1.`}</li>`
     + `<li>${tr`Un Porteur combat toujours avec ses`} <b>${tr`${DISTRICT.cartesMax} places`}</b> ${tr`: une place laissée vide se pioche comme une carte et`} <b>${tr`ne se joue pas`}</b> ${tr`(sauf dans les Épreuves).`}</li>`
     + `<li>${tr`Une carte n’a qu’`}<b>${tr`un Porteur à la fois`}</b>${tr`. Un Porteur ne porte pas deux fois la même carte, même dans deux métaux.`}</li>`
     + `<li>${tr`Les cartes communes du`} <b>${tr`Râtelier`}</b> ${tr`de l’escouade (2 à 4, choisies au district) s’ajoutent au deck, si les cristaux du départ sont payés.`}</li>`

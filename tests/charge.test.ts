@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CHARGE, PLACES_PORTEUR, chargeNiveau, poidsCarte } from '../src/core/collection';
+import { CHARGE, NIVEAU_METAL, PLACES_PORTEUR, chargeNiveau, poidsCarte } from '../src/core/collection';
 import { ajouter, creerCombat, lancer } from '../src/core/combat';
 import { DEPART_PORTEURS, carteId, gesteDeCarte } from '../src/core/donnees';
 import { chargeMax, chargePortee, echanger, estJeuValide, greffer, niveauPorteur, nouveauJeu, partir } from '../src/core/jeu';
@@ -24,21 +24,21 @@ describe('La Charge', () => {
     expect(chargeMax(j, 'ilka')).toBe(CHARGE.base + CHARGE.parNiveau);
   });
 
-  it('une carte trop lourde est refusée, à l’ajout comme à l’échange', () => {
+  // 12 novembre 2026 (Bryan : « ça complique quand même bien le jeu ») : la Charge ne limite plus le deck
+  it('plus de carte « trop lourde » : seuls les places et le niveau demandé par le métal comptent', () => {
     const j = nouveauJeu(0);
     j.chambre = true;
-    j.collection['coeur-reprise@or'] = { niveau: 7, doublons: 0 };
+    j.collection['coeur-reprise@or'] = { niveau: 5, doublons: 0 };
     for (const k of ['bras-grue@argent', 'dorsale@argent']) j.collection[k] = { niveau: 5, doublons: 0 };
-    // niveau 7 : l'or lui est permis (NIVEAU_METAL), mais il porte déjà deux cartes en argent
-    j.porteurs.ilka!.xp = 900;
+    j.porteurs.ilka!.xp = 1_000_000;
     j.porteurs.ilka!.modules = ['bras-grue@argent', 'dorsale@argent', 'ruee@fer'];
-    const avant = chargePortee(j, 'ilka');
-    const r = greffer(j, 'coeur-reprise@or', 'ilka');
-    expect(r.ok).toBe(false);
-    expect(r.message).toMatch(/Trop lourd/);
-    expect(chargePortee(j, 'ilka')).toBe(avant);
-    // à la place d'une carte légère, elle ne tient pas non plus
-    expect(echanger(j, 'ruee@fer', 'coeur-reprise@or', 'ilka').ok).toBe(false);
+    expect(niveauPorteur(j, 'ilka').niveau).toBeGreaterThanOrEqual(NIVEAU_METAL.or);
+    expect(greffer(j, 'coeur-reprise@or', 'ilka').ok).toBe(true);
+    expect(chargePortee(j, 'ilka')).toBeLessThanOrEqual(chargeMax(j, 'ilka'));
+    // la dernière place prise, plus rien n'entre : ce sont les places qui limitent
+    for (const k of ['bond@fer', 'tir@fer', 'esquive@fer']) if (j.porteurs.ilka!.modules.length < PLACES_PORTEUR && !j.porteurs.ilka!.modules.includes(k)) j.porteurs.ilka!.modules.push(k);
+    expect(j.porteurs.ilka!.modules).toHaveLength(PLACES_PORTEUR);
+    expect(echanger(j, 'ruee@fer', 'tir-vif@fer', 'ilka').ok).toBe(true);
   });
 
   it('une vieille sauvegarde trop lourde rend des cartes à la collection, sans rien perdre', () => {
@@ -52,15 +52,16 @@ describe('La Charge', () => {
     expect(j.journal[0]).toMatch(/Ilka portait des cartes/);
   });
 
-  it('le métal demande un niveau de Porteur : argent 4, or 7, nacre 10 (27 octobre 2026)', () => {
+  it('le métal demande un niveau de Porteur : argent 5, or 9, nacre 13 (12 novembre 2026 ; avant 4, 7 et 10)', () => {
     const j = nouveauJeu(0);
     j.chambre = true;
-    j.collection['coeur-reprise@or'] = { niveau: 7, doublons: 0 };
+    j.collection['coeur-reprise@or'] = { niveau: 5, doublons: 0 };
     j.porteurs.ilka!.modules = j.porteurs.ilka!.modules.slice(0, 4);
     const r = greffer(j, 'coeur-reprise@or', 'ilka');
     expect(r.ok).toBe(false);
-    expect(r.message).toMatch(/niveau 7/);
-    j.porteurs.ilka!.xp = 900;
+    expect(r.message).toMatch(new RegExp(`niveau ${NIVEAU_METAL.or}`));
+    expect(NIVEAU_METAL).toMatchObject({ argent: 5, or: 9, nacre: 13 });
+    j.porteurs.ilka!.xp = 1_000_000;
     expect(greffer(j, 'coeur-reprise@or', 'ilka').ok).toBe(true);
   });
 });

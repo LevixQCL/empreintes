@@ -106,20 +106,16 @@
    "en": "at least in the deck to go down ({0} for a Trial)."
   },
   {
-   "fr": "Chaque carte",
-   "en": "Each card"
+   "fr": "Un métal demande un Porteur assez aguerri :",
+   "en": "A metal needs a seasoned enough Bearer:"
   },
   {
-   "fr": "pèse",
-   "en": "weighs"
+   "fr": "niveau {0} pour l’argent, {1} pour l’or, {2} pour la nacre",
+   "en": "level {0} for silver, {1} for gold, {2} for nacre"
   },
   {
-   "fr": "selon sa force (le chiffre de glace sur sa tuile). Un Porteur porte une",
-   "en": "according to its power (the ice number on its tile). A Bearer carries a"
-  },
-  {
-   "fr": "de {0} au niveau 1, +{1} par niveau : une très grosse carte laisse moins de place aux autres.",
-   "en": "of {0} at level 1, +{1} per level: one very big card leaves less room for the rest."
+   "fr": ". Le fer et le cuivre se portent dès le niveau 1.",
+   "en": ". Iron and copper can be carried from level 1."
   },
   {
    "fr": "Un Porteur combat toujours avec ses",

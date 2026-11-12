@@ -769,7 +769,8 @@ export const CREUSEURS = {
   // 12 novembre 2026 (Bryan : « je roule sur tout le monde, mais je dois attendre mes creuseurs ») : plus de verrou après le gardien,
   // la Strate suivante s'ouvre dès qu'il est vaincu (avant : 0, 0, 2, 3, 4, 5, 6, 7, 8, 8, 9)
   requis: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as number[],
-  parStrateEnsuite: 1,
+  // 12 novembre 2026 : plus de verrou au Fond non plus (avant : 1)
+  parStrateEnsuite: 0,
   gardien: 1,
   /** chances de ramener un fouilleur perdu : fouille ciblée, mission courte, mission longue */
   fouille: 0.25,

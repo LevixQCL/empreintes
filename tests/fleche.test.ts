@@ -50,12 +50,12 @@ describe('La Flèche', () => {
     const avant = { c: j.energie, e: j.eclats };
     const r = remonterFleche(j, 1000)!;
     expect(r).toMatchObject({ victoire: true, de: 17, a: 21, record: true });
-    expect(r.paliers).toEqual([{ quai: 20, ...ASCENSION.recompenses[20], metal: 'argent' }]);
-    // 10 novembre 2026 : une carte au choix parmi trois, toutes au moins en argent
+    expect(r.paliers).toEqual([{ quai: 20, ...ASCENSION.recompenses[20], metal: 'or' }]);
+    // 10 novembre 2026 : une carte au choix parmi trois ; 12 novembre 2026 : le quai 20 donne de l'or (l'argent est devenu courant)
     const c = j.choix.at(-1)!;
     expect(c.source).toBe('fleche');
     expect(c.options).toHaveLength(3);
-    for (const id of c.options) expect(['argent', 'or', 'nacre']).toContain(moduleDef(id).rarete);
+    for (const id of c.options) expect(['or', 'nacre']).toContain(moduleDef(id).rarete);
     expect(j.energie - avant.c).toBe(ASCENSION.recompenses[20]!.composants);
     expect(j.eclats - avant.e).toBe(ASCENSION.recompenses[20]!.eclats);
     // redescendre puis remonter ne redonne rien

@@ -40,7 +40,9 @@ describe('Le palmarès', () => {
     const le = j.palmares!.profondeurLe;
     j.frontVaincu = true;
     tick(j, 5000);
-    expect(j.palmares!.profondeur).toBe(3);
+    // 12 novembre 2026 : plus de verrou, le gardien vaincu ouvre la Strate suivante au tick (avant : la profondeur passait à 3 en attendant les creuseurs)
+    expect(j.palmares!.profondeur).toBe(profondeurDe(j));
+    expect(j.palmares!.profondeur).toBeGreaterThanOrEqual(3);
     expect(j.palmares!.profondeurLe).toBeGreaterThan(le);
     const record = j.palmares!.registre;
     j.collection = {};

@@ -298,12 +298,12 @@
    "en": "One more copy of a card you already own. Duplicates level the card up; spare ones are recycled into ore."
   },
   {
-   "fr": "§poids§Charge",
-   "en": "Load"
+   "fr": "Force de l’escouade",
+   "en": "Squad strength"
   },
   {
-   "fr": "Le poids d’une carte confiée à un Porteur : sa puissance (force, effet, deux places, Fréquences) divisée par {0} (1 au moins). Un Porteur porte {1} de Charge au niveau 1, et {2} de plus à chaque niveau.",
-   "en": "The weight of a card given to a Bearer: its power (strength, effect, two slots, Frequencies) divided by {0} (1 at least). A Bearer carries {1} Load at level 1, and {2} more at each level."
+   "fr": "Ce que valent ensemble les cartes et les PV des trois Porteurs, Usure comprise. Avant de descendre, elle est comparée à la force conseillée de la Strate : Prêt, Jouable ou Risqué. Rien n’est interdit, mais une escouade prête gagne son front environ une fois sur deux.",
+   "en": "What the three Bearers’ cards and HP are worth together, Strain included. Before going down, it is compared with the Stratum’s recommended strength: Ready, Playable or Risky. Nothing is forbidden, but a squad that is ready wins at the front about one time in two."
   },
   {
    "fr": "Porteur",

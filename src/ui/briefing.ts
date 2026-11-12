@@ -96,8 +96,8 @@ const demoEquipes = () => `<div class="demo-equipes">`
 
 const demoBoucle = () => `<ol class="demo-boucle">`
   + `<li><i>1</i>${icone('porte')}<span><b>${tr`Vaincre le gardien`}</b>${tr`On descend par la Tour du Noyau.`}</span></li>`
-  + `<li><i>2</i>${icone('ouvrier')}<span><b>${tr`Trouver des creuseurs`}</b>${tr`Missions en mer, fouilles, puis Épreuves.`}</span></li>`
-  + `<li><i>3</i>${icone('tour')}<span><b>${tr`Monter la Tour du Noyau`}</b>${tr`Pour loger les creuseurs.`}</span></li>`
+  + `<li><i>2</i>${icone('strate')}<span><b>${tr`Renforcer l’escouade`}</b>${tr`Fouilles, missions en mer, niveaux des cartes.`}</span></li>`
+  + `<li><i>3</i>${icone('porte')}<span><b>${tr`Revenir plus fort`}</b>${tr`L’écran de départ dit si l’escouade est prête.`}</span></li>`
   + `<li class="fin">${icone('strate')}<span><b>${tr`La Strate suivante s’ouvre`}</b>${tr`Plus profond, plus précieux.`}</span></li></ol>`;
 
 const demoRepere = () => `<ul class="demo-liste">`

@@ -16,10 +16,13 @@ const T0 = Date.UTC(2026, 9, 21, 12);
 const avance = (): Jeu => { const j = nouveauJeu(T0, 1); j.chambre = true; j.recrues = true; j.strate = 4; return j; };
 
 describe('La difficulté des Strates', () => {
-  it('la force des ennemis monte à chaque Strate, sans jamais redescendre', () => {
-    for (let s = 1; s < 20; s++) expect(FORCE.table.length).toBeGreaterThan(0);
+  // 12 novembre 2026 : la force est réglée Strate par Strate sur le deck attendu. Elle monte de −1 à −6 et dans le Fond ;
+  // de −7 à −10, ce sont les traits, les conditions et les phases des gardiens qui font la difficulté, pas la force de base.
+  it('la force des ennemis monte de −1 à −6 et dans le Fond, et les Strates −7 à −10 restent au-dessus de −5', () => {
     const f = Array.from({ length: 20 }, (_, i) => FORCE.table[i] ?? FORCE.table[FORCE.table.length - 1]! * FORCE.ensuite ** (i + 1 - FORCE.table.length));
-    for (let i = 1; i < f.length; i++) expect(f[i]).toBeGreaterThan(f[i - 1]!);
+    for (let i = 1; i <= 5; i++) expect(f[i]).toBeGreaterThan(f[i - 1]!);
+    for (let i = 6; i <= 9; i++) expect(f[i]).toBeGreaterThan(f[4]!);
+    for (let i = 10; i < f.length; i++) expect(f[i]).toBeGreaterThan(f[i - 1]!);
   });
 });
 

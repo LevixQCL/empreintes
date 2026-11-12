@@ -3,8 +3,8 @@
 // La fiche complète d'un Porteur : qui il est, son état (PV, niveau, Usure), sa Marque, sa lignée, son poste et ses cartes.
 
 import { BATIMENTS, CLE_LEGS, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef, deNom } from '../core/donnees';
-import { CHARGE, NIVEAU_METAL, composantsNiveau, doublonsRequis } from '../core/collection';
-import { LOT_RECITS, PRODUITS, aRecit, droitRecit, lotProposable, prixEuros, ACCORD_OUVERT, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, NOMS_PALIER_MARQUE, PALIERS_MARQUE, porteursPresents, progresMarque, RECITS_ORIGINES, carteDuRecit, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
+import { NIVEAU_METAL, composantsNiveau, doublonsRequis } from '../core/collection';
+import { LOT_RECITS, PRODUITS, aRecit, droitRecit, lotProposable, prixEuros, ACCORD_OUVERT, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, deckEscouade, enExpedition, gestesDe, enMission, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, NOMS_PALIER_MARQUE, PALIERS_MARQUE, porteursPresents, progresMarque, RECITS_ORIGINES, carteDuRecit, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
@@ -15,7 +15,7 @@ import { illustrationBatiment, portrait } from './art';
 import { ICONES_ACTION, faceCarte } from './carte';
 import { RECITS_TEXTES } from './recits';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, entete, voletsEscouade, type EcranDistrict } from './coquille';
-import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugeCharge, jaugePv, plusLongueSuite } from './district';
+import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugePv, plusLongueSuite } from './district';
 import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } from './guide';
 import { ICO, sigle } from './icones';
 import { COULEUR } from './vue';
@@ -239,10 +239,7 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
   const portees = new Set(Object.values(j.porteurs).flatMap((x) => x.modules));
   const attendent = Object.keys(j.collection).filter((k) => !portees.has(k) && moduleDef(k).lignee === p.lignee).length;
   const raison = raisonHorsEscouade(j, id);
-  const trop = chargePortee(j, id) > chargeMax(j, id);
-  const alerte = trop && !j.expedition
-    ? `<p class="eq-alerte">${ICO.cristal}<span>${tr`Trop lourd : ${chargePortee(j, id)} de Charge sur ${chargeMax(j, id)}. Reprends-lui une carte pour qu’il descende.`}</span></p>`
-    : raison && !j.expedition
+  const alerte = raison && !j.expedition
     ? `<p class="eq-alerte">${ICO.verrou}<span>${tr`${echap(raison.replace(/\.$/, ''))} : ${IL.has(id) ? tr('il') : tr('elle')} ne pourra pas descendre.`}</span></p>`
     : textePosteQuitte(j, id) && !j.expedition ? `<p class="eq-alerte doux">${ICO.ouvrier}<span>${tr`Au départ, ${echap(textePosteQuitte(j, id)!)}`}</span></p>`
     : tropBlesse(j, id) && !j.expedition ? `<p class="eq-alerte">${ICO.soin}<span>${tr`${echap(tropBlesse(j, id)!.replace(/\.$/, ''))} : soins intensifs possibles à la Clinique.`}</span></p>`
@@ -259,8 +256,8 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
     + (verrou ? '' : `<button type="button" class="eq-changer" data-action="escouade-place" data-index="${i}" aria-label="${tr`Changer ${echap(p.nom)}`}">${ICO.recycler}<span>${tr`Changer`}</span></button>`)
     + `</header>`
     + blocMarque(j, id) + alerte
-    // la Charge et « Gérer » sur une seule ligne, juste au-dessus des cartes (28 octobre 2026)
-    + `<div class="eq-cartes-tete eq-charge-ligne">${jaugeCharge(chargePortee(j, id), chargeMax(j, id), undefined, d.modules)}`
+    // le compte des cartes et « Gérer » sur une seule ligne, juste au-dessus des cartes (12 novembre 2026 : plus de Charge)
+    + `<div class="eq-cartes-tete eq-charge-ligne"><span class="eq-compte${nc >= DISTRICT.cartesMax ? ' plein' : ''}">${ICO.cartes}<b>${nc} / ${DISTRICT.cartesMax}</b> ${tr`cartes`}</span>`
     + `<button type="button" class="eq-gerer" data-action="deck" data-id="${id}"${parti ? ' disabled' : ''} aria-label="${parti ? tr('Ses cartes changeront à son retour') : tr`Gérer ses cartes (${nc} sur ${DISTRICT.cartesMax})`}">${ICO.greffe}<span>${parti ? tr('À son retour') : tr('Gérer')}</span></button></div>`
     + `<ul class="eq-grille">${gestes.map((g) => tuileCarte(j, g, prete)).join('')}`
     // les places libres, à la taille d'une carte : on voit tout de suite ce qui manque
@@ -579,7 +576,6 @@ export function feuillePorteur(e: EcranDistrict): string {
   const places = DISTRICT.cartesMax - cartes.length;
   const dispo = parti ? '' : ` data-action="deck" data-id="${id}"`;
   h += `<section class="fp-bloc"><h3 class="fp-h3">${ICO.cartes}${tr`Ses cartes`} <span class="fp-compte${places ? '' : ' plein'}">${cartes.length} / ${DISTRICT.cartesMax}</span></h3>`
-    + jaugeCharge(chargePortee(j, id), chargeMax(j, id), tr`Ce que pèsent ses cartes sur ce qu’${IL.has(id) ? tr('il') : tr('elle')} peut porter : +${CHARGE.parNiveau} à chaque niveau.`, j.porteurs[id]!.modules)
     + `<div class="fp-cartes">${cartes.map((k) => { const cc = j.collection[k]!; const m = moduleDef(k);
       return `<button type="button" class="fp-carte" data-carte="${k}"${dispo}${parti ? ' disabled' : ''} aria-label="${tr`${echap(m.nom)}, niveau ${cc.niveau}. Changer ses cartes`}">${faceCarte(m, cc.niveau, multNiveau(k, cc.niveau))}</button>`; }).join('')}`
     + Array.from({ length: places }, () => `<button type="button" class="fp-place"${dispo}${parti ? ' disabled' : ''} aria-label="${tr`Place libre : lui confier une carte`}">${ICO.place}<span>${tr`Place libre`}</span></button>`).join('')

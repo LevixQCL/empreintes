@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  CREUSEURS, creuser, creuseursRequis, fouiller, gagnerCreuseurs, logementCreuseurs, manquePourCreuser, noyauRequis,
+  creuser, creuseursRequis, fouiller, gagnerCreuseurs, logementCreuseurs, manquePourCreuser, noyauRequis,
   nouveauJeu, remonter, partir, strateVaincue, type Jeu,
 } from '../src/core/jeu';
 
@@ -16,51 +16,37 @@ function vaincreGardien(j: Jeu) {
 }
 
 describe('Les creuseurs', () => {
-  it('chaque étage demande au moins autant de creuseurs que le précédent, et jamais plus que le logement maximum', () => {
-    for (let s = 2; s < 30; s++) expect(creuseursRequis(s)).toBeGreaterThanOrEqual(creuseursRequis(s - 1));
-    expect(creuseursRequis(60)).toBeLessThanOrEqual(CREUSEURS.logement[CREUSEURS.logement.length - 1]!);
-    expect(noyauRequis(10)).toBeGreaterThan(noyauRequis(5));
+  // 12 novembre 2026 (Bryan : « je roule sur tout le monde, mais je dois attendre mes creuseurs pour avancer ») :
+  // plus de verrou après le gardien. Les creuseurs restent dans l'histoire et se gagnent toujours, mais ne ferment plus de porte.
+  it('aucune Strate ne demande plus de creuseurs ni de niveau de Tour, même au Fond', () => {
+    for (let s = 1; s < 30; s++) expect(creuseursRequis(s)).toBe(0);
+    for (let s = 2; s < 30; s++) expect(noyauRequis(s)).toBe(1);
   });
 
-  it('dès la Strate −2, il faut des creuseurs : le gardien vaincu en amène un, il en faut un de plus (22 octobre 2026)', () => {
+  it('le gardien vaincu ouvre la Strate suivante, sans attendre', () => {
     const j = pret(1);
     const r = vaincreGardien(j);
-    expect(r.nouvelleStrate).toBe(false);
-    expect(j.frontVaincu).toBe(true);
-    expect(manquePourCreuser(j)).toEqual({ creuseurs: creuseursRequis(2) - CREUSEURS.gardien, noyau: 0 });
-    gagnerCreuseurs(j, creuseursRequis(2), 'test');
-    expect(creuser(j)).toBe(true);
+    expect(r.nouvelleStrate).toBe(true);
     expect(j.strate).toBe(2);
     expect(j.frontVaincu).toBe(false);
+    expect(manquePourCreuser(j)).toBeNull();
   });
 
-  it('plus bas, le gardien vaincu prépare l’étage, qui attend ses creuseurs puis consomme ceux qui le percent', () => {
-    const j = pret(5);
-    j.batiments.noyau = noyauRequis(6);
-    const r = vaincreGardien(j);
-    expect(r.nouvelleStrate).toBe(false);
-    expect(j.strate).toBe(5);
-    expect(j.frontVaincu).toBe(true);
-    expect(strateVaincue(j)).toBe(5);
-    expect(manquePourCreuser(j)!.creuseurs).toBeGreaterThan(0);
-    // on peut fouiller le front vaincu pour trouver des creuseurs
-    expect(fouiller(j, ['ilka', 'doran', 'vela'], 5, 'composants', 4).ok).toBe(true);
-    j.expedition = null;
-    gagnerCreuseurs(j, 20, 'test');
-    expect(j.creuseurs).toBe(logementCreuseurs(j));
-    const avant = j.creuseurs;
-    expect(creuser(j)).toBe(true);
-    expect(j.strate).toBe(6);
-    expect(j.creuseurs).toBe(avant - creuseursRequis(6));
-  });
-
-  it('sans un Noyau assez grand, les creuseurs ne sont pas logés et l’étage attend', () => {
+  it('plus bas aussi, avec une Tour au niveau 1 et sans un seul creuseur', () => {
     const j = pret(9);
-    j.frontVaincu = true;
-    j.batiments.noyau = 2;
+    j.batiments.noyau = 1;
+    j.creuseurs = 0;
+    const r = vaincreGardien(j);
+    expect(r.nouvelleStrate).toBe(true);
+    expect(j.strate).toBe(10);
+    expect(strateVaincue(j)).toBe(9);
+  });
+
+  it('on gagne toujours des creuseurs, logés par la Tour', () => {
+    const j = pret(5);
     gagnerCreuseurs(j, 50, 'test');
     expect(j.creuseurs).toBe(logementCreuseurs(j));
-    expect(manquePourCreuser(j)!.noyau).toBeGreaterThan(0);
     expect(creuser(j)).toBe(false);
+    expect(fouiller(j, ['ilka', 'doran', 'vela'], 4, 'composants', 4).ok).toBe(true);
   });
 });

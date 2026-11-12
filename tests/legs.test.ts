@@ -61,18 +61,20 @@ describe('L’Héritage du district', () => {
     expect(j.collection['voix-quartier@nacre']).toBeUndefined();
   });
 
-  it('scellée jusqu’à un Porteur de niveau 10, puis elle s’éveille avec lui (Porteur 13 : niveau 3 ; Porteur 16 : niveau 5)', () => {
+  it('scellée jusqu’à un Porteur de niveau 13, puis elle s’éveille avec lui (Porteur 16 : niveau 3 ; Porteur 19 : niveau 5)', () => {
     const j = nouveauJeu(0);
     j.chambre = true;
     choisirLegs(j, 'carapace-fondations');
     j.porteurs.doran!.modules = j.porteurs.doran!.modules.slice(0, 3);
     expect(greffer(j, 'carapace-fondations@nacre', 'doran').ok).toBe(false);
-    j.porteurs.doran!.xp = xpPour(10);
-    expect(greffer(j, 'carapace-fondations@nacre', 'doran').ok).toBe(true);
+    j.porteurs.doran!.xp = xpPour(12);
+    expect(greffer(j, 'carapace-fondations@nacre', 'doran').ok).toBe(false);
     j.porteurs.doran!.xp = xpPour(13);
+    expect(greffer(j, 'carapace-fondations@nacre', 'doran').ok).toBe(true);
+    j.porteurs.doran!.xp = xpPour(16);
     eveillerLegs(j);
     expect(j.collection['carapace-fondations@nacre']!.niveau).toBe(3);
-    j.porteurs.doran!.xp = xpPour(16);
+    j.porteurs.doran!.xp = xpPour(19);
     eveillerLegs(j);
     expect(j.collection['carapace-fondations@nacre']!.niveau).toBe(5);
   });
@@ -91,16 +93,18 @@ describe('L’Héritage du district', () => {
     expect(s.bouclier).toBe(10);
   });
 
-  it('la Clé de l’Héritage rejoint le paquetage quand un Porteur de l’escouade a le niveau 10', () => {
+  it('la Clé de l’Héritage rejoint le paquetage quand un Porteur de l’escouade a le niveau 13', () => {
     const j = nouveauJeu(0);
     j.chambre = true;
     expect(choisirLegs(j, 'cle').ok).toBe(true);
     const esc = ['ilka', 'doran', 'vela'];
     expect(cleDuLegs(j, esc)).toBeNull();
     expect(deckEscouade(j, esc).some((g) => g.id === 'cle-legs')).toBe(false);
-    j.porteurs.vela!.xp = xpPour(10);
+    j.porteurs.vela!.xp = xpPour(12);
+    expect(deckEscouade(j, esc).some((g) => g.id === 'cle-legs')).toBe(false);
+    j.porteurs.vela!.xp = xpPour(13);
     expect(deckEscouade(j, esc).some((g) => g.id === 'cle-legs')).toBe(true);
-    j.porteurs.vela!.xp = xpPour(16);
-    expect(cleDuLegs(j, esc)!.v).toBeGreaterThan(cleDuLegs({ ...j, porteurs: { ...j.porteurs, vela: { ...j.porteurs.vela!, xp: xpPour(10) } } }, esc)!.v);
+    j.porteurs.vela!.xp = xpPour(19);
+    expect(cleDuLegs(j, esc)!.v).toBeGreaterThan(cleDuLegs({ ...j, porteurs: { ...j.porteurs, vela: { ...j.porteurs.vela!, xp: xpPour(13) } } }, esc)!.v);
   });
 });

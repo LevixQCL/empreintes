@@ -153,7 +153,7 @@ describe('Une carte, cinq métaux', () => {
     ajouterCarte(j, 'jambes-ressort@or');
     expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@fer');
     const avant = j.porteurs.ilka!.modules.length;
-    j.porteurs.ilka!.xp = 900; // l'or demande un Porteur de niveau 7
+    j.porteurs.ilka!.xp = 1_000_000; // l'or demande un Porteur de niveau 9
     expect(greffer(j, 'jambes-ressort@or', 'ilka').ok).toBe(true);
     expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@or');
     expect(j.porteurs.ilka!.modules).not.toContain('jambes-ressort@fer');
@@ -163,7 +163,8 @@ describe('Une carte, cinq métaux', () => {
 
   it('les tirages donnent des cartes de tous les métaux d’origine dans chaque métal', () => {
     const e: EtatCollection = { collection: {}, sans: { argent: 0, or: 0, nacre: 0 }, rng: 11 };
-    const tirages = Array.from({ length: 600 }, () => tirerCarte(e, 12));
+    // 12 novembre 2026 : le fer est rare au Fond (5 %) ; on le cherche là où il domine, à la Strate −2
+    const tirages = [...Array.from({ length: 600 }, () => tirerCarte(e, 12)), ...Array.from({ length: 600 }, () => tirerCarte(e, 2))];
     expect(tirages.some((k) => k.startsWith('lames-orbitales@fer'))).toBe(true);
     expect(tirages.every((k) => /@(fer|cuivre|argent|or|nacre)$/.test(k))).toBe(true);
   });

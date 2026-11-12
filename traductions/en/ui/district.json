@@ -1154,16 +1154,8 @@
    "en": "Give to"
   },
   {
-   "fr": "Elle pèse",
-   "en": "It weighs"
-  },
-  {
-   "fr": "de Charge{0}.",
-   "en": "Load{0}."
-  },
-  {
-   "fr": "et demande un Porteur de",
-   "en": "and needs a Bearer of"
+   "fr": "Elle demande un Porteur de",
+   "en": "It needs a Bearer of"
   },
   {
    "fr": "Touche son portrait pour la reprendre, ou un autre Porteur pour la lui passer.",
@@ -1534,26 +1526,6 @@
    "en": "Epithets: rare feats, like landing the final blow on a Guardian."
   },
   {
-   "fr": "Pèse {0} de Charge",
-   "en": "Weighs {0} Load"
-  },
-  {
-   "fr": "{0} de trop",
-   "en": "{0} too many"
-  },
-  {
-   "fr": "Plein",
-   "en": "Full"
-  },
-  {
-   "fr": "Charge : {0} sur {1}, {2}",
-   "en": "Load: {0} of {1}, {2}"
-  },
-  {
-   "fr": "Trop lourd : reprends-lui une carte avant de descendre. ",
-   "en": "Too heavy: take a card back before going down. "
-  },
-  {
    "fr": "{0}, {1}, niveau {2}, pèse {3}",
    "en": "{0}, {1}, level {2}, weighs {3}"
   },
@@ -1572,10 +1544,6 @@
   {
    "fr": "{0} est en expédition : ses cartes changeront à son retour.",
    "en": "{0} is on an expedition: their cards will change when they’re back."
-  },
-  {
-   "fr": "Chaque carte pèse selon sa force. {0} porte plus lourd en montant de niveau (+{1} par niveau). Une place laissée vide se pioche et ne se joue pas.",
-   "en": "Each card weighs according to its power. {0} carries more as they level up (+{1} per level). An empty slot is drawn but can’t be played."
   },
   {
    "fr": "Ce que {0} porte",
@@ -2564,6 +2532,54 @@
   {
    "fr": "{0} rangée{1} · {2}",
    "en": "{0} row{1} · {2}"
+  },
+  {
+   "fr": "Prêt",
+   "en": "Ready"
+  },
+  {
+   "fr": "Jouable",
+   "en": "Playable"
+  },
+  {
+   "fr": "{0} {1} : la Clinique soigne l’Usure.",
+   "en": "{0} {1}: the Clinic heals Strain."
+  },
+  {
+   "fr": "sont fatigués",
+   "en": "are tired"
+  },
+  {
+   "fr": "est fatigué",
+   "en": "is tired"
+  },
+  {
+   "fr": "{0} carte{1} de l’escouade {2} monter d’un niveau.",
+   "en": "{0} squad card{1} {2} go up a level."
+  },
+  {
+   "fr": "peuvent",
+   "en": "can"
+  },
+  {
+   "fr": "peut",
+   "en": "can"
+  },
+  {
+   "fr": "Une fouille dans la Strate −{0} rapporte des cartes et des doublons.",
+   "en": "A dig in Stratum −{0} brings back cards and duplicates."
+  },
+  {
+   "fr": "Force de l’escouade : {0} sur {1} conseillés, {2}",
+   "en": "Squad strength: {0} out of {1} recommended, {2}"
+  },
+  {
+   "fr": "sur",
+   "en": "out of"
+  },
+  {
+   "fr": "conseillés pour la Strate −{0}",
+   "en": "recommended for Stratum −{0}"
   },
   {
    "fr": "FLÈCHE · DÉFI DU QUAI {0}",

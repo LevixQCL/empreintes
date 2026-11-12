@@ -155,13 +155,11 @@ describe('Audit du 7 novembre : économie', () => {
     expect(pvMaxCombat(j, 'doran')).toBeGreaterThan(avant * 1.1);
   });
 
-  it('les fouilles profondes ramènent plus de creuseurs, et le Noyau freine encore à −10', () => {
+  it('les fouilles profondes ramènent plus de creuseurs, et la Tour ne retient plus aucune Strate', () => {
     expect(chanceCreuseurFouille(5)).toBe(CREUSEURS.fouille);
     expect(chanceCreuseurFouille(6)).toBeGreaterThan(CREUSEURS.fouille);
-    // 8 novembre 2026 : Noyau 8 pour −9, 9 pour −10 (avant 7 : atteint au jour 10, il ne freinait plus rien)
-    expect(noyauRequis(9)).toBe(8);
-    expect(noyauRequis(10)).toBe(9);
-    for (let s = 3; s <= 10; s++) expect(noyauRequis(s)).toBeGreaterThanOrEqual(noyauRequis(s - 1));
+    // 12 novembre 2026 : plus de verrou après le gardien (avant : Noyau 8 pour −9, 9 pour −10)
+    for (let s = 2; s <= 15; s++) expect(noyauRequis(s)).toBe(1);
   });
 
   it('les Épreuves s’allègent à partir de −4', () => {
@@ -177,10 +175,13 @@ describe('Audit du 7 novembre : économie', () => {
   let parties: ReturnType<typeof simulerParcours>[] | null = null;
   const jouees = () => (parties ??= Array.from({ length: 32 }, (_, i) => simulerParcours(PROFILS.occasionnel, 40, 1000 + i * 7919, { joueur: 'moyen', jusqua: 10 })));
 
-  it('un joueur occasionnel ouvre la Strate −10 entre le jour 27 et le jour 32', () => {
+  // 12 novembre 2026 (révision complète, Bryan : « tu ne dois pas te fixer jour 30, le jeu doit durer mais ça ne doit pas être
+  // un objectif à tout prix ») : sans verrou, avec le métal par tranche et des ennemis réglés Strate par Strate, le joueur qui
+  // tente le front à chaque session ouvre −10 au jour 14 (médiane de ces 32 parties ; avant : le jour 32, tenu par la défaite).
+  it('un joueur occasionnel qui fonce ouvre la Strate −10 entre le jour 10 et le jour 18', () => {
     const d = mediane(jouees().map((r) => r.ouverture[10] ?? Infinity));
-    expect(d).toBeGreaterThanOrEqual(27);
-    expect(d).toBeLessThanOrEqual(32);
+    expect(d).toBeGreaterThanOrEqual(10);
+    expect(d).toBeLessThanOrEqual(18);
   }, 300_000);
 
   // 11 novembre 2026 (audit du 10 : « le jour 30 est tenu, mais par la défaite », et aucun test ne surveillait le taux de victoire).
@@ -188,9 +189,10 @@ describe('Audit du 7 novembre : économie', () => {
   // se gagnait de moins en moins souvent sans que rien ne le signale. Mesuré ce jour-là sur ces 32 parties, jusqu'à l'ouverture
   // de −10 : 26 % (19 % sur 50 jours, gardien de −10 compris). Le plancher est là pour que ça ne baisse plus ; la cible reste
   // « environ une victoire sur trois » : le relever quand FORCE.table sera réglée (`npm run front` donne les chiffres).
-  it('au front, le joueur occasionnel gagne au moins une expédition sur cinq', () => {
+  // 12 novembre 2026, révision complète : 41 % sur ces 32 parties (avant 26 %). Le plancher suit.
+  it('au front, le joueur occasionnel gagne au moins une expédition sur trois', () => {
     const t = jouees().reduce((n, r) => n + r.front.tentatives, 0), v = jouees().reduce((n, r) => n + r.front.victoires, 0);
-    expect(v / t).toBeGreaterThanOrEqual(0.22);
+    expect(v / t).toBeGreaterThanOrEqual(0.34);
   }, 300_000);
 });
 

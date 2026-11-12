@@ -2,8 +2,8 @@
  "source": "src/core/partie/recompenses.ts",
  "entrees": [
   {
-   "fr": "Lecture des Chroniques : {0} (Fer){1}.",
-   "en": "Reading the Chronicles: {0} (Iron){1}."
+   "fr": "Lecture des Chroniques : {0} ({1}){2}.",
+   "en": "Reading the Chronicles: {0} ({1}){2}."
   },
   {
    "fr": ", un doublon",

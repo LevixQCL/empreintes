@@ -16,10 +16,10 @@ import {
   COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, gardienPourTour, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, plafondEntrainement, raffinageParHeure, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
-import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, carteNiveau, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
+import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, carteNiveau, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
-import { DIFFICULTES_FOUILLE, type DifficulteFouille } from '../core/jeu';
+import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront } from '../core/jeu';
 import { FAMILLES, FRAGMENTS } from '../core/fragments';
 import { CONFIANCE, CERCLE, CERCLE_OUVERTURE, cercleOuvert, echangesParJour, metalMax, ouvertesMax, vitrineMax, niveauConfiance, nbFoyers, bassesOuvertes, bulleBasses } from '../core/jeu';
 import { feuilleBasses } from './basses';
@@ -1213,7 +1213,7 @@ export function feuilleCarte(e: EcranDistrict): string {
     + (loreCarte(cle) ? `<blockquote class="lore-carte">${echap(loreCarte(cle)!)}</blockquote>` : '')
     + `<p class="rang-carte"><b style="color:${COULEUR_RARETE[m.rarete]}">${RANG_METAL[m.rarete].rang}</b> · ${echap(RANG_METAL[m.rarete].texte)}</p>`;
   // à qui la confier : la décision la plus fréquente, donc juste sous la carte
-  h += `<section class="bloc fc-confier"><h3 class="titre-bloc">${ICO.greffe}${porte ? tr`Portée par ${echap(porteurDef(porte).nom)}` : tr('Confier à')}</h3><p class="fc-aide">${tr`Elle pèse`} <b class="fc-poids">${poidsCarte(cle)}</b> ${tr`de Charge${niveauRequis(cle) > 1 ? ` ${tr`et demande un Porteur de`} <b>${tr`niveau ${niveauRequis(cle)}`}</b>` : ''}.`} ${porte ? tr('Touche son portrait pour la reprendre, ou un autre Porteur pour la lui passer.') : tr`Elle entrera dans ton deck quand ce Porteur descendra (${DISTRICT.cartesMax} cartes au plus, de sa lignée).`}</p><div class="fc-porteurs">`
+  h += `<section class="bloc fc-confier"><h3 class="titre-bloc">${ICO.greffe}${porte ? tr`Portée par ${echap(porteurDef(porte).nom)}` : tr('Confier à')}</h3><p class="fc-aide">${niveauRequis(cle) > 1 ? `${tr`Elle demande un Porteur de`} <b>${tr`niveau ${niveauRequis(cle)}`}</b>. ` : ''}${porte ? tr('Touche son portrait pour la reprendre, ou un autre Porteur pour la lui passer.') : tr`Elle entrera dans ton deck quand ce Porteur descendra (${DISTRICT.cartesMax} cartes au plus, de sa lignée).`}</p><div class="fc-porteurs">`
     + porteurs.map((p) => {
       const ici = porte === p.id;
       const n = j.porteurs[p.id]!.modules.length;
@@ -1441,33 +1441,9 @@ function blocEmpreinte(j: Jeu, cle: string): string {
 
 
 /** Le poids d'une carte, en pastille de glace sur sa tuile */
-export const pastillePoids = (cle: string) => `<span class="poids-carte" title="${tr`Pèse ${poidsCarte(cle)} de Charge`}" aria-hidden="true">${poidsCarte(cle)}</span>`;
+// 12 novembre 2026 : la Charge ne limite plus le deck, les tuiles n'affichent plus le poids des cartes
+export const pastillePoids = (_cle: string) => '';
 
-/** La jauge de Charge d'un Porteur : ce que pèsent ses cartes sur ce qu'il peut porter */
-/**
- * La Charge (refaite le 3 novembre 2026) : une barre de glace où chaque carte portée est un éclat à sa taille,
- * de la couleur de son action (attaque, bouclier, soin) ; la marge restante reste en verre vide.
- * On voit d'un coup d'œil quelle carte pèse lourd, sans compter de petits crans.
- */
-export function jaugeCharge(portee: number, max: number, aide?: string, cartes: string[] = []): string {
-  const trop = portee > max;
-  const base = Math.max(1, max, portee);
-  const reste = max - portee;
-  const eclats = cartes.length
-    ? cartes.map((k) => {
-      const m = moduleDef(k);
-      return `<i class="ch-eclat ch-${m.type}" style="flex-grow:${poidsCarte(k)}" title="${echap(m.nom)} : ${poidsCarte(k)}"></i>`;
-    }).join('')
-    : `<i class="ch-eclat ch-atk" style="flex-grow:${portee}"></i>`;
-  const marge = reste > 0 ? `<i class="ch-marge" style="flex-grow:${reste}"></i>` : '';
-  const seuil = trop ? `<b class="ch-seuil" style="left:${(100 * max) / base}%"></b>` : '';
-  const etat = trop ? tr`${portee - max} de trop` : reste === 0 ? tr('Plein') : `${reste} libre${reste > 1 ? 's' : ''}`;
-  return `<div class="charge${trop ? ' trop' : reste === 0 ? ' plein' : ''}" role="group" aria-label="${tr`Charge : ${portee} sur ${max}, ${etat}`}">`
-    + `<span class="charge-nom">${ICO.cristal}${tr`Charge`}<small>${etat}</small></span>`
-    + `<b class="charge-val">${portee}<small> / ${max}</small></b>`
-    + `<span class="charge-rail" aria-hidden="true">${eclats}${marge}${seuil}</span>`
-    + (aide ? `<p class="charge-aide">${trop ? tr`Trop lourd : reprends-lui une carte avant de descendre. ` : ''}${aide}</p>` : '') + `</div>`;
-}
 
 /** La feuille d'un Porteur : les cartes qu'il porte (touche pour reprendre), puis celles qu'on peut lui confier */
 export function feuilleDeck(e: EcranDistrict): string {
@@ -1504,7 +1480,7 @@ export function feuilleDeck(e: EcranDistrict): string {
     + `<button type="button" class="btn-icone" data-action="guide" data-id="deck" aria-label="${tr`Comment construire son deck`}">${ICO.aide}</button>`
     + `<button type="button" class="btn-icone" data-action="deck-fermer" aria-label="${tr`Fermer`}">${ICO.fermer}</button></header><div class="feuille-corps">`;
   if (parti) h += `<p class="aide">${tr`${echap(p.nom)} est en expédition : ses cartes changeront à son retour.`}</p>`;
-  h += jaugeCharge(portee, max, tr`Chaque carte pèse selon sa force. ${echap(p.nom)} porte plus lourd en montant de niveau (+${CHARGE.parNiveau} par niveau). Une place laissée vide se pioche et ne se joue pas.`, porte);
+  // 12 novembre 2026 : la Charge ne limite plus le deck (les places et le niveau demandé par le métal suffisent) : plus de jauge
   // le tri, en tête : il range les deux listes de la feuille
   h += choixTri(tri);
   h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}${tr`Ce que ${echap(p.nom)} porte`}</h3><p class="aide">${tr`Ces cartes entrent dans ton deck quand ${echap(p.nom)} descend. Touche une carte pour l’échanger ou la reprendre.`}</p>`;
@@ -2242,6 +2218,29 @@ function tuileNiveau(n: DifficulteFouille, choisi: DifficulteFouille, cible: Cib
     + `${n === 'facile' ? ICO.soin : n === 'normale' ? ICO.strate : ICO.boost}<strong>${d.nom}</strong><small>${tr`${salles} rangée${salles > 1 ? 's' : ''} · ${force}`}</small><small class="es-tuile-filon">${filon}</small></button>`;
 }
 
+/**
+ * Prêt à descendre ? (12 novembre 2026, Bryan : la progression vient de la force du deck, et le joueur doit voir quand il est prêt.)
+ * La force de l'escouade sur la force conseillée de la Strate (la même échelle que les pillages et la Flèche, ×100), un état en
+ * trois mots, et ce qui la renforcerait tout de suite. Rien n'est interdit : on peut toujours tenter.
+ */
+function blocForce(j: Jeu, escouade: string[], strate: number): string {
+  const p = pretAuFront(j, escouade, strate);
+  const f = Math.round(p.force * 100), c = Math.round(p.conseillee * 100);
+  const nom = p.etat === 'pret' ? tr('Prêt') : p.etat === 'jouable' ? tr('Jouable') : tr('Risqué');
+  const conseils: string[] = [];
+  if (p.etat !== 'pret') {
+    if (p.fatigues.length) conseils.push(tr`${p.fatigues.map((id) => echap(porteurDef(id).nom)).join(', ')} ${p.fatigues.length > 1 ? tr('sont fatigués') : tr('est fatigué')} : la Clinique soigne l’Usure.`);
+    if (p.aMonter.length) conseils.push(tr`${p.aMonter.length} carte${p.aMonter.length > 1 ? 's' : ''} de l’escouade ${p.aMonter.length > 1 ? tr('peuvent') : tr('peut')} monter d’un niveau.`);
+    if (strate > 1) conseils.push(tr`Une fouille dans la Strate −${strate - 1} rapporte des cartes et des doublons.`);
+  }
+  return `<section class="es-force es-force-${p.etat}" aria-label="${tr`Force de l’escouade : ${f} sur ${c} conseillés, ${nom}`}">`
+    + `<div class="es-force-tete"><span class="surtitre">${tr`Force de l’escouade`}</span><b class="es-force-etat">${nom}</b></div>`
+    + `<div class="es-force-jauge" aria-hidden="true"><i style="width:${Math.min(100, Math.round((100 * f) / Math.max(1, c)))}%"></i></div>`
+    + `<p class="es-force-chiffres"><b>${f}</b> ${tr`sur`} <b>${c}</b> ${tr`conseillés pour la Strate −${strate}`}</p>`
+    + (conseils.length ? `<ul class="es-force-conseils">${conseils.map((x) => `<li>${x}</li>`).join('')}</ul>` : '')
+    + `</section>`;
+}
+
 export function htmlEscouade(e: EcranDistrict): string {
   const j = e.j;
   const ep = e.epreuve ? epreuveDef(e.epreuve) ?? null : null;
@@ -2357,6 +2356,9 @@ export function htmlEscouade(e: EcranDistrict): string {
       + (posteQuitte(j, id) ? `<span class="es-quitte">${ICO.ouvrier}<span>${echap(textePosteQuitte(j, id)!)}</span></span>` : '')
       + `</div>`;
   }).join('') + `</section>`;
+
+  // la force de l'escouade face à la Strate (12 novembre 2026) : on voit avant de partir si on est prêt, et quoi faire sinon
+  if (!ep && !fouille && !fl && !pi && e.escouade.length === 3) h += blocForce(j, e.escouade, e.strateChoisie);
 
   // 3. ce que donne leur deck
   const maigre = e.escouade.length === 3 && deck < deckMin;

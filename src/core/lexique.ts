@@ -3,7 +3,6 @@
 // et le glossaire du mode d'emploi. Une règle qui change se corrige ici, et partout à la fois.
 // Aucun affichage ici : seulement des noms, des textes et des motifs pour les reconnaître.
 
-import { CHARGE } from './collection';
 import { CONDITIONS, METAL_FREQ } from './donnees';
 import { REGLES, pctEcho } from './regles';
 import { langue, t, pourCent } from './i18n';
@@ -93,7 +92,8 @@ export const LEXIQUE: Record<string, Terme> = {
   force: { nom: t('Force'), theme: 'cartes', texte: t('Le chiffre dans le socle en bas à droite de la carte : ses dégâts (étoile rouge), son bouclier (écu bleu) ou son soin (fleur émeraude), sa valeur de base. En combat, la carte affiche le chiffre final, tous bonus et malus compris.') },
   metal: { nom: t('Métal'), theme: 'cartes', mots: mot('métal'), texte: t`La rareté d’une carte : fer, cuivre, argent, or, nacre. En fer, une carte n’a pas d’effet ; il s’ouvre en cuivre et se renforce en or et en nacre. Une carte a ${METAL_FREQ.argent} Fréquences en argent et en or, ${METAL_FREQ.nacre} en nacre. Une carte se trouve directement dans son métal.` },
   doublon: { nom: t('Doublon'), theme: 'cartes', mots: /doublons?/, texte: t('Un exemplaire de plus d’une carte que tu as déjà. Les doublons font monter la carte de niveau ; ceux en trop se recyclent en minerai.') },
-  charge: { nom: t('§poids§Charge'), theme: 'cartes', mots: mot('Charge'), texte: t`Le poids d’une carte confiée à un Porteur : sa puissance (force, effet, deux places, Fréquences) divisée par ${CHARGE.diviseur} (1 au moins). Un Porteur porte ${CHARGE.base} de Charge au niveau 1, et ${CHARGE.parNiveau} de plus à chaque niveau.` },
+  // 12 novembre 2026 : la Charge ne limite plus le deck ; à sa place, la force de l'escouade, affichée avant de descendre
+  forceEscouade: { nom: t('Force de l’escouade'), theme: 'cartes', mots: mot('Force de l’escouade'), texte: t`Ce que valent ensemble les cartes et les PV des trois Porteurs, Usure comprise. Avant de descendre, elle est comparée à la force conseillée de la Strate : Prêt, Jouable ou Risqué. Rien n’est interdit, mais une escouade prête gagne son front environ une fois sur deux.` },
   porteur: { nom: t('Porteur'), theme: 'cartes', mots: mot('Porteurs?'), texte: t('Un des personnages qui descendent pour toi. Chacun a une lignée et porte des cartes de sa lignée : ensemble, les cartes de ton escouade forment ton deck.') },
   escouade: { nom: t('Escouade'), theme: 'cartes', mots: mot('escouade'), texte: t('Les trois Porteurs qui descendent ensemble. On ne la change qu’au district, jamais pendant une descente.') },
   augmentes: { nom: t('Augmentés'), theme: 'cartes', mots: mot('Augmentée?s?'), texte: t('La lignée qui frappe : de grosses attaques. Une carte Augmentée qui termine une suite de 3 ou plus frappe encore plus fort (Finisseur). Ils battent les Résonants.') },

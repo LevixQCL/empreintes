@@ -89,9 +89,10 @@ export interface GainNiveau {
 export function profondeurNoyau(niveau: number): number {
   const max = CREUSEURS.logement[CREUSEURS.logement.length - 1]!;
   if ((CREUSEURS.logement[niveau] ?? max) >= max) return Infinity;
+  // 12 novembre 2026 : sans verrou, aucune Strate ne demande plus de niveau de Tour ; la boucle ne s'arrêtait plus (jeu figé)
   let s = 1;
-  while (noyauRequis(s + 1) <= niveau) s++;
-  return s;
+  while (s < 200 && noyauRequis(s + 1) <= niveau) s++;
+  return s >= 200 ? Infinity : s;
 }
 
 /**
@@ -134,9 +135,10 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
     if (niv + 1 === CERCLE.orAuNiveau) g.push({ quoi: 'or', texte: tr('Les cartes en or s’échangent'), detail: tr('la nacre, jamais') });
   }
   if (b === 'noyau') {
+    // 12 novembre 2026 : les creuseurs ne ferment plus de porte ; leur logement n'est annoncé que s'il limite encore une profondeur
     const prof = profondeurNoyau(niv + 1);
-    g.push({ quoi: 'creuseurs', texte: tr('Creuseurs logés'), avant: logementCreuseurs(j), apres: logementCreuseurs(apres),
-      detail: prof === Infinity ? tr('plus aucune limite de profondeur') : tr`de quoi creuser jusqu’à la Strate −${prof}` });
+    if (prof !== Infinity) g.push({ quoi: 'creuseurs', texte: tr('Creuseurs logés'), avant: logementCreuseurs(j), apres: logementCreuseurs(apres),
+      detail: tr`de quoi creuser jusqu’à la Strate −${prof}` });
     const manque = manquePourCreuser(j);
     if (manque && manque.creuseurs === 0 && noyauRequis(j.strate + 1) === niv + 1) g.push({ quoi: 'strate', texte: tr`Ouvre la Strate −${j.strate + 1}`, detail: tr('les creuseurs attendent déjà la place') });
     g.push({ quoi: 'plafond', texte: tr('Niveau max. des autres bâtiments'), avant: niv, apres: niv + 1 });

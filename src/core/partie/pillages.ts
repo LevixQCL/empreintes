@@ -8,8 +8,8 @@
 
 import { porteurDef } from '../donnees';
 import { creerCombat } from '../combat';
-import { puissanceCarte } from '../collection';
-import { nouvelleExpedition } from '../expedition';
+import { doublonsRequis, puissanceCarte } from '../collection';
+import { forceStrate, nouvelleExpedition } from '../expedition';
 
 /** Un combat de référence pour les pillages : 6 composants × (1 + 0,25 × (Strate − 1)). Gardé tel quel quand les combats des Strates
  *  sont passés à 8 (30 octobre 2026), pour ne pas changer l'équilibre des pillages */
@@ -446,4 +446,35 @@ export function remonter(j: Jeu): Retour {
   if (!j.expedition?.pillage) return remonterDescente(j);
   const p = remonterPillage(j, j.dernierTick)!;
   return { butin: p.gain, nouvelleStrate: false, victoire: p.victoire, fragment: null, cartes: [], eclats: 0, pillage: p };
+}
+
+// ---------- Prêt à descendre ? (12 novembre 2026, révision complète) ----------
+// Bryan : la progression doit venir de la force du deck qui grandit, et le joueur doit voir quand il est prêt, au lieu de
+// perdre quatre fois sur cinq sans savoir pourquoi. La force conseillée d'une Strate est celle où le joueur moyen gagne son
+// front une fois sur deux (mesurée sur 32 parties, `npx tsx scripts/puissance.ts`) : environ 2,2 fois la force de ses ennemis,
+// plus pour les gardiens de −4 et de −10. Même échelle que les pillages et la Flèche, Usure comprise : une escouade fatiguée
+// le voit aussi.
+export const CONSEIL = {
+  ratio: 2.2,
+  strates: { 4: 5.3, 10: 7.5 } as Record<number, number>,
+  /** en dessous de cette part de la force conseillée, le front est « risqué » ; entre les deux, « jouable » */
+  jouable: 0.85,
+  /** un Porteur est « fatigué » quand l'Usure lui a pris cette part de ses PV */
+  fatigue: 0.2,
+} as const;
+export const forceConseillee = (strate: number): number => CONSEIL.strates[strate] ?? Math.round(CONSEIL.ratio * forceStrate(strate) * 10) / 10;
+export type EtatFront = 'risque' | 'jouable' | 'pret';
+
+/** L'escouade est-elle prête pour cette Strate ? Sa force, la force conseillée, et ce qui la renforcerait tout de suite */
+export function pretAuFront(j: Jeu, escouade: string[], strate: number): { force: number; conseillee: number; etat: EtatFront; aMonter: string[]; fatigues: string[] } {
+  const force = Math.round(forceEscouade(j, escouade) * 10) / 10, conseillee = forceConseillee(strate);
+  const etat: EtatFront = force >= conseillee ? 'pret' : force >= CONSEIL.jouable * conseillee ? 'jouable' : 'risque';
+  // les cartes de l'escouade qui ont déjà leurs doublons : un niveau à prendre avant de partir
+  const aMonter = [...new Set(escouade.flatMap((id) => j.porteurs[id]?.modules ?? []))].filter((k) => {
+    const c = j.collection[k];
+    const requis = c ? doublonsRequis(k, c.niveau) : null;
+    return !!c && requis !== null && c.doublons >= requis;
+  });
+  const fatigues = escouade.filter((id) => (j.porteurs[id]?.usure ?? 0) >= CONSEIL.fatigue * (pvNiveau(j, id) + bonusPv(j, id)));
+  return { force, conseillee, etat, aMonter, fatigues };
 }

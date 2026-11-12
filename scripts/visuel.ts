@@ -51,6 +51,8 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   // un étage fin déplié d'un toucher (10 novembre 2026)
   { nom: 'tour-etage-ouvert', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); await p.waitForTimeout(300); await p.$eval('.tr-strates ol', (e) => { e.scrollIntoView({ block: 'start' }); document.scrollingElement?.scrollBy(0, -150); }); await p.click('.tr-deplier[data-strate="2"]').catch(() => {}); await p.waitForTimeout(300); } },
   { nom: 'porteurs', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); } },
+  // la ligne « cartes · Gérer » d'un Porteur de l'escouade, sous le premier écran (12 novembre 2026 : plus de jauge de Charge)
+  { nom: 'escouade-cartes', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.$eval('.eq-cartes-tete', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
   { nom: 'deck-echange', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('.eq-gerer'); await p.click('.deck-porteur [data-action="dk-porte"]'); } },
   { nom: 'cartes', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('.seg[data-action="cartes"]'); } },
   // la fiche d'une carte vétérane : son empreinte, ses épithètes, son journal (28 octobre 2026)

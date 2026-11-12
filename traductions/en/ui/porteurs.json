@@ -206,10 +206,6 @@
    "en": "Pick a Bearer: they bring their cards to the deck"
   },
   {
-   "fr": "Trop lourd : {0} de Charge sur {1}. Reprends-lui une carte pour qu’il descende.",
-   "en": "Too heavy: {0} of {1} Load. Take a card back so they can go down."
-  },
-  {
    "fr": "{0} : {1} ne pourra pas descendre.",
    "en": "{0}: {1} won’t be able to go down."
   },
@@ -620,10 +616,6 @@
   {
    "fr": "Ses cartes",
    "en": "Their cards"
-  },
-  {
-   "fr": "Ce que pèsent ses cartes sur ce qu’{0} peut porter : +{1} à chaque niveau.",
-   "en": "What the cards weigh against what {0} can carry: +{1} per level."
   },
   {
    "fr": "{0}, niveau {1}. Changer ses cartes",
