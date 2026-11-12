@@ -10,8 +10,16 @@
    "en": "Send"
   },
   {
+   "fr": "{0} : {1} familles secourues sur {2}",
+   "en": ""
+  },
+  {
    "fr": "Famille à secourir",
    "en": "Family to rescue"
+  },
+  {
+   "fr": "En mer · {0}",
+   "en": ""
   },
   {
    "fr": "{0} est parti secourir une famille",
@@ -22,12 +30,28 @@
    "en": "Every family within reach of a boat is home. Others wait further down the Dike slope: defeat the guardian of Stratum −{0}."
   },
   {
-   "fr": "{0} · {1} h · la famille, du minerai et de l’XP",
-   "en": "{0} · {1} h · the family, some ore and XP"
+   "fr": "{0} h",
+   "en": ""
   },
   {
-   "fr": "Derrière la digue, des familles vivent encore dans les quartiers noyés. Un Porteur libre va en chercher une et la ramène au district : elle te suit désormais.",
-   "en": "Behind the Dike, families still live in the drowned quarters. A free Bearer fetches one and brings it back to the district: it follows you from then on."
+   "fr": "la famille",
+   "en": ""
+  },
+  {
+   "fr": "XP",
+   "en": ""
+  },
+  {
+   "fr": "{0} · flanc de la digue",
+   "en": ""
+  },
+  {
+   "fr": "Choisis qui y va",
+   "en": ""
+  },
+  {
+   "fr": "Envoyer un Porteur",
+   "en": ""
   }
  ]
 }

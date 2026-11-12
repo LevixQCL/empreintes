@@ -4,7 +4,7 @@
 // Les règles sont dans src/core/partie/pillages.ts.
 
 import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, difficulte, escouadeActive, escouadeDefense, escouadesDe, etatPillage, forceEscouade, majJetons, MISSIONS, barquesMax, MAREES, bulleBasses, contratsDuMoment, mareesDe, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
-import { ageArchipel, vignetteArchipel, vignetteDistrict, visuel } from './art';
+import { ageArchipel, merLarge, vignetteArchipel, vignetteDistrict, visuel } from './art';
 import { avatar, avatarGarde, gardesGarnison, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
 import { ICO, icone } from './icones';
@@ -25,7 +25,8 @@ export function htmlPillages(e: EcranDistrict): string {
   // la présentation (28 octobre 2026) : Port fermé, première visite, ou rouverte par le « ? »
   const pres = !portOuvert(j) ? 'fermee' : !j.portVu ? 'premiere' : e.portAide ? 'aide' : null;
   const aide = pres ? '' : `<button type="button" class="btn-icone" data-action="port-aide" aria-label="${t`Comment marche le Port`}">${ICO.aide}</button>`;
-  let h = entete(t('La mer des piliers'), t('Le Port'), aide);
+  // le bandeau peint (12 novembre 2026, Bryan : « rendre ceci beaucoup plus visuel ») : la mer des piliers derrière le titre
+  let h = entete(t('La mer des piliers'), t('Le Port'), aide).replace('<header class="entete">', `<header class="entete pl-bandeau" style="--decor:url(${merLarge})">`);
   if (pres) return coquille(e, h + presentation(pres, pillagesOuverts(j)), 'pl pl-pres');
 
   // deux volets : les pillages et les missions en mer
@@ -33,16 +34,19 @@ export function htmlPillages(e: EcranDistrict): string {
   const volet = e.voletPort ?? (pillOk ? 'pillages' : 'missions');
   const enMer = j.missions.length;
   majJetons(j, e.now);
-  const seg = (id: 'pillages' | 'missions' | 'marees', nom: string, plus: string) =>
-    `<button type="button" role="tab" class="seg${volet === id ? ' actif' : ''}" data-action="port-volet" data-id="${id}" aria-selected="${volet === id}">${nom}<small>${plus}</small></button>`;
+  // chaque volet a son icône, et un point d'or quand quelque chose l'attend (12 novembre 2026)
+  const ICO_VOLET = { pillages: ICO.grappin, missions: ICO.porteurs, marees: ICO.flux } as const;
+  const seg = (id: 'pillages' | 'missions' | 'marees', nom: string, plus: string, attend = false) =>
+    `<button type="button" role="tab" class="seg${volet === id ? ' actif' : ''}${attend ? ' attend' : ''}" data-action="port-volet" data-id="${id}" aria-selected="${volet === id}">`
+    + `<span class="pl-seg-nom">${ICO_VOLET[id]}${nom}</span><small>${plus}</small></button>`;
   // les contrats de marée (31 octobre 2026) : un troisième volet ; le compte des contrats encore à remplir
   const marees = contratsDuMoment(j, e.now);
   const aRemplir = marees.filter((c) => c.ouvert && !c.reussi).length;
   const gabare = mareesDe(j).contrat;
   h += `<div class="segments-choix trois pl-volets" role="tablist" aria-label="${t`Pillages, missions en mer ou contrats de marée`}">`
-    + seg('pillages', t('Pillages'), pillOk ? t`${etatPillage(j).jetons} / ${PILLAGE.jetonsMax} jetons` : t`dès la Strate −${PILLAGE.strateMin}`)
-    + seg('missions', t('Missions'), bulleBasses(j, e.now).aFaire ? t('une famille attend') : t`${enMer} / ${barquesMax(j)} en mer`)
-    + seg('marees', t('Marées'), gabare ? t('gabare en mer') : marees.some((c) => c.ouvert) ? t`${aRemplir} à remplir` : t`dès la Strate −${MAREES.montante.strate}`) + `</div>`;
+    + seg('pillages', t('Pillages'), pillOk ? t`${etatPillage(j).jetons} / ${PILLAGE.jetonsMax} jetons` : t`dès la Strate −${PILLAGE.strateMin}`, pillOk && etatPillage(j).jetons >= PILLAGE.jetonsMax)
+    + seg('missions', t('Missions'), bulleBasses(j, e.now).aFaire ? t('une famille attend') : t`${enMer} / ${barquesMax(j)} en mer`, bulleBasses(j, e.now).aFaire)
+    + seg('marees', t('Marées'), gabare ? t('gabare en mer') : marees.some((c) => c.ouvert) ? t`${aRemplir} à remplir` : t`dès la Strate −${MAREES.montante.strate}`, !gabare && aRemplir > 0) + `</div>`;
   if (volet === 'missions') return coquille(e, h + htmlMissions(e), 'pl');
   if (volet === 'marees') return coquille(e, h + htmlMarees(e), 'pl');
   // pas encore de pillages : la raison, tirée du district, plutôt qu'une carte grisée

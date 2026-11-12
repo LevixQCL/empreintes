@@ -98,6 +98,9 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'port-marees-bas', sauvegarde: 'marees', faire: async (p) => { await ENTRER(p); await p.$eval('.onglet[data-action="pillages"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('[data-action="port-volet"][data-id="marees"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('.mr-depart', (e) => e.scrollIntoView({ block: 'end' })); } },
   { nom: 'port-marees-choix', sauvegarde: 'marees', faire: async (p) => { await ENTRER(p); await p.$eval('.onglet[data-action="pillages"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('[data-action="port-volet"][data-id="marees"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.click('.mr-poste >> nth=1'); await p.waitForTimeout(200); await p.$eval('.mr-choix', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'port-marees-mer', sauvegarde: 'mareesMer', faire: async (p) => { await ENTRER(p); await p.$eval('.onglet[data-action="pillages"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('[data-action="port-volet"][data-id="marees"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); } },
+  // la famille à secourir en carte illustrée (12 novembre 2026), fermée puis le choix du Porteur déplié
+  { nom: 'port-secours', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('.sc-bloc', (e) => e.scrollIntoView({ block: 'center' })); } },
+  { nom: 'port-secours-ouvert', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.click('.sc-lieu'); await p.waitForTimeout(300); await p.$eval('.sc-carte', (e) => e.scrollIntoView({ block: 'start' })); } },
   { nom: 'port-destinations', sauvegarde: 'port', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('.ds-lieux', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'onglet-fleche', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); } },
   { nom: 'onglet-fleche-bas', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.$eval('.fl-paliers', (e) => e.scrollIntoView({ block: 'end' })); } },
@@ -230,6 +233,8 @@ async function main() {
     po.data.missions = po.data.missions.slice(0, 1);
     po.data.portVu = true;
     po.data.energie = 500;
+    // un rapport déjà lu : la jauge de la fouille (barques Surface, Cales, Cœur) s'affiche
+    po.data.rapports = [{ porteur: po.data.missions[0].porteur, strate: 1, duree: 'courte', fin: T - 7_200_000, recit: ['La barque est rentrée.'], composants: 40, xp: 10, niveau: null, cartes: [], creuseurs: 0, usure: 0, marque: null, lu: true }];
     (saves as Record<string, unknown>).port = po;
     // les contrats de marée (31 octobre 2026) : Strate −6 vaincue (marée montante et vive-eau ouvertes), des Porteurs libres
     const ma = JSON.parse(JSON.stringify(po));

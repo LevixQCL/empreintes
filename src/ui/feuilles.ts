@@ -47,5 +47,7 @@ import './gardien.css';
 // le combat en une seule feuille (7 novembre 2026) : la matière, la modernisation, puis la table
 import './combat.css';
 import './moderne.css';
+// le Port plus visuel (12 novembre 2026) : après la modernisation, qu'il reprend en main
+import './port.css';
 // tout à la fin : les graphismes légers et les animations suspendues hors de l'écran (3 novembre 2026, graphismes.ts)
 import './leger.css';

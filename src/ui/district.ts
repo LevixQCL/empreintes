@@ -2118,10 +2118,13 @@ export function htmlMissions(e: EcranDistrict): string {
   const nf = naufragesDeLaStrate(j);
   const pf = choisie ? profondeurMission(j, choisie.cle, e.now) : { niveau: 0, mult: 1 };
   const PF = MISSIONS.profondeurs;
-  const crans = PF.map((x, k) => `<i class="${pf.niveau === null || k < pf.niveau ? 'fait' : k === pf.niveau ? 'ici' : ''}" title="${x.nom}"></i>`).join('');
+  // les crans de la fouille en barques peintes (12 novembre 2026) : allumées pour les passages faits, en or pour la prochaine
+  const crans = PF.map((x, k) => `<img class="ds-barque ${pf.niveau === null || k < pf.niveau ? 'fait' : k === pf.niveau ? 'ici' : ''}" src="${barque}" alt="" title="${x.nom}" decoding="async">`).join('');
   h += `<div class="ds-jauges${debutant ? ' seule' : ''}">`
     + (debutant ? '' : `<div class="ds-jauge ds-fouille${pf.niveau === COEUR ? ' coeur' : ''}" title="${tr`Chaque barque vers la même destination descend plus profond : Surface, Cales, puis le Cœur et sa trouvaille.`}">${ICO.composants}<span><small>${tr`Prochaine fouille ici`}</small><strong>${pf.niveau === null ? tr('Ruine fouillée à fond') : `${PF[pf.niveau]!.nom}${pf.mult > 1 ? ` · +${Math.round((pf.mult - 1) * 100)} %` : ''}`}</strong><small class="ds-crans">${crans}${pf.niveau === null ? tr('butin plein, jusqu’à demain 4 h') : pf.niveau === COEUR ? tr('une carte en plus') : tr`Cœur dans ${COEUR - pf.niveau} barque${COEUR - pf.niveau > 1 ? 's' : ''}`}</small></span></div>`)
-    + `<div class="ds-jauge${nf.restants ? '' : ' basse'}" title="${tr`Les naufragés ne fournissent qu’une partie des creuseurs de chaque Strate : le reste se gagne au front (gardien, fouilles, Épreuves).`}">${ICO.ouvrier}<span><small>${tr`Naufragés · Strate −${j.strate}`}</small><strong>${tr`${nf.ramenes} / ${nf.plafond} creuseur${nf.plafond > 1 ? 's' : ''}`}</strong><small>${nf.restants ? tr`encore ${nf.restants} en mer` : tr('le reste se gagne au front')}</small></span></div>`
+    + `<div class="ds-jauge${nf.restants ? '' : ' basse'}" title="${tr`Les naufragés ne fournissent qu’une partie des creuseurs de chaque Strate : le reste se gagne au front (gardien, fouilles, Épreuves).`}">${ICO.ouvrier}<span><small>${tr`Naufragés · Strate −${j.strate}`}</small><strong>${tr`${nf.ramenes} / ${nf.plafond} creuseur${nf.plafond > 1 ? 's' : ''}`}</strong>`
+    // un creuseur peint par place : éclairé quand il est ramené (12 novembre 2026)
+    + `<span class="ds-creuseurs" aria-hidden="true">${Array.from({ length: Math.min(8, Math.max(nf.plafond, nf.ramenes)) }, (_, k) => `<img class="${k < nf.ramenes ? 'la' : ''}" src="${baseIcones}ouvrier.webp" alt="" decoding="async">`).join('')}</span><small>${nf.restants ? tr`encore ${nf.restants} en mer` : tr('le reste se gagne au front')}</small></span></div>`
     + `</div>`;
   h += `<div class="ds-tete"><h3 class="titre-bloc">${icone('carte')}${tr`Destinations du jour`}</h3><small>${decompte(debutJour(jourDe(e.now) + 1), e.now, tr('Nouvelles dans '))}</small></div>`
     + `<div class="ds-lieux n${offre.length}" role="radiogroup" aria-label="${tr`Destinations du jour`}">`
