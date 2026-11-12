@@ -14,14 +14,20 @@
 .ambiance.nuit .amb-fenetre{filter:brightness(1.25)}
 @keyframes ambFenetre{from{opacity:.12}to{opacity:.62}}
 
-/* un passant : une petite silhouette et sa lanterne. La boîte fait 1 % du tableau : ses déplacements (--a à --e, en % d'elle-même)
-   se lisent donc en centièmes de tableau, et seul ce petit carré bouge. Il sort d'une porte et rentre dans une autre (fondu aux bouts). */
+/* un passant (12 novembre 2026, Bryan : les petites silhouettes « on dirait des bugs ») : on ne dessine plus la personne,
+   seulement sa lanterne qui se balance au pas et la flaque de lumière chaude qu'elle pose au sol. La boîte fait 1 % du tableau :
+   ses déplacements (--a à --e, en % d'elle-même) se lisent en centièmes de tableau. Elle sort d'une porte et rentre dans une autre. */
 .amb-passant{position:absolute;left:0;top:0;width:1%;height:1%;opacity:0;animation:ambPasse 40s linear infinite alternate}
-/* la silhouette et sa lanterne sont mesurées sur la boîte (1 % du tableau) : elles grandissent avec l'écran */
-.amb-passant::before{content:"";position:absolute;left:-45%;top:-260%;width:90%;height:260%;border-radius:45% 45% 20% 20%;background:#1e120c;box-shadow:0 0 0 1px rgba(255,214,150,.18)}
-.amb-passant::after{content:"";position:absolute;left:55%;top:-170%;width:70%;aspect-ratio:1;border-radius:50%;background:#ffe2a8;
-  box-shadow:0 0 4px 1.5px rgba(255,196,110,.95),0 0 12px 4px rgba(255,170,80,.45)}
-.ambiance.nuit .amb-passant::after{box-shadow:0 0 4px 1.5px rgba(255,200,120,.95),0 0 13px 5px rgba(255,170,80,.5)}
+/* la flaque de lumière au sol, large et douce, fondue dans la peinture */
+.amb-passant::before{content:"";position:absolute;left:-250%;top:-110%;width:500%;height:220%;border-radius:50%;mix-blend-mode:screen;
+  background:radial-gradient(closest-side,rgba(255,196,120,.42),rgba(255,160,80,.14) 55%,transparent);animation:ambFlaque 1.1s ease-in-out infinite alternate}
+/* la lanterne : un petit cœur de flamme qui se balance au rythme du pas et vacille */
+.amb-passant::after{content:"";position:absolute;left:-30%;top:-190%;width:60%;aspect-ratio:1;border-radius:50%;background:#fff1cf;
+  box-shadow:0 0 3px 1px rgba(255,214,140,.95),0 0 10px 3px rgba(255,176,90,.55),0 0 22px 8px rgba(255,150,70,.18);
+  animation:ambLanterne 1.1s ease-in-out infinite alternate}
+.ambiance.nuit .amb-passant::before{background:radial-gradient(closest-side,rgba(255,196,120,.55),rgba(255,160,80,.2) 55%,transparent)}
+@keyframes ambLanterne{0%{transform:translate(-18%,0) scale(.92)}50%{transform:translate(0,-14%) scale(1.04)}100%{transform:translate(18%,0) scale(.96)}}
+@keyframes ambFlaque{from{opacity:.75}to{opacity:1}}
 @keyframes ambPasse{
   0%{transform:translate(var(--a));opacity:0}
   5%{opacity:1}

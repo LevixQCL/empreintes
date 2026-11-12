@@ -1,5 +1,5 @@
 // La vie de la Cuvette (12 novembre 2026, Bryan : « rendre la vue un peu plus accueillante ») : des habitants qui passent
-// avec leur lanterne, des fenêtres qui respirent, la lueur chaude du quartier habité et, au large, les feux de quelques
+// avec leur lanterne (on ne voit que la lumière, pas la silhouette), des fenêtres qui respirent, la lueur chaude du quartier habité et, au large, les feux de quelques
 // barques. Plus de familles te suivent, plus il y a de passants et de fenêtres allumées. Rien de cliquable, rien à lire.
 import './ambiance.css';
 import { mouvementReduit } from './outils';
