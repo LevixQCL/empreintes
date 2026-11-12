@@ -304,16 +304,16 @@
   /* Dézoom (4 novembre 2026, Bryan : « on ne voit pas du tout le port ») : le tableau ne prend plus que 88 % de la hauteur,
      la Cuvette prolongée (la même que sur PC) continue autour de lui, et la vue glisse un peu vers la droite pour montrer
      le ponton du Port en entier. --zh = hauteur du tableau ; dans l'image large, le tableau commence à 0,472 × --zh. */
-  /* Remontée (12 novembre 2026, Bryan : « la carte gagnerait à remonter un peu ») : le tableau monte jusqu'à 95 % de la hauteur,
-     son pied (le Port) reste en place et le vide du large au-dessus se réduit. */
-  .archipel.cuvette{--zh:calc(var(--h) * .95);--gauche:calc(50% - var(--zh) * .42);
+  /* Remontée sans zoom (12 novembre 2026, Bryan : « la carte gagnerait à remonter », puis « on perd toute la gauche ») :
+     le tableau garde sa taille (88 %) et monte de --monte ; sous lui, la mer se prolonge en fondu jusqu'à la barre du bas. */
+  .archipel.cuvette{--zh:calc(var(--h) * .88);--monte:calc(var(--h) * .06);--gauche:calc(50% - var(--zh) * .42);
     background:radial-gradient(120% 60% at 55% 100%,#1d5552,#123c3f 60%,#0c2a30)}
-  .archipel.cuvette .toile{top:auto;bottom:0;height:var(--zh);width:auto;aspect-ratio:2/3;left:var(--gauche);transform:none}
+  .archipel.cuvette .toile{top:auto;bottom:var(--monte);height:var(--zh);width:auto;aspect-ratio:2/3;left:var(--gauche);transform:none}
   .archipel.cuvette .tableau-fond{display:none}
-  .archipel.cuvette .toile :is(.tableau,.anime,.houle){-webkit-mask-image:linear-gradient(to bottom,transparent,#000 9%);mask-image:linear-gradient(to bottom,transparent,#000 9%)}
-  .archipel.cuvette .mer-fond{display:block;position:absolute;z-index:0;top:auto;bottom:0;height:var(--zh);width:auto;aspect-ratio:3924/2464;
+  .archipel.cuvette .toile :is(.tableau,.anime,.houle){-webkit-mask-image:linear-gradient(to bottom,transparent,#000 9%,#000 94%,transparent);mask-image:linear-gradient(to bottom,transparent,#000 9%,#000 94%,transparent)}
+  .archipel.cuvette .mer-fond{display:block;position:absolute;z-index:0;top:auto;bottom:var(--monte);height:var(--zh);width:auto;aspect-ratio:3924/2464;
     left:calc(var(--gauche) - var(--zh) * .472);transform:none;background:var(--mer) center/100% 100% no-repeat;pointer-events:none;
-    -webkit-mask-image:linear-gradient(to bottom,transparent,#000 9%);mask-image:linear-gradient(to bottom,transparent,#000 9%)}
+    -webkit-mask-image:linear-gradient(to bottom,transparent,#000 9%,#000 94%,transparent);mask-image:linear-gradient(to bottom,transparent,#000 9%,#000 94%,transparent)}
   .archipel.cuvette .mer-fond .mer-reflets{display:none}
 }
 /* Sur PC, la Cuvette est prolongée en largeur (art/district/cuvette-large.webp, peinte avec Midjourney autour du district) :

@@ -36,7 +36,7 @@
 @media not all and (min-width:1100px) and (min-height:600px){
   /* le fond sous le haut du tableau prend la lueur du quartier au lieu d'un bleu nuit uni */
   .archipel.cuvette{background:radial-gradient(85% 30% at 92% 9%,rgba(255,164,88,.34),rgba(255,150,80,.12) 48%,transparent 74%),
-    radial-gradient(120% 60% at 55% 100%,#1d5552,#134144 60%,#0f333a)}
+    radial-gradient(120% 60% at 45% 100%,#163f42,#12383d 60%,#0f333a)}
   .amb-large{display:block;position:absolute;z-index:1;left:0;right:0;top:0;height:32%;overflow:hidden;pointer-events:none;
     -webkit-mask-image:linear-gradient(to bottom,#000 55%,transparent);mask-image:linear-gradient(to bottom,#000 55%,transparent)}
   .amb-brume{position:absolute;left:-60%;top:8%;width:220%;height:70%;opacity:.5;
