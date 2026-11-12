@@ -6,7 +6,7 @@ import * as C from '../../core/combat';
 import * as J from '../../core/jeu';
 import { NOMS_RARETE } from '../../core/collection';
 import { composerTourMoyen } from '../../core/robot';
-import { suitePorte } from '../../core/expedition';
+import { rienJoue, suitePorte } from '../../core/expedition';
 import { comparer, montrer, relever } from '../../ui/gains';
 import { duree } from '../../ui/coquille';
 import { basculerSon, debloquerSon } from '../../ui/son';
@@ -96,6 +96,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
     // le plan de la Strate : toucher une salle ouvre sa fiche (ou la referme), « Entrer » y va
     case 'salle-voir': { const n = Number(id); K.salleVue = n >= 0 && K.salleVue !== n ? n : undefined; break; }
     case 'salle': {
+      K.confirmeRetraite = false;
       K.salleVue = undefined; K.halteVus = []; K.porteChoix = [];
       const r = J.entrer(app.jeu, Number(id), b.dataset.second === '1');
       if (!r.ok && app.jeu.expedition) app.jeu.expedition.recit = r.message ?? '';
@@ -140,6 +141,10 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
       break;
     }
     case 'retraite':
+      // remonter avant d'avoir joué la moindre salle : on demande confirmation (12 novembre 2026, audit du début :
+      // cinq allers-retours suffisaient à dépenser les cristaux du Râtelier sans s'en rendre compte)
+      if (x && rienJoue(x) && !K.confirmeRetraite) { K.confirmeRetraite = true; break; }
+      K.confirmeRetraite = false;
       if (!J.retraite(app.jeu).ok) break;
     // falls through : remonter avec le butin
     case 'fuir-district':

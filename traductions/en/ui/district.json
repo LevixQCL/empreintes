@@ -366,10 +366,6 @@
    "en": "Nothing to cut: go down or send a boat, and it will cut everything you bring back."
   },
   {
-   "fr": "Minerai en taille",
-   "en": "Ore being cut"
-  },
-  {
    "fr": "Chaque heure, il taille {0} de ce qui attend, au moins {1} : plus il monte, plus il va vite.",
    "en": "Every hour it cuts {0} of what’s waiting, at least {1}: the higher it goes, the faster it works."
   },
@@ -384,6 +380,10 @@
   {
    "fr": "une part",
    "en": "a share"
+  },
+  {
+   "fr": "Minerai en taille",
+   "en": "Ore being cut"
   },
   {
    "fr": "1 cristal pour {0} points",

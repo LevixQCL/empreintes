@@ -740,6 +740,8 @@ function htmlEcranCombat(e: Ecran): string {
   // la bulle d'aide du groupe (3 novembre 2026, Luc : « rien ne dit qu'on peut toucher les vignettes ») : jusqu'au premier ennemi visé
   else if (enGroupe(s) && !e.viserAppris && !s.chaine.length) conseil = `<span class="bulle-viser" role="note">${tr`Touche un ennemi en haut pour le viser : toute ta chaîne le frappe`}</span>`;
   else if (e.parole && !s.chaine.length) conseil = `<span class="parole-gardien" role="status"><b>${echap(e.parole.nom)}</b>« ${echap(e.parole.texte)} »</span>`;
+  // au combat guidé, la leçon dit déjà quoi faire : pas de seconde consigne sous la chaîne vide (audit du 12 novembre 2026)
+  else if (!s.chaine.length && e.lecon) conseil = '';
   else if (!s.chaine.length) conseil = `${tr`Pose jusqu’à ${capacite(s)} cartes :`} <b>${tr`trois`}</b> ${tr`Fréquences qui se suivent (3, 4, 5) font une`} <b>${tr`Résonance`}</b>.`;
   else {
     const fin = serieFinale(s.chaine);
@@ -924,7 +926,8 @@ function htmlEcranCombat(e: Ecran): string {
   h += `</div><p class="conseil">${conseil}</p></section></div>`;
   if (e.lecon) h += `<section class="lecon" aria-live="polite"><span class="surtitre">${ICO.cristal}${tr`COMBAT GUIDÉ`}</span><p>${echap(e.lecon)}</p></section>`;
   h += escouade;
-  if (!e.lecon) {
+  // le Flux : caché pendant les trois premières leçons, montré à la leçon 4 qui l'explique
+  if (!e.lecon || s.tour >= 4) {
     // Coup d'éclat : Flux plein, un seul par combat. Un bouton doré dans la rangée du Flux déplie le choix (une lignée par
     // Porteur debout) à la même place : la rangée ne grandit pas, la main garde sa taille sur téléphone.
     const eclats = eclatsPossibles(s);

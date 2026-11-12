@@ -134,7 +134,7 @@ function dessiner() {
   else if (app.mode === 'intro') h = app.recit && app.recitChoix ? htmlChoixRecit(app.recit, J.carteDuRecit(app.jeu, app.recit)) : htmlIntro(app.plan, app.lignesVues, !reduit, app.texteCache, app.introLongue, filmActif());
   else if (app.mode === 'duel') h = htmlModeDuel();
   else if (app.mode === 'combat' && app.jeu.expedition?.carte && app.jeu.expedition.phase === 'carte') {
-    h = htmlExploration(app.jeu, K.salleVue, { details: K.halteVus ?? [], porte: K.porteChoix ?? [] });
+    h = htmlExploration(app.jeu, K.salleVue, { details: K.halteVus ?? [], porte: K.porteChoix ?? [], confirmeRetraite: !!K.confirmeRetraite });
     // le contenu des Strates s'explique la première fois qu'il apparaît (31 octobre 2026), une fenêtre à la fois
     const vues = app.jeu.decouvertes ?? [];
     const toutes = decouvertesExploration(app.jeu.expedition, app.jeu.quetes);

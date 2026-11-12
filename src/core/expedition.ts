@@ -303,6 +303,8 @@ const ramasser = (g: Gains | undefined, id: string): Gains => {
   return b.vestiges?.includes(id) ? b : { ...b, vestiges: [...(b.vestiges ?? []), id] };
 };
 export const salleCourante = (x: Expedition): Salle => x.carte!.salles[x.carte!.position]!;
+/** Rien n'a encore été joué dans cette descente : seule la salle d'entrée est faite, et aucun butin */
+export const rienJoue = (x: Expedition) => !!x.carte && x.carte.salles.filter((s) => s.faite).length <= 1 && !x.butin;
 /** Les salles où l'escouade peut aller : les voisines de la salle où elle se trouve */
 export const accessibles = (x: Expedition): Salle[] => {
   if (!x.carte) return [];

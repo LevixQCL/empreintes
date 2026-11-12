@@ -191,7 +191,7 @@ function paroleEscouade(x: Expedition): string {
  * on touche une salle qui brille, une fiche s'ouvre en bas (ce qui attend l'escouade, en vrais chiffres) avec « Entrer ».
  * `choisie` : la salle touchée ; s'il n'y a qu'un chemin, il est choisi d'office.
  */
-export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readonly number[]; porte?: readonly number[] } = {}): string {
+export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readonly number[]; porte?: readonly number[]; confirmeRetraite?: boolean } = {}): string {
   const x = j.expedition as Expedition;
   const c = x.carte!;
   const ici = salleCourante(x);
@@ -224,7 +224,9 @@ export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readon
     + (g?.fragment ? `<span>${icone('codex')}<b>1</b><small>${tr`archive`}</small></span>` : '')
     + (g?.vestiges?.length ? `<span class="ex-butin-vestige">${ICO.vestige}<b>${g.vestiges.length}</b><small>${tr`Vestige${g.vestiges.length > 1 ? 's' : ''}`}</small></span>` : '')
     // 27 octobre 2026 : le bouton du bas restait sous les chemins, hors de l'écran sur téléphone → toujours visible en tête
-    + (!x.terminee && peutRemonter(x) ? `<button type="button" class="ex-tete-remonter" data-action="retraite" aria-label="${tr`Remonter au district${x.butin ? tr` avec ${x.butin} minerai` : ''}`}">${ICO.retour}<span>${tr`Remonter`}</span></button>` : '')
+    + (!x.terminee && peutRemonter(x) ? (ui.confirmeRetraite
+      ? `<button type="button" class="ex-tete-remonter confirme" data-action="retraite" aria-label="${tr`Remonter au district sans rien rapporter : toucher encore pour confirmer`}">${ICO.retour}<span>${tr`Sûr ? Toucher encore`}</span></button>`
+      : `<button type="button" class="ex-tete-remonter" data-action="retraite" aria-label="${tr`Remonter au district${x.butin ? tr` avec ${x.butin} minerai` : ''}`}">${ICO.retour}<span>${tr`Remonter`}</span></button>`) : '')
     + `</div></header>`;
 
   // ---------- l'escouade : trois portraits, les vrais PV ----------

@@ -38,42 +38,6 @@
    "en": ", plus the special effect when it has one."
   },
   {
-   "fr": " : les chiffres se suivent.",
-   "en": ": the numbers follow each other."
-  },
-  {
-   "fr": "Sans suite",
-   "en": "No run"
-  },
-  {
-   "fr": "Résonance +{0} %",
-   "en": "Resonance +{0}%"
-  },
-  {
-   "fr": "dégâts",
-   "en": "damage"
-  },
-  {
-   "fr": "Exemple d’intention : Entaille sur Doran",
-   "en": "Example intent: Slash on Doran"
-  },
-  {
-   "fr": "INTENTION",
-   "en": "INTENT"
-  },
-  {
-   "fr": "Entaille sur Doran",
-   "en": "Slash on Doran"
-  },
-  {
-   "fr": "de bouclier",
-   "en": "shield"
-  },
-  {
-   "fr": "pour les trois",
-   "en": "for all three"
-  },
-  {
    "fr": "En combat, ce bouton rappelle toutes les règles. Pendant ce premier combat, une consigne t’attendra sous la chaîne à chaque tour.",
    "en": "In combat, this button brings up all the rules. During this first fight, a tip will be waiting for you under the chain every turn."
   },
@@ -94,28 +58,12 @@
    "en": "Three things to look at on a card. You’ll pick up the rest along the way."
   },
   {
-   "fr": "La chaîne",
-   "en": "The chain"
-  },
-  {
-   "fr": "À chaque tour, tu as cinq cartes en main. Tu en poses jusqu’à trois : c’est la chaîne. Tu la lances, et elles agissent l’une après l’autre. Si trois chiffres se suivent, la chaîne entre en Résonance : +40 % sur toute la chaîne. Deux ne suffisent pas.",
-   "en": "Each turn, you hold five cards. You lay down up to three: that’s the chain. You cast it, and they act one after the other. If three numbers follow each other, the chain goes into Resonance: +40% on the whole chain. Two aren’t enough."
-  },
-  {
-   "fr": "Écoute ce qu’il annonce",
-   "en": "Listen to what it announces"
-  },
-  {
-   "fr": "Ce qui vit là-dessous ne frappe jamais sans prévenir. Avant chaque tour, il annonce ce qu’il va faire. Si c’est une grosse attaque, glisse des boucliers dans ta chaîne : ils protègent toute l’escouade.",
-   "en": "Whatever lives down there never strikes without warning. Before each turn, it announces what it’s going to do. If it’s a big attack, slip some shields into your chain: they protect the whole squad."
-  },
-  {
    "fr": "Je reste avec toi",
    "en": "I’ll stay with you"
   },
   {
-   "fr": "Je te guiderai pendant ce premier combat, tour après tour. Et si tu as un doute, demande.",
-   "en": "I’ll guide you through this first fight, turn by turn. And if you’re ever unsure, just ask."
+   "fr": "La suite, tu l’apprendras en jouant : je te guiderai pendant ce premier combat, tour après tour. Et si tu as un doute, demande.",
+   "en": "The rest you’ll learn by playing: I’ll guide you through this first fight, turn by turn. And if you’re ever unsure, just ask."
   },
   {
    "fr": "Le minerai",
@@ -162,20 +110,20 @@
    "en": "You go down through the Core Tower."
   },
   {
-   "fr": "Renforcer l’escouade",
-   "en": "Strengthen the squad"
+   "fr": "Les creuseurs percent",
+   "en": "The diggers break through"
   },
   {
-   "fr": "Fouilles, missions en mer, niveaux des cartes.",
-   "en": "Digs, missions at sea, card levels."
+   "fr": "Quelques heures, affichées à la Tour. Des creuseurs en plus vont plus vite.",
+   "en": "A few hours, shown at the Tower. Extra diggers go faster."
   },
   {
-   "fr": "Revenir plus fort",
-   "en": "Come back stronger"
+   "fr": "En attendant, renforce l’escouade",
+   "en": "Meanwhile, strengthen the squad"
   },
   {
-   "fr": "L’écran de départ dit si l’escouade est prête.",
-   "en": "The departure screen tells you whether the squad is ready."
+   "fr": "Fouilles, missions en mer, niveaux des cartes. L’écran de départ dit si elle est prête.",
+   "en": "Digs, sea missions, card levels. The departure screen tells you whether it’s ready."
   },
   {
    "fr": "La Strate suivante s’ouvre",
@@ -230,8 +178,8 @@
    "en": "Ever deeper"
   },
   {
-   "fr": "Le but, c’est de creuser. Chaque Strate a un gardien qui garde le passage. Pour percer l’étage suivant, il faut trois choses, dans cet ordre.",
-   "en": "The goal is to dig. Each Stratum has a guardian holding the passage. To break through to the next level, you need three things, in this order."
+   "fr": "Le but, c’est de creuser. Chaque Strate a un gardien qui garde le passage. Voilà comment on passe d’un étage au suivant.",
+   "en": "The goal is to dig. Each Stratum has a guardian holding the passage. Here’s how you go from one level to the next."
   },
   {
    "fr": "Un pas à la fois",

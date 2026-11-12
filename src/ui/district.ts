@@ -595,9 +595,11 @@ function taille(j: Jeu): string {
   const note = t.brut
     ? decompte(Date.now() + t.heures * 3_600_000, Date.now(), tr('Tout taillé dans '), tr(' · continue même jeu fermé.'))
     : tr('Rien à tailler : descends ou envoie une barque, il taillera tout ce que tu rapportes.');
-  return `<div class="fb-reserve"><div class="fb-reserve-tete">${ICO.composants}<span>${tr`Minerai en taille`}</span><b>${ent(t.brut)}</b></div>`
+  // le détail du rythme passe en appui long (12 novembre 2026, audit du début : texte trop technique pour un premier coup d'œil)
+  const rythme = tr`Chaque heure, il taille ${h ? (h === 4 ? tr('environ un quart') : tr`environ un ${virgule(Math.round(h * 10) / 10)}ᵉ`) : tr('une part')} de ce qui attend, au moins ${ent(plancherTaille(j))} : plus il monte, plus il va vite.`;
+  return `<div class="fb-reserve" title="${echap(rythme)}"><div class="fb-reserve-tete">${ICO.composants}<span>${tr`Minerai en taille`}</span><b>${ent(t.brut)}</b></div>`
     + `<div class="fb-jauge" role="meter" aria-valuemin="0" aria-valuemax="${Math.max(1, t.brut + j.energie)}" aria-valuenow="${t.brut}" aria-label="${tr`Minerai en taille`}"><i style="width:${t.brut ? Math.min(100, Math.max(6, (100 * t.brut) / (t.brut + 20 * Math.max(1, raffinageParHeure(j))))) : 0}%"></i></div>`
-    + `<small>${note}</small>${eclatsTailleTexte(j)}<small>${tr`Chaque heure, il taille ${h ? (h === 4 ? tr('environ un quart') : tr`environ un ${virgule(Math.round(h * 10) / 10)}ᵉ`) : tr('une part')} de ce qui attend, au moins ${ent(plancherTaille(j))} : plus il monte, plus il va vite.`}</small></div>`;
+    + `<small>${note}</small>${eclatsTailleTexte(j)}</div>`;
 }
 
 /** Les soins intensifs de la Clinique (27 octobre 2026) : des cristaux pour effacer l'Usure d'un Porteur tout de suite */

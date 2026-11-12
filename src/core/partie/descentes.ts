@@ -1095,6 +1095,8 @@ export function leconTutoriel(tour: number): string {
   if (tour === 1) return tr('Leçon 1 : touche 3 cartes de ta main, puis « Lancer la chaîne ».');
   if (tour === 2) return tr('Leçon 2 : pose un 3, puis un 4, puis un 5, dans cet ordre. Des chiffres qui se suivent font une Résonance : +40 % sur toute la chaîne.');
   if (tour === 3) return tr('Leçon 3 : le Rémanent annonce une Entaille sur Doran. Pose des cartes à bouclier : elles protègent toute l’escouade pendant son attaque.');
+  // 12 novembre 2026 (audit du début) : le Flux apparaissait à la victoire sans avoir été expliqué
+  if (tour === 4) return tr('Leçon 4 : chaque Résonance remplit le Flux, la fiole près de ta main. 1 Flux ajoute une place à la chaîne ou repioche ta main. Puis achève-le !');
   return tr('Tu as l’essentiel : vise les suites, protège-toi des grosses attaques annoncées. Achève-le !');
 }
 

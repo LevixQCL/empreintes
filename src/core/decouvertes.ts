@@ -153,7 +153,8 @@ export function decouvertesExploration(x: Expedition, quetes: Record<number, num
       conseil: CONSEILS_PARTICULARITE[x.strate] ?? '' });
   }
   const q = queteDef(x.strate);
-  if (q && (quetes[x.strate] ?? 0) < q.etapes.length && x.carte.salles.some((s) => s.quete)) {
+  // après la première salle jouée, pas avant d'entrer (12 novembre 2026, audit du début : une fenêtre de plus dès l'arrivée)
+  if (q && (quetes[x.strate] ?? 0) < q.etapes.length && x.carte.salles.some((s) => s.quete) && x.carte.salles.filter((s) => s.faite).length > 1) {
     r.push({ id: 'quete', sur: tr('PREMIÈRE RENCONTRE'), titre: tr('La quête de la Strate'), ico: 'quete',
       texte: tr`Chaque Strate cache une quête en plusieurs étapes. Ici : « ${q.nom} ». À chaque descente, une salle porte la marque ✦, visible même dans le brouillard. Passes-y, et gagne le combat s’il y en a un : l’étape est relevée. Elle compte au retour au district, même si la descente finit mal.`,
       conseil: tr('Les points sous le nom de la Strate (●○○) montrent où tu en es. Au bout de la quête : une carte, de l’XP et un morceau de l’histoire.') });

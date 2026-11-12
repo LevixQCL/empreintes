@@ -278,6 +278,14 @@
    "en": "Relic{0}"
   },
   {
+   "fr": "Remonter au district sans rien rapporter : toucher encore pour confirmer",
+   "en": "Go back up to the district with nothing: tap again to confirm"
+  },
+  {
+   "fr": "Sûr ? Toucher encore",
+   "en": "Sure? Tap again"
+  },
+  {
    "fr": "Remonter au district{0}",
    "en": "Back to the district{0}"
   },

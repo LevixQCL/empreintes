@@ -94,6 +94,6 @@ export const D: EcranDistrict = { j: app.jeu, vue: app.jeu.chambre && !app.jeu.a
 export const G: GrandTableau = tableauVide();
 try { const t = localStorage.getItem('empreintes.tri'); if (estTri(t)) D.tri = t; } catch { /* stockage bloqué */ }
 D.grand = G;
-export const K: { verrou: boolean; regles: boolean; fuite: boolean; eclats: boolean; tuile?: string; guide: OngletGuide | null; journal: OngletJournal | null; fondus: { fissure?: number; felure?: { ne: number; avant: CombatEtat } }; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; phaseTour?: number; decouverteId?: string; decouverteLot?: number; decouvertesExpl?: string[]; salleVue?: number; halteVus?: number[]; porteChoix?: number[]; auto?: boolean } = {
+export const K: { verrou: boolean; regles: boolean; fuite: boolean; eclats: boolean; tuile?: string; guide: OngletGuide | null; journal: OngletJournal | null; fondus: { fissure?: number; felure?: { ne: number; avant: CombatEtat } }; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; phaseTour?: number; decouverteId?: string; decouverteLot?: number; decouvertesExpl?: string[]; salleVue?: number; halteVus?: number[]; porteChoix?: number[]; auto?: boolean; confirmeRetraite?: boolean } = {
   verrou: false, regles: false, fuite: false, eclats: false, guide: null, journal: null, fondus: {}, fin: null, etat: null, traces: {},
 };

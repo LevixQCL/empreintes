@@ -22,8 +22,16 @@
    "en": "{0}: {1}. Tap for the explanation"
   },
   {
+   "fr": "dégâts",
+   "en": "damage"
+  },
+  {
    "fr": "PV soignés",
    "en": "HP healed"
+  },
+  {
+   "fr": "de bouclier",
+   "en": "shield"
   },
   {
    "fr": "On part de la force, puis chaque bonus et malus s’applique l’un après l’autre (en pourcentage), on arrondit, on retire le blindage ; enfin, le bouclier de la cible absorbe ce qu’il peut. Le reste touche les PV.",

@@ -4,7 +4,6 @@
  * ce qu'est une chaîne et pourquoi il faut regarder ce que l'ennemi annonce.
  */
 import { DECK_DEPART, porteurDef } from '../core/donnees';
-import { REGLES } from '../core/regles';
 import type { Geste } from '../core/types';
 import { portrait } from './art';
 import { avatar } from './coquille';
@@ -28,26 +27,10 @@ const demoAnatomie = () => `<div class="demo-anatomie"><div class="demo-grande">
   + `<li><i>2</i><span><b>${tr`La force`}</b> ${tr`et ce qu’elle fait :`}<span class="types"><span class="g-val atk">${ICO.atk}</span>${tr`frappe`} <span class="g-val bouclier">${ICO.bouclier}</span>${tr`protège`} <span class="g-val soin">${ICO.soin}</span>${tr`soigne`}</span></span></li>`
   + `<li><i>3</i><span><b>${tr`Le nom de la carte`}</b>${tr`, et l’effet spécial quand elle en a un.`}</span></li></ol></div>`;
 
-/** les vrais chiffres de la démonstration : la force de chaque carte, puis la même chaîne en Résonance (suite de 3) */
-const demoChaine = () => {
-  const cs = ['ruee', 'bond', 'charge'].map(carte);
-  const mult = REGLES.multSuite[3] ?? 1;
-  const brut = cs.reduce((t, g) => t + g.v, 0);
-  const reso = cs.reduce((t, g) => t + Math.round(g.v * mult), 0);
-  return `<div class="demo-chaine"><div class="demo-rail">${cs.map((g, i) => (i ? '<span class="fleche" aria-hidden="true">›</span>' : '') + carteDemo(g, 'chaine')).join('')}</div>`
-    + `<p class="demo-suite"><b>${cs.map((g) => g.f).join('</b> → <b>')}</b>${tr` : les chiffres se suivent.`}</p>`
-    + `<dl class="demo-calcul"><div><dt>${tr`Sans suite`}</dt><dd>${cs.map((g) => g.v).join(' + ')} = <b>${brut}</b></dd></div>`
-    + `<div class="reso"><dt>${tr`Résonance +${Math.round((mult - 1) * 100)} %`}</dt><dd><b>${reso}</b> ${tr`dégâts`}</dd></div></dl></div>`;
-};
-
-const demoIntention = () => {
-  const cs = ['grogner', 'carapace'].map(carte);
-  return `<div class="demo-intention"><div class="intention danger" role="img" aria-label="${tr`Exemple d’intention : Entaille sur Doran`}"><span class="int-ico">${ICO.atk}</span><span class="int-txt"><small>${tr`INTENTION`}</small>${tr`Entaille sur Doran`}</span></div>`
-    + `<div class="demo-rang serre">${cs.map((g) => carteDemo(g)).join('')}<span class="demo-plus">${ICO.bouclier}<b>+${cs.reduce((t, g) => t + g.v, 0)}</b><span>${tr`de bouclier`}<br>${tr`pour les trois`}</span></span></div></div>`;
-};
-
 const demoAide = () => `<div class="demo-aide"><span class="aide-faux" aria-hidden="true">${ICO.aide}</span><p>${tr`En combat, ce bouton rappelle toutes les règles. Pendant ce premier combat, une consigne t’attendra sous la chaîne à chaque tour.`}</p></div>`;
 
+// 12 novembre 2026 (audit du début) : 3 écrans au lieu de 5. « La chaîne » et « Écoute ce qu'il annonce » répétaient
+// mot pour mot les leçons 2 et 3 du combat guidé, et l'exemple de chaîne frappait avec un « Plastron de choc »
 export const ETAPES: Etape[] = [
   {
     qui: 'vela', titre: tr('Des gestes, pas des armes'),
@@ -60,18 +43,8 @@ export const ETAPES: Etape[] = [
     demo: demoAnatomie,
   },
   {
-    qui: 'ilka', titre: tr('La chaîne'),
-    texte: tr('À chaque tour, tu as cinq cartes en main. Tu en poses jusqu’à trois : c’est la chaîne. Tu la lances, et elles agissent l’une après l’autre. Si trois chiffres se suivent, la chaîne entre en Résonance : +40 % sur toute la chaîne. Deux ne suffisent pas.'),
-    demo: demoChaine,
-  },
-  {
-    qui: 'doran', titre: tr('Écoute ce qu’il annonce'),
-    texte: tr('Ce qui vit là-dessous ne frappe jamais sans prévenir. Avant chaque tour, il annonce ce qu’il va faire. Si c’est une grosse attaque, glisse des boucliers dans ta chaîne : ils protègent toute l’escouade.'),
-    demo: demoIntention,
-  },
-  {
     qui: 'vela', titre: tr('Je reste avec toi'),
-    texte: tr('Je te guiderai pendant ce premier combat, tour après tour. Et si tu as un doute, demande.'),
+    texte: tr('La suite, tu l’apprendras en jouant : je te guiderai pendant ce premier combat, tour après tour. Et si tu as un doute, demande.'),
     demo: demoAide,
   },
 ];
@@ -96,8 +69,9 @@ const demoEquipes = () => `<div class="demo-equipes">`
 
 const demoBoucle = () => `<ol class="demo-boucle">`
   + `<li><i>1</i>${icone('porte')}<span><b>${tr`Vaincre le gardien`}</b>${tr`On descend par la Tour du Noyau.`}</span></li>`
-  + `<li><i>2</i>${icone('strate')}<span><b>${tr`Renforcer l’escouade`}</b>${tr`Fouilles, missions en mer, niveaux des cartes.`}</span></li>`
-  + `<li><i>3</i>${icone('porte')}<span><b>${tr`Revenir plus fort`}</b>${tr`L’écran de départ dit si l’escouade est prête.`}</span></li>`
+  // 12 novembre 2026 (audit du début) : la creuse, mise en ligne le même jour, rythme la suite ; on la dit ici
+  + `<li><i>2</i>${icone('ouvrier')}<span><b>${tr`Les creuseurs percent`}</b>${tr`Quelques heures, affichées à la Tour. Des creuseurs en plus vont plus vite.`}</span></li>`
+  + `<li><i>3</i>${icone('strate')}<span><b>${tr`En attendant, renforce l’escouade`}</b>${tr`Fouilles, missions en mer, niveaux des cartes. L’écran de départ dit si elle est prête.`}</span></li>`
   + `<li class="fin">${icone('strate')}<span><b>${tr`La Strate suivante s’ouvre`}</b>${tr`Plus profond, plus précieux.`}</span></li></ol>`;
 
 const demoRepere = () => `<ul class="demo-liste">`
@@ -118,7 +92,7 @@ export const ETAPES_DISTRICT: Etape[] = [
   },
   {
     qui: 'doran', titre: tr('Toujours plus bas'),
-    texte: tr('Le but, c’est de creuser. Chaque Strate a un gardien qui garde le passage. Pour percer l’étage suivant, il faut trois choses, dans cet ordre.'),
+    texte: tr('Le but, c’est de creuser. Chaque Strate a un gardien qui garde le passage. Voilà comment on passe d’un étage au suivant.'),
     demo: demoBoucle,
   },
   {

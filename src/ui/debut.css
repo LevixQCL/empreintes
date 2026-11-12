@@ -7,6 +7,10 @@
 
 /* ================= Écran titre ================= */
 #app .titre{padding:max(52px,env(safe-area-inset-top,0px)) 20px max(24px,env(safe-area-inset-bottom,0px))}
+/* sur téléphone, l'image va jusqu'aux bords comme le district (12 novembre 2026, audit du début : cadre arrondi et marge autour) */
+@media (max-width:1099px){
+  #app .titre{margin:-12px -16px -24px;max-width:none;border-radius:0;min-height:100dvh}
+}
 /* le haut et le bas assombris pour le logotype et les boutons, le tableau libre au milieu */
 #app .titre-voile{background:linear-gradient(180deg,rgba(6,8,14,.78) 0%,rgba(6,8,14,.25) 24%,rgba(6,8,14,0) 46%,rgba(6,8,14,.35) 66%,rgba(6,8,14,.88) 86%,rgba(6,8,14,.96) 100%)}
 #app .titre-haut{gap:14px}

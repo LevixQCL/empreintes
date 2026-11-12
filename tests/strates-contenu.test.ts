@@ -238,7 +238,13 @@ describe('Les premières rencontres de l’exploration (31 octobre 2026)', () =>
     partir(j, ESC, 3, 11);
     const ids = () => decouvertesExploration(j.expedition!, j.quetes).map((d) => d.id);
     expect(ids()).toContain('strate-3');
-    if (j.expedition!.carte!.salles.some((s) => s.quete)) expect(ids()).toContain('quete');
+    // la quête s'explique après la première salle jouée, pas à l'entrée (12 novembre 2026, audit du début)
+    if (j.expedition!.carte!.salles.some((s) => s.quete)) {
+      expect(ids()).not.toContain('quete');
+      const x = j.expedition!, k = x.carte!.salles.findIndex((s, i) => i !== x.carte!.position && !s.faite);
+      x.carte = { ...x.carte!, salles: x.carte!.salles.map((s, i) => (i === k ? { ...s, faite: true } : s)) };
+      expect(ids()).toContain('quete');
+    }
     expect(ids()).not.toContain('halte');
     allerALaHalte(j);
     expect(ids()).toContain('halte');
