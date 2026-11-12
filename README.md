@@ -122,10 +122,11 @@ Tous les chiffres sont dans deux fichiers :
 On la confie à un Porteur de sa lignée (`greffer` dans `jeu.ts`, 6 cartes au plus par Porteur, `DISTRICT.cartesMax`) ;
 le deck de combat réunit les cartes des 3 Porteurs de l'escouade, plus les cartes communes du Râtelier de l'escouade (2 à 4, `ratelierDe` dans `partie/descentes.ts`, payées en cristaux à chaque départ, prix fixe).
 Au départ, Ilka, Doran et Véla portent chacun 6 cartes en fer : leurs 5 cartes de base et leur carte de départ (`DEPART_PORTEURS`).
-**La Charge** (26 octobre 2026) : chaque carte pèse selon sa puissance (`poidsCarte`, dans son métal, à son niveau de départ) et chaque
-Porteur porte une Charge qui grandit avec son niveau (`CHARGE` dans `collection.ts`, `chargeMax` / `chargePortee`). Un Porteur combat toujours
-avec ses 6 places : celles qu'on ne remplit pas descendent en places vides (`placesVides`), piochées sans se jouer, sinon trois grosses
-cartes par Porteur battaient six cartes bien choisies. Une vieille sauvegarde trop lourde rend des cartes à la collection au chargement.
+**Ce qui limite le deck** (révision du 12 novembre 2026) : les 6 places de chaque Porteur et le niveau que demande le métal
+(`NIVEAU_METAL` dans `collection.ts` : argent niveau 5, or 9, nacre 13). Une carte trouvée trop tôt entre dans la collection et attend
+que son Porteur ait le niveau (`attente`). Un Porteur combat toujours avec ses 6 places : celles qu'on ne remplit pas descendent en places
+vides (`placesVides`), piochées sans se jouer. *La Charge* (26 octobre 2026, `CHARGE`, `chargeMax` / `chargePortee`) ne limite plus rien
+(`CHARGE.base` = 150) ; son affichage reste à retirer.
 En combat, le moteur manipule des « Gestes » : c'est le nom interne d'une carte en jeu (`gesteDeCarte`), avec son Porteur,
 son niveau et la Fréquence choisie. Le tableau des cartes garde son nom historique `MODULES`.
 
@@ -153,12 +154,16 @@ L'onglet Porteurs s'ouvre sur elle (`monEscouade` dans `porteurs.ts`) : on touch
 (`escouadeVerrouillee`). L'écran de départ part de cette escouade (`escouadePourDepart`) et la complète si l'un d'eux est au travail ou en mission.
 
 **Une carte, cinq métaux.** Chaque carte existe en fer, cuivre, argent, or et nacre. Un exemplaire possédé se note
-`carte@métal` (`jambes-ressort@or`) ; le métal est fixé quand on le trouve et ne change jamais. La force de `donnees.ts`
+`carte@métal` (`jambes-ressort@or`) ; depuis le 12 novembre 2026, on ne possède qu'un exemplaire de chaque carte, dans un seul métal.
+*Le métal suit la profondeur* (`TRANCHES`, `metalTranche` dans `collection.ts`) : fer de −1 à −2, cuivre de −3 à −6, argent de −7 à −10,
+or au Fond ; une récompense de prestige donne le métal du dessus (l'or au plus). *Trois niveaux par métal* (`COLLECTION.niveauMax`) :
+le niveau 2 ajoute +10 % de force, le niveau 3 un cran d'effet ; au niveau 3, la carte se **promeut** au métal suivant (`promouvoir`,
+3 copies et des cristaux) si son Porteur a le niveau de ce métal (`freinPromotion`). La force de `donnees.ts`
 est réglée pour le métal d'origine de la carte ; dans un autre métal, `METAL_FORCE` la règle. Le métal ouvre aussi l'effet
 (à partir du cuivre, renforcé en or et en nacre : `METAL_RENFORT`) et les Fréquences (1 en fer et en cuivre, 2 en argent
 et en or, 3 en nacre : `METAL_FREQ`). Une carte à plusieurs Fréquences prend d'elle-même celle qui prolonge la suite
 (`meilleureFrequence`), et le joueur peut en changer dans la chaîne (`accorder`) : aucun tirage au sort.
-Deux métaux d'une même carte sont deux cartes à part : chacune ses doublons, son niveau, et un Porteur n'en porte qu'une.
+Une copie d'un métal plus bas compte pour un tiers de doublon par métal d'écart.
 
 **Combats à plusieurs** (22 octobre 2026). À partir de la Strate −3, une salle de combat sur trois abrite un groupe
 (deux ennemis, trois à partir de la Strate −5 : `escorteDe` dans `expedition.ts`). Chaque ennemi a ses PV (`PART_GROUPE` :
@@ -171,7 +176,7 @@ chacun avec son `intention` : `viser` les échange, le reste du moteur ne change
 (`XP`, `gagnerXp`, `niveauPorteur` dans `jeu.ts`) : XP par combat gagné, salle scellée et gardien (×1 + 0,25 par Strate),
 partagée par toute l'escouade au retour, et XP de mission. Niveau 1 à 20, +4 % des PV de base par niveau (`pvNiveau`).
 Un Porteur en retard de deux niveaux sur le plus avancé apprend 1,5 fois plus vite. Les ennemis suivaient d'abord par `FORCE.niveaux`
-(+2,5 % par Strate) : descendre reste un défi (réglage du 22 octobre 2026, au parcours simulé : le joueur moyen gagne environ 3 tentatives au front sur 10, un joueur qui calcule tout comme le robot 5 à 8 sur 10 ; la Tour du Noyau et les creuseurs gardent le rythme des jours).
+(+2,5 % par Strate) : descendre reste un défi (réglage du 22 octobre 2026, revu le 12 novembre : c'est désormais la force du deck qui ouvre les Strates, et le délai de creuse qui garde un peu le rythme des jours).
 
 **Varier les combats** (22 octobre 2026).
 - *Traits des ennemis* (`traits` dans `ENNEMIS`, règles dans `combat.ts`, textes `texteTrait`) : Blindé, Régénération, Épines,
@@ -210,8 +215,9 @@ Des points (`VECU`) font passer trois paliers, Trace, Sillon et Empreinte, qui a
 (`public/art/empreinte/`) ; dans la collection un reflet le traverse (Sillon, Empreinte), jamais en combat. La fiche de la carte montre le palier,
 la jauge du suivant, les épithètes à choisir (`EPITHETES`) et le journal. **Aucun effet en combat** : c'est du souvenir, pas de la puissance.
 
-**Pas de Fusion.** Un métal se trouve dans les Strates, les boss, les choix et les garanties ; il ne se fabrique pas et ne
-se gagne pas en fusionnant des cartes (décision du 21 octobre 2026).
+**La promotion remplace l'ancienne règle « pas de Fusion »** (21 octobre 2026). Depuis le 12 novembre 2026 (retour de Luc, validé par Bryan),
+une carte au niveau 3 passe au métal suivant avec ses copies : le métal se trouve toujours dans les Strates, et il se gagne aussi en faisant
+évoluer une carte avec son Porteur.
 
 **Les effets.** Un effet se déclare dans `donnees.ts` (`{ type: 'percant' }`, `{ type: 'siphon', part: 0.5 }`…),
 son texte est dans `effets.ts` et sa règle dans `combat.ts` (l'Accord, qui touche aux suites, est dans `regles.ts`).
@@ -242,12 +248,17 @@ entière jouée par un « joueur moyen » (`jouerTourMoyen` : il lit la force, l
 du combat comme le robot), avec le vrai district, ses colis, ses niveaux, ses Épreuves, ses missions et ses fouilles. Objectif :
 qu'il faille un peu plus d'expéditions pour chaque nouvelle Strate (environ autant d'expéditions que la profondeur), sans mur.
 
-**Le creusement** (22 octobre 2026) : battre le gardien de la Strate la plus profonde prépare l'étage suivant, qui ne
-s'ouvre qu'avec assez de **creuseurs** logés par la **Tour du Noyau** (`CREUSEURS` dans `jeu.ts`). Les creuseurs qui percent
-un étage y restent : pas de réserve pour plus tard. On en gagne en jouant (fouilles, missions, Épreuves, gardiens, Confiance).
-Il en faut dès la Strate −2 (Bryan, 22 octobre 2026 : ralentir dès le début). Réglé pour un joueur occasionnel (`npm run audit`, 8 novembre 2026) : −10 vers le jour 30 (test : médiane de 32 parties entre 27 et 32 ; cible de Bryan : le jour 30). Mesuré le 8 novembre après-midi, après les combats plus longs de −1 à −3 : −10 au jour 16 à cinq sessions par jour, 30-31 à deux, 47 à une (celui-là bloque sur les gardiens du front, pas sur les creuseurs ni le Noyau). **Les fouilleurs du jour** (`CREUSEURS.fouilleursDuJour`) : à partir de −6, la première fouille réussie de la journée ramène un creuseur à coup sûr, la suivante une chance sur deux, puis une sur cinq. Le Noyau loge les creuseurs (niveau 5 pour −7, 6 pour −8) et il en faut plus pour descendre (`NOYAU_MIN`) : niveau 8 pour −9, 9 pour −10 et le Fond.
+**La creuse** (12 novembre 2026, remplace le verrou des creuseurs du 22 octobre) : battre le gardien de la Strate la plus profonde
+lance la creuse de l'étage suivant, qui s'ouvre au bout d'un délai fixe et affiché (`CREUSE` dans `partie/district.ts`) : rien pour −2,
+4 h pour −3, puis 6, 8, 10, 13, 16, 18 et 20 h pour −10 et le Fond. Pendant ce temps, on joue à autre chose (fouilles, missions, Flèche).
+Chaque **creuseur** logé par la **Tour du Noyau** raccourcit la creuse de 5 %, au plus 40 % (8 creuseurs, Tour 7). Plus aucune Strate ne
+demande un nombre de creuseurs ni un niveau de Tour (`CREUSEURS.requis` à 0, `NOYAU_MIN` vide) : c'est la force du deck qui fait descendre,
+et le métal qui suit la profondeur la fait grandir. On gagne toujours des creuseurs en jouant (fouilles, missions, Épreuves, gardiens, familles) ;
+**les fouilleurs du jour** (`CREUSEURS.fouilleursDuJour`) : à partir de −6, la première fouille réussie de la journée en ramène un à coup sûr,
+la suivante une chance sur deux, puis une sur cinq. Le rythme n'est plus réglé sur « −10 au jour 30 » (Bryan, 12 novembre 2026 : le jeu doit
+durer, mais ce n'est pas un objectif à tout prix) ; parcours simulé après la révision : −10 vers le jour 17 pour un joueur régulier.
 
-Les Éclats : le Comptoir en vend de 1 à 6 par jour selon son niveau (300, 450 puis 650 cristaux), le Générateur en recueille de 1 à 3 par jour en taillant le minerai à partir du niveau 4 (un tous les 300 cristaux taillés, `DISTRICT.eclatsParJour`), et après −10 chaque dépôt des Basses en laisse 1 ou 2. Les Basses ouvrent après −2, la lettre de la directrice aussi (`BASSES.ouverture`, `LEGS_STRATE`).
+Les Éclats : le Comptoir en vend de 1 à 6 par jour selon son niveau (300, 450 puis 650 cristaux), le Générateur en recueille de 1 à 3 par jour en taillant le minerai à partir du niveau 4 (un tous les 300 cristaux taillés, `DISTRICT.eclatsParJour`), et après −10 chaque secours en mer en laisse 1 ou 2. Le secours des familles ouvre après −2, la lettre de la directrice aussi (`BASSES.ouverture`, `LEGS_STRATE`).
 
 Confidentialité (8 novembre 2026) : `public/confidentialite.html`, l'âge demandé avant la première partie (`src/save/age.ts` : moins de 13 ans, rien en ligne), et « Supprimer mon compte et mes données » dans le panneau Compte (`supprimerCompte`, `src/net/compte.ts`).
 
@@ -259,11 +270,11 @@ gardien de la dernière Strate vaincue, une carte au choix dont une en argent à
 **Devenir plus fort sans descendre** (23 octobre 2026). Deux voies au district, réglées dans `jeu.ts` :
 - **Le Comptoir** (`COMPTOIR`, `acheter`) : le « acheter » de « forger, acheter ou combattre ». Il se construit sur le pilier
   qui attendait le Labo génétique (niveau 0 au départ). Chaque jour, 3 à 6 cartes à prix fixe selon son niveau, une fois chacune :
-  on voit la carte avant de payer, aucun hasard payé. Fer et cuivre, de l'argent après la Strate −4, jamais d'or ni de nacre.
+  on voit la carte avant de payer, aucun hasard payé. Depuis le 12 novembre 2026, les étals suivent la tranche de la Strate la plus profonde ouverte (`etalsDuComptoir`) : le métal du dessous, celui de la tranche et celui du dessus ; jamais de nacre.
   Une offre sur deux est un doublon d'une carte possédée. Il a son propre hasard (`comptoir.rng`) : il ne touche pas aux trouvailles.
 - **L'entraînement à la Tour** (`ENTRAINEMENT`) : un Porteur posté à la Tour du Noyau gagne de l'XP avec le temps (3 à 8 XP/h),
   jusqu'à 3 niveaux par niveau de la Tour (`ENTRAINEMENT.niveauxParNoyau`), jamais au-delà du meilleur Porteur de l'escouade. Il ne descend pas pendant ce temps.
-Le robot de parcours s'en sert aussi : ce sont les creuseurs, la Tour et le front qui tiennent le rythme (Strate −10 : voir plus haut). Les images `public/art/batiments/comptoir-N.webp` sont provisoires
+Le robot de parcours s'en sert aussi : depuis le 12 novembre 2026, c'est la force du deck face au front qui tient le rythme, avec le délai de creuse (voir « La creuse »). Les images `public/art/batiments/comptoir-N.webp` sont provisoires
 (le plateau vide du tableau) en attendant celles de Midjourney.
 
 **Lignées et origines** (23 octobre 2026, Bible « Devenir Résonant, Géné ou Augmenté » et « D'où viennent leurs dons »).
@@ -347,10 +358,11 @@ au plus toutes les 5 minutes (une nouvelle Strate ou un nouveau pseudo partent t
 Les règles Firestore valident chaque entrée (champs, bornes, profondeur qui ne redescend pas et monte de 2 Strates au plus,
 date d'arrivée = maintenant quand la profondeur monte). Les pseudos sont uniques : chacun est réservé dans `pseudos/{clé}` (`reserver` dans `src/net/classement.ts`, une transaction), la clé ignore majuscules, accents et séparateurs (`clePseudo`, même table que les règles), le Tableau n'accepte que le pseudo réservé par ce compte, un filtre écarte grossièretés et faux noms officiels (`pseudoInterdit`), et on en change au plus une fois par semaine (`DELAI_PSEUDO`, vérifié dans le jeu). En développement : `__tableau(entrées, uid)` dans la console pour l'essayer sans compte.
 
-**Les ouvertures par étapes** (2 novembre 2026, Bryan : « par étapes douces », sans ralentir la descente) : après le gardien
-de −1, le Port et ses missions en mer ; −2, les Épreuves de la semaine (`EPREUVES_STRATE`) ; −3, les pillages
-(`PILLAGE.strateMin`, le Port reste ouvert dès −1 avec `PILLAGE.strateDuPort`) et la première marée ; −4, les 2ᵉ et 3ᵉ escouades
-(`ESCOUADES_STRATE`, `escouadesOuvertes`). Avant, presque tout s'ouvrait après −1. Le parcours simulé ne change pas.
+**Les ouvertures par étapes** (12 novembre 2026, Bryan : une nouveauté par Strate, pour ne pas noyer le nouveau joueur ; remplace l'ordre
+du 2 novembre) : après le gardien de −1, le Port et ses missions en mer (`PILLAGE.strateDuPort`) ; −2, la lettre de la directrice (`LEGS_STRATE`),
+les Vestiges (`VESTIGES_STRATE`) et le secours des familles en mer (`BASSES.ouverture`) ; −3, les Épreuves de la semaine (`EPREUVES_STRATE`) ;
+−4, les pillages (`PILLAGE.strateMin`) ; −5, le Cercle des quais (`CERCLE_OUVERTURE`) et les 2ᵉ et 3ᵉ escouades (`ESCOUADES_STRATE`,
+`escouadesOuvertes`) ; −6, la Flèche, avec la lettre des Hauts (`flecheOuverte`).
 
 **Les pillages** (26 octobre 2026, décidé avec Bryan ; `src/core/partie/pillages.ts`, `src/ui/pillages.ts`).
 Le Port du district (fermé jusque-là) s'ouvre après la Strate −1 sur les « Cuvettes voisines » (Bryan : « il faut un bateau pour aller piller ») : une carte marine, ta cuvette en bas, six cuvettes
@@ -396,6 +408,8 @@ joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `gard
   Soins intensifs : 1 cristal par point d’Usure (`SOINS_INTENSIFS`).
 
 ### Audit de l'économie (7 novembre 2026)
+
+*Historique : les réglages de creuseurs et de Noyau ci-dessous ont été remplacés le 12 novembre 2026 par la creuse (voir « La creuse »).*
 
 `npm run audit` joue des parties d'un joueur occasionnel moyen et donne, Strate par Strate, le jour d'ouverture et les sessions
 passées à attendre des creuseurs, puis les cristaux, Éclats et niveau du Noyau au fil des jours, et le minerai qui attend d'être taillé.
