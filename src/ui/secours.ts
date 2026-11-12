@@ -8,7 +8,7 @@ import { lieuBassesDef, type LieuBasses, type SecteurBasses } from '../core/digu
 import { FAMILLES_DISTRICT } from '../core/familles';
 import { flancBasses, planchEmpreintes } from './art';
 import { BASSES, bassesDe, bassesOuvertes, famillesDesBasses, libresPourBasses, lieuFait, porteursPresents, prochainSecours, raisonHorsContrat, secteurSuivant, type Jeu } from '../core/jeu';
-import { NOM_LIGNEE, avatar, decompte, jaugeTemps, type EcranDistrict } from './coquille';
+import { NOM_LIGNEE, avatar, decompte, tuilePorteur, jaugeTemps, type EcranDistrict } from './coquille';
 import { ICO, icone } from './icones';
 import { echap } from './outils';
 import { t as tr } from '../core/i18n';
@@ -20,10 +20,12 @@ function choixPorteur(j: Jeu): string {
   const escouade = new Set(j.escouade ?? []);
   // les Porteurs de l'escouade en dernier : partis, ils ne peuvent plus descendre
   libres.sort((a, b) => Number(escouade.has(a)) - Number(escouade.has(b)));
-  return `<div class="bs-choix"><ul>`
-    + libres.map((p) => `<li><button type="button" class="mr-cand" data-action="basses-envoyer" data-id="${p}">${avatar(p, 32)}<span><b>${echap(porteurDef(p).nom)}</b><small>${NOM_LIGNEE[porteurDef(p).lignee]}${escouade.has(p) ? tr(' · dans ton escouade') : ''}</small></span><em>${tr`Envoyer`}</em></button></li>`).join('')
-    + autres.map((p) => `<li><span class="mr-cand indispo">${avatar(p, 32)}<span><b>${echap(porteurDef(p).nom)}</b><small>${echap(raisonHorsContrat(j, p)!)}</small></span></span></li>`).join('')
-    + `</ul></div>`;
+  // en tuiles portrait (12 novembre 2026, refonte des fiches) : on touche celui qu'on envoie
+  return `<div class="bs-choix"><div class="tb-cands">`
+    + libres.map((p) => tuilePorteur(p, { action: 'basses-envoyer', data: { id: p }, aria: tr`Envoyer ${echap(porteurDef(p).nom)}`,
+      badge: escouade.has(p) ? `<span class="tb-marque">${tr`Escouade`}</span>` : '', bas: `<span class="tb-eff">${NOM_LIGNEE[porteurDef(p).lignee]}</span><span class="tb-action">${tr`Envoyer`}</span>` })).join('')
+    + autres.map((p) => tuilePorteur(p, { indispo: true, bas: `<small class="tb-raison">${echap(raisonHorsContrat(j, p)!)}</small>` })).join('')
+    + `</div></div>`;
 }
 
 /** La main d'une famille sur le Mur des empreintes (planche 8 × 6, dans l'ordre des familles) */

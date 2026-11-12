@@ -35,6 +35,8 @@ export interface EcranDistrict {
   tourChanger?: boolean;
   /** la feuille d'un bâtiment (12 novembre 2026) : l'onglet du quotidien, ou celui du niveau suivant */
   ongletBat?: 'salle' | 'niveau';
+  /** l'onglet ouvert d'une fiche de carte ou de Porteur (12 novembre 2026) : null = le premier */
+  ongletFiche?: string | null;
   /** toutes les tuiles de Porteurs dépliées (plus de six) */
   porteursTous?: boolean;
   /** Port, missions en mer (28 octobre 2026) : la destination du jour choisie */
@@ -229,6 +231,26 @@ export function gardesGarnison(porteurs: string[]): { nom: string; lignee: Ligne
 export function avatarGarde(g: { nom: string; lignee: Lignee; img: string | null }, taille = 40): string {
   return `<span class="avatar${g.img ? '' : ' sans-portrait'}" style="--c:${COULEUR[g.lignee]};--t:${taille}px" aria-hidden="true">`
     + (g.img ? `<img src="${g.img}" alt="" decoding="async" loading="lazy">` : `<b>${echap(g.nom.charAt(0))}</b>`) + `</span>`;
+}
+
+/**
+ * Un Porteur en tuile (12 novembre 2026, refonte des fiches) : le portrait peint en haut, liseré de sa lignée, son nom,
+ * une ligne en dessous. Bouton si `action`, sinon simple tuile (grisée si `indispo`).
+ */
+export function tuilePorteur(id: string, o: { action?: string; data?: Record<string, string>; bas?: string; badge?: string; classe?: string; aria?: string; indispo?: boolean } = {}): string {
+  const d = porteurDef(id);
+  const p = portrait(id);
+  const visage = `<span class="tb-visage" style="--c:${COULEUR[d.lignee]}">${p ? `<img src="${p}" alt="" decoding="async" loading="lazy">` : `<b>${echap(d.nom.charAt(0))}</b>`}${o.badge ?? ''}</span>`;
+  const txt = `<span class="tb-cand-txt"><strong>${echap(d.nom.split(' ')[0]!)}</strong>${o.bas ?? ''}</span>`;
+  const cls = `tb-cand${o.classe ? ' ' + o.classe : ''}${o.indispo ? ' indispo' : ''}`;
+  if (!o.action || o.indispo) return `<span class="${cls}"${o.aria ? ` aria-label="${o.aria}"` : ''}>${visage}${txt}</span>`;
+  const data = Object.entries(o.data ?? {}).map(([k, v]) => ` data-${k}="${v}"`).join('');
+  return `<button type="button" class="${cls}" data-action="${o.action}"${data}${o.aria ? ` aria-label="${o.aria}"` : ''}>${visage}${txt}</button>`;
+}
+
+/** Les onglets d'une fiche (bâtiment, carte, Porteur) : la même barre partout */
+export function ongletsFiche(liste: { id: string; nom: string; point?: boolean }[], actif: string, action = 'onglet-fiche'): string {
+  return `<div class="tb-onglets" role="tablist">` + liste.map((o) => `<button type="button" role="tab" aria-selected="${o.id === actif}" data-action="${action}" data-id="${o.id}">${o.nom}${o.point && o.id !== actif ? `<i class="tb-pret"></i>` : ''}</button>`).join('') + `</div>`;
 }
 
 /** Une ressource : icône, valeur ; en rouge si on n'en a pas assez */

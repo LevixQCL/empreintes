@@ -53,7 +53,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     // le mode d'emploi des cartes : ouvrir sur un onglet, changer d'onglet, fermer (district et combat)
     case 'guide': if (app.mode === 'combat') { K.guide = id as OngletGuide; K.regles = false; } else { D.guide = id as OngletGuide; D.menu = false; D.ressource = null; } break;
     case 'guide-fermer': if (app.mode === 'combat') { K.guide = null; K.regles = true; } else D.guide = null; break;
-    case 'carte': D.carte = id; break;
+    case 'carte': D.carte = id; D.ongletFiche = null; break;
     case 'carte-fermer': D.carte = null; break;
     // depuis le détail d'une carte commune : le bâtiment qui la fait grandir (31 octobre 2026)
     case 'commune-batiment': ouvrir('archipel'); D.selection = id as typeof D.selection; break;
@@ -78,7 +78,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'fabriquer': resultat(J.fabriquer(app.jeu, b.dataset.module ?? '', Date.now())); break;
     case 'cartes': ouvrir('cartes'); if (b.dataset.carte) D.carte = b.dataset.carte; break;
     case 'porteurs': ouvrir('porteurs'); break;
-    case 'porteur': D.porteur = id; D.deck = null; D.place = null; break;
+    case 'porteur': D.porteur = id; D.deck = null; D.place = null; D.ongletFiche = null; break;
     // l'onglet Escouade (25 octobre 2026) s'ouvre sur l'escouade ; « Porteurs » et « Collection » sont ses deux autres volets
     case 'porteurs-tous': ouvrir('porteurs'); D.reserve = true; window.scrollTo(0, 0); break;
     case 'porteurs-escouade': D.reserve = false; D.porteur = null; D.deck = null; window.scrollTo(0, 0); break;
@@ -155,6 +155,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'ouvrir-archive': resultat(J.ouvrirArchive(app.jeu)); break;
     case 'entrer': ouvrir('coupe'); break;
     case 'vers-amelioration': D.ongletBat = 'niveau'; requestAnimationFrame(() => document.querySelector('.fb-corps')?.scrollTo(0, 0)); break;
+    case 'onglet-fiche': D.ongletFiche = id; requestAnimationFrame(() => document.querySelectorAll('.feuille .feuille-corps').forEach((c) => c.scrollTo(0, 0))); break;
     case 'bat-tous': D.porteursTous = !D.porteursTous; break;
     case 'onglet-bat': D.ongletBat = id === 'niveau' ? 'niveau' : 'salle'; requestAnimationFrame(() => document.querySelector('.fb-corps')?.scrollTo(0, 0)); break;
     case 'archipel': ouvrir('archipel'); break;

@@ -2,8 +2,8 @@
  "source": "src/ui/secours.ts",
  "entrees": [
   {
-   "fr": " · dans ton escouade",
-   "en": " · in your squad"
+   "fr": "Envoyer {0}",
+   "en": ""
   },
   {
    "fr": "Envoyer",

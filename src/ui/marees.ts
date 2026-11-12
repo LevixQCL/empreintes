@@ -9,7 +9,7 @@ import { CONTRAT, MAREES, contratsDuMoment, equipeConseillee, forceSurEpreuve, l
 import { lieuDef, type Affinite } from '../core/lieux';
 import type { Lignee } from '../core/types';
 import { LIEUX_SLUGS, decorLieu, barque, BARQUE_PEINTE, reflets, sceneDistrict, vignetteDistrict } from './art';
-import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, avatar, decompte, etapeVoyage, type EcranDistrict } from './coquille';
+import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, avatar, decompte, tuilePorteur, etapeVoyage, type EcranDistrict } from './coquille';
 import { ICO, type Icone } from './icones';
 import { echap, texteReplie } from './outils';
 import { COULEUR } from './vue';
@@ -131,10 +131,13 @@ export function htmlMarees(e: EcranDistrict): string {
       // les Porteurs libres, les plus forts sur cette épreuve d'abord ; ceux qui ne peuvent pas partir, grisés avec la raison
       const libres = libresPourContrat(j).map((p) => ({ p, f: forceSurEpreuve(j, c.rang, ep, p) })).sort((a, b) => b.f.s - a.f.s);
       const autres = porteursPresents(j).filter((p) => raisonHorsContrat(j, p));
-      h += `<li class="mr-choix"><ul>`
-        + libres.map(({ p, f }) => `<li><button type="button" class="mr-cand af-${f.affinite}${equipe[k] === p ? ' pris' : ''}" style="--c:${COULEUR[porteurDef(p).lignee]}" data-action="maree-choisir" data-id="${p}">${avatar(p, 32)}<span><b>${echap(porteurDef(p).nom)}</b><small>${tr`${NOM_LIGNEE[porteurDef(p).lignee]} · niv. ${f.niveau}`}</small></span><em>${NOM_AF[f.affinite]}</em>${equipe.includes(p) && equipe[k] !== p ? `<i class="mr-ailleurs">${tr`sur une autre épreuve`}</i>` : ''}</button></li>`).join('')
-        + autres.map((p) => `<li><span class="mr-cand indispo">${avatar(p, 32)}<span><b>${echap(porteurDef(p).nom)}</b><small>${echap(raisonHorsContrat(j, p)!)}</small></span></span></li>`).join('')
-        + `</ul></li>`;
+      // en tuiles portrait (12 novembre 2026, refonte des fiches), comme partout où l'on choisit un Porteur
+      h += `<li class="mr-choix"><div class="tb-cands">`
+        + libres.map(({ p, f }) => tuilePorteur(p, { action: 'maree-choisir', data: { id: p }, classe: `af-${f.affinite}${equipe[k] === p ? ' pris' : ''}`,
+          badge: equipe.includes(p) && equipe[k] !== p ? `<span class="tb-marque">${tr`ailleurs`}</span>` : '',
+          bas: `<span class="tb-eff">${tr`niv. ${f.niveau}`}</span><span class="tb-af">${NOM_AF[f.affinite]}</span>` })).join('')
+        + autres.map((p) => tuilePorteur(p, { indispo: true, bas: `<small class="tb-raison">${echap(raisonHorsContrat(j, p)!)}</small>` })).join('')
+        + `</div></li>`;
     }
   });
   h += `</ol>`;

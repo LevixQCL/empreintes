@@ -14,7 +14,7 @@ import type { BatimentId, GesteDef, Lignee, PorteurDef, TypeGeste } from '../cor
 import { illustrationBatiment, portrait } from './art';
 import { ICONES_ACTION, faceCarte } from './carte';
 import { RECITS_TEXTES } from './recits';
-import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, entete, voletsEscouade, type EcranDistrict } from './coquille';
+import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, ongletsFiche, entete, voletsEscouade, type EcranDistrict } from './coquille';
 import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugePv, plusLongueSuite } from './district';
 import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } from './guide';
 import { ICO, sigle } from './icones';
@@ -487,6 +487,8 @@ export function feuillePorteur(e: EcranDistrict): string {
     + `<div class="fp-titre"><span class="fp-sur">${tr`${NOM_LIGNEE[p.lignee]} · Niveau ${n.niveau}`}</span><h2 id="fiche-titre">${echap(p.nom)}</h2>`
     + (pres ? `<span class="fp-role">${echap(pres.titre)}</span>` : '') + `</div></header>`;
 
+  // deux onglets (12 novembre 2026, refonte des fiches) : « Porteur » (état, cartes, Marque, lignée, poste) d'abord, « Histoire » à part
+  const debutHistoire = h.length;
   if (pres) h += `<div class="fp-bio"><p>${echap(pres.texte)}</p>${pres.replique ? `<p class="fp-replique">« ${echap(pres.replique)} »</p>` : ''}</div>`;
   if (pres?.pourquoi) h += `<section class="fp-bloc fp-pourquoi"><h3 class="fp-h3">${ICO.porte}${tr`Pourquoi ${IL.has(id) ? tr('il') : tr('elle')} est là`}</h3><p class="fp-texte">${echap(pres.pourquoi)}</p></section>`;
   if (pres?.aParte) h += `<aside class="fp-aparte"><strong>${echap(pres.aParte.titre)}</strong><p>${echap(pres.aParte.texte)}</p></aside>`;
@@ -555,6 +557,9 @@ export function feuillePorteur(e: EcranDistrict): string {
       + `</ol></section>`;
   }
 
+  const histoireH = h.slice(debutHistoire);
+  h = h.slice(0, debutHistoire);
+  const debutFiche = h.length;
   // ---------- son état, en vrais chiffres ----------
   const soin = soinParHeure(j);
   const noteUsure = usure < 1
@@ -630,6 +635,11 @@ export function feuillePorteur(e: EcranDistrict): string {
     + `<p class="fp-note">${tr`${ateliers.length ? tr`Ailleurs : ×${virgule(DISTRICT.bonusPoste)}.` : tr`Aucun bâtiment n’est fait pour sa lignée : ×${virgule(DISTRICT.bonusPoste)} partout.`} Pour le poster, touche un bâtiment au District. S’il descend, il quitte son poste, qui reste vacant.`}</p>`
     + `</section>`;
 
+  if (histoireH) {
+    const ficheH = h.slice(debutFiche);
+    const onglet = e.ongletFiche === 'histoire' ? 'histoire' : 'porteur';
+    h = h.slice(0, debutFiche) + ongletsFiche([{ id: 'porteur', nom: tr('Porteur') }, { id: 'histoire', nom: tr('Histoire') }], onglet) + (onglet === 'histoire' ? histoireH : ficheH);
+  }
   // ---------- pied : la prochaine action ----------
   h += `</div><footer class="feuille-pied fp-pied"><button type="button" class="btn large fp-deck" data-action="deck" data-id="${id}"${parti ? ' disabled' : ''}>${ICO.cartes}${parti ? tr('Ses cartes changeront à son retour') : places ? tr`Lui confier des cartes · ${cartes.length} / ${DISTRICT.cartesMax}` : tr('Changer ses cartes')}</button></footer>`;
   return h + `</section>`;

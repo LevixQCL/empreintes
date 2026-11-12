@@ -41,7 +41,7 @@ import { avecMots } from './lexique';
 import { arriveeFuture, feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
 import { ICO, baseIcones, icone, type Icone } from './icones';
-import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, etapeVoyage, avatar, avatarGarde, gardesGarnison, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
+import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, etapeVoyage, avatar, ongletsFiche, avatarGarde, gardesGarnison, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
 import { decimal, echap, mouvementReduit, virgule, texteReplie } from './outils';
 import { ambianceLarge, ambianceTableau } from './ambiance';
@@ -1268,10 +1268,17 @@ export function feuilleCarte(e: EcranDistrict): string {
   let h = `<div class="voile-feuille" data-action="carte-fermer" aria-hidden="true"></div><section class="feuille carte-detail" role="dialog" aria-modal="true" aria-label="${echap(m.nom)}"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:${COULEUR_RARETE[m.rarete]}">${tr`${NOMS_RARETE[m.rarete].toUpperCase()} · ${NOM_LIGNEE[m.lignee].toUpperCase()} · NIVEAU ${c.niveau}`}</span><h2>${echap(m.nom)}</h2>${epitheteAffiche(cle, vecuDe(j, cle)) ? `<span class="fc-epithete">${echap(epitheteAffiche(cle, vecuDe(j, cle))!)}</span>` : ''}</div>`
     + `<button type="button" class="btn-icone" data-action="guide" data-id="effets" aria-label="${tr`Les cartes et leurs effets`}">${ICO.aide}</button>`
-    + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="${tr`Fermer`}">${ICO.fermer}</button></header><div class="feuille-corps">`
-    + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</div><div class="detail-infos">${effetsCarte(carteNiveau(m, c.niveau))}</div></div>`
-    + (loreCarte(cle) ? `<blockquote class="lore-carte">${echap(loreCarte(cle)!)}</blockquote>` : '')
-    + `<p class="rang-carte"><b style="color:${COULEUR_RARETE[m.rarete]}">${RANG_METAL[m.rarete].rang}</b> · ${echap(RANG_METAL[m.rarete].texte)}</p>`;
+    + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="${tr`Fermer`}">${ICO.fermer}</button></header><div class="feuille-corps">`;
+  // deux onglets (12 novembre 2026, refonte des fiches) : « Carte » (effets, à qui la confier, progression), « Empreinte » (son histoire)
+  const onglet = e.ongletFiche === 'empreinte' ? 'empreinte' : 'carte';
+  h += ongletsFiche([{ id: 'carte', nom: tr('Carte') }, { id: 'empreinte', nom: tr('Empreinte') }], onglet);
+  if (onglet === 'empreinte') {
+    h += (loreCarte(cle) ? `<blockquote class="lore-carte">${echap(loreCarte(cle)!)}</blockquote>` : '')
+      + `<p class="rang-carte"><b style="color:${COULEUR_RARETE[m.rarete]}">${RANG_METAL[m.rarete].rang}</b> · ${echap(RANG_METAL[m.rarete].texte)}</p>`
+      + blocEmpreinte(j, cle);
+    return h + `</div></section>`;
+  }
+  h += `<div class="detail-haut"><div class="detail-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</div><div class="detail-infos">${effetsCarte(carteNiveau(m, c.niveau))}</div></div>`;
   // à qui la confier : la décision la plus fréquente, donc juste sous la carte
   h += `<section class="bloc fc-confier"><h3 class="titre-bloc">${ICO.greffe}${porte ? tr`Portée par ${echap(porteurDef(porte).nom)}` : tr('Confier à')}</h3><p class="fc-aide">${niveauRequis(cle) > 1 ? `${tr`Elle demande un Porteur de`} <b>${tr`niveau ${niveauRequis(cle)}`}</b>. ` : ''}${porte ? tr('Touche son portrait pour la reprendre, ou un autre Porteur pour la lui passer.') : tr`Elle entrera dans ton deck quand ce Porteur descendra (${DISTRICT.cartesMax} cartes au plus, de sa lignée).`}</p><div class="fc-porteurs">`
     + porteurs.map((p) => {
@@ -1307,7 +1314,6 @@ export function feuilleCarte(e: EcranDistrict): string {
   }
   if (requis === null && c.doublons > 0) h += `<div class="ligne-btn"><button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}${tr`Recycler 1 · +${COLLECTION.recyclage[m.rarete]} minerai`}</button></div>`;
   h += `</section>`;
-  h += blocEmpreinte(j, cle);
   return h + `</div></section>`;
 }
 
@@ -1339,12 +1345,13 @@ function feuilleCommune(e: EcranDistrict, c: CarteCommuneDef): string {
     const max = bat.niveauMax;
     // le premier niveau du bâtiment où sa force monte vraiment (l'arrondi en saute parfois un)
     const prochain = Array.from({ length: max - niv }, (_, i) => niv + 1 + i).find((n) => forceCommune(c, n) > forceCommune(c, niv));
-    const echelle = Array.from({ length: max - c.niveau + 1 }, (_, i) => c.niveau + i)
-      .map((n) => `<li class="${n === niv ? 'ici' : n < niv ? 'fait' : ''}"><small>${tr`niv. ${n}`}</small><b>${forceCommune(c, n)}</b></li>`).join('');
-    h += `<p class="fc-aide">${tr`Elle grandit avec`} <b>${echap(bat.nom)}</b> ${tr`: améliore le bâtiment, et sa force monte.`}</p>`
-      + `<ol class="cm-echelle ${g.type}" aria-label="${tr`Force selon le niveau de ${echap(bat.nom)}`}">${echelle}</ol>`
-      + (prochain ? `<p class="fc-etat">${tr`Prochain gain : au niveau ${prochain} de ${echap(bat.nom)}, force ${forceCommune(c, niv)} →`} <b>${forceCommune(c, prochain)}</b>.</p>` : `<p class="fc-etat or">${tr`${echap(bat.nom)} au niveau maximum : la carte a toute sa force.`}</p>`)
-      + `<div class="ligne-btn"><button type="button" class="btn sec" data-action="commune-batiment" data-id="${c.batiment}">${ICO.district}${tr`Voir ${echap(bat.nom)}`}</button></div>`;
+    // une tuile au lieu de l'échelle niveau par niveau (12 novembre 2026, refonte des fiches) : le prochain gain, en grand
+    const avant = forceCommune(c, niv);
+    h += prochain
+      ? `<div class="tb-gain cm-gain"><span class="tb-g-ico">${ICO.monter}</span><span class="tb-g-corps"><span class="tb-g-val"><s>${avant}</s><b>${forceCommune(c, prochain)}</b><i>+${forceCommune(c, prochain) - avant}</i></span>`
+        + `<span class="tb-g-txt">${tr`Force au niveau ${prochain} de ${echap(bat.nom)}`}</span><small>${tr`aujourd’hui niv. ${niv} · jusqu’à ${forceCommune(c, max)} au niveau ${max}`}</small></span></div>`
+      : `<div class="tb-gain cm-gain"><span class="tb-g-ico">${ICO.ok}</span><span class="tb-g-corps"><span class="tb-g-val"><b>${avant}</b></span><span class="tb-g-txt">${tr`${echap(bat.nom)} au niveau maximum : la carte a toute sa force.`}</span></span></div>`;
+    h += `<div class="ligne-btn"><button type="button" class="btn sec" data-action="commune-batiment" data-id="${c.batiment}">${ICO.district}${tr`Voir ${echap(bat.nom)}`}</button></div>`;
   }
   h += `</section>`;
   // le Râtelier : une carte commune se met dans autant d'escouades qu'on veut (31 octobre 2026, Bryan), une ligne par escouade
@@ -1419,11 +1426,14 @@ function feuilleCle(e: EcranDistrict): string {
   // ce qui la descelle, puis la fait grandir : le niveau du Porteur le plus avancé de l'escouade
   h += `<section class="bloc fc-prog"><h3 class="titre-bloc">${ICO.monter}${meilleure ? tr('Son éveil') : tr('La desceller')}</h3>`
     + `<p class="fc-aide">${meilleure ? tr`Elle grandit avec le Porteur le plus avancé de l’escouade.` : `${ICO.cristal}<b>${tr`Scellée`}</b> ${tr`: elle s’ouvre quand un Porteur de l’escouade atteint le`} <b>${tr`niveau ${NIVEAU_METAL.nacre}`}</b> ${tr`(aujourd’hui, ton plus avancé est niveau ${niv}).`}`}</p>`
-    + `<ol class="cm-echelle ${g.type}" aria-label="${tr`Niveau de la carte selon le niveau du Porteur`}">${paliers.map((p, k) => {
-      const atteint = niv >= p.porteur;
-      const ici = atteint && (k === paliers.length - 1 || niv < paliers[k + 1]!.porteur);
-      return `<li class="${ici ? 'ici' : atteint ? 'fait' : ''}"><small>${tr`Porteur ${p.porteur}`}</small><b>${tr`niv. ${p.niveau}`}</b></li>`;
-    }).join('')}</ol></section>`;
+    + (() => {
+      // le prochain éveil en tuile (12 novembre 2026) : le niveau de la carte, et le Porteur qu'il faut
+      const suivant = paliers.find((p) => niv < p.porteur);
+      const actuel = [...paliers].reverse().find((p) => niv >= p.porteur);
+      if (!suivant) return `<div class="tb-gain cm-gain"><span class="tb-g-ico">${ICO.ok}</span><span class="tb-g-corps"><span class="tb-g-val"><b>${tr`niv. ${actuel!.niveau}`}</b></span><span class="tb-g-txt">${tr`Éveil complet`}</span></span></div>`;
+      return `<div class="tb-gain cm-gain"><span class="tb-g-ico">${ICO.monter}</span><span class="tb-g-corps"><span class="tb-g-val">${actuel ? `<s>${tr`niv. ${actuel.niveau}`}</s>` : ''}<b>${tr`niv. ${suivant.niveau}`}</b></span>`
+        + `<span class="tb-g-txt">${tr`Quand un Porteur de l’escouade atteint le niveau ${suivant.porteur}`}</span><small>${tr`aujourd’hui, ton plus avancé est niveau ${niv}`}</small></span></div>`;
+    })() + `</section>`;
   // les escouades avec qui elle descend : rien à choisir, elle suit toute seule
   h += `<section class="bloc"><h3 class="titre-bloc">${ICO.district}${tr`Dans tes escouades`}</h3><div class="cm-escouades">`
     + toutes.map((l, k) => {
