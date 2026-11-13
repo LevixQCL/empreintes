@@ -820,6 +820,14 @@ function feuilleLieuFutur(e: EcranDistrict, id: LieuFutur): string {
     + `<p class="fb-role">${echap(l.raison)}</p><p class="ff-promesse">${echap(l.promesse)}</p></div></section>`;
 }
 
+/** Une carte qui peut monter tout de suite : ses copies, ses cristaux, et rien ne la freine (écran Cartes et Forge) */
+function peutMonterCarte(j: Jeu, cle: string): boolean {
+  const m = moduleDef(cle); const c = j.collection[cle]; if (!c) return false;
+  const requis = doublonsRequis(m.id, c.niveau);
+  if (requis === null) return !freinPromotion(j, cle) && j.energie >= (COLLECTION.promotion.cristaux[metalSuivant(m.rarete) ?? 'nacre'] ?? 0);
+  return c.doublons >= requis && j.energie >= composantsNiveau(c.niveau + 1);
+}
+
 /**
  * La Forge (refonte du 27 octobre 2026, Bryan : « super chargé et difficile à lire ») :
  * l'établi au centre, puis les cartes groupées par métal — le prix ne dépend que du métal, il n'est écrit qu'une fois —
@@ -844,19 +852,26 @@ function blocForge(e: EcranDistrict): string {
   h += blocPerles(j);
   // les cartes : celles qui peuvent encore monter, les plus proches d'abord (moins de doublons manquants, puis moins chères)
   const ordre = (m: ModuleDef) => RARETES.indexOf(m.rarete);
-  const cartes = Object.keys(j.collection).map((k) => ({ m: moduleDef(k), c: j.collection[k]! })).filter((x) => !x.m.legs && !x.m.origine)
+  const cartes = Object.keys(j.collection).map((k) => ({ k, m: moduleDef(k), c: j.collection[k]! })).filter((x) => !x.m.legs && !x.m.origine)
     .map((x) => ({ ...x, requis: doublonsRequis(x.m.id, x.c.niveau) }));
+  // 13 novembre 2026 (Bryan : « on a les cartes proches de monter mais pas celles qui peuvent monter ») : un volet « Prêtes »,
+  // ouvert d'office quand une carte peut monter tout de suite ; la toucher ouvre sa fiche, où se trouve le bouton
+  const pretes = cartes.filter((x) => peutMonterCarte(j, x.k)).sort((a, b) => ordre(a.m) - ordre(b.m) || a.m.nom.localeCompare(b.m.nom));
+  const estPrete = new Set(pretes.map((x) => x.k));
   // une carte qui a déjà ses doublons n'a pas besoin de la Forge pour monter : elle passe après les autres
   const pasDe = (x: { m: { id: string }; c: { niveau: number } }) => copiesRequises(x.m.id, x.c.niveau)?.n ?? null;
   const manque = (x: { m: { id: string }; c: { niveau: number; doublons: number } }) => { const n = pasDe(x)! - x.c.doublons; return n > 0 ? n : 1000 + n; };
-  const utiles = cartes.filter((x) => pasDe(x) !== null)
+  const utiles = cartes.filter((x) => pasDe(x) !== null && !estPrete.has(x.k))
     .sort((a, b) => manque(a) - manque(b) || ordre(a.m) - ordre(b.m) || a.m.nom.localeCompare(b.m.nom));
-  const toutes = e.forgeToutes === true;
-  const montrees = toutes ? cartes : utiles.slice(0, FORGE_PROCHES);
+  const vue = e.forgeVue === 'pretes' && !pretes.length ? 'proches' : e.forgeVue ?? (pretes.length ? 'pretes' : 'proches');
+  const toutes = vue === 'toutes';
+  const montrees = vue === 'pretes' ? pretes : toutes ? cartes : utiles.slice(0, FORGE_PROCHES);
   if (!cartes.length) return h + `</section>`;
+  const onglet = (id: string, nom: string, n?: number, classe = '') => `<button type="button" role="tab" class="es-cible${classe}${vue === id ? ' actif' : ''}" data-action="forge-vue" data-id="${id}" aria-selected="${vue === id}">${nom}${n !== undefined ? ` <b>${n}</b>` : ''}</button>`;
   h += `<div class="fg-vues" role="tablist" aria-label="${tr`Cartes à refabriquer`}">`
-    + `<button type="button" role="tab" class="es-cible${toutes ? '' : ' actif'}" data-action="forge-vue" data-id="proches" aria-selected="${!toutes}">${tr`Proches de monter`}</button>`
-    + `<button type="button" role="tab" class="es-cible${toutes ? ' actif' : ''}" data-action="forge-vue" data-id="toutes" aria-selected="${toutes}">${tr`Toutes`} <b>${cartes.length}</b></button></div>`;
+    + (pretes.length ? onglet('pretes', tr('Prêtes à monter'), pretes.length, ' or') : '')
+    + onglet('proches', pretes.length ? tr('Proches') : tr('Proches de monter'))
+    + onglet('toutes', tr('Toutes'), cartes.length) + `</div>`;
   if (!montrees.length) return h + `<p class="fb-vide">${tr`Toutes tes cartes sont au niveau maximum.`}</p></section>`;
   for (const r of RARETES) {
     const groupe = montrees.filter((x) => x.m.rarete === r);
@@ -866,19 +881,22 @@ function blocForge(e: EcranDistrict): string {
     h += `<div class="fg-metal" style="--r:${COULEUR_RARETE[r]}"><span class="fg-metal-nom">${gemme(r)}${NOMS_RARETE[r]}</span>`
       + `<span class="fg-metal-prix">${couts(j, { energie: prix.energie, composants: prix.composants, eclats: prix.eclats })}<span class="fg-duree">${ICO.chrono}${duree(dureeFabrication(j, groupe[0]!.m.id))}</span></span></div>`
       + `<div class="fg-cartes">`;
-    for (const { m, c } of groupe) {
+    for (const { k, m, c } of groupe) {
       const assez = j.energie >= prix.energie && j.composants >= prix.composants && j.eclats >= prix.eclats;
       // le prochain pas : un niveau, ou la promotion au métal suivant (3 copies) une fois au niveau maximum
       const pas = copiesRequises(m.id, c.niveau);
       const jauge = !pas ? `<span class="fg-doublons max">${tr`Niveau max`}</span>`
         : c.doublons >= pas.n ? `<span class="fg-doublons pret">${ICO.monter}${pas.promotion ? tr`Peut évoluer` : tr`Peut monter`}</span>`
         : `<span class="fg-doublons">${pastillesCopies(c.doublons, pas.n, COULEUR_RARETE[pas.promotion ? metalSuivant(m.rarete)! : m.rarete])}${pas.promotion ? `<small>→ ${NOMS_RARETE[metalSuivant(m.rarete)!]}</small>` : ''}</span>`;
-      h += `<button type="button" class="fg-carte${assez && forgeron && !j.forge ? '' : ' attente'}" data-action="fabriquer" data-module="${m.id}" data-carte="${m.id}" aria-label="${tr`Refabriquer ${echap(m.nom)}${!pas ? tr(', niveau maximum') : tr`, ${texteCopies(c.doublons)} copies sur ${pas.n}`}`}">`
+      h += (vue === 'pretes'
+        ? `<button type="button" class="fg-carte prete" data-action="carte" data-id="${k}" aria-label="${tr`Ouvrir ${echap(m.nom)} : elle peut monter`}">`
+        : `<button type="button" class="fg-carte${assez && forgeron && !j.forge ? '' : ' attente'}${estPrete.has(k) ? ' prete' : ''}" data-action="fabriquer" data-module="${m.id}" data-carte="${m.id}" aria-label="${tr`Refabriquer ${echap(m.nom)}${!pas ? tr(', niveau maximum') : tr`, ${texteCopies(c.doublons)} copies sur ${pas.n}`}`}">`)
         + `<span class="fg-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</span>${jauge}</button>`;
     }
     h += `</div>`;
   }
-  if (!toutes && utiles.length > FORGE_PROCHES) h += `<button type="button" class="btn sec fg-plus" data-action="forge-vue" data-id="toutes">${tr`Voir les ${cartes.length} cartes`}</button>`;
+  if (vue === 'pretes') h += `<small class="fb-aide fg-pretes-aide">${tr`Touche une carte pour ouvrir sa fiche et la faire monter.`}</small>`;
+  if (vue === 'proches' && utiles.length > FORGE_PROCHES) h += `<button type="button" class="btn sec fg-plus" data-action="forge-vue" data-id="toutes">${tr`Voir les ${cartes.length} cartes`}</button>`;
   return h + `</section>`;
 }
 
@@ -1158,7 +1176,8 @@ export function htmlArchipel(e: EcranDistrict): string {
     + bulles(e)
     + (e.bulle ? `<button type="button" class="bulle-voile" data-action="bulle" data-id="" aria-label="${tr`Replier`}"></button>` : '')
     + `<div class="archipel-haut"${e.bulle ? ` data-bulle="${e.bulle}"` : ''}${!e.j.chambre ? ' data-porte' : ''}>${mission(e)}${appel(e)}</div></section>`;
-  h += feuilleBatiment(e) + feuilleExode(e);
+  // la fiche d'une carte touchée depuis la Forge (cartes prêtes à monter, Perles) s'ouvre par-dessus le bâtiment
+  h += feuilleBatiment(e) + feuilleExode(e) + (e.carte ? feuilleCarte(e) : '');
   const acte = decisionEnAttente(j);
   // le rapport d'expédition passe d'abord : la carte au choix s'ouvre une fois qu'il est lu
   if (e.expedition) { /* rien d'autre par-dessus */ }
@@ -1680,11 +1699,7 @@ export function htmlCartes(e: EcranDistrict): string {
   // l’Héritage n'entre pas dans le compte : chacun n'en reçoit qu'une sur dix
   const trouvees = MODULES_TIRABLES.filter((m) => exemplaires(j, m.id).length).length;
   const toutes = MODULES.flatMap((m) => exemplaires(j, m.id));
-  const peutMonter = (cle: string) => {
-    const m = moduleDef(cle); const c = j.collection[cle]!; const requis = doublonsRequis(m.id, c.niveau);
-    if (requis === null) return !freinPromotion(j, cle) && j.energie >= (COLLECTION.promotion.cristaux[metalSuivant(m.rarete) ?? 'nacre'] ?? 0);
-    return c.doublons >= requis && j.energie >= composantsNiveau(c.niveau + 1);
-  };
+  const peutMonter = (cle: string) => peutMonterCarte(j, cle);
   const portees = new Set(Object.values(j.porteurs).flatMap((p) => p.modules));
   const estLibre = (cle: string) => !portees.has(cle);
   const nMonter = toutes.filter(peutMonter).length;

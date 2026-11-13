@@ -706,6 +706,14 @@
    "en": "Cards to recraft"
   },
   {
+   "fr": "Prêtes à monter",
+   "en": "Ready to level up"
+  },
+  {
+   "fr": "Proches",
+   "en": "Close"
+  },
+  {
    "fr": "Proches de monter",
    "en": "Close to leveling up"
   },
@@ -726,6 +734,10 @@
    "en": "Can level up"
   },
   {
+   "fr": "Ouvrir {0} : elle peut monter",
+   "en": "Open {0}: it can level up"
+  },
+  {
    "fr": "Refabriquer {0}{1}",
    "en": "Recraft {0}{1}"
   },
@@ -736,6 +748,10 @@
   {
    "fr": ", {0} copies sur {1}",
    "en": ", {0} copies out of {1}"
+  },
+  {
+   "fr": "Touche une carte pour ouvrir sa fiche et la faire monter.",
+   "en": "Tap a card to open it and level it up."
   },
   {
    "fr": "Voir les {0} cartes",

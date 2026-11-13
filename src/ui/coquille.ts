@@ -31,7 +31,7 @@ export interface EcranDistrict {
   j: Jeu;
   /** Forge (27 octobre 2026) : la rangée des Porteurs ouverte pour changer de forgeron, et toutes les cartes affichées */
   posteChanger?: boolean;
-  forgeToutes?: boolean;
+  forgeVue?: 'pretes' | 'proches' | 'toutes';
   /** Tour du Noyau (28 octobre 2026) : la liste des Porteurs ouverte pour changer celui qui s'entraîne */
   tourChanger?: boolean;
   /** la feuille d'un bâtiment (12 novembre 2026) : l'onglet du quotidien, ou celui du niveau suivant */
