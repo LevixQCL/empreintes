@@ -244,7 +244,7 @@
   #app[data-mode="district"] .archipel-haut{top:74px;z-index:5}
   #app[data-mode="district"] .archipel-haut:not([data-porte])>*{display:none}
   #app[data-mode="district"] .archipel-haut[data-bulle="objectif"]>.mission:not(.barre){display:grid;animation:bulle-deplie .18s ease-out}
-  #app[data-mode="district"] .archipel-haut[data-bulle="appel"]>.appel{display:flex;animation:bulle-deplie .18s ease-out}
+  #app[data-mode="district"] .archipel-haut[data-bulle="appel"]>.appel:not(.gv-appel){display:flex;animation:bulle-deplie .18s ease-out}
   /* la porte scellée (tout début du jeu) reste une grande carte, sans bulle */
   #app[data-mode="district"] .archipel-haut[data-porte]{top:10px}
   .mj-y-aller{justify-self:start;min-height:40px;padding:0 14px;font-size:14px;margin-top:4px}
