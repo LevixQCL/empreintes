@@ -483,11 +483,11 @@
   },
   {
    "fr": "Carte gardée : « {0} »",
-   "en": ""
+   "en": "Card kept: “{0}”"
   },
   {
    "fr": "3 chapitres illustrés · 1 carte d’origine",
-   "en": ""
+   "en": "3 illustrated chapters · 1 origin card"
   },
   {
    "fr": "Son récit d’origine",
@@ -495,7 +495,7 @@
   },
   {
    "fr": "Lire",
-   "en": ""
+   "en": "Read"
   },
   {
    "fr": "Changer de carte",
@@ -508,10 +508,6 @@
   {
    "fr": "Une carte d’origine pour {0}, tu gardes l’une des deux ci-dessous, à la fin du récit",
    "en": "An origin card for {0}: you keep one of the two below, at the end of the story"
-  },
-  {
-   "fr": "Acquis pour toujours sur ton compte, sur tous tes appareils",
-   "en": "Yours for good on your account, on all your devices"
   },
   {
    "fr": "Carte exclusive, en or : elle grandit avec {0} au fil de ses niveaux.",
@@ -527,31 +523,11 @@
   },
   {
    "fr": "Les trois récits · {0} + 1 Perle de nacre",
-   "en": "",
-   "ancien": {
-    "fr": "Les trois récits · {0}",
-    "en": "All three stories · {0}"
-   }
-  },
-  {
-   "fr": "Ouverture du paiement…",
-   "en": "Opening payment…"
+   "en": "All three stories · {0} + 1 Nacre Pearl"
   },
   {
    "fr": "Paiement sécurisé par Stripe, en une fois, sans abonnement. Le récit s’ouvre tout de suite : en payant, tu demandes cet accès immédiat et tu renonces à ton droit de rétractation.",
    "en": "Secure payment by Stripe, one-off, no subscription. The story unlocks straight away: by paying, you ask for this immediate access and waive your right of withdrawal."
-  },
-  {
-   "fr": "Relie d’abord ta partie à un compte Google ou à un e-mail : ton achat y restera attaché, même si tu changes d’appareil.",
-   "en": "First link your game to a Google account or an e-mail: your purchase will stay attached to it, even if you change device."
-  },
-  {
-   "fr": "Relier ma partie",
-   "en": "Link my game"
-  },
-  {
-   "fr": "L’achat demande une connexion et un compte en ligne. Reviens ici une fois connecté.",
-   "en": "Buying needs a connection and an online account. Come back here once you are signed in."
   },
   {
    "fr": "Son histoire",
@@ -739,7 +715,7 @@
   },
   {
    "fr": "Histoire",
-   "en": ""
+   "en": "Story"
   },
   {
    "fr": "Lui confier des cartes · {0} / {1}",

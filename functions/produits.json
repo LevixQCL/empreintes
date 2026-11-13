@@ -1,6 +1,8 @@
 {
-  "recit-ilka": { "prix": 299, "nom": "Ossyra — Récit d'Ilka", "droits": ["recit-ilka"] },
-  "recit-doran": { "prix": 299, "nom": "Ossyra — Récit de Doran", "droits": ["recit-doran"] },
-  "recit-vela": { "prix": 299, "nom": "Ossyra — Récit de Véla", "droits": ["recit-vela"] },
-  "recits-trio": { "prix": 599, "nom": "Ossyra — Les trois Récits des origines", "droits": ["recit-ilka", "recit-doran", "recit-vela"] }
+  "recit-ilka": {"prix": 299, "nom": "Ossyra — Récit d'Ilka", "droits": ["recit-ilka"]},
+  "recit-doran": {"prix": 299, "nom": "Ossyra — Récit de Doran", "droits": ["recit-doran"]},
+  "recit-vela": {"prix": 299, "nom": "Ossyra — Récit de Véla", "droits": ["recit-vela"]},
+  "recits-trio": {"prix": 599, "nom": "Ossyra — Les trois Récits des origines", "droits": ["recit-ilka", "recit-doran", "recit-vela"]},
+  "pack-ossyra": {"prix": 499, "nom": "Ossyra — Le Fond (Strates −11 à −15)", "droits": ["fond-ossyra"]},
+  "ossyra-complet": {"prix": 899, "nom": "Ossyra — Les trois Récits des origines et le Fond", "droits": ["recit-ilka", "recit-doran", "recit-vela", "fond-ossyra"]}
 }

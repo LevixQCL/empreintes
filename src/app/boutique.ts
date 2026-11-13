@@ -81,11 +81,14 @@ export async function chargerAchats(uid: string | null): Promise<void> {
     const net = await import('../net/achats');
     for (let essais = attendus ? 8 : 1; essais > 0 && app.uid === uid; essais--) {
       const droits = await net.lireAchats(uid);
-      const nouveau = droits.some((d) => !boutique.achats.includes(d));
+      const nouveaux = droits.filter((d) => !boutique.achats.includes(d));
+      const nouveau = nouveaux.length > 0;
       boutique.achats = droits;
       garderCopie(uid, droits);
       if (nouveau || !attendus) {
-        if (attendus) D.message = t('Merci ! Ton achat est inscrit sur ton compte : le récit t’attend sur la fiche du Porteur.');
+        if (attendus) D.message = nouveaux.includes(DROIT_FOND) && nouveaux.length === 1
+          ? t('Merci ! Ton achat est inscrit sur ton compte : sous le Puits d’avant, la roche cède. Le Fond est ouvert.')
+          : t('Merci ! Ton achat est inscrit sur ton compte : le récit t’attend sur la fiche du Porteur.');
         break;
       }
       if (essais === 1) D.message = t('Ton paiement est en cours de confirmation : le récit s’ouvrira dans quelques instants.');

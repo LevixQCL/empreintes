@@ -57,7 +57,7 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
     case 'recit-garder': if (app.recit && !recitOuvert(app.recit)) { app.recit = null; app.recitChoix = false; app.mode = 'district'; break; }
       if (app.recit) { const r = garderCarteRecit(app.jeu, app.recit, c.id); if (r.ok) sauver(); } break;
     case 'recit-quitter': app.recit = null; app.recitChoix = false; app.mode = 'district'; window.scrollTo(0, 0); break;
-    case 'recit-acheter': if (!RECITS_ORIGINES[c.id]) break; majCompteAchat(); boutique.erreur = ''; boutique.offre = boutique.offre === c.id ? null : c.id; break;
+    case 'recit-acheter': if (!RECITS_ORIGINES[c.id] && c.id !== 'fond') break; majCompteAchat(); boutique.erreur = ''; boutique.offre = boutique.offre === c.id ? null : c.id; break;
     case 'achat-payer': await payer(c.id); break;
     case 'recit-fin': if (!recitOuvert(c.id)) { majCompteAchat(); boutique.offre = c.id; break; }
       app.recit = c.id; app.recitChoix = true; app.mode = 'intro'; D.menu = false; window.scrollTo(0, 0); break;

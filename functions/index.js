@@ -2,7 +2,7 @@
 // - creerPaiement : appelée par le jeu (joueur connecté avec Google ou un e-mail). Elle prépare la page de paiement Stripe
 //   pour un produit de functions/produits.json et renvoie son adresse. Le prix vient d'ici, jamais du téléphone du joueur.
 // - paiementRecu : appelée par Stripe (webhook) une fois le paiement encaissé. Elle vérifie la signature de Stripe, puis
-//   inscrit les droits dans achats/{uid}. Le jeu lit ce document, et aucune règle ne laisse un joueur l'écrire.
+//   inscrit les droits dans achats/{uid} ; un remboursement complet (charge.refunded) les retire. Le jeu lit ce document, et aucune règle ne laisse un joueur l'écrire.
 // Les deux clés secrètes vivent dans Secret Manager (firebase functions:secrets:set …), jamais dans le dépôt.
 // Mise en place pas à pas : docs/paiement.md.
 
@@ -48,6 +48,8 @@ exports.creerPaiement = onCall({ region: REGION, secrets: [STRIPE_CLE], maxInsta
     line_items: [{ quantity: 1, price_data: { currency: 'eur', unit_amount: p.prix, product_data: { name: p.nom } } }],
     client_reference_id: uid,
     metadata: { uid, produit },
+    // repris sur le paiement lui-même : un remboursement (qui ne connaît que le paiement) retrouve ainsi le compte
+    payment_intent_data: { metadata: { uid, produit } },
     customer_email: req.auth.token.email || undefined,
     success_url: `${retour}?achat=ok`,
     cancel_url: `${retour}?achat=annule`,
@@ -65,6 +67,23 @@ exports.paiementRecu = onRequest({ region: REGION, secrets: [STRIPE_CLE, STRIPE_
     return;
   }
   const s = evenement.data.object;
+  // un remboursement complet (13 novembre 2026) : le reçu est marqué, et le compte ne garde que les droits des reçus non remboursés
+  if (evenement.type === 'charge.refunded') {
+    const uid = s.metadata?.uid;
+    if (!s.refunded || !uid) { res.json({ ignore: 'remboursement partiel ou sans compte' }); return; }
+    const recus = await db.collection(`achats/${uid}/recus`).get();
+    const lot = db.batch();
+    const gardes = new Set();
+    for (const r of recus.docs) {
+      const rembourse = r.data().rembourse || r.data().paiement === s.payment_intent;
+      if (r.data().paiement === s.payment_intent && !r.data().rembourse) lot.update(r.ref, { rembourse: true, rembourseLe: FieldValue.serverTimestamp() });
+      if (!rembourse) for (const d of PRODUITS[r.data().produit]?.droits ?? []) gardes.add(d);
+    }
+    lot.set(db.doc(`achats/${uid}`), { droits: [...gardes], maj: FieldValue.serverTimestamp() }, { merge: true });
+    await lot.commit();
+    res.json({ ok: true, rembourse: true });
+    return;
+  }
   const paye = (evenement.type === 'checkout.session.completed' || evenement.type === 'checkout.session.async_payment_succeeded') && s.payment_status === 'paid';
   if (!paye) { res.json({ ignore: evenement.type }); return; }
   const uid = s.metadata?.uid;
@@ -73,7 +92,7 @@ exports.paiementRecu = onRequest({ region: REGION, secrets: [STRIPE_CLE, STRIPE_
   // le droit et le reçu s'écrivent ensemble ; Stripe peut renvoyer deux fois le même message : le résultat est le même
   const lot = db.batch();
   lot.set(db.doc(`achats/${uid}`), { droits: FieldValue.arrayUnion(...PRODUITS[produit].droits), maj: FieldValue.serverTimestamp() }, { merge: true });
-  lot.set(db.doc(`achats/${uid}/recus/${s.id}`), { produit, montant: s.amount_total, devise: s.currency, le: FieldValue.serverTimestamp() });
+  lot.set(db.doc(`achats/${uid}/recus/${s.id}`), { produit, montant: s.amount_total, devise: s.currency, paiement: s.payment_intent ?? null, le: FieldValue.serverTimestamp() });
   await lot.commit();
   res.json({ ok: true });
 });

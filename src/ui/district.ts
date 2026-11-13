@@ -21,7 +21,7 @@ import {
 import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, album, carteNiveau, composantsNiveau, copiesPromotion, doublonsRequis, copiesRequises, freinPromotion, metalSuivant, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
-import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront, finCreuse, gainCreuseurs, copiesAFondre, fondFerme } from '../core/jeu';
+import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront, finCreuse, gainCreuseurs, copiesAFondre, fondFerme, PRODUITS, PACK_OSSYRA, TOUT_OSSYRA, toutProposable, prixEuros } from '../core/jeu';
 import { exodeVisible as exodeVu } from '../core/partie/exode';
 import { bassesOuvertes, CONFIEE, REMUEE, apercuConfiee, confieesOuvertes, flecheOuverte, peutConfier, strateRemuee } from '../core/jeu';
 import { particularite } from '../core/strates';
@@ -2029,6 +2029,35 @@ export function jaugePv(pv: number, max: number, usure = 0, usureM = 1): string 
   return `<div class="jauge-pv"><i class="pv" style="width:${(100 * pv) / max}%"></i>${usure >= 1 ? `<i class="usure" style="width:${(100 * Math.min(usure, usureM)) / max}%"></i>` : ''}</div>`;
 }
 
+/**
+ * Le pack Ossyra (13 novembre 2026) : sous le Puits d'avant, une seule ligne scellée d'un sceau doré, comme le récit d'un
+ * Porteur. Vente fermée : la ligne dit seulement que le Fond viendra. Toucher le prix déplie l'offre et le paiement.
+ */
+function offreFond(e: EcranDistrict): string {
+  const bq = e.boutique?.ouverte ? e.boutique : null;
+  const prix = prixEuros(PRODUITS[PACK_OSSYRA]!.prix);
+  let h = `<section class="fp-recit tr-fond${bq ? ' scelle' : ''}${bq?.offre === 'fond' ? ' ouvert' : ''}"><span class="fp-sceau" aria-hidden="true"></span>`
+    + `<div class="fp-recit-tete"><strong>${tr`Le Fond · −11 à −15`}</strong><small>${tr('La fin de l’histoire de la Glacière, et ce qu’on y trouve')}</small></div>`;
+  if (!bq) return h + `<div class="fp-recit-actions"><span class="tr-fond-bientot">${tr`Bientôt`}</span></div></section>`;
+  if (bq.offre !== 'fond') return h + `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="recit-acheter" data-id="fond" aria-expanded="false">${ICO.verrou}${prix}</button></div></section>`;
+  h += `<div class="fp-recit-plus"><ul class="fp-offre"><li>${tr`Cinq Strates de plus sous le Puits d’avant, de −11 à −15, et leurs gardiens`}</li>`
+    + `<li>${tr`L’histoire des Ossyra, et la fin de celle de la Glacière`}</li>`
+    + `<li>${tr`Le butin du Fond, pour préparer la Flèche`}</li>`
+    + `<li>${tr`Acquis pour toujours sur ton compte, sur tous tes appareils`}</li></ul>`;
+  if (bq.compte === 'pret') {
+    h += `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="achat-payer" data-id="${PACK_OSSYRA}"${bq.occupe ? ' disabled' : ''}>${tr`Le Fond · ${prix}`}</button>`
+      + (toutProposable(bq.achats) ? `<button type="button" class="btn sec petit" data-action="achat-payer" data-id="${TOUT_OSSYRA}"${bq.occupe ? ' disabled' : ''}>${tr`Le Fond et les trois récits · ${prixEuros(PRODUITS[TOUT_OSSYRA]!.prix)} + 1 Perle de nacre`}</button>` : '') + `</div>`
+      + `<p class="fp-legal">${bq.occupe ? tr('Ouverture du paiement…') : tr('Paiement sécurisé par Stripe, en une fois, sans abonnement. Le Fond s’ouvre tout de suite : en payant, tu demandes cet accès immédiat et tu renonces à ton droit de rétractation.')}</p>`;
+  } else if (bq.compte === 'a-relier') {
+    h += `<p class="fp-legal">${tr`Relie d’abord ta partie à un compte Google ou à un e-mail : ton achat y restera attaché, même si tu changes d’appareil.`}</p>`
+      + `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="compte">${tr`Relier ma partie`}</button></div>`;
+  } else {
+    h += `<p class="fp-legal">${tr`L’achat demande une connexion et un compte en ligne. Reviens ici une fois connecté.`}</p>`;
+  }
+  if (bq.erreur) h += `<p class="fp-legal rouge" role="alert">${echap(bq.erreur)}</p>`;
+  return h + `</div></section>`;
+}
+
 // La Tour du Noyau en coupe (revue du 22 octobre 2026, même équipe que la feuille de bâtiment et l'Escouade) :
 // la coupe peinte en tête avec les habitants en bande, la prochaine étape avec ses boutons, puis les Strates
 // qui descendent dans le bon sens (−1 en haut, la roche à creuser tout en bas).
@@ -2059,9 +2088,9 @@ export function htmlCoupe(e: EcranDistrict): string {
     // le Fond fermé au jeu gratuit (13 novembre 2026) : la descente s'arrête au Puits d'avant, l'histoire continue en haut
     etape = `<strong>${tr('Sous le Puits d’avant, la roche ne cède plus')}</strong>`
       + `<small>${tr('Ce que tu cherchais en bas n’y est plus. La suite se joue en haut : la Flèche, et l’Exode du district, sur la digue.')}</small>`
-      + `<small class="tr-creuse-aide">${tr('Le Fond, de −11 à −15, s’ouvrira avec le récit des Ossyra.')}</small>`
       + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="fleche">${ICO.fleche}${tr`Monter à la Flèche`}</button>`
-      + `${exodeVu(j) ? `<button type="button" class="btn sec" data-action="exode-voir">${ICO.monter}${tr`Voir l’Exode`}</button>` : ''}</div>`;
+      + `${exodeVu(j) ? `<button type="button" class="btn sec" data-action="exode-voir">${ICO.monter}${tr`Voir l’Exode`}</button>` : ''}</div>`
+      + offreFond(e);
   } else if (manque) {
     const morceaux: string[] = [];
     const auPort = !!manque.creuseurs && portOuvert(j) && naufragesDeLaStrate(j).restants > 0;

@@ -3,7 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
-import { LOT_RECITS, PRODUITS, RECITS_ORIGINES, aRecit, droitRecit, lotProposable, prixEuros } from '../src/core/jeu';
+import { DROIT_FOND, LOT_RECITS, PACK_OSSYRA, PRODUITS, RECITS_ORIGINES, TOUT_OSSYRA, aFond, aRecit, droitRecit, lotProposable, prixEuros, toutProposable } from '../src/core/jeu';
 
 const require = createRequire(import.meta.url);
 const serveur = require('../functions/droits.js') as {
@@ -37,6 +37,16 @@ describe('Vente des Récits', () => {
     expect(aRecit(['recit-ilka'], 'ilka')).toBe(true);
     expect(lotProposable([])).toBe(true);
     expect(lotProposable(['recit-vela'])).toBe(false);
+  });
+
+  it('le pack Ossyra ouvre le Fond, et tout Ossyra coûte moins que le lot et le pack achetés à part', () => {
+    expect(PRODUITS[PACK_OSSYRA]!.droits).toEqual([DROIT_FOND]);
+    expect(PRODUITS[TOUT_OSSYRA]!.droits.sort()).toEqual([...PRODUITS[LOT_RECITS]!.droits, DROIT_FOND].sort());
+    expect(PRODUITS[TOUT_OSSYRA]!.prix).toBeLessThan(PRODUITS[LOT_RECITS]!.prix + PRODUITS[PACK_OSSYRA]!.prix);
+    expect(aFond([DROIT_FOND])).toBe(true);
+    expect(toutProposable([])).toBe(true);
+    expect(toutProposable([DROIT_FOND])).toBe(false);
+    expect(toutProposable(['recit-ilka'])).toBe(false);
   });
 
   it('les prix s’écrivent en euros', () => {

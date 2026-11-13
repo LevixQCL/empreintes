@@ -2146,6 +2146,66 @@
    "en": "Max level"
   },
   {
+   "fr": "Le Fond · −11 à −15",
+   "en": "The Deep · −11 to −15",
+   "ancien": {
+    "fr": "Le Fond · Strates −11 à −15",
+    "en": "The Deep · Strata −11 to −15"
+   }
+  },
+  {
+   "fr": "La fin de l’histoire de la Glacière, et ce qu’on y trouve",
+   "en": "The end of the Icehouse’s story, and what lies down there"
+  },
+  {
+   "fr": "Bientôt",
+   "en": "Soon"
+  },
+  {
+   "fr": "Cinq Strates de plus sous le Puits d’avant, de −11 à −15, et leurs gardiens",
+   "en": "Five more Strata below the Shaft of Before, from −11 to −15, and their guardians"
+  },
+  {
+   "fr": "L’histoire des Ossyra, et la fin de celle de la Glacière",
+   "en": "The story of the Ossyra, and the end of the Icehouse’s"
+  },
+  {
+   "fr": "Le butin du Fond, pour préparer la Flèche",
+   "en": "The loot of the Deep, to prepare for the Spire"
+  },
+  {
+   "fr": "Acquis pour toujours sur ton compte, sur tous tes appareils",
+   "en": "Yours for good on your account, on all your devices"
+  },
+  {
+   "fr": "Le Fond · {0}",
+   "en": "The Deep · {0}"
+  },
+  {
+   "fr": "Le Fond et les trois récits · {0} + 1 Perle de nacre",
+   "en": "The Deep and the three stories · {0} + 1 Nacre Pearl"
+  },
+  {
+   "fr": "Ouverture du paiement…",
+   "en": "Opening payment…"
+  },
+  {
+   "fr": "Paiement sécurisé par Stripe, en une fois, sans abonnement. Le Fond s’ouvre tout de suite : en payant, tu demandes cet accès immédiat et tu renonces à ton droit de rétractation.",
+   "en": "Secure one-time payment by Stripe, no subscription. The Deep opens right away: by paying, you request this immediate access and waive your right of withdrawal."
+  },
+  {
+   "fr": "Relie d’abord ta partie à un compte Google ou à un e-mail : ton achat y restera attaché, même si tu changes d’appareil.",
+   "en": "First link your game to a Google account or an e-mail: your purchase will stay attached to it, even if you change device."
+  },
+  {
+   "fr": "Relier ma partie",
+   "en": "Link my game"
+  },
+  {
+   "fr": "L’achat demande une connexion et un compte en ligne. Reviens ici une fois connecté.",
+   "en": "Buying needs a connection and an online account. Come back here once you are signed in."
+  },
+  {
    "fr": "EN COUPE · {0} ÉTAGE{1} CREUSÉ{2}",
    "en": "CROSS-SECTION · {0} LEVEL{1|S} DUG{2|}"
   },
@@ -2180,10 +2240,6 @@
   {
    "fr": "Ce que tu cherchais en bas n’y est plus. La suite se joue en haut : la Flèche, et l’Exode du district, sur la digue.",
    "en": "What you were looking for down below is gone. The story goes on up above: the Spire, and the district’s Exodus, on the dike."
-  },
-  {
-   "fr": "Le Fond, de −11 à −15, s’ouvrira avec le récit des Ossyra.",
-   "en": "The Depths, from −11 to −15, will open with the story of the Ossyra."
   },
   {
    "fr": "Voir l’Exode",

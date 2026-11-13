@@ -1,4 +1,5 @@
-// Ce qui se vend en euros (11 novembre 2026, document « Ossyra — Monétisation ») : les Récits des origines, à l'unité ou les trois.
+// Ce qui se vend en euros (11 novembre 2026, document « Ossyra — Monétisation ») : les Récits des origines, à l'unité ou les trois,
+// et depuis le 13 novembre 2026 le pack Ossyra (le Fond) et tout Ossyra (les trois récits et le Fond).
 // Les prix sont en centimes. Le serveur a sa propre copie (functions/produits.json) : c'est elle qui fait foi au moment de payer,
 // et tests/produits.test.ts vérifie que les deux disent la même chose.
 // Un achat donne des « droits » (un par récit), inscrits sur le compte par le serveur une fois le paiement confirmé
@@ -19,14 +20,24 @@ export const droitRecit = (recit: string): string => `recit-${recit}`;
 /** le lot des trois récits */
 export const LOT_RECITS = 'recits-trio';
 
+/** Le droit au Fond (−11 à −15), qu'inscrit le pack Ossyra (12 novembre 2026) ; le compte d'administration l'a pour tester */
+export const DROIT_FOND = 'fond-ossyra';
+/** le pack Ossyra : le Fond, de −11 à −15, où se conclut l'histoire de la Glacière (4,99 €, document du 10 novembre 2026) */
+export const PACK_OSSYRA = 'pack-ossyra';
+/** tout Ossyra : les trois récits et le Fond ensemble (8,99 €, même document) */
+export const TOUT_OSSYRA = 'ossyra-complet';
+
 export const PRODUITS: Record<string, Produit> = {
   ...Object.fromEntries(RECITS_VENDUS.map((r) => [droitRecit(r), { prix: 299, droits: [droitRecit(r)] }])),
   [LOT_RECITS]: { prix: 599, droits: RECITS_VENDUS.map(droitRecit) },
+  [PACK_OSSYRA]: { prix: 499, droits: [DROIT_FOND] },
+  [TOUT_OSSYRA]: { prix: 899, droits: [...RECITS_VENDUS.map(droitRecit), DROIT_FOND] },
 };
 
-/** Le droit au Fond (−11 à −15), qu'inscrira le pack Ossyra (12 novembre 2026) : pas encore en vente ; le compte
- *  d'administration l'a pour tester */
-export const DROIT_FOND = 'fond-ossyra';
+/** Le Fond est-il acquis sur ce compte ? */
+export const aFond = (achats: readonly string[]): boolean => achats.includes(DROIT_FOND);
+/** Tout Ossyra n'est proposé que tant que rien n'est acquis (ni récit, ni Fond) */
+export const toutProposable = (achats: readonly string[]): boolean => lotProposable(achats) && !aFond(achats);
 
 /** Ce récit est-il acquis sur ce compte ? */
 export const aRecit = (achats: readonly string[], recit: string): boolean => achats.includes(droitRecit(recit));

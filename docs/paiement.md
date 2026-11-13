@@ -1,6 +1,7 @@
 # Vendre les Récits des origines (mis en place le 11 novembre 2026)
 
-Le jeu web vend les trois Récits (Ilka, Doran, Véla) à l'unité (2,99 €) ou ensemble (5,99 €), par carte bancaire, avec Stripe.
+Le jeu web vend les trois Récits (Ilka, Doran, Véla) à l'unité (2,99 €) ou ensemble (5,99 €), le Fond (pack Ossyra, 4,99 €)
+et le tout (8,99 €), par carte bancaire, avec Stripe.
 **Tant que `VENTE_OUVERTE` est faux dans `src/net/vente.ts`, rien ne change pour les joueurs** : les récits restent en aperçu.
 
 ## Comment ça marche
@@ -28,7 +29,7 @@ affiche) et `functions/produits.json` (ce que le serveur fait payer).
 5. `firebase deploy --only functions,firestore:rules` (publie aussi la règle `achats` de `firestore.rules`).
    La console affiche l'adresse de `paiementRecu`.
 6. Dans Stripe › Développeurs › Webhooks : ajouter cette adresse, avec les événements `checkout.session.completed` et
-   `checkout.session.async_payment_succeeded`. Copier le « secret de signature » (`whsec_…`) dans `STRIPE_WEBHOOK`
+   `checkout.session.async_payment_succeeded` et `charge.refunded` (un remboursement complet retire le droit). Copier le « secret de signature » (`whsec_…`) dans `STRIPE_WEBHOOK`
    (même commande qu'à l'étape 4), puis redéployer les fonctions.
 7. **Essai** : mettre `VENTE_OUVERTE = true`, pousser, acheter un récit avec la carte de test de Stripe (4242 4242 4242 4242).
    Le récit doit s'ouvrir au retour. Puis passer Stripe en mode réel (clé `sk_live_…`, nouveau webhook réel).
@@ -47,7 +48,7 @@ Ce raccourci n'existe pas sur le jeu publié.
 
 - **Les textes des récits sont encore dans le jeu public** (`src/ui/recits.ts`) : quelqu'un qui fouille le code peut les lire.
   Le verrou arrête le joueur normal ; pour un vrai secret, il faudra envoyer les textes depuis le serveur après achat.
-- **Remboursements** : un paiement remboursé dans Stripe ne retire pas encore le droit (à faire à la main dans Firestore).
 - **Suppression du compte** : les reçus restent (obligation comptable) ; le joueur ne peut pas les effacer lui-même.
 - **Juridique** : conditions de vente, mention sur le droit de rétractation (texte provisoire sur la fiche), TVA, statut.
-- **Pack Ossyra** (Strates −11 à −15) : pas encore de produit.
+- **Pack Ossyra** : en vente sous le Puits d'avant (Tour du Noyau) à 4,99 €, et « tout Ossyra » (trois récits + le Fond) à 8,99 €.
+  Le butin du Fond reste à décider. Une partie déjà avancée sous −10 garde le Fond (`nouvelle.ts`), même sans achat.
