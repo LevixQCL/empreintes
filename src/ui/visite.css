@@ -1,0 +1,80 @@
+/* OSSYRA — la visite de la Cuvette (13 novembre 2026) : la vraie carte, un seul point lumineux, une bulle de verre fumé.
+   Rien n'est peint en code par-dessus la Cuvette : le voile l'assombrit, le cercle d'or montre où toucher. */
+
+.visite{--x-txt:#DCE4EE;--x-doux:#A9B6C7;--x-or:#F2D58C;--x-glace:#CDEFFF;position:fixed;inset:0;z-index:45;pointer-events:none}
+/* tout ce qui n'est pas la cible est inerte pendant la visite */
+.vi-garde{position:absolute;inset:0;pointer-events:auto}
+.visite.survol .vi-garde{background:linear-gradient(180deg,rgba(6,8,14,.45) 0,rgba(6,8,14,0) 22%,rgba(6,8,14,0) 46%,rgba(6,8,14,.55) 70%,rgba(6,8,14,.9) 100%)}
+
+/* Le point lumineux : un trou dans le voile, cerclé d'or, qui respire */
+.vi-trou{position:fixed;left:50%;top:50%;width:0;height:0;padding:0;border:0;border-radius:22px;background:transparent;cursor:pointer;pointer-events:auto;
+  box-shadow:0 0 0 200vmax rgba(5,8,14,.68),inset 0 0 0 1.5px rgba(242,213,140,.95),inset 0 0 22px rgba(242,213,140,.28);
+  transition:left .5s cubic-bezier(.3,.7,.2,1),top .5s cubic-bezier(.3,.7,.2,1),width .5s cubic-bezier(.3,.7,.2,1),height .5s cubic-bezier(.3,.7,.2,1);
+  animation:vi-entree .45s ease-out both}
+.vi-trou::before{content:"";position:absolute;inset:-6px;border-radius:28px;border:1px solid rgba(242,213,140,.55);animation:vi-respire 2.2s ease-in-out infinite}
+.vi-trou:focus-visible{outline:2px solid var(--x-glace);outline-offset:6px}
+/* le doigt : une onde qui part du centre, comme un toucher */
+.vi-doigt{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,240,200,.95) 0 22%,rgba(242,213,140,.45) 23% 48%,transparent 50%);
+  box-shadow:0 0 18px rgba(242,213,140,.6);animation:vi-toucher 1.8s ease-out infinite}
+
+/* La bulle : qui parle, le titre, trois lignes, la consigne */
+.vi-bulle{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom,0px));width:min(440px,calc(100% - 24px));transform:translateX(-50%);
+  display:flex;flex-direction:column;gap:10px;padding:14px 16px 14px;pointer-events:auto;color:var(--x-txt);
+  background:linear-gradient(180deg,rgba(16,22,36,.94),rgba(8,11,20,.96));-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  box-shadow:inset 0 0 0 1px rgba(205,239,255,.16),inset 0 1px 0 rgba(205,239,255,.22),0 18px 40px rgba(0,0,0,.55);
+  clip-path:polygon(0 12px,12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px));
+  animation:vi-bulle .4s ease-out both}
+.visite[data-cote="haut"] .vi-bulle{bottom:auto;top:max(14px,env(safe-area-inset-top,0px))}
+.vi-bulle::before{content:"";position:absolute;left:14%;right:14%;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.9}
+
+.vi-haut{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-4px -6px -6px 0}
+.vi-etape{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--x-doux)}
+.vi-etape b{color:var(--x-or);font-weight:600}
+.vi-passer{min-height:40px;padding:0 6px;border:0;background:none;font:600 14px/1 inherit;font-family:inherit;color:var(--x-doux);cursor:pointer;
+  text-decoration:underline;text-decoration-color:rgba(205,239,255,.3);text-underline-offset:4px}
+.vi-passer:hover{color:var(--x-glace)}
+
+.vi-parole{display:flex;align-items:center;gap:12px}
+.vi-portrait{flex:none;margin:0;width:54px;height:54px;border-radius:50%;overflow:hidden;
+  box-shadow:0 0 0 1.5px color-mix(in srgb,var(--c) 70%,white),0 0 14px color-mix(in srgb,var(--c) 45%,transparent)}
+.vi-portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 16%;display:block}
+.vi-mots{display:flex;flex-direction:column;gap:2px;min-width:0}
+.vi-qui{font-family:var(--display);font-size:14px;letter-spacing:.08em;color:color-mix(in srgb,var(--c) 55%,white)}
+.vi-mots h2{margin:0;font-family:var(--display);font-size:22px;line-height:1.1;font-weight:400;color:#F4EEDD}
+.vi-texte{margin:0;font-size:15px;line-height:1.5;color:var(--x-txt);text-wrap:pretty}
+
+.vi-bas{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.vi-points{display:flex;gap:5px}
+.vi-points i{width:14px;height:2px;border-radius:2px;background:rgba(205,239,255,.16)}
+.vi-points i.vu{background:rgba(242,213,140,.5)}
+.vi-points i.ici{width:22px;background:linear-gradient(90deg,#D4A54E,#F8E3A6)}
+.vi-consigne{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--x-or)}
+.vi-pouls{width:10px;height:10px;border-radius:50%;background:var(--x-or);box-shadow:0 0 0 0 rgba(242,213,140,.6);animation:vi-pouls 1.8s ease-out infinite}
+.vi-suite{min-width:150px}
+
+/* Le survol : la Cuvette descend doucement vers sa place, comme vue d'un bateau qui approche */
+.en-visite:has(.visite.survol) .archipel .toile{animation:vi-survol 6s cubic-bezier(.22,.6,.2,1) both;transform-origin:50% 45%}
+/* pendant la visite, rien d'autre ne parle par-dessus la carte */
+.en-visite .archipel-haut,.en-visite .bulle-bat{visibility:hidden}
+
+@keyframes vi-survol{from{scale:1.16;translate:0 4%;filter:brightness(.8)}to{scale:1;translate:0 0;filter:none}}
+@keyframes vi-entree{from{opacity:0}to{opacity:1}}
+@keyframes vi-bulle{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+@keyframes vi-respire{0%,100%{opacity:.25;transform:scale(1)}50%{opacity:.9;transform:scale(1.03)}}
+@keyframes vi-toucher{0%{opacity:0;transform:scale(.5)}20%{opacity:1;transform:scale(1)}70%{opacity:.4;transform:scale(1.6)}100%{opacity:0;transform:scale(1.9)}}
+@keyframes vi-pouls{0%{box-shadow:0 0 0 0 rgba(242,213,140,.6)}100%{box-shadow:0 0 0 10px rgba(242,213,140,0)}}
+
+@media (prefers-reduced-motion:reduce){
+  .vi-trou,.vi-trou::before,.vi-doigt,.vi-pouls,.vi-bulle,.en-visite:has(.visite.survol) .archipel .toile{animation:none}
+  .vi-trou{transition:none}
+}
+
+@media (min-width:1100px){
+  .vi-bulle{width:420px;padding:18px 20px}
+  .vi-mots h2{font-size:24px}
+  .vi-texte{font-size:16px}
+  /* sur PC, la bulle se pose à côté de la Cuvette, à droite, en bas */
+  .visite .vi-bulle{left:auto;right:32px;transform:none}
+  .visite[data-cote="haut"] .vi-bulle{top:96px}
+}

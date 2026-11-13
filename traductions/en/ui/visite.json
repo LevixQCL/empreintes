@@ -1,0 +1,73 @@
+{
+ "source": "src/ui/visite.ts",
+ "entrees": [
+  {
+   "fr": "Ta Cuvette",
+   "en": "Your Basin"
+  },
+  {
+   "fr": "Dans les années 2060, chaque cuvette était un chantier : une digue en anneau autour d’un puits, pour creuser à sec. La ville a payé ses ouvriers avec les anneaux. Leurs familles y vivent encore, plus bas que la mer.",
+   "en": "In the 2060s, every Basin was a building site: a ring-shaped Dike around a shaft, so they could dig in the dry. The city paid its workers with the rings. Their families still live there, below the sea."
+  },
+  {
+   "fr": "La digue",
+   "en": "The Dike"
+  },
+  {
+   "fr": "Les pompes la gardent au sec depuis plus de cinquante ans. Mais cette année, la ligne bleue peinte sur la digue est passée sous la marée.",
+   "en": "The pumps have kept it dry for over fifty years. But this year, the blue line painted on the Dike went under the tide."
+  },
+  {
+   "fr": "Touche la digue",
+   "en": "Tap the Dike"
+  },
+  {
+   "fr": "La Tour du Noyau",
+   "en": "The Core Tower"
+  },
+  {
+   "fr": "Sous la Tour, le puits. C’est par là qu’on descend, Strate après Strate : chaque gardien vaincu ouvre l’étage suivant. La réponse est en bas.",
+   "en": "Under the Tower, the shaft. That’s our way down, Stratum after Stratum: every guardian we beat opens the next level. The answer is below."
+  },
+  {
+   "fr": "Touche la Tour",
+   "en": "Tap the Tower"
+  },
+  {
+   "fr": "Ce qui fait tourner le district",
+   "en": "What keeps the district running"
+  },
+  {
+   "fr": "La Forge pour tes cartes, la Clinique pour nos blessures, le Générateur pour tout le reste. Les cadenas s’ouvriront à mesure qu’on descend.",
+   "en": "The Forge for your cards, the Clinic for our wounds, the Generator for everything else. The padlocks will open as we go deeper."
+  },
+  {
+   "fr": "Touche un bâtiment",
+   "en": "Tap a building"
+  },
+  {
+   "fr": "Le Générateur taille en cristaux le minerai qu’on remonte, même quand tu ne joues pas. Ils paient tout : bâtiments, cartes, entraînement.",
+   "en": "The Generator cuts the ore we bring up into crystals, even when you’re not playing. They pay for everything: buildings, cards, training."
+  },
+  {
+   "fr": "Touche tes cristaux",
+   "en": "Tap your crystals"
+  },
+  {
+   "fr": "Les recrues travaillent au district, nous trois on descend. Poste une recrue au Générateur. Ensuite, suis l’objectif en haut : il dit toujours quoi faire.",
+   "en": "The recruits work in the district; the three of us go down. Post a recruit at the Generator. After that, follow the objective at the top: it always tells you what to do next."
+  },
+  {
+   "fr": "Touche le Générateur",
+   "en": "Tap the Generator"
+  },
+  {
+   "fr": "La Cuvette",
+   "en": "The Basin"
+  },
+  {
+   "fr": "Visiter",
+   "en": "Look around"
+  }
+ ]
+}

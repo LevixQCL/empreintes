@@ -11,6 +11,7 @@ import * as J from '../../core/jeu';
 import type { BatimentId } from '../../core/types';
 import { visuel as ageDistrict } from '../../ui/art';
 import { nbEtapes } from '../../ui/briefing';
+import { VISITE } from '../../ui/visite';
 import { NB_REPLIQUES } from '../../ui/district';
 import { contratAffiche, equipeAffichee } from '../../ui/marees';
 import type { OngletGuide } from '../../ui/guide';
@@ -323,8 +324,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'briefing-retour': D.etape = Math.max(D.etape - 1, 0); break;
     // « Ton district » : à l'arrivée après la chambre, et depuis le menu
     case 'accueil': ouvrir('accueil'); D.etape = 0; window.scrollTo(0, 0); break;
-    case 'accueil-suite': D.etape = Math.min(D.etape + 1, nbEtapes('district') - 1); break;
-    case 'accueil-retour': D.etape = Math.max(D.etape - 1, 0); break;
+    case 'accueil-suite': D.etape = Math.min(D.etape + 1, VISITE.length - 1); break;
     case 'accueil-fin':
       app.jeu.accueilVu = true; ouvrir('archipel'); window.scrollTo(0, 0);
       // le pseudo, dès l'arrivée au district (3 novembre 2026 : une recrue restait « Sans pseudo ») ;

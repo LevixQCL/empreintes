@@ -138,6 +138,10 @@
    "en": "THE DISTRICT’S CURRENCY"
   },
   {
+   "fr": "Les cristaux",
+   "en": "Crystals"
+  },
+  {
    "fr": "La pierre bleue des profondeurs, taillée par le Générateur. Tout ce que tu rapportes en jouant arrive en minerai ; le Générateur le taille en cristaux, même quand tu ne joues pas. Rien ne se perd. Les cristaux paient tout.",
    "en": "The blue stone of the depths, cut by the Generator. Everything you bring back by playing arrives as ore; the Generator cuts it into crystals, even when you’re not playing. Nothing is lost. Crystals pay for everything."
   },
@@ -260,6 +264,10 @@
   {
    "fr": "RESSOURCE RARE",
    "en": "RARE RESOURCE"
+  },
+  {
+   "fr": "Les Éclats",
+   "en": "Shards"
   },
   {
    "fr": "Des fragments de cristal chargés d’empreintes. Rares, ils ne se trouvent qu’en profondeur ou en récompense.",
@@ -504,6 +512,10 @@
   {
    "fr": "Bats son gardien pour pouvoir creuser l’étage suivant",
    "en": "Beat its guardian to dig the next level"
+  },
+  {
+   "fr": "Vaincre le gardien",
+   "en": "Defeat the guardian"
   },
   {
    "fr": "Le gardien de la Strate −{0} garde l’accès à l’étage suivant.",

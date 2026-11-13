@@ -15,6 +15,7 @@ import './batiment.css';
 import './escouade.css';
 import './ecrans.css';
 import './debut.css';
+import './visite.css';
 import './fiche-porteur.css';
 import './mon-escouade.css';
 import './equipe.css';
