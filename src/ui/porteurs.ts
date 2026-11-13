@@ -13,7 +13,6 @@ import { multNiveau } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
 import { illustrationBatiment, portrait } from './art';
 import { ICONES_ACTION, faceCarte } from './carte';
-import { RECITS_TEXTES } from './recits';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, ongletsFiche, entete, voletsEscouade, type EcranDistrict } from './coquille';
 import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugePv, plusLongueSuite } from './district';
 import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } from './guide';
@@ -494,25 +493,26 @@ export function feuillePorteur(e: EcranDistrict): string {
   if (pres?.aParte) h += `<aside class="fp-aparte"><strong>${echap(pres.aParte.titre)}</strong><p>${echap(pres.aParte.texte)}</p></aside>`;
   // ---------- son Récit des origines (Pack des origines, 11 novembre 2026) : une page scellée d'un sceau doré ----------
   const recit = Object.keys(RECITS_ORIGINES).find((r) => RECITS_ORIGINES[r]!.porteur === id);
+  // l'onglet Histoire porte le petit sceau doré du récit tant que son récit n'est pas lu jusqu'au bout (à lire, ou à débloquer)
+  const recitALire = !!recit && !carteDuRecit(j, recit);
   if (recit) {
     const garde = carteDuRecit(j, recit);
     // vente ouverte (src/app/boutique.ts) : le récit ne se lit qu'une fois acquis sur le compte ; sinon il reste en aperçu
     const bq = e.boutique?.ouverte ? e.boutique : null;
     const acquis = !bq || aRecit(bq.achats, recit);
     const prix = prixEuros(PRODUITS[droitRecit(recit)]!.prix);
-    const accroche = !bq ? RECITS_TEXTES[recit]!.accroche
-      : IL.has(id) ? tr('D’où il vient, avant la porte : trois chapitres illustrés, et une carte d’origine à garder.')
-      : tr('D’où elle vient, avant la porte : trois chapitres illustrés, et une carte d’origine à garder.');
-    h += `<section class="fp-bloc fp-recit${acquis ? '' : ' scelle'}"><span class="fp-sceau" aria-hidden="true"></span><div><h3 class="fp-h3">${ICO.journal}${tr`Son récit d’origine`}</h3>`
-      + `<p class="fp-texte">${garde ? tr`Lu jusqu’au bout. Carte d’origine gardée : « ${moduleDef(garde).nom} ».` : accroche}</p>`;
+    // une seule ligne (Bryan, 13 novembre 2026 : trop de texte sous le Porteur) : le sceau, ce que c'est, et un bouton à droite
+    const sous = garde ? tr`Carte gardée : « ${moduleDef(garde).nom} »` : tr('3 chapitres illustrés · 1 carte d’origine');
+    h += `<section class="fp-bloc fp-recit${acquis ? '' : ' scelle'}${bq?.offre === recit ? ' ouvert' : ''}"><span class="fp-sceau" aria-hidden="true"></span>`
+      + `<div class="fp-recit-tete"><strong>${tr`Son récit d’origine`}</strong><small>${echap(sous)}</small></div>`;
     if (acquis) {
-      h += `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="recit-lire" data-id="${recit}">${garde ? tr('Relire son récit') : tr('Lire son récit')}</button>`
+      h += `<div class="fp-recit-actions"><button type="button" class="btn ${garde ? 'sec' : 'prim'} petit" data-action="recit-lire" data-id="${recit}">${garde ? tr('Relire') : tr('Lire')}</button>`
         + (garde ? `<button type="button" class="btn sec petit" data-action="recit-fin" data-id="${recit}">${tr`Changer de carte`}</button>` : '') + `</div>`;
     } else if (bq!.offre !== recit) {
-      h += `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="recit-acheter" data-id="${recit}" aria-expanded="false">${ICO.verrou}${tr`Débloquer son récit · ${prix}`}</button></div>`;
+      h += `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="recit-acheter" data-id="${recit}" aria-expanded="false">${ICO.verrou}${prix}</button></div>`;
     } else {
       // l'offre dépliée : ce qu'on reçoit, puis le paiement (ou ce qui manque pour payer)
-      h += `<ul class="fp-offre"><li>${tr`Trois chapitres illustrés, à relire quand tu veux`}</li><li>${tr`Une carte d’origine pour ${echap(p.nom)}, tu gardes l’une des deux ci-dessous, à la fin du récit`}</li><li>${tr`Acquis pour toujours sur ton compte, sur tous tes appareils`}</li></ul>`;
+      h += `<div class="fp-recit-plus"><ul class="fp-offre"><li>${tr`Trois chapitres illustrés, à relire quand tu veux`}</li><li>${tr`Une carte d’origine pour ${echap(p.nom)}, tu gardes l’une des deux ci-dessous, à la fin du récit`}</li><li>${tr`Acquis pour toujours sur ton compte, sur tous tes appareils`}</li></ul>`;
       // aucune surprise (Bryan, 11 novembre 2026) : les deux cartes d'origine en clair avant de payer, avec ce qu'elles font
       h += `<ul class="fp-cartes-recit">${RECITS_ORIGINES[recit]!.choix.map((c) => {
         const m = moduleDef(c.carte);
@@ -531,8 +531,9 @@ export function feuillePorteur(e: EcranDistrict): string {
         h += `<p class="fp-legal">${tr`L’achat demande une connexion et un compte en ligne. Reviens ici une fois connecté.`}</p>`;
       }
       if (bq!.erreur) h += `<p class="fp-legal rouge" role="alert">${echap(bq!.erreur)}</p>`;
+      h += `</div>`;
     }
-    h += `</div></section>`;
+    h += `</section>`;
   }
 
   // ---------- son histoire : d'où vient son don, un palier de plus tous les quelques niveaux ----------
@@ -638,7 +639,7 @@ export function feuillePorteur(e: EcranDistrict): string {
   if (histoireH) {
     const ficheH = h.slice(debutFiche);
     const onglet = e.ongletFiche === 'histoire' ? 'histoire' : 'porteur';
-    h = h.slice(0, debutFiche) + ongletsFiche([{ id: 'porteur', nom: tr('Porteur') }, { id: 'histoire', nom: tr('Histoire') }], onglet) + (onglet === 'histoire' ? histoireH : ficheH);
+    h = h.slice(0, debutFiche) + ongletsFiche([{ id: 'porteur', nom: tr('Porteur') }, { id: 'histoire', nom: recitALire ? `<span class="fp-onglet-recit"><i class="fp-mini-sceau" aria-hidden="true"></i>${tr('Histoire')}</span>` : tr('Histoire') }], onglet) + (onglet === 'histoire' ? histoireH : ficheH);
   }
   // ---------- pied : la prochaine action ----------
   h += `</div><footer class="feuille-pied fp-pied"><button type="button" class="btn large fp-deck" data-action="deck" data-id="${id}"${parti ? ' disabled' : ''}>${ICO.cartes}${parti ? tr('Ses cartes changeront à son retour') : places ? tr`Lui confier des cartes · ${cartes.length} / ${DISTRICT.cartesMax}` : tr('Changer ses cartes')}</button></footer>`;

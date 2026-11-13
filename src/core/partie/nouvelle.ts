@@ -105,6 +105,8 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
   for (const p of PORTEURS) porteurs[p.id] = { usure: 0, poste: null, modules: (DEPART_PORTEURS[p.id] ?? []).map((id) => carteId(id, 'fer')) };
   return {
     version: VERSION_JEU,
+    // une partie neuve n'a pas d'exploits d'avant les Perles à rattraper (perles.ts)
+    perlesRattrapees: true,
     energie: DISTRICT.depart.energie,
     composants: DISTRICT.depart.composants,
     batiments: { noyau: 1, generateur: 1, forge: 1, clinique: 1, comptoir: 0, cercle: 0 },

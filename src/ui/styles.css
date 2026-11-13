@@ -863,3 +863,4 @@ button.res:focus-visible{outline:1.5px solid var(--glace,#CDEFFF);outline-offset
   font-family:var(--mono);font-size:var(--t-min);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
 .faible .sigle{width:24px;height:24px;margin:0;vertical-align:middle}
 .faible:focus-visible{outline:2px solid var(--glace,#cfefff);outline-offset:2px}
+.rm-gains li .rx-perle{width:20px;height:20px;object-fit:contain}

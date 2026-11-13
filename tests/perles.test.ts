@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { xpPourAtteindre } from '../src/core/partie/district';
 import { COLLECTION, freinPromotion } from '../src/core/collection';
-import { fondrePerle, perleDesRecits, perlesDuLundi } from '../src/core/partie/perles';
+import { fondrePerle, perleDesRecits, perlesDuLundi, rattraperPerles } from '../src/core/partie/perles';
+import { ASCENSION } from '../src/core/partie/fleche';
+import { tick } from '../src/core/partie/temps';
 import { OBJECTIFS, nouveauJeu, promouvoir, semaineDe } from '../src/core/jeu';
 
 const debut = Date.UTC(2026, 9, 21, 12);
@@ -68,4 +70,29 @@ describe('La Perle de nacre (13 novembre 2026)', () => {
     expect(perleDesRecits(j)).toBeNull();
     expect(j.perles).toBe(1);
   });
+
+  it('une partie déjà avancée récupère une fois les Perles de −9, −10 et des quais à nacre déjà passés', () => {
+    const j = avance();
+    expect(j.perlesRattrapees).toBe(true); // une partie neuve n'a rien à rattraper
+    delete j.perlesRattrapees;
+    j.strate = 10; j.frontVaincu = true;
+    j.fleche = { quai: 82, record: 82, recordLe: 0, recus: [20, 40, 50, 60, 70, 75, 80], victoires: 9, defaites: 0 };
+    const nacre = Object.keys(ASCENSION.cartes).map(Number).filter((q) => ASCENSION.cartes[q] === 'nacre');
+    // la Perle de −9 était déjà arrivée (notée au journal) : elle n'est pas donnée deux fois
+    j.journal.unshift('Une Perle de nacre (gardien de la Strate −9) : à la Forge, elle fait passer une carte en or en nacre.');
+    expect(rattraperPerles(j, nacre)).toMatch(/3 Perles/);
+    expect(j.perles).toBe(3); // −10, quais 75 et 80
+    expect(rattraperPerles(j, nacre)).toBeNull();
+    expect(j.perles).toBe(3);
+  });
+
+  it('le rattrapage passe tout seul au chargement d’une ancienne partie', () => {
+    const j = avance();
+    delete j.perlesRattrapees;
+    j.strate = 9; j.frontVaincu = true;
+    tick(j, debut + 60_000);
+    expect(j.perles).toBe(1);
+    expect(j.perlesRattrapees).toBe(true);
+  });
 });
+

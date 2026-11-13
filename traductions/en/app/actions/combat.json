@@ -46,12 +46,16 @@
    "en": ": new record"
   },
   {
-   "fr": " Quai gravé {0} : +{1} cristaux, +{2} Éclats{3}.",
-   "en": " Engraved quay {0}: +{1} crystals, +{2} Shards{3}."
+   "fr": " Quai gravé {0} : +{1} cristaux, +{2} Éclats{3}{4}.",
+   "en": " Engraved quay {0}: +{1} crystals, +{2} Shards{3}{4}."
   },
   {
    "fr": ", une carte {0} au choix",
    "en": ", one {0} card of your choice"
+  },
+  {
+   "fr": " et une Perle de nacre (à la Forge)",
+   "en": " and a Nacre Pearl (at the Forge)"
   },
   {
    "fr": "Repoussés au quai {0} : l’escouade redescend au quai {1}.",

@@ -16,7 +16,7 @@ import { CREUSE, finCreuse, heuresCreuse, cercleOuvert, MAREES, ACCORD_OUVERT, A
 import type { Lignee } from '../core/types';
 import { miniature, portrait, visageGarnison } from './art';
 import { feuilleGuide, trouveesDe } from './guide';
-import { ICO, baseIcones, icone, type Icone } from './icones';
+import { ICO, baseIcones, icone, perle, type Icone } from './icones';
 import { feuilleNom } from './classements';
 import { cristalAllume, cristalRail, entreeFiche, feuilleFiche } from './fiche';
 import { COULEUR, ICONE_MUET, ICONE_SON, panneauCompte, type Compte } from './vue';
@@ -31,7 +31,7 @@ export interface EcranDistrict {
   j: Jeu;
   /** Forge (27 octobre 2026) : la rangée des Porteurs ouverte pour changer de forgeron, et toutes les cartes affichées */
   posteChanger?: boolean;
-  forgeToutes?: boolean;
+  forgeVue?: 'pretes' | 'proches' | 'toutes';
   /** Tour du Noyau (28 octobre 2026) : la liste des Porteurs ouverte pour changer celui qui s'entraîne */
   tourChanger?: boolean;
   /** la feuille d'un bâtiment (12 novembre 2026) : l'onglet du quotidien, ou celui du niveau suivant */
@@ -611,6 +611,8 @@ export interface RapportExpedition {
   /** les cartes au choix qui attendent au district (gardien, filon, Épreuve, étoiles) */
   choix: number;
   creuseurs: number;
+  /** les Perles de nacre gagnées (gardiens de −9, −10 et −11) */
+  perles?: number;
   /** une précision (fuite, étage qui attend des creuseurs…) */
   note: string;
 }
@@ -647,6 +649,7 @@ function feuilleExpedition(e: EcranDistrict): string {
     + (g.eclats ? ligne(ICO.eclats, `+${g.eclats}`, tr`Éclat${g.eclats > 1 ? 's' : ''}`) : '')
     + (r.creuseurs ? ligne(ICO.ouvrier, `+${r.creuseurs}`, `creuseur${r.creuseurs > 1 ? 's' : ''}`) : '')
     + (g.fragment ? ligne(ICO.journal, '+1', tr('fragment d’archives')) : '')
+    + (r.perles ? ligne(perle('ico peinte rx-perle'), `+${r.perles}`, r.perles > 1 ? tr('Perles de nacre · à la Forge') : tr('Perle de nacre · à la Forge'), 'nouvelle') : '')
     + (g.nouvelleStrate ? ligne(ICO.descendre, `−${e.j.strate}`, tr('nouvelle Strate ouverte'), 'nouvelle') : '')
     + `</ul>`;
   // les cartes trouvées, avec leur face : nouvelle, doublon, ou niveau suivant prêt

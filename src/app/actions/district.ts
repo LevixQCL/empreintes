@@ -82,7 +82,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'comptoir-eclat': { const r = J.acheterEclat(app.jeu, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
     case 'poste-changer': D.posteChanger = !D.posteChanger; break;
     case 'tour-changer': D.tourChanger = !D.tourChanger; break;
-    case 'forge-vue': D.forgeToutes = id === 'toutes'; break;
+    case 'forge-vue': D.forgeVue = id === 'toutes' || id === 'pretes' ? id : 'proches'; break;
     case 'fabriquer': resultat(J.fabriquer(app.jeu, b.dataset.module ?? '', Date.now())); break;
     case 'cartes': ouvrir('cartes'); if (b.dataset.carte) D.carte = b.dataset.carte; break;
     case 'porteurs': ouvrir('porteurs'); break;

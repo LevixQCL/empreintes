@@ -482,36 +482,24 @@
    "en": "Why {0}’s here"
   },
   {
-   "fr": "D’où il vient, avant la porte : trois chapitres illustrés, et une carte d’origine à garder.",
-   "en": "Where he comes from, before the door: three illustrated chapters, and an origin card to keep."
+   "fr": "Carte gardée : « {0} »",
+   "en": ""
   },
   {
-   "fr": "D’où elle vient, avant la porte : trois chapitres illustrés, et une carte d’origine à garder.",
-   "en": "Where she comes from, before the door: three illustrated chapters, and an origin card to keep."
+   "fr": "3 chapitres illustrés · 1 carte d’origine",
+   "en": ""
   },
   {
    "fr": "Son récit d’origine",
    "en": "Origin story"
   },
   {
-   "fr": "Lu jusqu’au bout. Carte d’origine gardée : « {0} ».",
-   "en": "Read to the end. Origin card kept: “{0}”."
-  },
-  {
-   "fr": "Relire son récit",
-   "en": "Reread the story"
-  },
-  {
-   "fr": "Lire son récit",
-   "en": "Read the story"
+   "fr": "Lire",
+   "en": ""
   },
   {
    "fr": "Changer de carte",
    "en": "Change card"
-  },
-  {
-   "fr": "Débloquer son récit · {0}",
-   "en": "Unlock the story · {0}"
   },
   {
    "fr": "Trois chapitres illustrés, à relire quand tu veux",
