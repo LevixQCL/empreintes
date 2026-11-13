@@ -7,7 +7,7 @@ import { DECK_DEPART, porteurDef } from '../core/donnees';
 import type { Geste } from '../core/types';
 import { portrait } from './art';
 import { avatar } from './coquille';
-import { ICO, icone } from './icones';
+import { ICO } from './icones';
 import { COULEUR, carteDemo } from './vue';
 import { echap } from './outils';
 import { t as tr } from '../core/i18n';
@@ -49,58 +49,7 @@ export const ETAPES: Etape[] = [
   },
 ];
 
-// ---------- « Ton district » : juste après la chambre (25 octobre 2026) ----------
-// Bryan, sur la capture de sa première ouverture : « logique qu’on soit perdu ». Le combat était expliqué,
-// pas le district : à quoi servent les ressources, qui travaille et qui descend, et le but (creuser plus bas).
-
-const demoRessources = () => `<ul class="demo-liste">`
-  + `<li>${icone('composants')}<span><b>${tr`Le minerai`}</b>${tr`Ce que l’escouade rapporte d’en bas : de la pierre bleue encore prise dans sa gangue. En haut, c’est le petit « + » sous tes cristaux : ce qui attend d’être taillé.`}</span></li>`
-  + `<li>${icone('energie')}<span><b>${tr`Les cristaux`}</b>${tr`Le Générateur taille le minerai en cristaux, même quand tu ne joues pas. Ils paient tout : bâtiments, cartes, entraînement.`}</span></li>`
-  + `<li>${icone('eclats')}<span><b>${tr`Les Éclats`}</b>${tr`Rares, trouvés en profondeur. Pour les cartes précieuses.`}</span></li>`
-  + `</ul>`;
-
-const groupe = (titre: string, ids: string[], texte: string) => `<div class="demo-groupe"><span class="surtitre">${titre}</span>`
-  + `<div class="demo-avatars">${ids.map((id) => `<figure>${avatar(id, 44)}<figcaption>${echap(porteurDef(id).nom)}</figcaption></figure>`).join('')}</div><p>${texte}</p></div>`;
-
-const demoEquipes = () => `<div class="demo-equipes">`
-  + groupe(tr('Au district'), ['coursier', 'docker', 'guetteur'], tr('Postés dans un bâtiment, ils le font produire davantage.'))
-  + groupe(tr('L’escouade'), ['ilka', 'doran', 'vela'], tr('Elle descend combattre. Un Porteur qui descend quitte son poste.'))
-  + `</div>`;
-
-const demoBoucle = () => `<ol class="demo-boucle">`
-  + `<li><i>1</i>${icone('porte')}<span><b>${tr`Vaincre le gardien`}</b>${tr`On descend par la Tour du Noyau.`}</span></li>`
-  // 12 novembre 2026 (audit du début) : la creuse, mise en ligne le même jour, rythme la suite ; on la dit ici
-  + `<li><i>2</i>${icone('ouvrier')}<span><b>${tr`Les creuseurs percent`}</b>${tr`Tout de suite pour −2, puis quelques heures de plus à chaque étage, affichées à la Tour. Des creuseurs en plus vont plus vite.`}</span></li>`
-  + `<li><i>3</i>${icone('strate')}<span><b>${tr`En attendant, renforce l’escouade`}</b>${tr`Fouilles, missions en mer, niveaux des cartes. L’écran de départ dit si elle est prête.`}</span></li>`
-  + `<li class="fin">${icone('strate')}<span><b>${tr`La Strate suivante s’ouvre`}</b>${tr`Plus profond, plus précieux.`}</span></li></ol>`;
-
-const demoRepere = () => `<ul class="demo-liste">`
-  + `<li>${ICO.ok}<span><b>${tr`L’objectif, en haut`}</b>${tr`Il dit quoi faire ensuite, et donne une récompense.`}</span></li>`
-  + `<li><span class="demo-pastille" aria-hidden="true"><i class="pastille-alerte"></i></span><span><b>${tr`Les pastilles orange`}</b>${tr`Quelque chose t’attend dans cet onglet ou ce bâtiment.`}</span></li>`
-  + `<li>${icone('coffre')}<span><b>${tr`Le ravitaillement du jour`}</b>${tr`Un colis chaque jour : des cristaux et des cartes.`}</span></li></ul>`;
-
-export const ETAPES_DISTRICT: Etape[] = [
-  {
-    qui: 'vela', titre: tr('Ton district'),
-    texte: tr('Ici, tout tourne avec trois ressources, toutes en haut de l’écran : touche les cristaux ou les Éclats pour tout savoir.'),
-    demo: demoRessources,
-  },
-  {
-    qui: 'ilka', titre: tr('Ceux qui restent, ceux qui descendent'),
-    texte: tr('Les trois recrues travaillent au district. Nous trois, on descend. Garde-nous pour l’escouade et poste les recrues dans les bâtiments.'),
-    demo: demoEquipes,
-  },
-  {
-    qui: 'doran', titre: tr('Toujours plus bas'),
-    texte: tr('Le but, c’est de creuser. Chaque Strate a un gardien qui garde le passage. Voilà comment on passe d’un étage au suivant.'),
-    demo: demoBoucle,
-  },
-  {
-    qui: 'vela', titre: tr('Un pas à la fois'),
-    texte: tr('Tu n’as pas à tout retenir. Suis l’objectif en haut du district : il te montre la prochaine chose à faire. On commence par mettre une recrue au travail au Générateur.'),
-    demo: demoRepere,
-  },
-];
+// « Ton district », à l'arrivée au district, est devenu la visite de la Cuvette sur la vraie carte (visite.ts, 13 novembre 2026)
 
 /** Le Porteur qui parle, peint en grand (portrait 3:4 fondu vers le bas) ; l'avatar si l'image manque */
 const portraitParole = (id: string) => {
@@ -108,12 +57,10 @@ const portraitParole = (id: string) => {
   return `<figure class="bf-portrait" aria-hidden="true">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 96)}</figure>`;
 };
 
-/** Les deux suites d'explications : avant la chambre (le combat), puis à l'arrivée au district */
+/** Les explications d'avant la chambre (le combat) */
 const SUITES = {
   chambre: { etapes: ETAPES, nom: tr('Avant d’ouvrir'), passer: 'ouvrir-chambre', action: 'briefing',
     fin: `<button type="button" class="btn prim large appel-porte" data-action="ouvrir-chambre">${ICO.porte}${tr`Ouvrir la porte`}</button>` },
-  district: { etapes: ETAPES_DISTRICT, nom: tr('Ton district'), passer: 'accueil-fin', action: 'accueil',
-    fin: `<button type="button" class="btn prim large appel-porte" data-action="accueil-fin" data-id="generateur">${icone('ouvrier')}${tr`Poster une recrue`}</button>` },
 };
 export type Suite = keyof typeof SUITES;
 export const nbEtapes = (s: Suite) => SUITES[s].etapes.length;

@@ -54,7 +54,24 @@
   .feuille-tete{padding:22px 24px 16px}
   .feuille-corps{padding:20px 24px 24px}
   .feuille-pied{padding:16px 24px 20px}
-  .feuille.carte-detail{width:min(620px,48vw)}
+  /* La fiche d'une carte en vitrine (13 novembre 2026, Bryan : « sur grand écran je dois encore défiler pour voir ma carte ») :
+     au centre de l'écran, la carte en grand à gauche, tout le reste (effets, Porteurs, progression) à droite, sans défiler. */
+  .feuille.carte-detail{--h-vitrine:min(840px,calc(100dvh - 48px));left:calc(50% + var(--rail,0px) / 2);right:auto;top:50%;bottom:auto;
+    transform:translate(-50%,-50%);width:min(1080px,calc(100vw - var(--rail,0px) - 64px));height:var(--h-vitrine);
+    box-shadow:0 0 0 1px var(--glace-3,var(--line)),0 40px 120px rgba(0,0,0,.65)}
+  html #app .feuille.carte-detail{border-radius:20px}
+  .voile-feuille:has(+ .carte-detail){background:rgba(4,6,16,.72);backdrop-filter:blur(4px)}
+  .feuille.carte-detail.entre{animation:fc-vitrine .3s cubic-bezier(.2,.8,.2,1)}
+  @keyframes fc-vitrine{from{transform:translate(-50%,-47%) scale(.97);opacity:0}to{transform:translate(-50%,-50%);opacity:1}}
+  .carte-detail .feuille-corps:has(> .detail-haut){display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:repeat(8,auto) 1fr;
+    column-gap:40px;row-gap:18px;align-content:stretch;padding:24px 36px 28px}
+  .carte-detail .feuille-corps:has(> .detail-haut) > *{grid-column:2;min-width:0}
+  .carte-detail .detail-haut{display:contents}
+  .carte-detail .detail-face{grid-column:1;grid-row:1 / -1;align-self:start;position:sticky;top:0;
+    width:min(460px,calc((var(--h-vitrine) - 150px) * 5 / 7));
+    /* un léger halo derrière la carte : c'est elle la vedette */
+    background:radial-gradient(closest-side,rgba(190,225,255,.10),transparent);padding:4px}
+  .carte-detail .detail-infos{align-content:start}
 
   /* ================= District : le tableau au centre, la vitre à droite ================= */
   .ecran.ecran-archipel > .contenu{max-width:none;padding:0;margin:0}

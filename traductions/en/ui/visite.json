@@ -1,0 +1,53 @@
+{
+ "source": "src/ui/visite.ts",
+ "entrees": [
+  {
+   "fr": "Ta Cuvette",
+   "en": "Your Basin"
+  },
+  {
+   "fr": "Un chantier des années 2060 : une digue en anneau, un puits au centre. Les ouvriers ont été payés en anneaux. Leurs familles vivent ici, plus bas que la mer.",
+   "en": "A building site from the 2060s: a ring-shaped Dike, a shaft in the middle. The workers were paid in rings. Their families live here, below the sea."
+  },
+  {
+   "fr": "La digue",
+   "en": "The Dike"
+  },
+  {
+   "fr": "Les pompes la gardent au sec depuis cinquante ans. Mais cette année, la ligne bleue peinte sur la digue est passée sous la marée.",
+   "en": "The pumps have kept it dry for fifty years. But this year, the blue line painted on the Dike went under the tide."
+  },
+  {
+   "fr": "Touche la digue",
+   "en": "Tap the Dike"
+  },
+  {
+   "fr": "La Tour du Noyau",
+   "en": "The Core Tower"
+  },
+  {
+   "fr": "Ce matin, on a ouvert la porte sous la Tour. Scellée depuis cinquante-cinq ans. Ce qu’il y a dessous, on va le chercher.",
+   "en": "This morning, we opened the door under the Tower. Sealed for fifty-five years. Whatever lies beneath, we’re going to find it."
+  },
+  {
+   "fr": "Touche la Tour",
+   "en": "Tap the Tower"
+  },
+  {
+   "fr": "Le Générateur",
+   "en": "The Generator"
+  },
+  {
+   "fr": "Il taille nos cristaux, même quand tu dors. Et les cristaux paient tout. Mets-y une recrue.",
+   "en": "It cuts our crystals, even while you sleep. And crystals pay for everything. Put a recruit on it."
+  },
+  {
+   "fr": "Touche le Générateur",
+   "en": "Tap the Generator"
+  },
+  {
+   "fr": "Visiter",
+   "en": "Look around"
+  }
+ ]
+}

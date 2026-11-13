@@ -39,6 +39,7 @@ import { frequenceLibre } from '../core/regles';
 import { htmlListeScenes } from './campagne';
 import { COULEUR } from './vue';
 import type { Affinite } from '../core/lieux';
+import { htmlVisite, suivreVisite } from './visite';
 import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteDistrict, decor, decorStrate, illustrationBatiment, illustrationModule, interieurBatiment, portrait, prochainVisuel, prochainPalier, palierCuvette, type PalierCuvette, CALQUES_CUVETTE, calquePalier, FUMEE_FORGE, reflets, sceneDistrict, CUVETTE, visuel, portraitYse, illustrationEnnemi } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence, pastillesCopies, texteCopies } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
@@ -207,6 +208,7 @@ function degagerBalises(racine: HTMLElement) {
 
 export function brancherTableau(racine: HTMLElement) {
   degagerBalises(racine);
+  suivreVisite(racine);
   if (!mouvementReduit()) brancherHoule(racine);
   const place = racine.querySelector<HTMLElement>('.archipel .anime');
   if (!place || mouvementReduit()) return;
@@ -1181,6 +1183,8 @@ export function htmlArchipel(e: EcranDistrict): string {
     + (e.bulle ? `<button type="button" class="bulle-voile" data-action="bulle" data-id="" aria-label="${tr`Replier`}"></button>` : '')
     + `<div class="archipel-haut"${e.bulle ? ` data-bulle="${e.bulle}"` : ''}${!e.j.chambre ? ' data-porte' : ''}>${mission(e)}${appel(e)}${appelVille(e)}</div></section>`;
   // la fiche d'une carte touchée depuis la Forge (cartes prêtes à monter, Perles) s'ouvre par-dessus le bâtiment
+  // la visite de la Cuvette (13 novembre 2026) : la carte seule, voilée sauf ce qu'il faut toucher, rien d'autre par-dessus
+  if (e.vue === 'accueil') return coquille(e, h + htmlVisite(e.etape), 'ecran-archipel en-visite');
   h += feuilleBatiment(e) + feuilleExode(e) + feuilleVille(e) + (e.carte ? feuilleCarte(e) : '');
   const acte = decisionEnAttente(j);
   // le rapport d'expédition passe d'abord : la carte au choix s'ouvre une fois qu'il est lu
