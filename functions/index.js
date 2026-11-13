@@ -14,6 +14,8 @@ const Stripe = require('stripe');
 const { PRODUITS, retourPermis, droitsNouveaux } = require('./droits');
 
 initializeApp();
+// le Gardien de la ville (13 novembre 2026) : les frappes, rejouées et comptées ici
+exports.compterFrappes = require('./gardien').compterFrappes;
 const db = getFirestore();
 
 const STRIPE_CLE = defineSecret('STRIPE_CLE');

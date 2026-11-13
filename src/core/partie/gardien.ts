@@ -44,17 +44,27 @@ export const GARDIEN_VILLE = {
   paliers: [0.25, 0.5, 0.75, 1, 1.5] as const,
   /** la Perle de nacre (13 novembre 2026) : toutes les deux semaines, après −10, quand la ville abat le Gardien ; ratée, elle attend le suivant */
   perle: { strate: 10, toutesLes: 2 },
+  /** « une journée de cristaux » : 300 par Strate vaincue (≈ ce que taille un Générateur en un jour à −10, audit du 13 novembre) */
+  cristauxJour: 300,
 };
 
 /** La règle de salle de chaque semaine, dans cet ordre (une par semaine, en boucle) */
 const REGLES_SEMAINE = ['echo', 'courants', 'brouillard', 'chant', 'inondee', 'sanctuaire', 'eboulis'] as const;
+
+/** Le nom de chaque écho, accordé (« de la », « du ») */
+const NOMS_ECHOS: Record<string, string> = {
+  confluence: tr('L’écho de la Confluence'),
+  'gardien-registres': tr('L’écho du Gardien des registres'),
+  tisseuse: tr('L’écho de la Tisseuse'),
+  'premier-porteur': tr('L’écho du Premier Porteur'),
+};
 
 /** Le Gardien de la semaine : l'écho d'un gardien des Strates (les quatre en boucle), et sa règle de salle */
 export function gardienDeLaSemaine(semaine: number): { ennemi: string; condition: string; nom: string } {
   const bosses = ZONES.map((z) => z.boss);
   const ennemi = bosses[((semaine % bosses.length) + bosses.length) % bosses.length]!;
   const condition = REGLES_SEMAINE[((semaine % REGLES_SEMAINE.length) + REGLES_SEMAINE.length) % REGLES_SEMAINE.length]!;
-  return { ennemi, condition, nom: tr`L’écho ${ennemiDef(ennemi).nom.replace(/^L[ae] /, (m) => m.toLowerCase())}` };
+  return { ennemi, condition, nom: NOMS_ECHOS[ennemi] ?? tr`L’écho de ${ennemiDef(ennemi).nom}` };
 }
 export const regleDeLaSemaine = (semaine: number) => CONDITIONS[gardienDeLaSemaine(semaine).condition];
 
@@ -75,6 +85,8 @@ export interface EtatGardien {
   perleDue?: boolean;
   /** la dernière semaine dont la Perle a été réglée (donnée ou reportée) */
   perleSemaine?: number;
+  /** la ville a déjà répondu à ce directeur : la Perle des deux semaines vient du Gardien, plus du lundi des Perles (perles.ts) */
+  enLigne?: boolean;
 }
 
 /** Une frappe : de quoi la rejouer à l'identique (le serveur recompte tout, il ne lit jamais les dégâts du téléphone) */
@@ -139,6 +151,8 @@ export function combatGardien(d: DepartGardien): CombatEtat {
   const s = C.creerCombat({
     porteurs: d.porteurs.map((p) => ({ ...p })), deck: d.deck.map((g) => ({ ...g })), ennemiId: d.ennemi, rng: d.rng,
     force: d.force, condition: d.condition, troisiemePhase: false,
+    // au bout de 12 tours, il replonge dans le puits avec ses blessures (le mécanisme des Rôdeurs) : le combat compte comme fini
+    fuyard: { tours: GARDIEN_VILLE.tours, part: 1 },
     ...(d.bonus && Object.keys(d.bonus).length ? { bonus: d.bonus } : {}),
   });
   // personne ne l'abat seul
@@ -220,7 +234,7 @@ export function frapperGardien(j: Jeu, escouade: string[], now: number, rng = gr
     force: forceStrate(Math.max(1, strateVaincue(j))), rng,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
   };
-  const x = nouvelleExpedition({ porteurs: e.porteurs, deck: e.deck, strate: 1, rng, sequence: [sem.ennemi], force: depart.force });
+  const x = nouvelleExpedition({ porteurs: e.porteurs, deck: e.deck, strate: Math.max(1, strateVaincue(j)), rng, sequence: [sem.ennemi], force: depart.force });
   x.combat = combatGardien(depart);
   x.combat.journal = [tr`${sem.nom} remonte par le puits. Douze tours pour le repousser : chaque coup compte pour la ville.`];
   x.gardienVille = { depart, journal: [] };
@@ -278,7 +292,8 @@ export type RecompensePalier =
   | { palier: number; type: 'decor' };
 
 /** Les paliers touchés et non encore reçus (le joueur a frappé au moins une fois cette semaine) : on les donne ici */
-export function recevoirPaliers(j: Jeu, ville: VilleGardien, now: number, productionHeure: number): RecompensePalier[] {
+export function recevoirPaliers(j: Jeu, ville: VilleGardien, now: number): RecompensePalier[] {
+  const jour = GARDIEN_VILLE.cristauxJour * Math.max(1, strateVaincue(j));
   const g = etatGardien(j, now);
   if (ville.semaine !== g.semaine || (g.parts <= 0 && !g.aEnvoyer.length && g.meilleure <= 0)) return [];
   const part = ville.parts / Math.max(1, ville.pv);
@@ -286,11 +301,11 @@ export function recevoirPaliers(j: Jeu, ville: VilleGardien, now: number, produc
   for (const p of GARDIEN_VILLE.paliers) {
     if (part < p || g.recus.includes(p)) continue;
     g.recus.push(p);
-    if (p === 0.25) { const n = Math.round(productionHeure * 12); j.energie += n; dons.push({ palier: p, type: 'cristaux', n }); }
+    if (p === 0.25) { const n = Math.round(jour / 2); j.energie += n; dons.push({ palier: p, type: 'cristaux', n }); }
     else if (p === 0.5) { j.eclats += 10; dons.push({ palier: p, type: 'eclats', n: 10 }); }
     else if (p === 0.75) { j.choix.push({ source: 'gardien', options: tirerChoix(j, Math.max(1, strateVaincue(j)), undefined, undefined, porteursPresents(j)) }); dons.push({ palier: p, type: 'carte' }); }
     else if (p === 1) {
-      const n = Math.round(productionHeure * 24); j.energie += n; dons.push({ palier: p, type: 'cristaux', n });
+      const n = jour; j.energie += n; dons.push({ palier: p, type: 'cristaux', n });
       if (perleDeLaSemaine(j, g.semaine)) { gagnerPerles(j, 1, tr('le Gardien de la ville')); g.perleDue = false; dons.push({ palier: p, type: 'perle' }); }
     } else dons.push({ palier: p, type: 'decor' });
   }

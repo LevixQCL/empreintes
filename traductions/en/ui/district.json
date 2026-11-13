@@ -2906,6 +2906,10 @@
    "en": "Entrust the dig ({0} h)"
   },
   {
+   "fr": "GARDIEN DE LA VILLE",
+   "en": "CITY GUARDIAN"
+  },
+  {
    "fr": "FLÈCHE · DÉFI DU QUAI {0}",
    "en": "SPIRE · QUAY {0} CHALLENGE"
   },
@@ -2928,6 +2932,14 @@
   {
    "fr": "FOUILLE · ",
    "en": "DIG · "
+  },
+  {
+   "fr": "Douze tours pour le frapper le plus fort possible. On ne peut pas perdre, et l’escouade ne prend pas d’Usure : chaque coup compte pour la ville.",
+   "en": "Twelve turns to strike it as hard as you can. You cannot lose, and the squad takes no Strain: every blow counts for the city."
+  },
+  {
+   "fr": "Sans règle",
+   "en": "No rule"
   },
   {
    "fr": "Défi · quai {0}",
@@ -3184,6 +3196,10 @@
   {
    "fr": "{0} cartes, prêt",
    "en": "{0} cards, ready"
+  },
+  {
+   "fr": "Frapper",
+   "en": "Strike"
   },
   {
    "fr": "Piller",

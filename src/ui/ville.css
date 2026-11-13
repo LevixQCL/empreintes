@@ -1,0 +1,73 @@
+/* OSSYRA — Le Gardien de la ville (13 novembre 2026). Même matière que l'Exode : verre fumé, arêtes de glace, or pour la valeur.
+   Textes à 12 px minimum, cibles de 44 px. La feuille reprend la base .bs-feuille. */
+
+/* la bulle de la Cuvette : le portrait du Gardien de la semaine dans le médaillon */
+.gv-bulle .bulle-med{overflow:hidden}
+.gv-bulle .bulle-med img{width:100%;height:100%;object-fit:cover;object-position:50% 22%;border-radius:inherit}
+
+.gv-scene{display:grid;gap:10px;margin:4px 0 14px}
+.gv-scene img{width:100%;height:170px;object-fit:cover;object-position:50% 22%;border-radius:12px;box-shadow:inset 0 0 0 1px rgba(205,239,255,.18)}
+.gv-scene p{margin:0;font-size:13.5px;line-height:1.5;color:#C9D6E6}
+.gv-regle{display:flex;gap:10px;align-items:flex-start;margin:0 0 14px;font-size:13px;line-height:1.45;color:#C9D6E6}
+.gv-regle .ico{flex:none;width:16px;height:16px;margin-top:2px;color:#CDEFFF}
+.gv-regle strong{display:block;color:#fff;font-weight:600}
+
+/* la jauge de la ville, avec ses paliers */
+.gv-ville{display:grid;gap:8px;margin:0 0 14px;padding:14px;border-radius:12px;
+  background:linear-gradient(180deg,rgba(242,213,140,.1),rgba(242,213,140,.03));box-shadow:inset 0 0 0 1px rgba(242,213,140,.28)}
+.gv-ville-tete{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.gv-ville-tete .surtitre{display:flex;align-items:center;gap:6px;color:#F2D58C}
+.gv-ville-tete .surtitre .ico{width:14px;height:14px}
+.gv-ville-tete b{font:600 15px/1 var(--mono);color:#FFF6DC}
+.gv-ville small{font-size:12.5px;color:#C9D6E6}
+.gv-barre{position:relative;display:block;height:10px;margin:2px 0 18px;border-radius:999px;background:rgba(242,213,140,.14)}
+.gv-barre>i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#C99A3F,#F2D58C)}
+.gv-cran{position:absolute;top:-3px;width:2px;height:16px;margin-left:-1px;background:rgba(205,239,255,.35)}
+.gv-cran b{position:absolute;top:18px;left:50%;transform:translateX(-50%);font:600 12px/1 var(--mono);color:#93A3B8;white-space:nowrap}
+.gv-cran.atteint{background:#FFF6DC}
+.gv-cran.atteint b{color:#F2D58C}
+.gv-cran:last-child b{transform:translateX(-100%)}
+
+/* ce que ce directeur a fait */
+.gv-moi{display:grid;gap:12px}
+.gv-chiffres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.gv-chiffres span{display:grid;gap:4px;padding:10px 8px;border-radius:10px;background:rgba(205,239,255,.05);text-align:center}
+.gv-chiffres b{font:600 22px/1 var(--mono);color:#FFF6DC;font-variant-numeric:tabular-nums}
+.gv-chiffres b i{font:500 13px/1 var(--mono);font-style:normal;color:#93A3B8}
+.gv-chiffres small{font-size:12px;color:#93A3B8}
+.gv-envoi,.gv-attente{display:flex;gap:8px;align-items:flex-start;margin:0;font-size:13px;line-height:1.45;color:#C9D6E6}
+.gv-envoi .ico,.gv-attente .ico{flex:none;width:14px;height:14px;margin-top:2px;color:#CDEFFF}
+
+/* le fil des dernières frappes */
+.gv-fil{display:grid;gap:4px;margin:0 0 14px;padding:0;list-style:none}
+.gv-fil li{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;padding:8px 10px;border-radius:8px;background:rgba(205,239,255,.04);font-size:13.5px}
+.gv-fil li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#E8EEF6}
+.gv-fil li small{font:500 12px/1 var(--mono);color:#93A3B8}
+.gv-fil li b{font:600 13px/1 var(--mono);color:#F2D58C}
+
+/* les paliers de la ville */
+.gv-paliers{display:grid;gap:6px;margin:0 0 8px;padding:0;list-style:none}
+.gv-paliers li{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;min-height:44px;padding:6px 12px;border-radius:10px;
+  background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.08)}
+.gv-paliers li>b{font:600 13px/1 var(--mono);color:#93A3B8}
+.gv-paliers li span{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#E8EEF6}
+.gv-paliers li span .ico{flex:none;width:18px;height:18px}
+.gv-paliers li i{display:inline-flex;align-items:center;gap:4px;font:600 12px/1 var(--mono);font-style:normal;color:#93A3B8}
+.gv-paliers li i .ico{width:12px;height:12px}
+.gv-paliers li.atteint{box-shadow:inset 0 0 0 1px rgba(242,213,140,.4)}
+.gv-paliers li.atteint>b,.gv-paliers li.atteint i{color:#F2D58C}
+.gv-paliers li.recu{opacity:.7}
+.gv-paliers li.recu i{color:#9FE3B4}
+.gv-note{margin:0 0 12px;font-size:12.5px;line-height:1.5;color:#93A3B8}
+
+/* l'écran de départ */
+.es-pillage-visages .gv-visage{width:34px;height:34px;border-radius:50%;object-fit:cover;object-position:50% 20%}
+
+/* sur PC : la carte du Gardien sous les autres panneaux de droite (sur téléphone, c'est la bulle) */
+.gv-appel{display:none}
+@media (min-width:1100px) and (min-height:600px){
+  .gv-appel{display:flex;align-items:center;gap:12px;text-align:left}
+  .gv-appel-img{flex:none;width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:50% 22%;box-shadow:0 0 0 1px rgba(242,213,140,.5)}
+  .gv-appel strong{display:block;font:400 17px/1.2 var(--display);color:#F6F2EA}
+  .gv-appel small{font-size:12.5px;color:#C9D6E6}
+}

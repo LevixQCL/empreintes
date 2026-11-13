@@ -42,6 +42,18 @@
    "en": "Go back up and try again"
   },
   {
+   "fr": "Le Gardien replonge dans le puits",
+   "en": "The Guardian sinks back into the shaft"
+  },
+  {
+   "fr": "L’escouade lui a infligé {0} dégâts : {1} part{2} pour la ville. Ta frappe part au district, qui la compte avec toutes les autres.",
+   "en": "The squad dealt it {0} damage: {1} share{2} for the city. Your strike goes back to the district, which counts it with all the others."
+  },
+  {
+   "fr": "Remonter au district",
+   "en": "Back to the district"
+  },
+  {
    "fr": "le gardien",
    "en": "the guardian"
   },
@@ -164,10 +176,6 @@
   {
    "fr": "L’Épreuve",
    "en": "The Trial"
-  },
-  {
-   "fr": "Remonter au district",
-   "en": "Back to the district"
   },
   {
    "fr": "{0} s’éteint dans le noir avant de tomber : il fallait frapper plus vite.",

@@ -1,0 +1,49 @@
+{
+ "source": "src/core/partie/gardien.ts",
+ "entrees": [
+  {
+   "fr": "L’écho de la Confluence",
+   "en": "The Echo of the Confluence"
+  },
+  {
+   "fr": "L’écho du Gardien des registres",
+   "en": "The Echo of the Guardian of the Registers"
+  },
+  {
+   "fr": "L’écho de la Tisseuse",
+   "en": "The Echo of the Weaver"
+  },
+  {
+   "fr": "L’écho du Premier Porteur",
+   "en": "The Echo of the First Bearer"
+  },
+  {
+   "fr": "L’écho de {0}",
+   "en": "The Echo of {0}"
+  },
+  {
+   "fr": "Le Gardien de la ville se montre aux directeurs qui ont vaincu la Strate −{0}.",
+   "en": "The City Guardian shows itself to directors who have conquered Stratum −{0}."
+  },
+  {
+   "fr": "Plus de tentative aujourd’hui : la prochaine arrive demain matin.",
+   "en": "No attempts left today: the next one arrives tomorrow morning."
+  },
+  {
+   "fr": "{0} remonte par le puits. Douze tours pour le repousser : chaque coup compte pour la ville.",
+   "en": "{0} rises through the shaft. Twelve turns to drive it back: every blow counts for the city."
+  },
+  {
+   "fr": "L’escouade descend au puits repousser {0}.",
+   "en": "The squad goes down the shaft to drive back {0}."
+  },
+  {
+   "fr": "Le Gardien de la ville a encaissé {0} dégâts : {1} part{2} pour la ville.",
+   "en": "The City Guardian took {0} damage: {1} share{2} for the city."
+  },
+  {
+   "fr": "le Gardien de la ville",
+   "en": "the City Guardian"
+  }
+ ]
+}

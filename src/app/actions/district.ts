@@ -15,6 +15,7 @@ import { NB_REPLIQUES } from '../../ui/district';
 import { contratAffiche, equipeAffichee } from '../../ui/marees';
 import type { OngletGuide } from '../../ui/guide';
 import { finPour } from '../combat';
+import { rafraichirVille } from '../ville';
 import { app, compteEtat, D, G, K } from '../etat';
 import { sauver } from '../synchro';
 import { ouvrir, resultat, type Clic, type Suite } from './commun';
@@ -175,6 +176,23 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'onglet-bat': D.ongletBat = id === 'niveau' ? 'niveau' : 'salle'; requestAnimationFrame(() => document.querySelector('.fb-corps')?.scrollTo(0, 0)); break;
     case 'archipel': ouvrir('archipel'); break;
     case 'exode-voir': ouvrir('archipel'); D.exode = true; D.selection = null; break;
+    // le Gardien de la ville (13 novembre 2026) : sa feuille s'ouvre sur la Cuvette, depuis sa bulle ou depuis la Tour
+    case 'ville': {
+      const ouvre = !D.villeOuverte || D.vue !== 'archipel';
+      if (D.vue !== 'archipel') ouvrir('archipel');
+      D.villeOuverte = ouvre; D.exode = false; D.selection = null; D.bulle = null;
+      if (ouvre) void rafraichirVille();
+      break;
+    }
+    case 'ville-preparer': {
+      const r = J.peutFrapper(app.jeu, Date.now());
+      if (!r.ok) { resultat(r); break; }
+      D.deck = null; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = false; D.defi = null;
+      D.villeDepart = true; D.villeOuverte = false;
+      D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
+      break;
+    }
+    case 'ville-retour': ouvrir('archipel'); D.villeDepart = false; D.villeOuverte = true; break;
     case 'coupe': ouvrir('coupe'); break;
     // les pillages (26 octobre 2026) : la carte des archipels, la fiche d'un archipel, puis le départ
     case 'pillages': ouvrir('pillages'); D.portAide = false; if (portOuvert(app.jeu)) lireCiblesEnLigne(); break;
@@ -230,7 +248,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       const c = cibleDefi();
       const r = J.peutDefier(app.jeu, c);
       if (!r.ok || !c) { resultat(r); break; }
-      D.deck = null; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = true; D.defi = c;
+      D.deck = null; D.villeDepart = false; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = true; D.defi = c;
       D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
@@ -250,7 +268,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'fleche-preparer': {
       const r = J.peutMonter(app.jeu);
       if (!r.ok) { resultat(r); break; }
-      D.deck = null; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = true; D.defi = null;
+      D.deck = null; D.villeDepart = false; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = true; D.defi = null;
       D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
@@ -262,20 +280,20 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       // un vrai directeur : son bouclier se vérifie en ligne juste avant
       const bouclier = await sousBouclier(c);
       if (bouclier !== false) { D.message = bouclier ? t`${c.nom} est sous bouclier pour l’instant : choisis un autre district.` : t`Impossible de joindre ${c.nom} pour l’instant : réessaie dans un moment.`; break; }
-      D.deck = null; D.fouille = null; D.epreuve = null; D.fleche = false; D.pillage = c; D.strateChoisie = c.strate;
+      D.deck = null; D.villeDepart = false; D.fouille = null; D.epreuve = null; D.fleche = false; D.pillage = c; D.strateChoisie = c.strate;
       D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
     case 'tr-etage': { const n = Number(b.dataset.strate ?? 0); D.etageOuvert = D.etageOuvert === n ? null : n; break; }
     case 'tour-volet': D.ongletTour = id === 'epreuves' || id === 'missions' ? id : 'strates'; break;
-    case 'descendre': D.deck = null; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = false; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
+    case 'descendre': D.deck = null; D.villeDepart = false; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = false; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
     case 'vestiges-voir': D.vestiges = b.dataset.strate ? Number(b.dataset.strate) : null; break;
     case 'fouiller-choix': D.deck = null; D.fouille = 'composants'; D.epreuve = null; D.pillage = null; D.fleche = false; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
     case 'cible': D.fouille = id as typeof D.fouille; break;
     case 'niveau-fouille': D.niveauFouille = id as typeof D.niveauFouille; break;
     case 'palier': D.felee = id === 'felee'; break;
     case 'epreuve': {
-      D.deck = null; D.fouille = null; D.epreuve = id; D.felee = false; D.pillage = null; D.fleche = false; D.strateChoisie = J.strateEpreuve(app.jeu);
+      D.deck = null; D.villeDepart = false; D.fouille = null; D.epreuve = id; D.felee = false; D.pillage = null; D.fleche = false; D.strateChoisie = J.strateEpreuve(app.jeu);
       D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
@@ -298,7 +316,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       break;
     }
     case 'partir': {
-      const r = D.fleche ? (D.defi ? J.defierGardien(app.jeu, D.escouade, D.defi) : J.monterFleche(app.jeu, D.escouade))
+      const r = D.villeDepart ? J.frapperGardien(app.jeu, D.escouade, Date.now()) : D.fleche ? (D.defi ? J.defierGardien(app.jeu, D.escouade, D.defi) : J.monterFleche(app.jeu, D.escouade))
         : D.pillage ? J.piller(app.jeu, D.escouade, D.pillage, Date.now())
         : D.epreuve ? J.partirEpreuve(app.jeu, D.escouade, D.epreuve, Date.now(), undefined, !!D.felee)
         : D.fouille ? J.fouiller(app.jeu, D.escouade, D.strateChoisie, D.fouille, undefined, D.niveauFouille ?? 'normale')

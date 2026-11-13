@@ -26,10 +26,12 @@
     "audit": "tsx scripts/audit-economie.ts",
     "front": "tsx scripts/front.ts",
     "i18n": "tsx scripts/i18n.ts",
-    "metaux": "tsx scripts/metaux.ts"
+    "metaux": "tsx scripts/metaux.ts",
+    "serveur": "esbuild src/serveur/gardien.ts --bundle --platform=node --format=cjs --target=node20 --outfile=functions/gardien-core.js --log-level=warning"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",
+    "esbuild": "^0.28.2",
     "postcss": "^8.5.31",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",

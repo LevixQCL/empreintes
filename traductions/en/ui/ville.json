@@ -1,0 +1,161 @@
+{
+ "source": "src/ui/ville.ts",
+ "entrees": [
+  {
+   "fr": "Le Gardien de la ville : {0}, {1} tentative{2}",
+   "en": "The City Guardian: {0}, {1} attempt{2}"
+  },
+  {
+   "fr": "La ville contre le Gardien",
+   "en": "The city against the Guardian"
+  },
+  {
+   "fr": "Toute la ville",
+   "en": "The whole city"
+  },
+  {
+   "fr": "{0} % repoussé",
+   "en": "{0} % driven back"
+  },
+  {
+   "fr": "Personne n’a encore frappé",
+   "en": "No one has struck yet"
+  },
+  {
+   "fr": "{0} directeurs ont frappé",
+   "en": "{0} directors have struck"
+  },
+  {
+   "fr": "{0} directeur a frappé",
+   "en": "{0} director has struck"
+  },
+  {
+   "fr": "{0} parts sur {1}",
+   "en": "{0} shares out of {1}"
+  },
+  {
+   "fr": "La jauge se remplit des parts de chaque directeur.",
+   "en": "The gauge fills with every director’s shares."
+  },
+  {
+   "fr": "10 Éclats",
+   "en": "10 Shards"
+  },
+  {
+   "fr": "{0} cristaux et une Perle de nacre",
+   "en": "{0} crystals and a Nacre Pearl"
+  },
+  {
+   "fr": "Un décor pour la Cuvette",
+   "en": "A decoration for the Basin"
+  },
+  {
+   "fr": "Ce que la ville gagne",
+   "en": "What the city earns"
+  },
+  {
+   "fr": "Atteint",
+   "en": "Reached"
+  },
+  {
+   "fr": "Chaque palier atteint par la ville revient à tous ceux qui ont frappé au moins une fois cette semaine.",
+   "en": "Every tier the city reaches goes to everyone who struck at least once this week."
+  },
+  {
+   "fr": "Le Gardien de la ville",
+   "en": "The City Guardian"
+  },
+  {
+   "fr": "Il se montre aux directeurs qui ont vaincu la Strate −{0}.",
+   "en": "It shows itself to directors who have conquered Stratum −{0}."
+  },
+  {
+   "fr": "LE GARDIEN DE LA VILLE · CETTE SEMAINE",
+   "en": "THE CITY GUARDIAN · THIS WEEK"
+  },
+  {
+   "fr": "Il remonte par le puits et menace toutes les cuvettes. Chaque directeur a douze tours pour le frapper : la ville additionne les coups.",
+   "en": "It rises through the shaft and threatens every basin. Each director has twelve turns to strike it: the city adds up the blows."
+  },
+  {
+   "fr": "Règle de la semaine · {0}",
+   "en": "Rule of the week · {0}"
+  },
+  {
+   "fr": "tes parts",
+   "en": "your shares"
+  },
+  {
+   "fr": "ta plus belle frappe",
+   "en": "your best strike"
+  },
+  {
+   "fr": "tentatives",
+   "en": "attempts"
+  },
+  {
+   "fr": "{0} frappes en route vers la ville : elles comptent dès que tu es en ligne.",
+   "en": "{0} strikes on their way to the city: they count as soon as you are online."
+  },
+  {
+   "fr": "Une frappe en route vers la ville : elle compte dès que tu es en ligne.",
+   "en": "A strike on its way to the city: it counts as soon as you are online."
+  },
+  {
+   "fr": "Frapper le Gardien",
+   "en": "Strike the Guardian"
+  },
+  {
+   "fr": "Prochaine tentative",
+   "en": "Next attempt"
+  },
+  {
+   "fr": "Les dernières frappes",
+   "en": "Latest strikes"
+  },
+  {
+   "fr": "parts",
+   "en": "shares"
+  },
+  {
+   "fr": "part",
+   "en": "share"
+  },
+  {
+   "fr": "1 part, c’est à peu près un combat de gardien de ta Strate : un débutant compte autant qu’un vétéran. On ne peut pas perdre : l’escouade ne prend pas d’Usure.",
+   "en": "1 share is roughly one guardian fight at your Stratum: a newcomer counts as much as a veteran. You cannot lose: the squad takes no Strain."
+  },
+  {
+   "fr": "Gardien de la ville · {0}",
+   "en": "City Guardian · {0}"
+  },
+  {
+   "fr": "La ville l’a repoussé à {0} %.",
+   "en": "The city has driven it back {0} %."
+  },
+  {
+   "fr": "{0} tentative{1} pour frapper.",
+   "en": "{0} attempt{1} left to strike."
+  },
+  {
+   "fr": "Plus de tentative aujourd’hui.",
+   "en": "No attempts left today."
+  },
+  {
+   "fr": "Gardien de la ville",
+   "en": "City Guardian"
+  },
+  {
+   "fr": "{0} tentative{1}",
+   "en": "{0} attempt{1}"
+  },
+  {
+   "fr": "un palier t’attend",
+   "en": "a tier is waiting for you"
+  },
+  {
+   "fr": "la ville à {0} %",
+   "en": "city at {0} %"
+  }
+ ]
+}

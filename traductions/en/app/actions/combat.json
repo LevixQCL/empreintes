@@ -22,6 +22,14 @@
    "en": "The squad is resting. The sealed door is still waiting for you."
   },
   {
+   "fr": "Ta frappe : {0} dégâts, {1} part{2} pour la ville{3}.",
+   "en": "Your strike: {0} damage, {1} share{2} for the city{3}."
+  },
+  {
+   "fr": " (ta plus belle de la semaine)",
+   "en": " (your best this week)"
+  },
+  {
    "fr": "{0} est battu : ton escouade tient désormais le quai {1}.",
    "en": "{0} is beaten: your squad now holds quay {1}."
   },

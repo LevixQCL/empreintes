@@ -3,7 +3,8 @@
 // Les autres cartes s'écartent pendant le geste ; au lâcher, la règle (C.deplacer) range la chaîne et l'écran se redessine
 // (le vol « FLIP » de toucher.ts fait atterrir la carte à sa place).
 
-import * as C from '../core/combat';
+import * as Combat from '../core/combat';
+import { combatNote } from '../core/jeu';
 import { vibrer } from '../ui/toucher';
 import { app, K, racine } from './etat';
 import { afficher } from './rendu';
@@ -108,6 +109,8 @@ export function brancherChaine(): void {
     annulerClic = true;
     setTimeout(() => { annulerClic = false; }, 400);
     const s = app.jeu.expedition?.combat;
+    const gv = app.jeu.expedition?.gardienVille;
+    const C = gv ? combatNote(gv.journal) : Combat;
     if (ev.type === 'pointerup' && s && p.vers !== p.de && C.deplacer(s, p.uid, p.vers).ok) {
       // la carte repart de là où le doigt l'a lâchée : on ne remet que les autres à zéro avant de redessiner
       for (const [i, g] of p.groupes.entries()) if (i !== p.de) for (const el of g.els) { el.style.transition = 'none'; el.style.transform = ''; }

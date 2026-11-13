@@ -20,6 +20,9 @@ export function gagnerPerles(j: Jeu, n: number, raison: string): string {
 /** Un lundi sur deux, une fois la Strate −10 vaincue : une Perle. Rien ne se perd pendant une absence (3 au plus d'un coup). */
 export function perlesDuLundi(j: Jeu, now: number): string | null {
   if (strateVaincue(j) < 10) return null;
+  // 13 novembre 2026 (Bryan) : la Perle des deux semaines devient la récompense du Gardien de la ville. Un directeur qui joue
+  // en ligne la reçoit là (gardien.ts) ; hors ligne, le lundi des Perles reste sa source, pour n'en jamais manquer.
+  if (j.gardienVille?.enLigne) return null;
   const s = semaineDe(now), pas = COLLECTION.perle.semaines;
   // la première fois : le compte commence ce lundi-ci
   if (j.perleSemaine === undefined) { j.perleSemaine = s - (s % pas); return null; }

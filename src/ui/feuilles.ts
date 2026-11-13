@@ -38,6 +38,7 @@ import './missions-mer.css';
 import './marees.css';
 import './basses.css';
 import './exode.css';
+import './ville.css';
 import './fleche.css';
 import './journal.css';
 import './lexique.css';

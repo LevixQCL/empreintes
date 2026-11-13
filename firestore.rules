@@ -502,6 +502,15 @@ service cloud.firestore {
     }
 
     // Tout le reste est fermé par défaut.
+    // Le Gardien de la ville (13 novembre 2026, functions/gardien.js) : la jauge de la semaine se lit par tous les joueurs
+    // connectés ; la fiche d'un directeur, par lui seul. Personne ne les écrit : seul le serveur, après avoir rejoué les combats.
+    match /gardien/{semaine} {
+      allow get: if request.auth != null;
+      match /directeurs/{uid} {
+        allow get: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

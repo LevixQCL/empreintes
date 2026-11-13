@@ -36,6 +36,13 @@ export function finPour(): Fin | null {
     if (s.issue === 'defaite') return { issue: 'defaite', titre: t('Repoussés'), texte: t('Le gardien a eu le dessus, cette fois. Vise les suites et protège-toi quand il annonce une grosse attaque.'), bouton: t('Remonter et réessayer'), action: 'remonter' };
     return null;
   }
+  if (x.gardienVille) {
+    // le Gardien de la ville : on ne peut pas perdre ; au bout de 12 tours (ou l'escouade à terre), il replonge dans le puits
+    const deg = J.degatsInfliges(s);
+    const parts = J.partsDe(x.gardienVille.depart, deg);
+    if (s.issue === 'en-cours') return null;
+    return { titre: t('Le Gardien replonge dans le puits'), texte: t`L’escouade lui a infligé ${deg} dégâts : ${parts.toLocaleString()} part${parts >= 2 ? 's' : ''} pour la ville. Ta frappe part au district, qui la compte avec toutes les autres.`, bouton: t('Remonter au district'), action: 'remonter' };
+  }
   if (x.fleche?.defi) {
     const q = x.fleche.quai;
     const nom = x.fleche.gardien?.nom ?? t('le gardien');

@@ -2,7 +2,7 @@
 // Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ;
 // chaque bâtiment y porte son cristal de niveau et, s'il y a quelque chose à faire, une bulle, le détail s'ouvre en feuille par le bas.
 
-import { chantiersExodeFinis } from '../core/jeu';
+import { chantiersExodeFinis, etatGardien, gardienDeLaSemaine, gardienOuvert, regleDeLaSemaine } from '../core/jeu';
 import { HALTES_FOND, PISTES, halteDef, nombreHaltes, queteDef, revelationDe } from '../core/strates';
 import { ETOILES, releveDef, vestigesDe } from '../core/explorer';
 import { htmlBestiaire } from './bestiaire';
@@ -30,6 +30,7 @@ import { CONFIANCE, CERCLE, CERCLE_OUVERTURE, cercleOuvert, echangesParJour, met
 import { blocSecours } from './secours';
 import { LECTURE_PROFONDE, premiersPas } from '../core/partie/etat';
 import { feuilleExode } from './exode';
+import { appelVille, bulleGardien, feuilleVille, ligneVille } from './ville';
 import { RANG_METAL, loreCarte } from '../core/lore-cartes';
 import { rumeurDuJour } from '../core/rumeurs';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
@@ -38,7 +39,7 @@ import { frequenceLibre } from '../core/regles';
 import { htmlListeScenes } from './campagne';
 import { COULEUR } from './vue';
 import type { Affinite } from '../core/lieux';
-import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteDistrict, decor, decorStrate, illustrationBatiment, illustrationModule, interieurBatiment, portrait, prochainVisuel, prochainPalier, palierCuvette, type PalierCuvette, CALQUES_CUVETTE, calquePalier, FUMEE_FORGE, reflets, sceneDistrict, CUVETTE, visuel, portraitYse } from './art';
+import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteDistrict, decor, decorStrate, illustrationBatiment, illustrationModule, interieurBatiment, portrait, prochainVisuel, prochainPalier, palierCuvette, type PalierCuvette, CALQUES_CUVETTE, calquePalier, FUMEE_FORGE, reflets, sceneDistrict, CUVETTE, visuel, portraitYse, illustrationEnnemi } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence, pastillesCopies, texteCopies } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { avecMots } from './lexique';
@@ -491,6 +492,9 @@ function bulles(e: EcranDistrict): string {
     r.push(`<button type="button" class="bulle-d appel-bulle prete${ouvert ? ' ouverte' : ''}" data-action="bulle" data-id="appel" aria-expanded="${ouvert}" aria-label="${echap(nom)}">`
       + `<span class="bulle-med">${ico}</span>${nb || gemme}</button>`);
   }
+  // le Gardien de la ville (13 novembre 2026) : une bulle seulement quand quelque chose attend
+  const gv = bulleGardien(e);
+  if (gv) r.push(gv);
   return r.length ? `<div class="bulles" role="group" aria-label="${tr`Objectif et ravitaillement`}">${r.join('')}</div>` : '';
 }
 
@@ -1157,8 +1161,8 @@ export function htmlArchipel(e: EcranDistrict): string {
     + (CUVETTE ? ambianceLarge(scene.nuit) : '')
     + bulles(e)
     + (e.bulle ? `<button type="button" class="bulle-voile" data-action="bulle" data-id="" aria-label="${tr`Replier`}"></button>` : '')
-    + `<div class="archipel-haut"${e.bulle ? ` data-bulle="${e.bulle}"` : ''}${!e.j.chambre ? ' data-porte' : ''}>${mission(e)}${appel(e)}</div></section>`;
-  h += feuilleBatiment(e) + feuilleExode(e);
+    + `<div class="archipel-haut"${e.bulle ? ` data-bulle="${e.bulle}"` : ''}${!e.j.chambre ? ' data-porte' : ''}>${mission(e)}${appel(e)}${appelVille(e)}</div></section>`;
+  h += feuilleBatiment(e) + feuilleExode(e) + feuilleVille(e);
   const acte = decisionEnAttente(j);
   // le rapport d'expédition passe d'abord : la carte au choix s'ouvre une fois qu'il est lu
   if (e.expedition) { /* rien d'autre par-dessus */ }
@@ -2384,6 +2388,8 @@ function blocAutour(e: EcranDistrict, off: boolean): string {
   const rem = strateRemuee(j, e.now);
   if (!rem) return '';
   const lignes: string[] = [];
+  const gv = ligneVille(e, off);
+  if (gv) lignes.push(gv);
   const p = particularite(rem.modele);
   lignes.push(`<li class="tr-autour-ligne${rem.faite ? ' faite' : ''}">${ICO.strate}<span><strong>${tr`Strate remuée du jour · −${rem.strate}`}</strong>`
     + `<small>${p ? `${echap(p.nom)} ${tr`(empruntée à −${rem.modele})`}. ` : ''}${rem.faite ? tr('Prime prise aujourd’hui.') : tr`Première sortie réussie : ${REMUEE.eclats} Éclats et une carte au choix.`}</small></span>`
@@ -2520,20 +2526,28 @@ export function htmlEscouade(e: EcranDistrict): string {
   const fouille = ep ? null : e.fouille;
   // une fouille ne paie qu'un tiers du Râtelier (1er novembre 2026)
   // le prix des cartes du district : 30 min de Générateur pour explorer, 15 min pour une sortie courte (1er novembre 2026)
-  const sortie: Sortie = fouille || ep || e.fleche || e.pillage ? 'courte' : 'explorer';
+  const sortie: Sortie = fouille || ep || e.fleche || e.pillage || e.villeDepart ? 'courte' : 'explorer';
   const deck = deckEscouade(j, e.escouade, indiceEscouade(j, e.escouade), sortie).length;
   const deckMin = ep ? EPREUVE_DECK_MIN : DISTRICT.deckMin;
   const zone = zoneDe(e.strateChoisie);
-  const fl = !ep && !fouille && e.fleche ? etatFleche(j) : null;
-  const pi = !ep && !fouille && !fl ? e.pillage ?? null : null;
+  const gv = !ep && !fouille && e.villeDepart && gardienOuvert(j) ? gardienDeLaSemaine(etatGardien(j, e.now).semaine) : null;
+  const fl = !ep && !fouille && !gv && e.fleche ? etatFleche(j) : null;
+  const pi = !ep && !fouille && !fl && !gv ? e.pillage ?? null : null;
   const df = fl ? e.defi ?? null : null;
-  const titre = df ? tr`FLÈCHE · DÉFI DU QUAI ${df.quai}` : fl ? tr`FLÈCHE · QUAI ${fl.quai}` : pi ? tr`PILLAGE · ${pi.nom.toUpperCase()}` : ep ? tr`ÉPREUVE · ${ep.nom.toUpperCase()}` : tr`${fouille ? tr('FOUILLE · ') : ''}STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, NOMS_ETAGES.length - 1)]!.toUpperCase()}`;
+  const titre = gv ? tr`GARDIEN DE LA VILLE` : df ? tr`FLÈCHE · DÉFI DU QUAI ${df.quai}` : fl ? tr`FLÈCHE · QUAI ${fl.quai}` : pi ? tr`PILLAGE · ${pi.nom.toUpperCase()}` : ep ? tr`ÉPREUVE · ${ep.nom.toUpperCase()}` : tr`${fouille ? tr('FOUILLE · ') : ''}STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, NOMS_ETAGES.length - 1)]!.toUpperCase()}`;
   let h = `<div class="ecran ecran-escouade es"><main class="contenu">`
-    + entete(titre, tr('Escouade'), `<button type="button" class="btn-icone" data-action="${fl ? 'fleche' : pi ? 'pillages' : 'coupe'}" aria-label="${tr`Retour`}">${ICO.retour}</button>`);
+    + entete(titre, tr('Escouade'), `<button type="button" class="btn-icone" data-action="${gv ? 'ville-retour' : fl ? 'fleche' : pi ? 'pillages' : 'coupe'}" aria-label="${tr`Retour`}">${ICO.retour}</button>`);
 
   // 1. ce qu'on part faire
   h += `<section class="es-mission">`;
-  if (df) {
+  if (gv) {
+    const regle = regleDeLaSemaine(etatGardien(j, e.now).semaine);
+    const img = illustrationEnnemi(gv.ennemi);
+    h += `<p class="es-but">${ICO.bouclier}<span><strong>${echap(gv.nom)}</strong>${tr`Douze tours pour le frapper le plus fort possible. On ne peut pas perdre, et l’escouade ne prend pas d’Usure : chaque coup compte pour la ville.`}</span></p>`
+      + `<div class="es-pillage d1"><span class="es-pillage-visages">${img ? `<img class="gv-visage" src="${img}" alt="" decoding="async">` : ''}</span>`
+      + `<span><b>${regle ? echap(regle.nom) : tr('Sans règle')}</b><small>${regle ? echap(regle.texte) : ''}</small></span>`
+      + `<span class="es-pillage-butin">${ICO.atk}<b>12</b></span></div>`;
+  } else if (df) {
     // un défi (29 octobre 2026) : la garnison figée du directeur qui tient le quai
     const c = chanceVictoire(df.force / Math.max(0.01, forceEscouade(j, e.escouade)));
     const d = difficulte(c >= 0.85 ? 0.9 : c >= 0.5 ? 1 : c >= 0.15 ? 1.05 : 1.2);
@@ -2692,7 +2706,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   const coutDepart = e.escouade.length ? (ratelierPayable(j, indiceEscouade(j, e.escouade), sortie).length ? coutRatelier(j, sortie, indiceEscouade(j, e.escouade)) : 0) : 0;
   h += `<footer class="pied-fixe es-pied"><div class="es-pied-info"><span class="es-avatars">${[0, 1, 2].map((i) => e.escouade[i] ? avatar(e.escouade[i]!, 30) : '<i class="es-pastille-vide"></i>').join('')}</span>`
     + `<span><b>${e.escouade.length} / 3</b><small class="${maigre || blesses.length ? 'alerte' : e.escouade.length === 3 ? 'ok' : ''}">${e.escouade.length < 3 ? tr`Encore ${3 - e.escouade.length} Porteur${3 - e.escouade.length > 1 ? 's' : ''}` : maigre ? tr`${deck} cartes · ${deckMin} au moins` : blesses.length ? tr`${blesses.length} blessé${blesses.length > 1 ? 's' : ''} · au repos` : tr`${deck} cartes, prêt`}</small></span></div>`
-    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${fl ? `${ICO.monter}${tr('Monter')}` : pi ? `${ICO.grappin}${tr('Piller')}` : ep ? `${ICO.boost}${e.felee ? tr('Tenter la Fêlée') : tr('Tenter l’Épreuve')}` : fouille ? `${ICO.cristal}${tr('Fouiller')}` : `${ICO.descendre}${tr('Partir')}`}${coutDepart ? `<span class="es-btn-cout">${ICO.energie}−${ent(coutDepart)}</span>` : ''}</button></footer>`;
+    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${gv ? `${ICO.atk}${tr('Frapper')}` : fl ? `${ICO.monter}${tr('Monter')}` : pi ? `${ICO.grappin}${tr('Piller')}` : ep ? `${ICO.boost}${e.felee ? tr('Tenter la Fêlée') : tr('Tenter l’Épreuve')}` : fouille ? `${ICO.cristal}${tr('Fouiller')}` : `${ICO.descendre}${tr('Partir')}`}${coutDepart ? `<span class="es-btn-cout">${ICO.energie}−${ent(coutDepart)}</span>` : ''}</button></footer>`;
   h += e.guide ? feuilleGuide(e.guide, trouveesDe(j.collection)) : e.deck ? feuilleDeck(e) : e.carte ? feuilleCarte(e) : feuillePorteur(e);
   h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';
   return h + `</div>`;

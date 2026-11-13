@@ -124,6 +124,10 @@ export interface EcranDistrict {
   bassesLieu?: string | null;
   /** la feuille de l'Exode est ouverte ; `exodeAide` : sa présentation relue à la demande */
   exode?: boolean;
+  /** le Gardien de la ville (13 novembre 2026) : sa feuille ouverte, la jauge lue sur le serveur, un départ pour le frapper */
+  villeOuverte?: boolean;
+  ville?: import('../core/jeu').VilleGardien | null;
+  villeDepart?: boolean;
   exodeAide?: boolean;
   /** onglet Escouade : le volet « Porteurs » (tous les Porteurs) est affiché au lieu de l’escouade */
   reserve?: boolean;
@@ -489,7 +493,7 @@ export function navigation(e: EcranDistrict): string {
     fleche: flecheOuverte(j) && !j.fleche,
   };
   // le Port et le Cercle sont des lieux du district : leur écran garde l'onglet District allumé
-  const actif = e.menu || e.vue === 'classements' || e.vue === 'recruter' ? 'plus' : e.vue === 'escouade' ? (e.fleche ? 'fleche' : e.pillage ? 'archipel' : 'coupe')
+  const actif = e.menu || e.vue === 'classements' || e.vue === 'recruter' ? 'plus' : e.vue === 'escouade' ? (e.fleche ? 'fleche' : e.pillage || e.villeDepart ? 'archipel' : 'coupe')
     : e.vue === 'cartes' ? 'porteurs' : e.vue === 'pillages' || e.vue === 'cercle' ? 'archipel' : e.vue;
   // ce qui attend au Port s'annonce sur l'onglet District, puisque le Port n'a plus d'onglet
   if (alerte.pillages) alerte.archipel = true;

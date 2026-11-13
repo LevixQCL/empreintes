@@ -1,0 +1,33 @@
+{
+ "source": "src/app/ville.ts",
+ "entrees": [
+  {
+   "fr": "La ville n’a pas compté ta frappe : {0}",
+   "en": "The city did not count your strike: {0}"
+  },
+  {
+   "fr": "La ville a repoussé le Gardien à {0} % : ",
+   "en": "The city has driven the Guardian back {0} %: "
+  },
+  {
+   "fr": "+{0} cristaux",
+   "en": "+{0} crystals"
+  },
+  {
+   "fr": "+{0} Éclats",
+   "en": "+{0} Shards"
+  },
+  {
+   "fr": "une carte au choix",
+   "en": "a card of your choice"
+  },
+  {
+   "fr": "une Perle de nacre",
+   "en": "a Nacre Pearl"
+  },
+  {
+   "fr": "un décor pour la Cuvette",
+   "en": "a decoration for the Basin"
+  }
+ ]
+}

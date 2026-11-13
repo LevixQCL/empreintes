@@ -2,7 +2,7 @@
 
 import { envoyerPillages } from '../pillages';
 import { envoyerAssauts, synchroGarde } from '../fleche';
-import * as C from '../../core/combat';
+import * as Combat from '../../core/combat';
 import * as J from '../../core/jeu';
 import { NOMS_RARETE } from '../../core/collection';
 import { composerTourMoyen } from '../../core/robot';
@@ -15,6 +15,7 @@ import { autoActif, basculerAuto, changerLangue } from '../../ui/options';
 import { basculerGraphismes } from '../../ui/graphismes';
 import { basculerAnimations } from '../../ui/outils';
 import { jouer, jouerFuite } from '../combat';
+import { rafraichirVille } from '../ville';
 import { app, D, K } from '../etat';
 import { afficher } from '../rendu';
 import { sauver } from '../synchro';
@@ -23,6 +24,8 @@ import { t } from '../../core/i18n';
 
 export async function agirCombat(a: string, c: Clic): Promise<Suite> {
   const { b, id, x, s, avantGains } = c;
+  // le Gardien de la ville (13 novembre 2026) : chaque action est notée, pour que le serveur rejoue le combat à l'identique
+  const C = x?.gardienVille ? J.combatNote(x.gardienVille.journal) : Combat;
   // le choix « protéger ou soigner » d'une tuile se referme dès qu'on fait autre chose
   if (a !== 'tuile') K.tuile = undefined;
   switch (a) {
@@ -170,6 +173,12 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
         D.message = r.victoire
           ? t('La chambre est ouverte. Derrière la porte, une carte : l’Œil-relais. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans les Chroniques (onglet Archives).')
           : t('L’escouade se repose. La porte scellée t’attend toujours.');
+      } else if (r.gardien) {
+        // le Gardien de la ville : retour sur sa feuille, la frappe part tout de suite au serveur
+        const g = r.gardien;
+        D.vue = 'archipel'; D.villeDepart = false; D.villeOuverte = true;
+        D.message = t`Ta frappe : ${g.degats} dégâts, ${g.parts.toLocaleString()} part${g.parts >= 2 ? 's' : ''} pour la ville${g.meilleure ? t(' (ta plus belle de la semaine)') : ''}.`;
+        void rafraichirVille(true);
       } else if (r.fleche) {
         const f = r.fleche;
         D.vue = 'fleche'; D.fleche = false;

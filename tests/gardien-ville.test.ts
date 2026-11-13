@@ -80,9 +80,9 @@ describe('Le Gardien de la ville', () => {
     const j = pret(11);
     j.gardienVille = { semaine: semaineDe(LUNDI), tentatives: 1, jour: jourDe(LUNDI), parts: 2, meilleure: 1, aEnvoyer: [], recus: [] };
     const sem = semaineDe(LUNDI);
-    const dons = recevoirPaliers(j, { semaine: sem, pv: 100, parts: 120, frappeurs: 30 }, LUNDI, 100);
+    const dons = recevoirPaliers(j, { semaine: sem, pv: 100, parts: 120, frappeurs: 30 }, LUNDI);
     expect([...new Set(dons.map((d) => d.palier))]).toEqual([0.25, 0.5, 0.75, 1]);
-    expect(recevoirPaliers(j, { semaine: sem, pv: 100, parts: 120, frappeurs: 30 }, LUNDI, 100)).toEqual([]);
+    expect(recevoirPaliers(j, { semaine: sem, pv: 100, parts: 120, frappeurs: 30 }, LUNDI)).toEqual([]);
     expect(dons.some((d) => d.type === 'perle')).toBe(sem % 2 === 0);
     // la Perle ratée attend le Gardien suivant
     const k = pret(11);
