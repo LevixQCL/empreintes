@@ -544,7 +544,7 @@ export const CHAPITRES: Chapitre[] = [
   // prix, par la bouche de Véla, qui sait ce que soulèvent les Berceaux ; le choix de rendre ou de porter viendra avec le Fond.
   // Le district monte, le directeur reste : la Cuvette continue, pour les convois des cuvettes voisines.
   {
-    id: 'six-cents', livre: 5, titre: t('Six cents noms'), epoque: '2121', exode: 1,
+    id: 'six-cents', livre: 5, titre: t('Six cents noms'), epoque: '2121', image: 'chap-six-cents', exode: 1,
     teaser: t('Ce que contient le Registre.'),
     paragraphes: [
       t('Tu as fait ce que personne n’avait fait depuis la Montée : compter tout le monde. Pas les foyers, pas les bras. Les gens.'),
@@ -555,7 +555,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'porte-mer', livre: 5, titre: t('Une porte sur la mer'), epoque: '2121', exode: 2,
+    id: 'porte-mer', livre: 5, titre: t('Une porte sur la mer'), epoque: '2121', image: 'chap-porte-mer', exode: 2,
     teaser: t('La digue a désormais une porte.'),
     paragraphes: [
       t('Pendant soixante ans, on a mis la mer dehors. Aujourd’hui, ton district lui a ouvert une porte.'),
@@ -565,7 +565,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'radeaux', livre: 5, titre: t('Une place pour chacun'), epoque: '2121', exode: 3,
+    id: 'radeaux', livre: 5, titre: t('Une place pour chacun'), epoque: '2121', image: 'chap-radeaux', exode: 3,
     teaser: t('De quoi sont faites les Barges.'),
     paragraphes: [
       t('Les Barges sont à flot. Six cents places, et quelques-unes de plus : Véla a insisté pour qu’on garde de la marge, sans dire pour qui.'),
@@ -575,7 +575,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'une-vie-de-plus', livre: 5, titre: t('Une vie de plus'), epoque: '2121', exode: 4,
+    id: 'une-vie-de-plus', livre: 5, titre: t('Une vie de plus'), epoque: '2121', image: 'chap-une-vie-de-plus', exode: 4,
     teaser: t('La réponse de Dame Isaure.'),
     paragraphes: [
       t('Dame Isaure m’a répondu. Je recopie sa lettre à la fin de ce chapitre, parce qu’elle mérite d’être lue en entier, et parce qu’elle a raison sur un point.'),
@@ -596,7 +596,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'le-prix', livre: 5, titre: t('Le prix'), epoque: '2121', exode: 5,
+    id: 'le-prix', livre: 5, titre: t('Le prix'), epoque: '2121', image: 'chap-le-prix', exode: 5,
     teaser: t('La nuit où l’île est passée.'),
     paragraphes: [
       t('L’île est passée cette nuit. Ton escouade tenait le sommet. Les Barges sont montées une à une, et sur le quai, les gardes des Hauts ont regardé passer six cents personnes qui n’étaient pas une escouade. Personne ne les a arrêtées : la Clause était écrite, et cette fois, quelqu’un l’a lue jusqu’au bout.'),
