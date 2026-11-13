@@ -526,8 +526,12 @@
    "en": "This story · {0}"
   },
   {
-   "fr": "Les trois récits · {0}",
-   "en": "All three stories · {0}"
+   "fr": "Les trois récits · {0} + 1 Perle de nacre",
+   "en": "",
+   "ancien": {
+    "fr": "Les trois récits · {0}",
+    "en": "All three stories · {0}"
+   }
   },
   {
    "fr": "Ouverture du paiement…",
