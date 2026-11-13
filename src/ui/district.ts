@@ -40,7 +40,7 @@ import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { avecMots } from './lexique';
 import { arriveeFuture, feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
-import { CHANTIER, ICO, baseIcones, icone, type Icone } from './icones';
+import { CHANTIER, ICO, baseIcones, icone, perle, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, etapeVoyage, avatar, ongletsFiche, avatarGarde, gardesGarnison, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
 import { decimal, echap, mouvementReduit, virgule, texteReplie } from './outils';
@@ -879,7 +879,7 @@ function blocPerles(j: Jeu): string {
     ? (perles ? tr`Choisis la carte qui passe en nacre : ${pretes.length} carte${pretes.length > 1 ? 's sont prêtes' : ' est prête'}.`
       : tr`${pretes.length} carte${pretes.length > 1 ? 's' : ''} en or ${pretes.length > 1 ? 'attendent' : 'attend'} une Perle pour passer en nacre.`)
     : tr('Une carte en or au niveau 3, avec 5 copies, passe en nacre avec une Perle.');
-  return `<div class="fg-perles"><span class="fg-perles-gemme" aria-hidden="true">${gemme('nacre')}</span>`
+  return `<div class="fg-perles"><span class="fg-perles-gemme" aria-hidden="true">${perle('fg-perle-img')}</span>`
     + `<div><small>${tr`Perles de nacre`}</small><strong>${perles ? tr`${perles} Perle${perles > 1 ? 's' : ''}` : tr('Aucune Perle')}</strong>`
     + `<small>${choix}</small>`
     + `<small class="fg-perles-sources">${tr('Elles viennent des quais à nacre de la Flèche, des gardiens de −9 et −10, et un lundi sur deux une fois −10 vaincue.')}</small>`
@@ -1740,7 +1740,7 @@ function blocPromotion(j: Jeu, cle: string): string {
   const besoin = copiesPromotion(vers), cout = COLLECTION.promotion.cristaux[vers];
   const frein = freinPromotion(j, cle);
   // la nacre demande aussi une Perle (13 novembre 2026) : elle s'affiche dans le prix
-  const perle = vers === 'nacre' ? ` · ${gemme('nacre')}${tr`1 Perle (tu en as ${j.perles ?? 0})`}` : '';
+  const prixPerle = vers === 'nacre' ? ` · ${perle()}${tr`1 Perle (tu en as ${j.perles ?? 0})`}` : '';
   const manqueC = Math.max(0, cout - j.energie);
   const nom = NOMS_RARETE[vers].toLowerCase();
   const etat = frein && c.doublons >= besoin ? echap(frein)
@@ -1750,7 +1750,7 @@ function blocPromotion(j: Jeu, cle: string): string {
   const f1 = carteNiveau(m, c.niveau).v, f2 = carteNiveau(apres, 1).v;
   return `<div class="progression">${pastillesCopies(c.doublons, besoin, COULEUR_RARETE[vers], 'grandes')}<span class="chiffre">${tr`${Math.floor(c.doublons + 1e-6)} copie${c.doublons >= 2 ? 's' : ''} sur ${besoin}`}</span></div>`
     + `<p class="fc-etat${pret ? ' or' : ''}">${etat} <span>${tr`En ${nom} : force ${f1} →`} <b>${f2}</b>${apres.f.length > m.f.length ? tr`, une Fréquence de plus` : ''}${tr`, puis de nouveau 3 niveaux`}.</span></p>`
-    + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="promouvoir" data-module="${cle}"${pret ? '' : ' disabled'}>${ICO.monter}${tr`Passer en ${nom} · ${prix('energie', cout, j.energie >= cout)}`}${perle}</button>`
+    + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="promouvoir" data-module="${cle}"${pret ? '' : ' disabled'}>${ICO.monter}${tr`Passer en ${nom} · ${prix('energie', cout, j.energie >= cout)}`}${prixPerle}</button>`
     + (c.doublons >= besoin + 1 ? `<button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}${tr`Recycler 1 · +${COLLECTION.recyclage[m.rarete]} minerai`}</button>` : '')
     + `</div>`;
 }

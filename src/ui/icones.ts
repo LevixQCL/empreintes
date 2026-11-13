@@ -126,6 +126,9 @@ export function sigle(l: Lignee, nom = false): string {
   return `<img class="sigle" src="${baseIcones}lignee-${l}.webp" alt="${nom ? { tech: t('Augmentés'), bio: t('Génés'), reso: t('Résonants') }[l] : ''}"${nom ? '' : ' aria-hidden="true"'} decoding="async">`;
 }
 
+/** La Perle de nacre (13 novembre 2026, Midjourney) : une perle dans une coquille d'or */
+export const perle = (classe = 'ico peinte'): string => `<img class="${classe}" src="${baseIcones}perle.webp" alt="" aria-hidden="true" decoding="async">`;
+
 /** L'icône peinte si elle existe, sinon le trait SVG */
 export function icone(nom: Icone): string {
   return PEINTES.has(nom) ? `<img class="ico peinte" src="${baseIcones}${nom}.webp" alt="" aria-hidden="true" decoding="async">` : ICO[nom];
