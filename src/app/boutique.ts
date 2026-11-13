@@ -2,7 +2,7 @@
 // Les droits viennent du compte (achats/{uid}, écrit par le serveur) ; une copie reste sur l'appareil pour jouer hors ligne.
 // Tant que la vente n'est pas ouverte (src/net/vente.ts), rien de tout cela ne se voit : les récits restent en aperçu.
 
-import { aRecit, DROIT_FOND, perleDesRecits, PRODUITS } from '../core/jeu';
+import { aFond, aRecit, DROIT_FOND, perleDesRecits, perleDuFond, PRODUITS } from '../core/jeu';
 import { sauver } from './synchro';
 import { langue, t } from '../core/i18n';
 import { VENTE_OUVERTE, venteEssai } from '../net/vente';
@@ -13,7 +13,7 @@ import { afficher } from './rendu';
 const CLE = 'ossyra.achats';
 const essai = venteEssai();
 
-export const boutique: Boutique = { ouverte: essai?.ouverte ?? VENTE_OUVERTE, achats: essai?.achats ?? [], offre: null, occupe: false, erreur: '', compte: 'indisponible' };
+export const boutique: Boutique = { ouverte: essai?.ouverte ?? VENTE_OUVERTE, achats: essai?.achats ?? [], offre: null, occupe: false, erreur: '', renonce: false, compte: 'indisponible' };
 D.boutique = boutique;
 
 /** Ce récit se lit-il sur ce compte ? (toujours, tant que la vente n'est pas ouverte) */
@@ -101,6 +101,11 @@ export async function chargerAchats(uid: string | null): Promise<void> {
     const perle = perleDesRecits(app.jeu);
     if (perle) { D.message = perle; sauver(); }
   }
+  // le pack Ossyra donne aussi sa Perle, une seule fois (13 novembre 2026)
+  if (aFond(boutique.achats)) {
+    const perle = perleDuFond(app.jeu);
+    if (perle) { D.message = perle; sauver(); }
+  }
   if (app.mode === 'district') afficher();
 }
 
@@ -109,7 +114,7 @@ export async function payer(produit: string): Promise<void> {
   if (!PRODUITS[produit] || boutique.occupe) return;
   majCompteAchat();
   if (essai) { boutique.erreur = t('Mode essai : le paiement ne s’ouvre que sur le jeu publié.'); return; }
-  if (boutique.compte !== 'pret') return;
+  if (boutique.compte !== 'pret' || !boutique.renonce) return;
   boutique.occupe = true; boutique.erreur = '';
   afficher();
   try {

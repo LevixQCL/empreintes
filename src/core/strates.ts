@@ -682,8 +682,9 @@ export const FOND = {
   eclatsGardien: 3,
   /** la première fois (le front) : une carte en or de plus, sauf à −11 et −15 : une nacre au choix (13 novembre 2026) */
   nacreAuChoix: [11, 15] as readonly number[],
-  /** la première victoire de −11 donne aussi une Perle de nacre (perles.ts) : le pack Ossyra = 2 nacres et 1 Perle */
-  perleA: 11,
+  /** la première victoire de ces gardiens donne aussi une Perle de nacre (perles.ts). Bryan, 13 novembre 2026 : les Perles
+   *  sont plus fréquentes en bas, et une de plus à l'achat : le pack Ossyra = 2 nacres et 4 Perles (avant : 1, à −11) */
+  perlesA: [11, 13, 15] as readonly number[],
 } as const;
 export const estFond = (strate: number) => strate >= FOND.des;
 /** La Strate dont une Strate emprunte la particularité (elle-même au-dessus de −11) */

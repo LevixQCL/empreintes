@@ -526,10 +526,6 @@
    "en": "All three stories · {0} + 1 Nacre Pearl"
   },
   {
-   "fr": "Paiement sécurisé par Stripe, en une fois, sans abonnement. Le récit s’ouvre tout de suite : en payant, tu demandes cet accès immédiat et tu renonces à ton droit de rétractation.",
-   "en": "Secure payment by Stripe, one-off, no subscription. The story unlocks straight away: by paying, you ask for this immediate access and waive your right of withdrawal."
-  },
-  {
    "fr": "Son histoire",
    "en": "Their story"
   },
@@ -724,6 +720,30 @@
   {
    "fr": "Changer ses cartes",
    "en": "Change their cards"
+  },
+  {
+   "fr": "Je veux recevoir mon achat tout de suite, et je renonce à mon droit de rétractation de 14 jours.",
+   "en": "I want my purchase right away, and I waive my 14-day right of withdrawal."
+  },
+  {
+   "fr": "Ouverture du paiement…",
+   "en": "Opening payment…"
+  },
+  {
+   "fr": "Paiement sécurisé par Stripe, en une fois, sans abonnement. Le reçu arrive par e-mail.",
+   "en": "Secure one-time payment by Stripe, no subscription. The receipt arrives by e-mail."
+  },
+  {
+   "fr": "Relie d’abord ta partie à un compte Google ou à un e-mail : ton achat y restera attaché, même si tu changes d’appareil.",
+   "en": "First link your game to a Google account or an e-mail: your purchase will stay attached to it, even if you change device."
+  },
+  {
+   "fr": "Relier ma partie",
+   "en": "Link my game"
+  },
+  {
+   "fr": "L’achat demande une connexion et un compte en ligne. Reviens ici une fois connecté.",
+   "en": "Buying needs a connection and an online account. Come back here once you are signed in."
   }
  ]
 }

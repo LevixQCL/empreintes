@@ -19,9 +19,10 @@ export async function lireAchats(uid: string): Promise<string[]> {
 /** Prépare le paiement d'un produit (src/core/produits.ts) et renvoie l'adresse de la page de paiement.
  *  `retour` : l'adresse du jeu, où Stripe ramène le joueur ensuite. */
 export async function ouvrirPaiement(produit: string, retour: string, langue: string): Promise<string> {
-  const creer = httpsCallable<{ produit: string; retour: string; langue: string }, { url: string }>(
+  const creer = httpsCallable<{ produit: string; retour: string; langue: string; renonce: true }, { url: string }>(
     getFunctions(getApp(), REGION_FONCTIONS), 'creerPaiement');
-  const r = await creer({ produit, retour, langue });
+  // renonce : la case du droit de rétractation, cochée dans le jeu (le serveur refuse sans elle)
+  const r = await creer({ produit, retour, langue, renonce: true });
   if (!r.data?.url) throw new Error('paiement-sans-adresse');
   return r.data.url;
 }

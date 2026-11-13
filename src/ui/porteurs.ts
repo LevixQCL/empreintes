@@ -520,17 +520,8 @@ export function feuillePorteur(e: EcranDistrict): string {
         return `<li><span class="fp-carte-face">${faceCarte(m, 1)}</span><span class="fp-carte-texte"><strong>${echap(m.nom)}</strong>${effets}`
           + `<small>${tr`Carte exclusive, en or : elle grandit avec ${echap(p.nom)} au fil de ses niveaux.`}${m.origine ? ' ' + tr`Face à un autre joueur (duel, défi d’un quai), son effet « ${echap(NOMS_EFFET[m.origine])} » est éteint.` : ''}</small></span></li>`;
       }).join('')}</ul>`;
-      if (bq!.compte === 'pret') {
-        h += `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="achat-payer" data-id="${droitRecit(recit)}"${bq!.occupe ? ' disabled' : ''}>${tr`Ce récit · ${prix}`}</button>`
-          + (lotProposable(bq!.achats) ? `<button type="button" class="btn sec petit" data-action="achat-payer" data-id="${LOT_RECITS}"${bq!.occupe ? ' disabled' : ''}>${tr`Les trois récits · ${prixEuros(PRODUITS[LOT_RECITS]!.prix)} + 1 Perle de nacre`}</button>` : '') + `</div>`
-          + `<p class="fp-legal">${bq!.occupe ? tr('Ouverture du paiement…') : tr('Paiement sécurisé par Stripe, en une fois, sans abonnement. Le récit s’ouvre tout de suite : en payant, tu demandes cet accès immédiat et tu renonces à ton droit de rétractation.')}</p>`;
-      } else if (bq!.compte === 'a-relier') {
-        h += `<p class="fp-legal">${tr`Relie d’abord ta partie à un compte Google ou à un e-mail : ton achat y restera attaché, même si tu changes d’appareil.`}</p>`
-          + `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="compte">${tr`Relier ma partie`}</button></div>`;
-      } else {
-        h += `<p class="fp-legal">${tr`L’achat demande une connexion et un compte en ligne. Reviens ici une fois connecté.`}</p>`;
-      }
-      if (bq!.erreur) h += `<p class="fp-legal rouge" role="alert">${echap(bq!.erreur)}</p>`;
+      h += blocPaiement(bq!, [{ id: droitRecit(recit), texte: tr`Ce récit · ${prix}` }]
+        .concat(lotProposable(bq!.achats) ? [{ id: LOT_RECITS, texte: tr`Les trois récits · ${prixEuros(PRODUITS[LOT_RECITS]!.prix)} + 1 Perle de nacre` }] : []));
       h += `</div>`;
     }
     h += `</section>`;
@@ -644,4 +635,28 @@ export function feuillePorteur(e: EcranDistrict): string {
   // ---------- pied : la prochaine action ----------
   h += `</div><footer class="feuille-pied fp-pied"><button type="button" class="btn large fp-deck" data-action="deck" data-id="${id}"${parti ? ' disabled' : ''}>${ICO.cartes}${parti ? tr('Ses cartes changeront à son retour') : places ? tr`Lui confier des cartes · ${cartes.length} / ${DISTRICT.cartesMax}` : tr('Changer ses cartes')}</button></footer>`;
   return h + `</section>`;
+}
+
+/**
+ * Le paiement d'une offre dépliée (récit d'un Porteur, pack Ossyra), selon le compte. Cadre légal (13 novembre 2026) :
+ * un contenu numérique fourni tout de suite n'a plus de droit de rétractation de 14 jours que si l'acheteur le demande
+ * expressément et reconnaît le perdre ; d'où la case à cocher, sans laquelle les boutons de paiement restent éteints.
+ * Le serveur refuse aussi un paiement sans elle et la recopie sur le reçu Stripe (la confirmation écrite).
+ */
+export function blocPaiement(bq: import('./coquille').Boutique, boutons: readonly { id: string; texte: string }[]): string {
+  let h = '';
+  if (bq.compte === 'pret') {
+    const eteint = bq.occupe || !bq.renonce ? ' disabled' : '';
+    h += `<label class="fp-renonce"><input type="checkbox" data-action="achat-renonce"${bq.renonce ? ' checked' : ''}>`
+      + `<span>${tr`Je veux recevoir mon achat tout de suite, et je renonce à mon droit de rétractation de 14 jours.`}</span></label>`
+      + `<div class="fp-recit-actions">${boutons.map((b, i) => `<button type="button" class="btn ${i ? 'sec' : 'prim'} petit" data-action="achat-payer" data-id="${b.id}"${eteint}>${b.texte}</button>`).join('')}</div>`
+      + `<p class="fp-legal">${bq.occupe ? tr('Ouverture du paiement…') : tr('Paiement sécurisé par Stripe, en une fois, sans abonnement. Le reçu arrive par e-mail.')}</p>`;
+  } else if (bq.compte === 'a-relier') {
+    h += `<p class="fp-legal">${tr`Relie d’abord ta partie à un compte Google ou à un e-mail : ton achat y restera attaché, même si tu changes d’appareil.`}</p>`
+      + `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="compte">${tr`Relier ma partie`}</button></div>`;
+  } else {
+    h += `<p class="fp-legal">${tr`L’achat demande une connexion et un compte en ligne. Reviens ici une fois connecté.`}</p>`;
+  }
+  if (bq.erreur) h += `<p class="fp-legal rouge" role="alert">${echap(bq.erreur)}</p>`;
+  return h;
 }

@@ -55,3 +55,6 @@
 /* le pack Ossyra sous le Puits d'avant (13 novembre 2026) : la même ligne scellée que le récit d'un Porteur, dans la Tour */
 .tr-fond{--fp-txt:#C9D6E6;--fp-doux:#93A3B8;--fp-or:#F2D58C;--fp-rouge:#FF9C8A;margin-top:12px;text-align:left}
 .tr-fond-bientot{font:600 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--fp-or);padding:6px 10px;border-radius:999px;box-shadow:inset 0 0 0 1px rgba(216,180,101,.45)}
+/* la renonciation au droit de rétractation (13 novembre 2026) : une case à cocher, avant les boutons de paiement */
+.fp-renonce{display:flex;gap:10px;align-items:flex-start;margin-top:10px;font-size:12.5px;line-height:1.4;color:var(--fp-txt);cursor:pointer}
+.fp-renonce input{flex:none;width:18px;height:18px;margin:1px 0 0;accent-color:#D8B465;cursor:pointer}

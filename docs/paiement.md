@@ -29,7 +29,8 @@ affiche) et `functions/produits.json` (ce que le serveur fait payer).
 5. `firebase deploy --only functions,firestore:rules` (publie aussi la règle `achats` de `firestore.rules`).
    La console affiche l'adresse de `paiementRecu`.
 6. Dans Stripe › Développeurs › Webhooks : ajouter cette adresse, avec les événements `checkout.session.completed` et
-   `checkout.session.async_payment_succeeded` et `charge.refunded` (un remboursement complet retire le droit). Copier le « secret de signature » (`whsec_…`) dans `STRIPE_WEBHOOK`
+   `checkout.session.async_payment_succeeded` `charge.refunded` et `charge.dispute.closed`
+   (un remboursement complet ou un litige perdu retire le droit). Copier le « secret de signature » (`whsec_…`) dans `STRIPE_WEBHOOK`
    (même commande qu'à l'étape 4), puis redéployer les fonctions.
 7. **Essai** : mettre `VENTE_OUVERTE = true`, pousser, acheter un récit avec la carte de test de Stripe (4242 4242 4242 4242).
    Le récit doit s'ouvrir au retour. Puis passer Stripe en mode réel (clé `sk_live_…`, nouveau webhook réel).
@@ -52,3 +53,19 @@ Ce raccourci n'existe pas sur le jeu publié.
 - **Juridique** : conditions de vente, mention sur le droit de rétractation (texte provisoire sur la fiche), TVA, statut.
 - **Pack Ossyra** : en vente sous le Puits d'avant (Tour du Noyau) à 4,99 €, et « tout Ossyra » (trois récits + le Fond) à 8,99 €.
   Le butin du Fond reste à décider. Une partie déjà avancée sous −10 garde le Fond (`nouvelle.ts`), même sans achat.
+
+## Cadre légal des achats (13 novembre 2026)
+
+Je ne suis pas juriste : à faire relire. Ce qui est en place, d'après la directive européenne sur les droits des consommateurs
+(contenu numérique fourni tout de suite, sans support matériel) :
+- **Droit de rétractation (14 jours)** : il ne tombe que si l'acheteur demande l'accès immédiat et reconnaît le perdre, de
+  façon expresse. Le jeu affiche une case à cocher (décochée par défaut) ; sans elle, les boutons de paiement restent éteints,
+  et le serveur refuse le paiement. Le reçu porte la mention (`renonciation: true` dans `achats/{uid}/recus`).
+- **Confirmation écrite** : la description du paiement (nom du produit + renonciation) s'imprime sur le reçu Stripe. À activer
+  dans Stripe : *Paramètres → E-mails clients → Paiements réussis*.
+- **Remboursement** : rien n'oblige à rembourser un contenu livré avec renonciation, sauf s'il ne fonctionne pas (garantie de
+  conformité). Politique proposée : rembourser sur demande quand l'achat ne s'est pas ouvert ou en cas d'erreur (double achat,
+  achat par un enfant). Un remboursement complet retire le droit ; un remboursement partiel ne retire rien.
+- **Litige (contestation bancaire)** : perdu, il retire le droit comme un remboursement ; gagné, rien ne change.
+- **Encore à faire** : les conditions de vente (identité du vendeur, prix TTC, droit de rétractation, garantie, contact) et
+  la TVA (guichet OSS pour les ventes numériques dans l'UE), avec un comptable.

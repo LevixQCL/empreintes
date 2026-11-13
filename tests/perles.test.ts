@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { xpPourAtteindre } from '../src/core/partie/district';
 import { COLLECTION, freinPromotion } from '../src/core/collection';
-import { fondrePerle, perleDesRecits, perlesDuLundi, rattraperPerles } from '../src/core/partie/perles';
+import { fondrePerle, perleDesRecits, perleDuFond, perlesDuLundi, rattraperPerles } from '../src/core/partie/perles';
 import { ASCENSION } from '../src/core/partie/fleche';
 import { tick } from '../src/core/partie/temps';
 import { OBJECTIFS, nouveauJeu, promouvoir, semaineDe } from '../src/core/jeu';
@@ -69,6 +69,14 @@ describe('La Perle de nacre (13 novembre 2026)', () => {
     expect(perleDesRecits(j)).not.toBeNull();
     expect(perleDesRecits(j)).toBeNull();
     expect(j.perles).toBe(1);
+  });
+
+  it('le pack Ossyra : une Perle à l’achat, une seule fois, en plus de celle du lot des récits', () => {
+    const j = avance();
+    expect(perleDuFond(j)).not.toBeNull();
+    expect(perleDuFond(j)).toBeNull();
+    perleDesRecits(j);
+    expect(j.perles).toBe(2);
   });
 
   it('une partie déjà avancée récupère une fois les Perles de −9, −10 et des quais à nacre déjà passés', () => {

@@ -919,8 +919,8 @@ export function remonter(j: Jeu): Retour {
     // une nacre au choix parmi les cartes des Porteurs présents, sans tirage payant (13 novembre 2026)
     if (FOND.nacreAuChoix.includes(x.strate)) j.choix.push({ source: 'boss', options: tirerChoix(j, x.strate, 'nacre', undefined, porteursPresents(j)) });
     else cartes.push(tirerTrouvaille(j, x.strate, estFond(x.strate) ? 'or' : metalTranche(x.strate)));
-    // la Perle de nacre (perles.ts) : la première victoire de −9 et de −10, et l'entrée dans le Fond (−11)
-    if (COLLECTION.perle.strates.includes(x.strate) || x.strate === FOND.perleA) gagnerPerles(j, 1, tr`gardien de la Strate −${x.strate}`);
+    // la Perle de nacre (perles.ts) : la première victoire de −9 et de −10, puis de −11, −13 et −15 dans le Fond
+    if (COLLECTION.perle.strates.includes(x.strate) || FOND.perlesA.includes(x.strate)) gagnerPerles(j, 1, tr`gardien de la Strate −${x.strate}`);
     eclats += 2;
   }
   // la Strate remuée (12 novembre 2026) : la première sortie réussie du jour y laisse une prime, hors fouille facile

@@ -2166,40 +2166,20 @@
    "en": "The story of the Ossyra, and the end of the Icehouse’s"
   },
   {
-   "fr": "Le butin du Fond, pour préparer la Flèche",
-   "en": "The loot of the Deep, to prepare for the Spire"
+   "fr": "Une Perle de nacre tout de suite, puis une à chaque premier gardien vaincu de −11, −13 et −15 : de quoi monter tes cartes en nacre avant la Flèche",
+   "en": "A Nacre Pearl right away, then one for each first guardian defeated at −11, −13 and −15: enough to raise your cards to nacre before the Spire"
   },
   {
    "fr": "Acquis pour toujours sur ton compte, sur tous tes appareils",
    "en": "Yours for good on your account, on all your devices"
   },
   {
-   "fr": "Le Fond · {0}",
-   "en": "The Deep · {0}"
+   "fr": "Le Fond · {0} + 1 Perle de nacre",
+   "en": "The Deep · {0} + 1 Nacre Pearl"
   },
   {
-   "fr": "Le Fond et les trois récits · {0} + 1 Perle de nacre",
-   "en": "The Deep and the three stories · {0} + 1 Nacre Pearl"
-  },
-  {
-   "fr": "Ouverture du paiement…",
-   "en": "Opening payment…"
-  },
-  {
-   "fr": "Paiement sécurisé par Stripe, en une fois, sans abonnement. Le Fond s’ouvre tout de suite : en payant, tu demandes cet accès immédiat et tu renonces à ton droit de rétractation.",
-   "en": "Secure one-time payment by Stripe, no subscription. The Deep opens right away: by paying, you request this immediate access and waive your right of withdrawal."
-  },
-  {
-   "fr": "Relie d’abord ta partie à un compte Google ou à un e-mail : ton achat y restera attaché, même si tu changes d’appareil.",
-   "en": "First link your game to a Google account or an e-mail: your purchase will stay attached to it, even if you change device."
-  },
-  {
-   "fr": "Relier ma partie",
-   "en": "Link my game"
-  },
-  {
-   "fr": "L’achat demande une connexion et un compte en ligne. Reviens ici une fois connecté.",
-   "en": "Buying needs a connection and an online account. Come back here once you are signed in."
+   "fr": "Le Fond et les trois récits · {0} + 2 Perles de nacre",
+   "en": "The Deep and the three stories · {0} + 2 Nacre Pearls"
   },
   {
    "fr": "EN COUPE · {0} ÉTAGE{1} CREUSÉ{2}",

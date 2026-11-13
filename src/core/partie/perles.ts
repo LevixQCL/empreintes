@@ -68,6 +68,13 @@ export function perleDesRecits(j: Jeu): string | null {
   return gagnerPerles(j, 1, tr('les trois Récits des origines'));
 }
 
+/** Le pack Ossyra donne une Perle à l'achat, une seule fois (l'application l'appelle quand le Fond est acquis) */
+export function perleDuFond(j: Jeu): string | null {
+  if (j.perleFond) return null;
+  j.perleFond = true;
+  return gagnerPerles(j, 1, tr('le pack Ossyra'));
+}
+
 /**
  * Les parties déjà avancées le 13 novembre 2026 (vérification de Bryan : « j'ai peur qu'on ait oublié des endroits ») :
  * les gardiens de −9, −10 et −11 et les quais à nacre passés avant l'arrivée des Perles n'en avaient rien donné.
@@ -78,7 +85,7 @@ export function rattraperPerles(j: Jeu, quaisNacre: readonly number[]): string |
   j.perlesRattrapees = true;
   const deja = (raison: string) => j.journal.some((l) => l.includes(`(${raison})`));
   const v = strateVaincue(j);
-  const raisons = [...COLLECTION.perle.strates, FOND.perleA].filter((s) => v >= s).map((s) => tr`gardien de la Strate −${s}`)
+  const raisons = [...COLLECTION.perle.strates, FOND.perlesA[0]!].filter((s) => v >= s).map((s) => tr`gardien de la Strate −${s}`)
     .concat(quaisNacre.filter((q) => j.fleche?.recus.includes(q)).map((q) => tr`quai ${q} de la Flèche`))
     .filter((r) => !deja(r));
   if (!raisons.length) return null;

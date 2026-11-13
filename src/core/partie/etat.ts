@@ -394,6 +394,8 @@ export interface Jeu {
   perleSemaine?: number;
   /** la Perle du lot des trois Récits a été donnée */
   perleRecits?: boolean;
+  /** la Perle du pack Ossyra a été donnée (perles.ts) */
+  perleFond?: boolean;
   /** les Perles des exploits faits avant leur arrivée (−9, −10, −11, quais à nacre) ont été rendues une fois */
   perlesRattrapees?: boolean;
   /** les cartes possédées */

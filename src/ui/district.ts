@@ -44,7 +44,7 @@ import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge,
 import { COULEUR_RARETE, faceCarte, couleurFrequence, pastillesCopies, texteCopies } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { avecMots } from './lexique';
-import { arriveeFuture, feuillePorteur } from './porteurs';
+import { arriveeFuture, blocPaiement, feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
 import { CHANTIER, ICO, baseIcones, icone, perle, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, etapeVoyage, avatar, ongletsFiche, avatarGarde, gardesGarnison, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
@@ -2042,19 +2042,10 @@ function offreFond(e: EcranDistrict): string {
   if (bq.offre !== 'fond') return h + `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="recit-acheter" data-id="fond" aria-expanded="false">${ICO.verrou}${prix}</button></div></section>`;
   h += `<div class="fp-recit-plus"><ul class="fp-offre"><li>${tr`Cinq Strates de plus sous le Puits d’avant, de −11 à −15, et leurs gardiens`}</li>`
     + `<li>${tr`L’histoire des Ossyra, et la fin de celle de la Glacière`}</li>`
-    + `<li>${tr`Le butin du Fond, pour préparer la Flèche`}</li>`
+    + `<li>${tr`Une Perle de nacre tout de suite, puis une à chaque premier gardien vaincu de −11, −13 et −15 : de quoi monter tes cartes en nacre avant la Flèche`}</li>`
     + `<li>${tr`Acquis pour toujours sur ton compte, sur tous tes appareils`}</li></ul>`;
-  if (bq.compte === 'pret') {
-    h += `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="achat-payer" data-id="${PACK_OSSYRA}"${bq.occupe ? ' disabled' : ''}>${tr`Le Fond · ${prix}`}</button>`
-      + (toutProposable(bq.achats) ? `<button type="button" class="btn sec petit" data-action="achat-payer" data-id="${TOUT_OSSYRA}"${bq.occupe ? ' disabled' : ''}>${tr`Le Fond et les trois récits · ${prixEuros(PRODUITS[TOUT_OSSYRA]!.prix)} + 1 Perle de nacre`}</button>` : '') + `</div>`
-      + `<p class="fp-legal">${bq.occupe ? tr('Ouverture du paiement…') : tr('Paiement sécurisé par Stripe, en une fois, sans abonnement. Le Fond s’ouvre tout de suite : en payant, tu demandes cet accès immédiat et tu renonces à ton droit de rétractation.')}</p>`;
-  } else if (bq.compte === 'a-relier') {
-    h += `<p class="fp-legal">${tr`Relie d’abord ta partie à un compte Google ou à un e-mail : ton achat y restera attaché, même si tu changes d’appareil.`}</p>`
-      + `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="compte">${tr`Relier ma partie`}</button></div>`;
-  } else {
-    h += `<p class="fp-legal">${tr`L’achat demande une connexion et un compte en ligne. Reviens ici une fois connecté.`}</p>`;
-  }
-  if (bq.erreur) h += `<p class="fp-legal rouge" role="alert">${echap(bq.erreur)}</p>`;
+  h += blocPaiement(bq, [{ id: PACK_OSSYRA, texte: tr`Le Fond · ${prix} + 1 Perle de nacre` }]
+    .concat(toutProposable(bq.achats) ? [{ id: TOUT_OSSYRA, texte: tr`Le Fond et les trois récits · ${prixEuros(PRODUITS[TOUT_OSSYRA]!.prix)} + 2 Perles de nacre` }] : []));
   return h + `</div></section>`;
 }
 

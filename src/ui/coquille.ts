@@ -172,6 +172,8 @@ export interface Boutique {
   offre: string | null;
   occupe: boolean;
   erreur: string;
+  /** la case « je renonce à mon droit de rétractation » est cochée (13 novembre 2026) : sans elle, pas de paiement */
+  renonce: boolean;
   /** pret : compte relié, on peut payer ; a-relier : compte invisible, à relier d'abord ; indisponible : hors ligne, sans compte */
   compte: 'pret' | 'a-relier' | 'indisponible';
 }
