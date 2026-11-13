@@ -24,6 +24,7 @@ import { strateVaincue, jourDe } from './partie/etat';
 import { strateRemuee } from './partie/descentes';
 import { chanceQuai, etatFleche, flecheOuverte, monterFleche, peutMonter } from './partie/fleche';
 import { confieesOuvertes, confierFouille, peutConfier } from './partie/confiees';
+import { avancementExode, exodeOuvert, lancerExode } from './partie/exode';
 // (les creuseurs se gagnent par les fouilles, missions et Épreuves que joue déjà ce joueur simulé)
 import type { CombatEtat, Lignee } from './types';
 import { t as tr } from './i18n';
@@ -201,7 +202,12 @@ function gerer(j: Jeu, now: number): void {
   for (const b of ['noyau', 'generateur', 'clinique', 'forge', 'comptoir'] as const) ameliorer(j, b, now);
   const prochain = (['noyau', 'generateur', 'clinique', 'forge', 'comptoir'] as const).map((b) => coutAmelioration(j, b))
     .filter((c): c is NonNullable<typeof c> => !!c && j.eclats >= (c.eclats ?? 0)).reduce((m, c) => Math.min(m, c.energie), Infinity);
-  const reserve = Number.isFinite(prochain) ? 0.6 * prochain : 0;
+  // l'Exode (10 novembre 2026), une fois ouvert : il lance l'étape suivante dès qu'il le peut, et met de côté pour elle
+  // comme pour un chantier (le grand projet passe avant les achats au Comptoir)
+  if (exodeOuvert(j) && !avancementExode(j).enCours) lancerExode(j, now);
+  const exo = exodeOuvert(j) && !avancementExode(j).enCours && j.eclats >= avancementExode(j).cout.eclats ? avancementExode(j).cout.cristaux : Infinity;
+  const aMettreDeCote = Math.min(prochain, exo);
+  const reserve = Number.isFinite(aMettreDeCote) ? (aMettreDeCote === exo ? 1 : 0.6) * aMettreDeCote : 0;
   const libre = () => j.energie - reserve;
   // des Éclats au Comptoir (audit du 7 novembre 2026), s'il reste de quoi faire le reste (trois fois le prix)
   while (j.batiments.comptoir && libre() >= 3 * prixEclatComptoir(j) && acheterEclat(j, now).ok);
@@ -302,6 +308,8 @@ export function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: Combat
 export function simulerParcours(
   profil: Profil, jours: number, graine: number,
   opts: { trace?: (j: Jeu, jour: number, escouade: string[]) => void; jusqua?: number;
+    /** la Strate la plus profonde ouverte au joueur (le jeu gratuit s'arrête à −10, 12 novembre 2026) : plus bas, il ne tente plus le front */
+    plafond?: number;
     /** appelé avant chaque expédition (attente : le gardien du front est vaincu, il manque des creuseurs) */
     session?: (j: Jeu, jour: number, attente: boolean) => void;
     /** les cristaux taillés, et le brut qui attendait à chaque session (en heures de taille) */
@@ -383,7 +391,8 @@ export function simulerParcours(
       opts.session?.(j, d + 1, attente);
       const forceDepart = opts.tentative || opts.oser ? forceEscouade(j, escouade) : 0;
       const prudent = !!opts.oser && !attente && front > 1 && !opts.oser(j, front, forceDepart);
-      const cible = attente ? front : prudent || (echecs >= 2 && front > 1) ? front - 1 : front;
+      const bloque = !!opts.plafond && front > opts.plafond;
+      const cible = bloque ? opts.plafond! : attente ? front : prudent || (echecs >= 2 && front > 1) ? front - 1 : front;
       const faible = LIGNEES.map((l) => ({ l, v: meilleures(j, l, Math.max(...escouade.filter((id) => porteurDef(id).lignee === l).map((id) => chargeMax(j, id)), chargeMax(j, NOMME[l])), Math.max(...escouade.filter((id) => porteurDef(id).lignee === l).map((id) => niveauPorteur(j, id).niveau), niveauPorteur(j, NOMME[l]).niveau)).reduce((n, id) => n + valeurCarte(id, j.collection[id]!.niveau), 0) / DEFENSES_POIDS[l] }))
         .sort((a, b) => a.v - b.v)[0]!.l;
       // un joueur moyen paie les soins intensifs avant de retenter le front, si l'énergie ne manque pas aux chantiers
@@ -391,7 +400,7 @@ export function simulerParcours(
       const g = suivant();
       // 12 novembre 2026 : quand il ne tente pas le front, il ne refouille plus la même Strate par défaut. D'abord la Strate
       // remuée du jour (une fois), puis la Flèche tant qu'il a une chance sur deux d'y monter, sinon la fouille d'avant.
-      const auFront = cible === front && !attente;
+      const auFront = cible === front && !attente && !bloque;
       const rem = auFront || opts.ancien ? null : strateRemuee(j, now);
       const monte = !auFront && !opts.ancien && !(rem && !rem.faite) && flecheOuverte(j) && peutMonter(j).ok && chanceQuai(forceEscouade(j, escouade), etatFleche(j).quai) >= 0.5;
       const sorte = auFront ? 'front' : rem && !rem.faite ? 'remuee' : monte ? 'fleche' : 'fouille';
