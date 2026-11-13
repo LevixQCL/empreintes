@@ -190,7 +190,9 @@ export const FORCE = {
   // 12 novembre 2026 (révision complète, chantier 2) : réglée Strate par Strate sur le deck des nouvelles règles (métal par tranche,
   // sans Charge, sans verrou) pour des victoires régulières au front (avant : 2.46, 2.781, 2.98, 3.34, 3.58, 3.78 de −5 à −10 ;
   // le front de −8 demandait 16 expéditions et −10 se gagnait une fois sur dix). `npx tsx scripts/progression.ts` donne les chiffres.
-  table: [0.85, 1.39, 1.818, 2.139, 2.583, 2.92, 2.771, 3.006, 3.15, 3.024, 3.88, 4.05, 4.2, 4.35] as number[],
+  // 13 novembre 2026 (audit par testeurs, validé par Bryan) : −6 était plus forte que −7 (2.92 contre 2.771), un mur à 26 % de victoires
+  // au front ; ramenée à 2.686, entre −5 et −7 : 41 % de victoires à −6, front global inchangé (27 %), −10 au jour 15 au lieu de 17.
+  table: [0.85, 1.39, 1.818, 2.139, 2.583, 2.686, 2.771, 3.006, 3.15, 3.024, 3.88, 4.05, 4.2, 4.35] as number[],
   /** hausse par Strate au-delà de la table */
   ensuite: 1.04,
   /** hausse par Strate pour suivre les niveaux des Porteurs. À 0 depuis les traits, phases et conditions (22 octobre 2026), qui
