@@ -5,7 +5,7 @@
    (medaillon-scelle.webp, même cadrage : le passage de l'une à l'autre est un simple fondu). */
 
 .nav .medaillon{position:relative;z-index:2;min-width:0;-webkit-tap-highlight-color:transparent}
-.nav .med-image{position:absolute;left:50%;pointer-events:none;transform:translateX(-50%);
+.nav .med-image{position:absolute;z-index:1;left:50%;pointer-events:none;transform:translateX(-50%);
   filter:drop-shadow(0 0 12px rgba(95,168,255,.35)) drop-shadow(0 4px 8px rgba(0,0,0,.7));transition:filter .25s ease,transform .25s cubic-bezier(.2,1.4,.4,1)}
 .nav .medaillon.actif .med-image{filter:drop-shadow(0 0 16px rgba(140,200,255,.6)) drop-shadow(0 0 22px rgba(255,200,120,.25)) drop-shadow(0 4px 8px rgba(0,0,0,.7))}
 .nav .medaillon:has(.med-moitie:active) .med-image{transform:translateX(-50%) scale(.95)}
