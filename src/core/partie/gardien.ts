@@ -14,9 +14,9 @@ import { forceStrate, nouvelleExpedition } from '../expedition';
 import { graine } from '../rng';
 import { tirerChoix } from '../collection';
 import type { BonusMarques, CombatEtat, GesteDef, PorteurEtat } from '../types';
-import { bonusPv, debutJour, jourDe, log, non, porteursPresents, pvNiveau, semaineDe, strateVaincue, type Jeu, type Resultat } from './etat';
+import { bonusPv, debutJour, enMission, escouadeDe, jourDe, log, niveauPorteur, non, porteursPresents, pvNiveau, semaineDe, strateVaincue, type Jeu, type Resultat } from './etat';
+import { porteurDef } from '../donnees';
 import { deckEscouade, escouadePrete, indiceEscouade } from './descentes';
-import { quitterPostes } from './recompenses';
 import { gagnerPerles } from './perles';
 import { remonter as remonterFleche } from './fleche';
 import type { Retour } from './descentes';
@@ -35,6 +35,9 @@ export const GARDIEN_VILLE = {
   /** 1 part = les PV d'un gardien de sa Strate, abattus en ce nombre de tours, ramenés aux 12 tours du combat.
    *  10 : un joueur moyen fait environ 1 part par frappe à −3, 1,3 à −10 (scripts/gardien-ville.ts, 13 novembre 2026) */
   toursReference: 10,
+  /** le classement de la semaine compte les dégâts purs (Bryan, 13 novembre 2026 : « plus clair ») ; une frappe n'en inscrit
+   *  jamais plus que ce plafond (un joueur moyen en fait 300 à 1 400, scripts/gardien-ville.ts) : un chiffre farfelu ne passe pas */
+  degatsMax: 5000,
   /** une tentative ne compte jamais plus de 3 parts (un deck très au-dessus de sa Strate ne fait pas tout seul la semaine) */
   partsMax: 3,
   /** les PV de la ville (serveur) : 4 parts par joueur actif la semaine d'avant, jamais moins de 40 */
@@ -77,6 +80,9 @@ export interface EtatGardien {
   /** parts comptées par le serveur cette semaine, et la plus belle frappe */
   parts: number;
   meilleure: number;
+  /** les dégâts comptés en ligne cette semaine, et la plus grosse frappe en dégâts (le classement) */
+  degats?: number;
+  record?: number;
   /** les frappes jouées, pas encore comptées par le serveur */
   aEnvoyer: FrappeGardien[];
   /** les paliers de la ville déjà touchés cette semaine (en part : 0.25, 0.5…) */
@@ -97,6 +103,7 @@ export interface FrappeGardien {
   journal: ActionCombat[];
   /** ce que le téléphone a compté (pour l'affichage en attendant le serveur) */
   parts: number;
+  degats?: number;
 }
 
 /** Tout ce qu'il faut pour recréer le combat */
@@ -214,6 +221,26 @@ export function appliquer(s: CombatEtat, a: ActionCombat): boolean {
   }
 }
 
+// ---------- Le trio du Gardien (13 novembre 2026) ----------
+// Bryan : « ceux qui ne jouent pas le trio sont désavantagés : il faudrait pouvoir modifier son trio pour jouer à ça, comme on veut ».
+// Contre le Gardien, on choisit librement 3 Porteurs présents, sans toucher aux escouades enregistrées. On ne peut pas perdre et
+// personne ne prend d'Usure : les blessés partent à PV pleins, et ceux qui travaillent gardent leur poste. Seuls ceux en mer manquent.
+
+/** Pourquoi ce Porteur ne peut pas frapper le Gardien (null : il peut) */
+export function raisonHorsGardien(j: Jeu, id: string): string | null {
+  if (!porteursPresents(j).includes(id)) return tr('Pas encore arrivé au district.');
+  if (enMission(j, id)) return tr('En mission.');
+  return null;
+}
+
+/** Les Porteurs proposés au départ : l'escouade active, complétée par les plus hauts niveaux */
+export function trioGardien(j: Jeu): string[] {
+  const peut = (id: string) => !raisonHorsGardien(j, id);
+  const garde = escouadeDe(j).filter(peut);
+  const autres = porteursPresents(j).filter((id) => peut(id) && !garde.includes(id)).sort((a, b) => niveauPorteur(j, b).niveau - niveauPorteur(j, a).niveau);
+  return [...garde, ...autres].slice(0, 3);
+}
+
 export function peutFrapper(j: Jeu, now: number): Resultat {
   if (!gardienOuvert(j)) return non(tr`Le Gardien de la ville se montre aux directeurs qui ont vaincu la Strate −${GARDIEN_VILLE.ouverture}.`);
   if (j.expedition) return non(tr('Une expédition est déjà en cours.'));
@@ -225,7 +252,9 @@ export function peutFrapper(j: Jeu, now: number): Resultat {
 export function frapperGardien(j: Jeu, escouade: string[], now: number, rng = graine()): Resultat {
   const p = peutFrapper(j, now);
   if (!p.ok) return p;
-  const e = escouadePrete(j, escouade, undefined, undefined, 'courte');
+  const hors = escouade.map((id) => raisonHorsGardien(j, id) && porteurDef(id).nom).find(Boolean);
+  if (hors) return non(tr`${hors} ne peut pas frapper le Gardien : il est en mer.`);
+  const e = escouadePrete(j, escouade, undefined, undefined, 'courte', true);
   if (!e.ok) return e;
   const g = etatGardien(j, now);
   const sem = gardienDeLaSemaine(g.semaine);
@@ -239,7 +268,6 @@ export function frapperGardien(j: Jeu, escouade: string[], now: number, rng = gr
   x.combat.journal = [tr`${sem.nom} remonte par le puits. Douze tours pour le repousser : chaque coup compte pour la ville.`];
   x.gardienVille = { depart, journal: [] };
   g.tentatives--;
-  quitterPostes(j, escouade);
   j.expedition = x;
   log(j, tr`L’escouade descend au puits repousser ${sem.nom.toLowerCase()}.`);
   return { ok: true };
@@ -248,17 +276,21 @@ export function frapperGardien(j: Jeu, escouade: string[], now: number, rng = gr
 /** Le retour du combat du Gardien : la frappe part au serveur ; pas d'Usure, pas de défaite (on ne peut pas perdre) */
 export interface RetourGardien { degats: number; parts: number; meilleure: boolean }
 
+/** Les dégâts de la semaine (comptés en ligne + ceux qui attendent d'être envoyés), et la plus grosse frappe */
+export const degatsSemaine = (g: EtatGardien) => (g.degats ?? 0) + g.aEnvoyer.reduce((n, f) => n + (f.degats ?? 0), 0);
+
 export function remonterGardien(j: Jeu, now: number): RetourGardien | null {
   const x = j.expedition;
   if (!x?.gardienVille) return null;
   const g = etatGardien(j, now);
   const degats = degatsInfliges(x.combat);
   const parts = partsDe(x.gardienVille.depart, degats);
-  g.aEnvoyer.push({ semaine: g.semaine, le: now, depart: x.gardienVille.depart, journal: x.gardienVille.journal, parts });
-  const meilleure = parts > g.meilleure;
-  if (meilleure) g.meilleure = parts;
+  g.aEnvoyer.push({ semaine: g.semaine, le: now, depart: x.gardienVille.depart, journal: x.gardienVille.journal, parts, degats });
+  const meilleure = degats > (g.record ?? 0);
+  if (meilleure) g.record = degats;
+  if (parts > g.meilleure) g.meilleure = parts;
   j.expedition = null;
-  log(j, tr`Le Gardien de la ville a encaissé ${degats} dégâts : ${parts.toLocaleString()} part${parts >= 2 ? 's' : ''} pour la ville.`);
+  log(j, tr`Le Gardien de la ville a encaissé ${degats} dégâts.`);
   return { degats, parts, meilleure };
 }
 
@@ -304,13 +336,16 @@ export interface FicheGardien {
   parts: number;
   frappes: number;
   meilleure: number;
+  /** les dégâts de la semaine (le classement) et la plus grosse frappe */
+  degats: number;
+  record: number;
   /** l'heure de la dernière frappe comptée : une frappe envoyée deux fois ne compte qu'une fois */
   dernier: number;
   maj: number;
 }
 
 /** Une ligne du classement des dégâts */
-export interface LigneClassementGardien { uid: string; nom: string | null; strate: number; parts: number; frappes: number }
+export interface LigneClassementGardien { uid: string; nom: string | null; strate: number; parts: number; frappes: number; degats: number }
 
 /** Combien de frappes un directeur peut avoir jouées cette semaine à cet instant : une par jour écoulé, plus sa réserve */
 export const frappesPermises = (now: number) => jourDe(now) - semaineDe(now) * 7 + GARDIEN_VILLE.reserve;
@@ -321,15 +356,17 @@ export const pvDeLaVille = (frappeursAvant: number) => Math.max(GARDIEN_VILLE.pv
 const dixieme = (n: number) => Math.round(n * 10) / 10;
 
 /** La fiche après une frappe, avec les bornes de firestore.rules ; null si elle est déjà comptée, d'une autre semaine ou de trop */
-export function ficheApres(avant: FicheGardien | null, f: Pick<FrappeGardien, 'semaine' | 'le' | 'parts'>, qui: { nom: string | null; strate: number }, now: number): FicheGardien | null {
+export function ficheApres(avant: FicheGardien | null, f: Pick<FrappeGardien, 'semaine' | 'le' | 'parts' | 'degats'>, qui: { nom: string | null; strate: number }, now: number): FicheGardien | null {
   if (f.semaine !== semaineDe(now)) return null;
   if (avant && f.le <= avant.dernier) return null;
   const frappes = (avant?.frappes ?? 0) + 1;
   if (frappes > frappesPermises(now)) return null;
   const p = dixieme(Math.min(GARDIEN_VILLE.partsMax, Math.max(0, f.parts)));
+  const d = Math.round(Math.min(GARDIEN_VILLE.degatsMax, Math.max(0, f.degats ?? 0)));
   return {
     nom: qui.nom, strate: Math.max(1, Math.min(200, Math.round(qui.strate))),
     parts: dixieme((avant?.parts ?? 0) + p), frappes, meilleure: Math.max(avant?.meilleure ?? 0, p),
+    degats: (avant?.degats ?? 0) + d, record: Math.max(avant?.record ?? 0, d),
     dernier: Math.min(Math.round(f.le), now), maj: now,
   };
 }
@@ -377,11 +414,11 @@ export function reporterPerle(j: Jeu, semaine: number, villeAbattu: boolean): vo
   if (!villeAbattu && perleDeLaSemaine(j, semaine)) g.perleDue = true;
 }
 
-/** Les parts comptées par le serveur pour cette partie (après envoi) */
-export function partsComptees(j: Jeu, semaine: number, parts: number, envoyees: number): void {
+/** Ce qui est compté en ligne pour cette partie (après envoi) */
+export function partsComptees(j: Jeu, semaine: number, fiche: Pick<FicheGardien, 'parts' | 'degats' | 'record'>, envoyees: number): void {
   const g = j.gardienVille;
   if (!g || g.semaine !== semaine) return;
-  g.parts = parts;
+  g.parts = fiche.parts; g.degats = fiche.degats; g.record = Math.max(g.record ?? 0, fiche.record);
   g.aEnvoyer = g.aEnvoyer.slice(envoyees);
 }
 

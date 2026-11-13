@@ -12,7 +12,7 @@ import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
 import { REGLES } from '../regles';
-import { nbFoyers, ACCORD_OUVERT, chanceCreuseurDuJour, fouilleursDuJour, facteurXp, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, strateVaincue, premiersPas, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
+import { nbFoyers, ACCORD_OUVERT, chanceCreuseurDuJour, fouilleursDuJour, facteurXp, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, bonusPv, semaineDe, strateVaincue, premiersPas, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
 import { barquesMax, gardienPourTour, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { KIT_RECRUES, donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -1160,13 +1160,15 @@ const remueeDe = (j: Jeu, strate: number): number | null => { const r = strateRe
 
 // ---------- Les départs : expédition, fouille ciblée, Épreuve ----------
 
-export function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef) => boolean, min: number = DISTRICT.deckMin, sortie: Sortie = 'explorer'):
+/** gardien : le Gardien de la ville (13 novembre 2026) — ni blessure ni poste ne retiennent, tout le monde part à PV pleins */
+export function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef) => boolean, min: number = DISTRICT.deckMin, sortie: Sortie = 'explorer', gardien = false):
   { ok: false; message: string } | { ok: true; message?: undefined; porteurs: PorteurEtat[]; deck: GesteDef[]; bonus: BonusMarques } {
   if (j.expedition) return refus(tr('Une expédition est déjà en cours.'));
   if (escouade.length !== 3 || new Set(escouade).size !== 3) return refus(tr('Choisis 3 Porteurs.'));
   for (const id of escouade) {
     if (!porteursPresents(j).includes(id)) return refus(tr('Ce Porteur n’est pas encore arrivé au district.'));
     if (enMission(j, id)) return refus(tr`${porteurDef(id).nom} est en mission.`);
+    if (gardien) continue;
     if (j.porteurs[id]?.poste === 'forge' && j.forge) return refus(tr`${porteurDef(id).nom} ne peut pas quitter la Forge pendant une fabrication.`);
     const blesse = tropBlesse(j, id);
     if (blesse) return refus(blesse);
@@ -1182,6 +1184,8 @@ export function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef)
   // chaque Porteur combat avec ses 6 places : celles qu'on n'a pas remplies descendent vides (pas dans les Épreuves, qui retirent des cartes)
   const deck = filtre ? cartes : [...cartes, ...escouade.flatMap((id) => placesVides(id, (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).length))];
   const porteurs: PorteurEtat[] = escouade.map((id) => {
+    if (gardien) return { id, pv: pvNiveau(j, id) + bonusPv(j, id), pvMax: pvNiveau(j, id) + bonusPv(j, id), aTerre: false };
+    if (gardien) return { id, pv: pvNiveau(j, id) + bonusPv(j, id), pvMax: pvNiveau(j, id) + bonusPv(j, id), aTerre: false };
     const u = Math.floor(j.porteurs[id]!.usure);
     return { id, pv: pvMaxCombat(j, id), pvMax: pvMaxCombat(j, id), aTerre: false, ...(u > 0 ? { usure: u } : {}) };
   });

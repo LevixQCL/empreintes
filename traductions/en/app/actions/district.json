@@ -30,6 +30,10 @@
    "en": "{0} already carries {1} cards: tap the one {2} will replace."
   },
   {
+   "fr": "Le trio est complet : touche d’abord un Porteur pour le reposer.",
+   "en": "Your trio is full: tap a Bearer first to set them down."
+  },
+  {
    "fr": "Le quai {0} vient d’être pris : défie son gardien, ou tiens un autre quai.",
    "en": "Quay {0} has just been taken: challenge its guardian, or hold another quay."
   },

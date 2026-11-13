@@ -197,7 +197,16 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       if (!r.ok) { resultat(r); break; }
       D.deck = null; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = false; D.defi = null;
       D.villeDepart = true; D.villeOuverte = false;
-      D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
+      D.escouade = J.trioGardien(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
+      break;
+    }
+    // le trio du Gardien (13 novembre 2026) : on prend ou on repose un Porteur, sans toucher aux escouades enregistrées
+    case 'gv-trio': {
+      const non = J.raisonHorsGardien(app.jeu, id);
+      if (D.escouade.includes(id)) D.escouade = D.escouade.filter((x) => x !== id);
+      else if (non) D.message = non;
+      else if (D.escouade.length >= 3) D.message = t('Le trio est complet : touche d’abord un Porteur pour le reposer.');
+      else D.escouade = [...D.escouade, id];
       break;
     }
     case 'ville-retour': ouvrir('archipel'); D.villeDepart = false; D.villeOuverte = true; break;

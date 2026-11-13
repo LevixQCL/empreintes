@@ -2954,6 +2954,14 @@
    "en": "Entrust the dig ({0} h)"
   },
   {
+   "fr": "Le trio contre le Gardien",
+   "en": "The trio against the Guardian"
+  },
+  {
+   "fr": "Ton trio · {0} / 3",
+   "en": "Your trio · {0} / 3"
+  },
+  {
    "fr": "GARDIEN DE LA VILLE",
    "en": "CITY GUARDIAN"
   },
@@ -3106,6 +3114,10 @@
    "en": "Departing Bearers"
   },
   {
+   "fr": "Place libre · choisis un Porteur ci-dessus",
+   "en": "Free slot · pick a Bearer above"
+  },
+  {
    "fr": "Place libre · compléter l’escouade",
    "en": "Free slot · complete the squad"
   },
@@ -3224,6 +3236,10 @@
   {
    "fr": "profite des premiers soins intensifs, offerts",
    "en": "use the first intensive care, on the house"
+  },
+  {
+   "fr": "Contre le Gardien, tout le monde part à PV pleins, garde son poste et ne prend pas d’Usure.",
+   "en": "Against the Guardian, everyone goes in at full HP, keeps their post and takes no Wear."
   },
   {
    "fr": "Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.",

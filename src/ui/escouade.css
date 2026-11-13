@@ -202,3 +202,17 @@ button.es-place.vide{width:100%;border:0;font:inherit;cursor:pointer;color:inher
 .es-confier-non{display:flex;align-items:flex-start;gap:8px;color:#E8B86A!important}
 .es-confier-non .ico{width:15px;height:15px;flex-shrink:0;margin-top:2px}
 .es-confier .btn{width:100%;min-height:46px;margin-top:10px;justify-content:center}
+
+/* Le trio du Gardien de la ville (13 novembre 2026) : tous les Porteurs présents, on en touche trois */
+.gv-trio-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px}
+.gv-trio-p{position:relative;display:grid;justify-items:center;gap:4px;min-height:96px;padding:9px 4px 8px;border:0;border-radius:6px;cursor:pointer;font:inherit;color:var(--es-txt);
+  background:rgba(14,19,34,.7);box-shadow:inset 0 0 0 1px rgba(205,239,255,.16);transition:background .15s,box-shadow .15s}
+.gv-trio-p strong{font-family:var(--display);font-weight:400;font-size:14px;line-height:1.1;color:#E5EEF8;text-align:center}
+.gv-trio-p small{font-family:var(--mono);font-size:12px;color:var(--es-doux)}
+.gv-trio-p:hover{background:rgba(205,239,255,.07)}
+.gv-trio-p.pris{background:linear-gradient(180deg,rgba(242,213,140,.16),rgba(242,213,140,.03));box-shadow:inset 0 0 0 1.5px var(--es-or),0 0 16px rgba(242,200,110,.22)}
+.gv-trio-p.pris strong,.gv-trio-p.pris small{color:var(--es-or)}
+.gv-trio-p.hors{cursor:default;opacity:.5}
+.gv-trio-ok{position:absolute;top:5px;right:5px;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--es-or);color:#1A1406}
+.gv-trio-ok svg{width:12px;height:12px}
+@media (min-width:1100px){.gv-trio-grille{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}}

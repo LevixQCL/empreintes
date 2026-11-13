@@ -2,7 +2,7 @@
 // Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ;
 // chaque bâtiment y porte son cristal de niveau et, s'il y a quelque chose à faire, une bulle, le détail s'ouvre en feuille par le bas.
 
-import { chantiersExodeFinis, etatGardien, gardienDeLaSemaine, gardienOuvert, regleDeLaSemaine } from '../core/jeu';
+import { chantiersExodeFinis, etatGardien, gardienDeLaSemaine, gardienOuvert, raisonHorsGardien, regleDeLaSemaine } from '../core/jeu';
 import { HALTES_FOND, PISTES, halteDef, nombreHaltes, queteDef, revelationDe } from '../core/strates';
 import { ETOILES, releveDef, vestigesDe } from '../core/explorer';
 import { htmlBestiaire } from './bestiaire';
@@ -14,7 +14,7 @@ import { NOMS_EFFET, effetsDe, formuleEffet, texteEffet } from '../core/effets';
 import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe, deNom, ilElle } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, EVEIL_ORIGINE, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, EPREUVES_STRATE, epreuvesOuvertes, vestigesOuverts, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, chanceCreuseurFouille, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, EPREUVES_STRATE, epreuvesOuvertes, vestigesOuverts, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, chanceCreuseurFouille, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, pvNiveau, bonusPv, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, gainsAmelioration, type GainNiveau,
   COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, gardienPourTour, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, plafondEntrainement, raffinageParHeure, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
@@ -2565,6 +2565,20 @@ function blocConfier(e: EcranDistrict, cible: CibleFouille): string {
     + `<button type="button" class="btn sec" data-action="confier-fouille"${r.ok ? '' : ' disabled'}>${ICO.porteurs}${tr`Confier la fouille (${a.heures} h)`}</button></section>`;
 }
 
+/** Le trio du Gardien de la ville (13 novembre 2026, Bryan : « pouvoir modifier son trio pour jouer à ça, comme on veut ») :
+ *  tous les Porteurs présents, on en touche trois ; les escouades enregistrées ne bougent pas */
+function choixTrioGardien(j: Jeu, trio: readonly string[]): string {
+  const ids = porteursPresents(j).slice().sort((a, b) => niveauPorteur(j, b).niveau - niveauPorteur(j, a).niveau);
+  return `<section class="es-equipes gv-trio" aria-label="${tr`Le trio contre le Gardien`}"><div class="es-equipes-tete"><span class="surtitre">${tr`Ton trio · ${trio.length} / 3`}</span></div>`
+    + `<div class="gv-trio-grille">` + ids.map((id) => {
+      const p = porteurDef(id);
+      const pris = trio.includes(id);
+      const hors = raisonHorsGardien(j, id);
+      return `<button type="button" class="gv-trio-p${pris ? ' pris' : ''}${hors ? ' hors' : ''}" data-action="gv-trio" data-id="${id}" aria-pressed="${pris}" style="--c:${COULEUR[p.lignee]}"${hors ? ` title="${echap(hors)}"` : ''}>`
+        + `${avatar(id, 44)}<strong>${echap(p.nom)}</strong><small>${hors ? echap(hors) : tr`niv. ${niveauPorteur(j, id).niveau}`}</small>${pris ? `<b class="gv-trio-ok">${ICO.ok}</b>` : ''}</button>`;
+    }).join('') + `</div></section>`;
+}
+
 export function htmlEscouade(e: EcranDistrict): string {
   const j = e.j;
   const ep = e.epreuve ? epreuveDef(e.epreuve) ?? null : null;
@@ -2662,7 +2676,8 @@ export function htmlEscouade(e: EcranDistrict): string {
   // on ne compose plus ici (la grille de tous les Porteurs prenait l'écran)
   const toutes = escouadesDe(j);
   const active = escouadeActive(j);
-  h += `<section class="es-equipes" aria-label="${tr`Escouade qui part`}"><div class="es-equipes-tete"><span class="surtitre">${toutes.length > 1 ? tr('Quelle escouade part ?') : tr('L’escouade qui part')}</span>`
+  if (gv) h += choixTrioGardien(j, e.escouade);
+  else h += `<section class="es-equipes" aria-label="${tr`Escouade qui part`}"><div class="es-equipes-tete"><span class="surtitre">${toutes.length > 1 ? tr('Quelle escouade part ?') : tr('L’escouade qui part')}</span>`
     + `<button type="button" class="es-modifier" data-action="escouade-modifier">${ICO.porteurs}${tr`Modifier`}</button></div>`
     + `<div class="es-equipes-choix" role="radiogroup" aria-label="${tr`Escouade qui part`}">`
     + toutes.map((l, k) => {
@@ -2675,20 +2690,21 @@ export function htmlEscouade(e: EcranDistrict): string {
   // les trois Porteurs qui partent : toucher un portrait ouvre sa fiche
   h += `<section class="es-trio" aria-label="${tr`Porteurs qui partent`}">` + [0, 1, 2].map((i) => {
     const id = e.escouade[i];
+    if (!id && gv) return `<div class="es-place vide"><span class="es-silhouette" aria-hidden="true"></span><b>${i + 1}</b><small>${tr`Place libre · choisis un Porteur ci-dessus`}</small></div>`;
     if (!id) return `<button type="button" class="es-place vide" data-action="escouade-modifier"><span class="es-silhouette" aria-hidden="true"></span><b>${i + 1}</b><small>${tr`Place libre · compléter l’escouade`}</small></button>`;
     const p = porteurDef(id);
     const img = portrait(id);
     const nCartes = j.porteurs[id]!.modules.length;
     // les Marques (0 / 30 expéditions…) attendent le premier gardien vaincu
     const m = premiersPas(j) ? null : progresMarque(j, id);
-    const pv = pvMaxCombat(j, id);
-    const blesse = !!tropBlesse(j, id);
+    const pv = gv ? pvNiveau(j, id) + bonusPv(j, id) : pvMaxCombat(j, id);
+    const blesse = !gv && !!tropBlesse(j, id);
     return `<div class="es-place${blesse ? ' blesse' : ''}" style="--c:${COULEUR[p.lignee]}">`
       + `<button type="button" class="es-portrait" data-action="porteur" data-id="${id}" aria-label="${tr`Fiche ${echap(deNom(p.nom))}`}">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 72)}`
       + `<span class="es-nom"><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · ${blesse ? `<b class="es-pv-bas">${tr`PV ${pv} → ${pvMinDepart(j, id)}`}</b>` : `PV ${pv}`}</small></span></button>`
       + `<button type="button" class="es-cartes${nCartes ? '' : ' aucune'}${nCartes >= DISTRICT.cartesMax ? ' pleine' : ''}" data-action="deck" data-id="${id}">${ICO.cartes}<span>${tr`${nCartes} / ${DISTRICT.cartesMax} cartes`}</span></button>`
       + (m ? `<button type="button" class="es-marque${m.acquise ? ' acquise' : ''}" data-action="porteur" data-id="${id}" title="${echap(m.texte)}">${m.acquise ? ICO.ok : ICO.verrou}<span><b>${echap(m.nom)}</b> ${m.acquise ? echap(m.courtEffectif) : `${Math.min(m.n, m.seuil)} / ${m.seuil} ${echap(m.quoi)}`}</span></button>` : '')
-      + (posteQuitte(j, id) ? `<span class="es-quitte">${ICO.ouvrier}<span>${echap(textePosteQuitte(j, id)!)}</span></span>` : '')
+      + (!gv && posteQuitte(j, id) ? `<span class="es-quitte">${ICO.ouvrier}<span>${echap(textePosteQuitte(j, id)!)}</span></span>` : '')
       + `</div>`;
   }).join('') + `</section>`;
 
@@ -2696,7 +2712,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   if (fouille && confieesOuvertes(j)) h += blocConfier(e, fouille);
 
   // la force de l'escouade face à la Strate (12 novembre 2026) : on voit avant de partir si on est prêt, et quoi faire sinon
-  if (!ep && !fouille && !fl && !pi && e.escouade.length === 3) h += blocForce(j, e.escouade, e.strateChoisie);
+  if (!ep && !fouille && !fl && !pi && !gv && e.escouade.length === 3) h += blocForce(j, e.escouade, e.strateChoisie);
 
   // 3. ce que donne leur deck
   const maigre = e.escouade.length === 3 && deck < deckMin;
@@ -2722,7 +2738,7 @@ export function htmlEscouade(e: EcranDistrict): string {
     h += `</section>`;
   }
 
-  const vacants = e.escouade.filter((id) => posteQuitte(j, id));
+  const vacants = gv ? [] : e.escouade.filter((id) => posteQuitte(j, id));
   if (vacants.length) {
     const et = (l: string[]) => l.length > 1 ? tr`${l.slice(0, -1).join(', ')} et ${l[l.length - 1]}` : l[0]!;
     const lieux = vacants.map((id) => posteQuitte(j, id) === 'noyau' ? tr('l’entraînement à la Tour') : batimentDef(posteQuitte(j, id)!).nom);
@@ -2734,7 +2750,7 @@ export function htmlEscouade(e: EcranDistrict): string {
     })()}</span></p>`;
   }
   // trop blessés pour repartir (3 novembre 2026 : l'écran disait « prêt » et le refus n'arrivait qu'en touchant Partir)
-  const blesses = e.escouade.filter((id) => tropBlesse(j, id));
+  const blesses = gv ? [] : e.escouade.filter((id) => tropBlesse(j, id));
   if (blesses.length) {
     const soin = Math.max(0.1, soinParHeure(j));
     const heures = Math.max(...blesses.map((id) => (pvMinDepart(j, id) - pvMaxCombat(j, id)) / soin));
@@ -2744,11 +2760,12 @@ export function htmlEscouade(e: EcranDistrict): string {
       + `${tr`Il faut au moins un quart de ${blesses.length > 1 ? tr('§pv§leurs') : tr('§pv§ses')} PV pour redescendre : encore ${attente} environ au rythme actuel. Poste une recrue Géné à la Clinique pour aller plus vite, ou ${j.soinOffert ? tr('paie des soins intensifs') : `<b>${tr`profite des premiers soins intensifs, offerts`}</b>`}.`}</span>`
       + `<button type="button" class="btn sec" data-action="depart-clinique">${tr`Clinique`}</button></div>`;
   }
-  h += `<p class="es-note">${ICO.soin}${tr`Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.`}</p></main>`;
+  h += gv ? `<p class="es-note">${ICO.soin}${tr`Contre le Gardien, tout le monde part à PV pleins, garde son poste et ne prend pas d’Usure.`}</p></main>`
+    : `<p class="es-note">${ICO.soin}${tr`Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.`}</p></main>`;
 
   const pret = e.escouade.length === 3 && !maigre && !blesses.length;
   // l'énergie des cartes du Râtelier, rappelée sur le bouton (31 octobre 2026, Luc)
-  const coutDepart = e.escouade.length ? (ratelierPayable(j, indiceEscouade(j, e.escouade), sortie).length ? coutRatelier(j, sortie, indiceEscouade(j, e.escouade)) : 0) : 0;
+  const coutDepart = e.escouade.length && !gv ? (ratelierPayable(j, indiceEscouade(j, e.escouade), sortie).length ? coutRatelier(j, sortie, indiceEscouade(j, e.escouade)) : 0) : 0;
   h += `<footer class="pied-fixe es-pied"><div class="es-pied-info"><span class="es-avatars">${[0, 1, 2].map((i) => e.escouade[i] ? avatar(e.escouade[i]!, 30) : '<i class="es-pastille-vide"></i>').join('')}</span>`
     + `<span><b>${e.escouade.length} / 3</b><small class="${maigre || blesses.length ? 'alerte' : e.escouade.length === 3 ? 'ok' : ''}">${e.escouade.length < 3 ? tr`Encore ${3 - e.escouade.length} Porteur${3 - e.escouade.length > 1 ? 's' : ''}` : maigre ? tr`${deck} cartes · ${deckMin} au moins` : blesses.length ? tr`${blesses.length} blessé${blesses.length > 1 ? 's' : ''} · au repos` : tr`${deck} cartes, prêt`}</small></span></div>`
     + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${gv ? `${ICO.atk}${tr('Frapper')}` : fl ? `${ICO.monter}${tr('Monter')}` : pi ? `${ICO.grappin}${tr('Piller')}` : ep ? `${ICO.boost}${e.felee ? tr('Tenter la Fêlée') : tr('Tenter l’Épreuve')}` : fouille ? `${ICO.cristal}${tr('Fouiller')}` : `${ICO.descendre}${tr('Partir')}`}${coutDepart ? `<span class="es-btn-cout">${ICO.energie}−${ent(coutDepart)}</span>` : ''}</button></footer>`;

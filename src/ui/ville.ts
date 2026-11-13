@@ -4,7 +4,7 @@
 // la feuille reste ouverte à tout moment depuis la Tour (« Aujourd'hui en bas »).
 // Les règles sont dans src/core/partie/gardien.ts ; la jauge de la ville vient du serveur (src/app/ville.ts).
 
-import { strateVaincue, GARDIEN_VILLE, etatGardien, gardienDeLaSemaine, gardienOuvert, perleDeLaSemaine, prochaineTentative, regleDeLaSemaine, type Jeu, type VilleGardien } from '../core/jeu';
+import { strateVaincue, GARDIEN_VILLE, degatsSemaine, etatGardien, gardienDeLaSemaine, gardienOuvert, perleDeLaSemaine, prochaineTentative, regleDeLaSemaine, type Jeu, type VilleGardien } from '../core/jeu';
 import { illustrationEnnemi } from './art';
 import { decompte, type EcranDistrict } from './coquille';
 import { ICO, perle } from './icones';
@@ -12,6 +12,7 @@ import { echap } from './outils';
 import { t as tr, locale } from '../core/i18n';
 
 const parts = (n: number) => n.toLocaleString(locale(), { maximumFractionDigits: 1 });
+const deg = (n: number) => Math.round(n).toLocaleString(locale());
 
 /** Faut-il montrer la bulle ? Une tentative à jouer, ou un palier de la ville pas encore reçu */
 export function bulleGardienUtile(j: Jeu, ville: VilleGardien | null | undefined, now: number): boolean {
@@ -48,7 +49,8 @@ function jauge(ville: VilleGardien | null | undefined, semaine: number): string 
     + `</section>`;
 }
 
-/** Le classement des dégâts de la semaine (Bryan, 13 novembre 2026 : « une petite compétition, et un résultat farfelu se verra vite ») */
+/** Le classement des dégâts de la semaine (Bryan, 13 novembre 2026 : « une petite compétition, et un résultat farfelu se verra vite »),
+ *  en dégâts purs (même soir : les parts n'étaient pas claires) */
 function classement(j: Jeu, ville: VilleGardien | null | undefined, semaine: number, miennes: number): string {
   const v = ville && ville.semaine === semaine ? ville : null;
   const lignes = v?.classement ?? [];
@@ -56,11 +58,11 @@ function classement(j: Jeu, ville: VilleGardien | null | undefined, semaine: num
   const ligne = (rang: number, nom: string | null, strate: number, p: number, moi: boolean) =>
     `<li class="${moi ? 'moi' : ''}${rang <= 3 ? ` podium p${rang}` : ''}"><b class="gv-rang">${rang}</b>`
     + `<span>${echap(nom ?? tr('Un directeur'))}${moi ? `<em>${tr`toi`}</em>` : ''}</span><small>−${strate}</small>`
-    + `<b>${parts(p)} ${p >= 2 ? tr('parts') : tr('part')}</b></li>`;
+    + `<b>${deg(p)}</b></li>`;
   let h = `<h3 class="titre-bloc">${ICO.objectif}${tr`Le classement des dégâts`}</h3><ol class="gv-classement">`
-    + lignes.map((l, i) => ligne(i + 1, l.nom, l.strate, l.parts, l.uid === v!.moi)).join('');
+    + lignes.map((l, i) => ligne(i + 1, l.nom, l.strate, l.degats, l.uid === v!.moi)).join('');
   if (v!.rang && v!.rang > lignes.length) h += `<li class="gv-ecart" aria-hidden="true">···</li>` + ligne(v!.rang, j.directeur?.nom || tr('Un directeur'), Math.max(1, strateVaincue(j)), miennes, true);
-  return h + `</ol><p class="gv-note">${tr`Remis à zéro chaque lundi. Une frappe compte au plus 3 parts.`}</p>`;
+  return h + `</ol><p class="gv-note">${tr`Les dégâts de toutes tes frappes de la semaine, additionnés. Remis à zéro chaque lundi.`}</p>`;
 }
 
 /** Ce que la ville gagne à chaque palier */
@@ -107,17 +109,17 @@ export function feuilleVille(e: EcranDistrict): string {
   h += jauge(e.ville, g.semaine);
   // ce que ce directeur a fait, et ses tentatives
   h += `<section class="fb-bloc gv-moi"><div class="gv-chiffres">`
-    + `<span><b>${parts(g.parts + g.aEnvoyer.reduce((n, f) => n + f.parts, 0))}</b><small>${tr`tes parts`}</small></span>`
-    + `<span><b>${parts(g.meilleure)}</b><small>${tr`ta plus belle frappe`}</small></span>`
+    + `<span><b>${deg(degatsSemaine(g))}</b><small>${tr`tes dégâts`}</small></span>`
+    + `<span><b>${deg(g.record ?? 0)}</b><small>${tr`ta plus belle frappe`}</small></span>`
     + `<span><b>${g.tentatives}<i>/${GARDIEN_VILLE.reserve}</i></b><small>${tr`tentatives`}</small></span></div>`
     + (envoi ? `<p class="gv-envoi">${ICO.chrono}<span>${envoi > 1 ? tr`${envoi} frappes en route vers la ville : elles comptent dès que tu es en ligne.` : tr('Une frappe en route vers la ville : elle compte dès que tu es en ligne.')}</span></p>` : '')
     + (g.tentatives > 0
       ? `<button type="button" class="btn prim large" data-action="ville-preparer"${j.expedition ? ' disabled' : ''}>${ICO.atk}${tr`Frapper le Gardien`}</button>`
       : `<p class="gv-attente">${ICO.chrono}<span>${prochaine ? `${tr('Prochaine tentative')} ${decompte(prochaine, e.now, tr('dans '))}` : ''}</span></p>`)
     + `</section>`;
-  h += classement(j, e.ville, g.semaine, g.parts + g.aEnvoyer.reduce((n, f) => n + f.parts, 0));
+  h += classement(j, e.ville, g.semaine, degatsSemaine(g));
   h += paliers(j, e.ville, g.semaine);
-  h += `<p class="gv-note">${tr`1 part, c’est à peu près un combat de gardien de ta Strate : un débutant compte autant qu’un vétéran. On ne peut pas perdre : l’escouade ne prend pas d’Usure.`}</p>`;
+  h += `<p class="gv-note">${tr`Choisis librement tes 3 Porteurs pour ce combat, sans toucher à tes escouades. On ne peut pas perdre : tout le monde part à PV pleins et ne prend pas d’Usure. Pour la jauge de la ville, tes dégâts sont ramenés à ta Strate : un débutant y pèse autant qu’un vétéran.`}</p>`;
   return h + `</div></section>`;
 }
 

@@ -113,6 +113,9 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'fleche-fermee', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.med-fleche'); } },
   { nom: 'fleche-depart', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.med-fleche'); await p.click('[data-action="fleche-preparer"]'); } },
   { nom: 'fleche-combat', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.med-fleche'); await p.click('[data-action="fleche-preparer"]'); await p.click('[data-action="partir"]'); await p.waitForTimeout(800); } },
+  // le Gardien de la ville (13 novembre 2026) : sa feuille (classement en dégâts) et le départ, où l'on choisit librement son trio
+  { nom: 'ville-feuille', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.med-coupe'); await p.click('.tr-autour-ligne [data-action="ville"]'); await p.waitForTimeout(300); } },
+  { nom: 'ville-depart', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.med-coupe'); await p.click('.tr-autour-ligne [data-action="ville"]'); await p.waitForTimeout(300); await p.click('[data-action="ville-preparer"]'); await p.waitForTimeout(300); await p.click('.gv-trio-p.pris >> nth=0'); await p.waitForTimeout(200); } },
   { nom: 'scene', sauvegarde: 'district', faire: async (p) => { await p.click('.titre-go'); await p.waitForTimeout(400); for (let i = 0; i < 3; i++) { await p.click('.scene-campagne'); await p.waitForTimeout(150); } } },
   { nom: 'strate', sauvegarde: 'combat', faire: ENTRER },
   // le brouillard des Strates profondes (30 octobre 2026) : les voisines ne montrent qu'un indice, la fiche d'une salle voilée

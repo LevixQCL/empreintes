@@ -132,3 +132,33 @@ describe('La fiche du Gardien écrite par le directeur (offre gratuite de Fireba
     expect(regles).toContain('request.resource.data.parts <= resource.data.parts + 3.0001');
   });
 });
+
+// 13 novembre 2026 (Bryan) : le classement en dégâts purs, et un trio libre pour le Gardien
+describe('Le Gardien de la ville : trio libre et dégâts purs', () => {
+  it('un Porteur blessé ou au travail frappe quand même, à PV pleins, et garde son poste', () => {
+    const j = pret();
+    j.porteurs.ilka!.usure = 999; j.porteurs.doran!.poste = 'clinique';
+    expect(frapperGardien(j, ESC, LUNDI, 7).ok).toBe(true);
+    const p = j.expedition!.combat.porteurs.find((x) => x.id === 'ilka')!;
+    expect(p.pv).toBe(p.pvMax);
+    expect(p.pvMax).toBeGreaterThan(1);
+    expect(j.porteurs.doran!.poste).toBe('clinique');
+    jouerNote(j.expedition!.combat, j.expedition!.gardienVille!.journal);
+    const r = remonter(j);
+    expect(j.gardienVille!.aEnvoyer[0]!.degats).toBe(r.gardien!.degats);
+    expect(j.gardienVille!.record).toBe(r.gardien!.degats);
+    const rejeu = rejouerGardien(j.gardienVille!.aEnvoyer[0]!.depart, j.gardienVille!.aEnvoyer[0]!.journal);
+    expect(rejeu.ok && rejeu.degats).toBe(r.gardien!.degats);
+  });
+
+  it('la fiche additionne les dégâts, plafonnés par frappe comme dans firestore.rules', () => {
+    const lundi = debutJour(semaineDe(Date.UTC(2026, 10, 16, 12)) * 7) + 3_600_000;
+    const qui = { nom: null, strate: 5 };
+    const a = ficheApres(null, { semaine: semaineDe(lundi), le: lundi, parts: 1, degats: 800 }, qui, lundi + 1000)!;
+    const b = ficheApres(a, { semaine: semaineDe(lundi), le: lundi + 5000, parts: 1, degats: 99_999 }, qui, lundi + 6000)!;
+    expect(a).toMatchObject({ degats: 800, record: 800 });
+    expect(b).toMatchObject({ degats: 800 + GARDIEN_VILLE.degatsMax, record: GARDIEN_VILLE.degatsMax });
+    const regles = readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8');
+    expect(regles).toContain(`d.record <= ${GARDIEN_VILLE.degatsMax}`);
+  });
+});

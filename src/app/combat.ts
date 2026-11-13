@@ -39,9 +39,8 @@ export function finPour(): Fin | null {
   if (x.gardienVille) {
     // le Gardien de la ville : on ne peut pas perdre ; au bout de 12 tours (ou l'escouade à terre), il replonge dans le puits
     const deg = J.degatsInfliges(s);
-    const parts = J.partsDe(x.gardienVille.depart, deg);
     if (s.issue === 'en-cours') return null;
-    return { titre: t('Le Gardien replonge dans le puits'), texte: t`L’escouade lui a infligé ${deg} dégâts : ${parts.toLocaleString()} part${parts >= 2 ? 's' : ''} pour la ville. Ta frappe part au district, qui la compte avec toutes les autres.`, bouton: t('Remonter au district'), action: 'remonter' };
+    return { titre: t('Le Gardien replonge dans le puits'), texte: t`L’escouade lui a infligé ${deg} dégâts. Ta frappe part au classement de la semaine et à la jauge de la ville.`, bouton: t('Remonter au district'), action: 'remonter' };
   }
   if (x.fleche?.defi) {
     const q = x.fleche.quai;

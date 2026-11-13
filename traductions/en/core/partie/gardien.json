@@ -30,6 +30,10 @@
    "en": "No attempts left today: the next one arrives tomorrow morning."
   },
   {
+   "fr": "{0} ne peut pas frapper le Gardien : il est en mer.",
+   "en": "{0} can’t strike the Guardian: they’re out at sea."
+  },
+  {
    "fr": "{0} remonte par le puits. Douze tours pour le repousser : chaque coup compte pour la ville.",
    "en": "{0} rises through the shaft. Twelve turns to drive it back: every blow counts for the city."
   },
@@ -38,8 +42,8 @@
    "en": "The squad goes down the shaft to drive back {0}."
   },
   {
-   "fr": "Le Gardien de la ville a encaissé {0} dégâts : {1} part{2} pour la ville.",
-   "en": "The City Guardian took {0} damage: {1} share{2} for the city."
+   "fr": "Le Gardien de la ville a encaissé {0} dégâts.",
+   "en": "The City Guardian took {0} damage."
   },
   {
    "fr": "le Gardien de la ville",

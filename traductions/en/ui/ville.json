@@ -38,20 +38,12 @@
    "en": "The gauge fills with every director’s shares."
   },
   {
-   "fr": "parts",
-   "en": "shares"
-  },
-  {
-   "fr": "part",
-   "en": "share"
-  },
-  {
    "fr": "Le classement des dégâts",
    "en": "Damage leaderboard"
   },
   {
-   "fr": "Remis à zéro chaque lundi. Une frappe compte au plus 3 parts.",
-   "en": "Resets every Monday. A strike counts for 3 shares at most."
+   "fr": "Les dégâts de toutes tes frappes de la semaine, additionnés. Remis à zéro chaque lundi.",
+   "en": "The damage of all your strikes this week, added up. Resets every Monday."
   },
   {
    "fr": "10 Éclats",
@@ -98,8 +90,8 @@
    "en": "Rule of the week · {0}"
   },
   {
-   "fr": "tes parts",
-   "en": "your shares"
+   "fr": "tes dégâts",
+   "en": "your damage"
   },
   {
    "fr": "ta plus belle frappe",
@@ -126,8 +118,8 @@
    "en": "Next attempt"
   },
   {
-   "fr": "1 part, c’est à peu près un combat de gardien de ta Strate : un débutant compte autant qu’un vétéran. On ne peut pas perdre : l’escouade ne prend pas d’Usure.",
-   "en": "1 share is roughly one guardian fight at your Stratum: a newcomer counts as much as a veteran. You cannot lose: the squad takes no Strain."
+   "fr": "Choisis librement tes 3 Porteurs pour ce combat, sans toucher à tes escouades. On ne peut pas perdre : tout le monde part à PV pleins et ne prend pas d’Usure. Pour la jauge de la ville, tes dégâts sont ramenés à ta Strate : un débutant y pèse autant qu’un vétéran.",
+   "en": "Pick any 3 Bearers for this fight, without touching your squads. You can’t lose: everyone goes in at full HP and takes no Wear. For the city gauge, your damage is scaled to your Stratum: a newcomer weighs as much as a veteran."
   },
   {
    "fr": "Gardien de la ville · {0}",

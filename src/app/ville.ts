@@ -33,19 +33,19 @@ export function rafraichirVille(force = false): Promise<void> {
         const f = g.aEnvoyer[0]!;
         const d = app.jeu.directeur;
         const qui = { nom: d?.public && d.nom ? d.nom : null, strate: Math.max(1, J.strateVaincue(app.jeu)) };
-        let parts: number | null;
+        let fiche: J.FicheGardien | null;
         try {
-          parts = await n.inscrireFrappe(uid, qui, f);
+          fiche = await n.inscrireFrappe(uid, qui, f);
         } catch (e) {
           // refusée par les règles (pseudo pas encore réservé, horloge du téléphone très décalée) : sans le pseudo, sinon on l'abandonne
           if ((e as { code?: string }).code !== 'permission-denied') throw e;
-          try { parts = await n.inscrireFrappe(uid, { ...qui, nom: null }, f); } catch (e2) {
+          try { fiche = await n.inscrireFrappe(uid, { ...qui, nom: null }, f); } catch (e2) {
             if ((e2 as { code?: string }).code !== 'permission-denied') throw e2;
-            parts = null;
+            fiche = null;
             D.message = t('La ville n’a pas pu compter ta frappe : vérifie l’heure de ton téléphone.');
           }
         }
-        J.partsComptees(app.jeu, g.semaine, parts ?? (await n.mesParts(g.semaine, uid)), 1);
+        J.partsComptees(app.jeu, g.semaine, fiche ?? (await n.maFiche(g.semaine, uid)), 1);
         envoye = true;
       }
       if (envoye || force || now - luLe > 300_000) {
