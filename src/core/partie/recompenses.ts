@@ -1,12 +1,13 @@
 // Couche 4 — ce que le district donne : kit des recrues, lectures et Ravitaillement, nouveautés.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
+
 import { batimentDef, porteurDef, MODULES, tirablesEn, NOMS_LIGNEE, moduleDe, moduleDef, carteId, deNom } from '../donnees';
 import type { Rarete } from '../types';
 import { COLLECTION, NIVEAU_METAL, ajouterCarte, auMoins, metalDessus, metalTranche, tirerChoix, NOMS_RARETE, RARETES, clePossedee } from '../collection';
 import { tireur } from '../rng';
 import { CHAPITRES, chapitreOuvert } from '../chroniques';
-import { ARCHIVE, DISTRICT, log, niveauPorteur, non, porteursPresents, strateVaincue, type Jeu, type Resultat, typeDuJour } from './etat';
+import { ARCHIVE, DISTRICT, log, niveauPorteur, non, porteursPresents, strateVaincue, chantiersExodeFinis, type Jeu, type Resultat, typeDuJour } from './etat';
 import { interrompreSeance, progresser, quotidienFait } from './district';
 import { t, minuscule } from '../i18n';
 
@@ -90,7 +91,7 @@ export function recompenserLecture(j: Jeu, chapitreId: string): string | null {
 }
 
 /** Les chapitres ouverts dont la carte de lecture n'a pas encore été donnée */
-export const chapitresALire = (j: Jeu) => CHAPITRES.filter((c) => chapitreOuvert(c, j.strate) && !j.luesRecompensees.includes(c.id)).length;
+export const chapitresALire = (j: Jeu) => CHAPITRES.filter((c) => chapitreOuvert(c, j.strate, chantiersExodeFinis(j)) && !j.luesRecompensees.includes(c.id)).length;
 
 /** Lit un chapitre (le marque comme lu) et donne sa carte à la première lecture */
 export function lireChapitre(j: Jeu, chapitreId: string): string | null {

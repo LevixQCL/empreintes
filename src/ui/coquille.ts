@@ -1,6 +1,7 @@
 // La coquille des écrans du district : barre de ressources en haut, navigation en bas, notifications, menu.
 // Tout l'affichage du district passe par ici pour rester cohérent d'un écran à l'autre.
 
+import { chantiersExodeFinis } from '../core/jeu';
 import { autoActif, langueReglable, NOMS_LANGUES } from './options';
 import { texteGraphismes } from './graphismes';
 import { sonActif } from './son';
@@ -482,7 +483,7 @@ export function navigation(e: EcranDistrict): string {
     porteurs: !!(o && (o.onglet === 'porteurs' || o.onglet === 'cartes') && !o.fait(j))
       || nouveau('porteurs', [...porteursNouveaux(j), ...(j.chambre ? cartesNouvelles(j) : [])].join(','), e),
     coupe: !!j.expedition || !!(o && o.onglet === 'coupe' && !o.fait(j)),
-    codex: nouveau('codex', CHAPITRES.filter((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)).map((c) => c.id).join(','), e),
+    codex: nouveau('codex', CHAPITRES.filter((c) => chapitreOuvert(c, j.strate, chantiersExodeFinis(j)) && !j.lus.includes(c.id)).map((c) => c.id).join(','), e),
     // une pastille quand l'onglet vient de s'ouvrir et qu'on n'y est jamais allé
     pillages: (!!j.chambre && strateVaincue(j) >= PILLAGE.strateDuPort && !j.portVu) || !!(o && o.onglet === 'pillages' && !o.fait(j)),
     fleche: flecheOuverte(j) && !j.fleche,

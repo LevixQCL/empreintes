@@ -25,6 +25,7 @@ import { strateRemuee } from './partie/descentes';
 import { chanceQuai, etatFleche, flecheOuverte, monterFleche, peutMonter } from './partie/fleche';
 import { confieesOuvertes, confierFouille, peutConfier } from './partie/confiees';
 import { avancementExode, exodeOuvert, lancerExode } from './partie/exode';
+import { chantiersExodeFinis } from './partie/etat';
 // (les creuseurs se gagnent par les fouilles, missions et Épreuves que joue déjà ce joueur simulé)
 import type { CombatEtat, Lignee } from './types';
 import { t as tr } from './i18n';
@@ -173,7 +174,7 @@ function gerer(j: Jeu, now: number): void {
   if (acte) decider(j, acte, DECISIONS[acte].options[0]!.id);
   // les scènes de la campagne se regardent au district : la convocation des Hauts ouvre la Flèche (12 novembre 2026)
   for (let sc = sceneCampagne(j); sc && voirScene(j, sc.id); sc = sceneCampagne(j));
-  for (const c of CHAPITRES) if (chapitreOuvert(c, j.strate) && !j.luesRecompensees.includes(c.id)) lireChapitre(j, c.id);
+  for (const c of CHAPITRES) if (chapitreOuvert(c, j.strate, chantiersExodeFinis(j)) && !j.luesRecompensees.includes(c.id)) lireChapitre(j, c.id);
   while (colisDisponible(j)) ouvrirColis(j);
   if (quotidienFait(j)) reclamerQuotidien(j);
   ouvrirArchive(j);

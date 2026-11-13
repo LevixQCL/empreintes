@@ -78,3 +78,26 @@ describe('L’Exode', () => {
     expect(avancementExode(j).familles).toBe(EXODE.convoi.familles);
   });
 });
+
+describe('Le Livre V des Chroniques (13 novembre 2026)', () => {
+  it('un chapitre s’ouvre à chaque chantier fini, le dernier avec le Passage', async () => {
+    const { CHAPITRES, chapitreOuvert } = await import('../src/core/chroniques');
+    const { chantiersExodeFinis } = await import('../src/core/partie/etat');
+    const livre5 = CHAPITRES.filter((c) => c.livre === 5);
+    expect(livre5.length).toBe(5);
+    const j = pret();
+    expect(livre5.filter((c) => chapitreOuvert(c, j.strate, chantiersExodeFinis(j))).length).toBe(0);
+    faire(j, 20);
+    expect(livre5.filter((c) => chapitreOuvert(c, j.strate, chantiersExodeFinis(j))).map((c) => c.id)).toEqual(['six-cents', 'porte-mer']);
+  });
+});
+
+it('chantiersExodeFinis (etat.ts) suit le barème de l’Exode', async () => {
+  const { chantiersExodeFinis } = await import('../src/core/partie/etat');
+  const j = pret();
+  expect(CHANTIERS_EXODE_NB()).toBe(5);
+  expect(EXODE.etapes).toBe(10);
+  j.exode = { etape: ETAPES_EXODE, convois: 3 };
+  expect(chantiersExodeFinis(j)).toBe(5);
+});
+function CHANTIERS_EXODE_NB() { return ETAPES_EXODE / EXODE.etapes; }

@@ -2,6 +2,7 @@
 // Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ;
 // chaque bâtiment y porte son cristal de niveau et, s'il y a quelque chose à faire, une bulle, le détail s'ouvre en feuille par le bas.
 
+import { chantiersExodeFinis } from '../core/jeu';
 import { HALTES_FOND, PISTES, halteDef, nombreHaltes, queteDef, revelationDe } from '../core/strates';
 import { ETOILES, releveDef, vestigesDe } from '../core/explorer';
 import { htmlBestiaire } from './bestiaire';
@@ -1850,7 +1851,7 @@ export function htmlRencontre(n = 0): string {
 // ---------- La Bibliothèque : Chroniques et Archives ----------
 
 /** Chapitres des Chroniques ouverts mais pas encore lus (pour la pastille « nouveau ») */
-const chapitresNouveaux = (j: Jeu) => CHAPITRES.filter((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)).length;
+const chapitresNouveaux = (j: Jeu) => CHAPITRES.filter((c) => chapitreOuvert(c, j.strate, chantiersExodeFinis(j)) && !j.lus.includes(c.id)).length;
 
 /** Le carnet du directeur (3 novembre 2026) : ce qu'il a appris à chaque Halte, et ce qu'il y a choisi, Strate par Strate */
 function htmlCarnet(j: Jeu): string {
@@ -1886,9 +1887,9 @@ export function htmlCodex(e: EcranDistrict): string {
   const j = e.j;
   if (e.onglet === 'chroniques' && e.chapitre) {
     const c = chapitreDef(e.chapitre);
-    if (c && chapitreOuvert(c, j.strate)) return coquille(e, htmlChapitre(e, c.id), 'ecran-lecture');
+    if (c && chapitreOuvert(c, j.strate, chantiersExodeFinis(j))) return coquille(e, htmlChapitre(e, c.id), 'ecran-lecture');
   }
-  const ouverts = CHAPITRES.filter((c) => chapitreOuvert(c, j.strate)).length;
+  const ouverts = CHAPITRES.filter((c) => chapitreOuvert(c, j.strate, chantiersExodeFinis(j))).length;
   const retour = e.retourBiblio === 'titre' ? `<button type="button" class="btn-icone" data-action="biblio-retour" aria-label="${tr`Retour à l’écran titre`}">${ICO.retour}</button>` : '';
   let h = entete(tr`${ouverts} / ${CHAPITRES.length} CHAPITRES · ${j.fragments.filter((f) => FRAGMENTS.some((x) => x.id === f)).length} / ${FRAGMENTS.length} ARCHIVES`, tr('Bibliothèque'), retour);
   const nouveaux = chapitresNouveaux(j);
@@ -1920,16 +1921,16 @@ export function htmlCodex(e: EcranDistrict): string {
     return coquille(e, h, 'ecran-codex');
   }
   h += `<p class="chroniques-intro"><img class="yse-medaillon" src="${portraitYse}" alt="${tr`Ysé`}" decoding="async">${tr`Les Chroniques d’Ysé, archiviste des Veilleurs de Sédime, écrites pour toi le matin de ta première descente, à lire en remontant.`}</p>`;
-  for (const livre of [1, 2, 3, 4] as const) {
+  for (const livre of [1, 2, 3, 4, 5] as const) {
     const chapitres = CHAPITRES.filter((x) => x.livre === livre);
-    const lus = chapitres.filter((c) => chapitreOuvert(c, j.strate) && j.lus.includes(c.id)).length;
+    const lus = chapitres.filter((c) => chapitreOuvert(c, j.strate, chantiersExodeFinis(j)) && j.lus.includes(c.id)).length;
     const [numLivre, nomLivre] = LIVRES[livre].split(' · ');
     h += `<section class="livre"><header class="livre-tete"><span class="surtitre">${echap(numLivre!.toUpperCase())}</span><h2>${echap(nomLivre ?? '')}</h2>`
       + `<span class="livre-compte">${tr`${lus} / ${chapitres.length} lus`}</span></header><div class="rayon">`;
     for (const c of chapitres) {
       const n = String(CHAPITRES.indexOf(c) + 1).padStart(2, '0');
       const img = `<img src="./intro/${imageChapitre(c)}.webp" alt="" loading="lazy" decoding="async">`;
-      if (chapitreOuvert(c, j.strate)) {
+      if (chapitreOuvert(c, j.strate, chantiersExodeFinis(j))) {
         const neuf = !j.lus.includes(c.id);
         h += `<button type="button" class="chapitre-tuile${neuf ? ' neuf' : ''}" data-action="chapitre" data-id="${c.id}">${img}`
           + `<span class="chap-num">${tr`CH. ${n}`}</span>`
@@ -1937,7 +1938,7 @@ export function htmlCodex(e: EcranDistrict): string {
           + `<span class="chap-bas"><strong>${echap(c.titre)}</strong><small>${echap(c.epoque)}</small></span></button>`;
       } else {
         h += `<div class="chapitre-tuile ferme" aria-disabled="true">${img}<span class="chap-num">${tr`CH. ${n}`}</span><span class="chap-verrou" aria-hidden="true">${ICO.verrou}</span>`
-          + `<span class="chap-bas"><strong>${echap(c.titre)}</strong>${c.teaser ? `<small>${echap(c.teaser)}</small>` : ''}<em>${ICO.strate}${tr`Strate −${c.strate}`}</em></span></div>`;
+          + `<span class="chap-bas"><strong>${echap(c.titre)}</strong>${c.teaser ? `<small>${echap(c.teaser)}</small>` : ''}<em>${c.exode ? `${ICO.monter}${tr`Exode · chantier ${ROMAINS_EXODE[c.exode - 1]}`}` : `${ICO.strate}${tr`Strate −${c.strate}`}`}</em></span></div>`;
       }
     }
     h += `</div></section>`;
@@ -1955,11 +1956,11 @@ function htmlChapitre(e: EcranDistrict, id: string): string {
   const j = e.j;
   const c = chapitreDef(id)!;
   const i = CHAPITRES.indexOf(c);
-  const lisibles = CHAPITRES.filter((x) => chapitreOuvert(x, j.strate));
+  const lisibles = CHAPITRES.filter((x) => chapitreOuvert(x, j.strate, chantiersExodeFinis(j)));
   const k = lisibles.indexOf(c);
   const prec = lisibles[k - 1];
   const suiv = lisibles[k + 1];
-  const prochainFerme = CHAPITRES.slice(i + 1).find((x) => !chapitreOuvert(x, j.strate));
+  const prochainFerme = CHAPITRES.slice(i + 1).find((x) => !chapitreOuvert(x, j.strate, chantiersExodeFinis(j)));
   const suite = (x: typeof c, sens: 'prec' | 'suiv') => `<button type="button" class="lecture-suite ${sens}" data-action="chapitre" data-id="${x.id}">`
     + `<img src="./intro/${imageChapitre(x)}.webp" alt="" loading="lazy" decoding="async">`
     + `<span><small>${sens === 'prec' ? tr('Chapitre précédent') : tr('Chapitre suivant')}</small><strong>${echap(x.titre)}</strong></span>${sens === 'prec' ? ICO.retour : ICO.lancer}</button>`;
@@ -1987,6 +1988,9 @@ function htmlChapitre(e: EcranDistrict, id: string): string {
 }
 
 // ---------- La Tour du Noyau en coupe ----------
+
+/** les chantiers de l'Exode, en chiffres romains (Livre V des Chroniques) */
+const ROMAINS_EXODE = ['I', 'II', 'III', 'IV', 'V'];
 
 /** Les dix Strates nommées (décisions du 28 octobre 2026) ; au-delà de −10, un seul libellé pour tout le Fond */
 const NOMS_ETAGES = [tr('Les Pompes noyées'), tr('Les Abris murés'), tr('La Galerie aux lueurs'), tr('Les Portes rondes'), tr('Le Treillis'),

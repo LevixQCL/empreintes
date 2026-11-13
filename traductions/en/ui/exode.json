@@ -22,8 +22,8 @@
    "en": "The convoys"
   },
   {
-   "fr": "Les cinq chantiers sont finis : le district est prêt. Les Pontons servent maintenant aux cuvettes voisines : chaque convoi fait passer {0} familles de plus.",
-   "en": "The five works are finished: the district is ready. The Pontoons now serve the neighboring Basins: each convoy takes {0} more families across."
+   "fr": "Ton district est monté sur l’île. Les Pontons servent maintenant aux cuvettes voisines : chaque convoi fait passer {0} familles de plus.",
+   "en": "Your district has gone up to the island. The Pontoons now serve the neighboring Basins: each convoy takes {0} more families across."
   },
   {
    "fr": "APRÈS LE PASSAGE",
@@ -122,8 +122,8 @@
    "en": "A finished work"
   },
   {
-   "fr": "Il donne une Perle de nacre, et le district change un peu : la digue s’ouvre vers la mer.",
-   "en": "It gives a Nacre Pearl, and the district changes a little: the dike opens toward the sea."
+   "fr": "Il donne une Perle de nacre et une lettre d’Ysé, à lire dans les Chroniques.",
+   "en": "It gives a Nacre Pearl and a letter from Ysé, to read in the Chronicles."
   },
   {
    "fr": "Le dernier chantier demande le sommet de la Flèche (quai {0}) : elle donne le droit de passer, l’Exode prépare les gens.",

@@ -37,7 +37,7 @@ function enCours(e: EcranDistrict): string {
   const raison = raisonExode(j);
   const assezC = j.energie >= a.cout.cristaux, assezE = j.eclats >= a.cout.eclats;
   const titre = a.fini ? tr('Les convois') : a.def.nom;
-  const texte = a.fini ? tr`Les cinq chantiers sont finis : le district est prêt. Les Pontons servent maintenant aux cuvettes voisines : chaque convoi fait passer ${EXODE.convoi.familles} familles de plus.` : a.def.texte;
+  const texte = a.fini ? tr`Ton district est monté sur l’île. Les Pontons servent maintenant aux cuvettes voisines : chaque convoi fait passer ${EXODE.convoi.familles} familles de plus.` : a.def.texte;
   let h = `<section class="fb-bloc xo-chantier"><header><span class="surtitre">${a.fini ? tr`APRÈS LE PASSAGE` : tr`CHANTIER ${ROMAIN[a.chantier]} SUR ${ROMAIN[CHANTIERS_EXODE.length - 1]}`}</span><h3>${echap(titre)}</h3></header>`
     + `<p class="xo-texte">${echap(texte)}</p>`;
   if (!a.fini) h += `<div class="xo-etapes">${crans(a.dans, a.enCours)}<b>${tr`Étape ${Math.min(EXODE.etapes, a.dans + 1)} sur ${EXODE.etapes}`}</b></div>`;
@@ -82,7 +82,7 @@ function presentation(premiere: boolean): string {
     ])
     + replie(tr('Comment ça marche'), `<ul class="fl-pr-etapes">`
       + etape(ICO.marteau, tr('Une étape à la fois'), tr`Chaque chantier compte ${EXODE.etapes} étapes. Une étape se paie en cristaux et en Éclats, puis avance toute seule, même jeu fermé.`)
-      + etape(perle('ico peinte xo-perle'), tr('Un chantier fini'), tr('Il donne une Perle de nacre, et le district change un peu : la digue s’ouvre vers la mer.'))
+      + etape(perle('ico peinte xo-perle'), tr('Un chantier fini'), tr('Il donne une Perle de nacre et une lettre d’Ysé, à lire dans les Chroniques.'))
       + etape(ICO.fleche, tr('Le Passage'), tr`Le dernier chantier demande le sommet de la Flèche (quai ${FLECHE.quais}) : elle donne le droit de passer, l’Exode prépare les gens.`)
       + etape(ICO.energie, tr('Rien ne presse'), tr`Rien ne se perd et rien ne s’abîme si tu ne joues pas. En tout, environ ${ent(total)} cristaux : un projet de plusieurs semaines.`)
       + `</ul>`, ICO.aide)

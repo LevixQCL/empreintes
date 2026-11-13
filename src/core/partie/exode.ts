@@ -44,7 +44,7 @@ export const CHANTIERS_EXODE: ChantierExode[] = [
   { id: 'place', nom: tr('La Place là-haut'), texte: tr('Des abris et des jardins à monter sur l’île : la réponse à ceux qui disent qu’une île ne porte pas une vie de plus.'),
     fini: tr('La Place là-haut est prête : des abris et des jardins attendent d’être montés.') },
   { id: 'passage', nom: tr('Le Passage'), texte: tr('Le jour où l’île passe, tout le district monte. Il faut tenir le sommet de la Flèche.'),
-    fini: tr('Le Passage est prêt : quand l’île passera, tout le district montera.') },
+    fini: tr('L’île est passée : tout le district est monté. Toi, tu restes, pour mener les convois des cuvettes voisines.') },
 ];
 /** Le nombre d'étapes des cinq chantiers */
 export const ETAPES_EXODE = CHANTIERS_EXODE.length * EXODE.etapes;

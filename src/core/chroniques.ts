@@ -8,13 +8,15 @@ import { t } from './i18n';
 
 export interface Chapitre {
   id: string;
-  livre: 1 | 2 | 3 | 4;
+  livre: 1 | 2 | 3 | 4 | 5;
   titre: string;
   epoque: string;
   /** illustration de l'intro réutilisée en tête de chapitre (public/intro/<id>.webp) */
   image?: string;
   /** Strate qu'il faut avoir ouverte pour lire ce chapitre ; absent = ouvert dès le départ */
   strate?: number;
+  /** chantiers de l'Exode qu'il faut avoir finis pour lire ce chapitre (Livre V, 13 novembre 2026) */
+  exode?: number;
   /** une ligne visible tant que le chapitre est fermé */
   teaser?: string;
   paragraphes: string[];
@@ -22,11 +24,12 @@ export interface Chapitre {
   documents?: { titre: string; support: string; lignes: string[] }[];
 }
 
-export const LIVRES: Record<1 | 2 | 3 | 4, string> = {
+export const LIVRES: Record<1 | 2 | 3 | 4 | 5, string> = {
   1: t('Livre I · Ce que nous savions'),
   2: t('Livre II · Ce que nous avons trouvé'),
   3: t('Livre III · Ce qui dort en dessous'),
   4: t('Livre IV · Ce qui tient'),
+  5: t('Livre V · Ceux qui partent'),
 };
 
 export const CHAPITRES: Chapitre[] = [
@@ -536,9 +539,77 @@ export const CHAPITRES: Chapitre[] = [
       '— Ysé',
     ],
   },
+  // ---------- Livre V · Ceux qui partent (13 novembre 2026) ----------
+  // L'Exode, une seule issue (Bryan, 13 novembre 2026 : « monter ») : un chapitre à chaque chantier fini. Le dernier dit le
+  // prix, par la bouche de Véla, qui sait ce que soulèvent les Berceaux ; le choix de rendre ou de porter viendra avec le Fond.
+  // Le district monte, le directeur reste : la Cuvette continue, pour les convois des cuvettes voisines.
+  {
+    id: 'six-cents', livre: 5, titre: t('Six cents noms'), epoque: '2121', exode: 1,
+    teaser: t('Ce que contient le Registre.'),
+    paragraphes: [
+      t('Tu as fait ce que personne n’avait fait depuis la Montée : compter tout le monde. Pas les foyers, pas les bras. Les gens.'),
+      t('Le Registre est sur ma table. Six cents noms, écrits par des mains qui tremblaient ou qui s’appliquaient. Certains ont signé d’une croix, d’autres d’une empreinte de pouce, comme au Mur.'),
+      t('Une vieille dame de la rue des pompes est venue vérifier que son chat y figurait. Il y figure : Doran l’a ajouté lui-même, en bas de la page, au crayon gras.'),
+      t('Le Noyé est passé aussi. Il a lu la liste jusqu’au bout sans rien dire, puis il a demandé s’il restait de la place pour un nom. Le sien. Je crois que c’est la première fois en vingt ans qu’il accepte d’être compté.'),
+      '— Ysé',
+    ],
+  },
+  {
+    id: 'porte-mer', livre: 5, titre: t('Une porte sur la mer'), epoque: '2121', exode: 2,
+    teaser: t('La digue a désormais une porte.'),
+    paragraphes: [
+      t('Pendant soixante ans, on a mis la mer dehors. Aujourd’hui, ton district lui a ouvert une porte.'),
+      t('Les Pontons partent de la digue, côté large, là où mon père disait qu’il ne fallait jamais percer. Doran a refait le calcul trois fois. La digue tient. Elle tient même mieux, maintenant qu’elle n’a plus à faire semblant d’être un mur.'),
+      t('Le premier soir, les enfants s’y sont assis, les pieds au-dessus de l’eau. Personne ne les a grondés. Je crois que personne, ici, n’avait jamais regardé la mer d’aussi près sans en avoir peur.'),
+      '— Ysé',
+    ],
+  },
+  {
+    id: 'radeaux', livre: 5, titre: t('Une place pour chacun'), epoque: '2121', exode: 3,
+    teaser: t('De quoi sont faites les Barges.'),
+    paragraphes: [
+      t('Les Barges sont à flot. Six cents places, et quelques-unes de plus : Véla a insisté pour qu’on garde de la marge, sans dire pour qui.'),
+      t('On les a construites avec ce que la ville jette : des coques de pompes, les tôles des anciens chantiers d’abris, les planchers des passerelles brûlées pendant la Grève. Ilka trouve qu’elles ressemblent à des radeaux de pirates. Elle a raison, et elle en est très fière.'),
+      t('Les Hauts ont envoyé quelqu’un compter nos barges depuis une passerelle. Il a pris des notes. Il n’est pas descendu.'),
+      '— Ysé',
+    ],
+  },
+  {
+    id: 'une-vie-de-plus', livre: 5, titre: t('Une vie de plus'), epoque: '2121', exode: 4,
+    teaser: t('La réponse de Dame Isaure.'),
+    paragraphes: [
+      t('Dame Isaure m’a répondu. Je recopie sa lettre à la fin de ce chapitre, parce qu’elle mérite d’être lue en entier, et parce qu’elle a raison sur un point.'),
+      t('Alors on monte léger. Des abris qui se plient, des jardins en bacs, des lits qui se suspendent. Tout ce que ton district a appris en vivant sur quelques mètres de sol sec, il l’emporte. Six cents vies qui ont l’habitude de tenir dans peu de place.'),
+      t('Isaure compte en poids. Nous, nous comptons en gens. Ce n’est pas la même arithmétique, et je ne sais pas encore laquelle aura le dernier mot.'),
+      '— Ysé',
+    ],
+    documents: [
+      {
+        titre: t('La lettre de Dame Isaure'), support: t('Un papier épais aux armes de la Maison Orsève, cacheté d’or'),
+        lignes: [
+          t('Une île porte tant de vies, pas une de plus. Ce ne sont pas mes mots : ce sont ceux des Berceaux.'),
+          t('Vous pouvez y monter vos jardins. Vous ne pourrez pas y monter leur poids.'),
+          t('Je ne vous empêcherai pas de passer. Je vous demande seulement de savoir ce que vous emportez, et ce que vous laissez.'),
+          '— I. O.',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'le-prix', livre: 5, titre: t('Le prix'), epoque: '2121', exode: 5,
+    teaser: t('La nuit où l’île est passée.'),
+    paragraphes: [
+      t('L’île est passée cette nuit. Ton escouade tenait le sommet. Les Barges sont montées une à une, et sur le quai, les gardes des Hauts ont regardé passer six cents personnes qui n’étaient pas une escouade. Personne ne les a arrêtées : la Clause était écrite, et cette fois, quelqu’un l’a lue jusqu’au bout.'),
+      t('On t’a proposé le palais. Tu l’as laissé aux autres. Le Noyé était sur la dernière barge ; il n’a pas regardé en arrière, mais il souriait.'),
+      t('Véla est restée près de moi au départ. Elle m’a dit, à voix basse, ce que tu dois savoir : chaque île qu’on ouvre puise dans les Berceaux qui soulèvent Vertiga. Nous venons d’en ouvrir une pour six cents personnes. La ville descendra un peu plus vite, et ceux qui restent le paieront.'),
+      t('Je lui ai demandé si nous avions eu tort. Elle a haussé les épaules : « On a sauvé ceux qu’on pouvait sauver. Le reste, il faudra le trouver en bas. » Je crois qu’elle pensait à la Glacière.'),
+      t('Ton district est là-haut, directeur. Toi, tu es redescendu. Je savais que tu le ferais : les cuvettes voisines attendent leur tour, et il y a des Pontons pour les y conduire.'),
+      '— Ysé',
+    ],
+  },
 ];
 
 export const chapitreDef = (id: string) => CHAPITRES.find((c) => c.id === id);
 
-/** Un chapitre est ouvert si on a ouvert la Strate qu'il demande */
-export const chapitreOuvert = (c: Chapitre, strate: number) => !c.strate || strate >= c.strate;
+/** Un chapitre est ouvert si on a ouvert la Strate qu'il demande, et (Livre V) fini les chantiers de l'Exode qu'il demande */
+export const chapitreOuvert = (c: Chapitre, strate: number, chantiersExode = 0) => (!c.strate || strate >= c.strate) && (!c.exode || chantiersExode >= c.exode);

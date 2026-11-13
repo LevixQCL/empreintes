@@ -905,6 +905,10 @@ export function escouadesDe(j: Jeu): string[][] {
 /** La Strate vaincue la plus profonde (le front compte s'il a été vaincu) */
 export const strateVaincue = (j: Jeu) => (j.frontVaincu ? j.strate : j.strate - 1);
 
+/** Les chantiers de l'Exode finis (0 à 5) : ils ouvrent les chapitres du Livre V des Chroniques. Ici, et pas dans exode.ts,
+ *  parce que les couches d'en dessous (recompenses) en ont besoin : 5 chantiers de 10 étapes (EXODE ; tests/exode.test.ts vérifie). */
+export const chantiersExodeFinis = (j: Jeu): number => Math.min(5, Math.floor((j.exode?.etape ?? 0) / 10));
+
 /** Le Fond (12 novembre 2026, Bryan : « pack Ossyra pour le Fond ») : le jeu gratuit se conclut à −10 ; plus bas, c'est l'extension.
  *  Fermé, il ne s'ouvre pas à la creuse : la suite de l'histoire est en haut (la Flèche) et dans l'Exode. */
 export const FOND = { premiere: 11 } as const;
