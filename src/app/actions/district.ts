@@ -11,15 +11,21 @@ import * as J from '../../core/jeu';
 import type { BatimentId } from '../../core/types';
 import { visuel as ageDistrict } from '../../ui/art';
 import { nbEtapes } from '../../ui/briefing';
-import { VISITE } from '../../ui/visite';
+import { VISITE, toucherVisite } from '../../ui/visite';
 import { NB_REPLIQUES } from '../../ui/district';
 import { contratAffiche, equipeAffichee } from '../../ui/marees';
 import type { OngletGuide } from '../../ui/guide';
 import { finPour } from '../combat';
-import { app, compteEtat, D, G, K } from '../etat';
+import { app, compteEtat, D, G, K, racine } from '../etat';
 import { sauver } from '../synchro';
 import { ouvrir, resultat, type Clic, type Suite } from './commun';
 import { t } from '../../core/i18n';
+
+/** Le pseudo, une fois, à une recrue connectée qui n'en a pas (la fenêtre s'ouvre par-dessus l'écran du moment) */
+function demanderPseudo() {
+  if (!app.uid || app.jeu.directeur?.nom || app.jeu.pseudoPropose || app.pseudoDemande) return;
+  app.pseudoDemande = true; app.jeu.pseudoPropose = true; G.edition = true; G.accueil = true; G.erreur = '';
+}
 
 export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
   // une bulle dépliée se replie dès qu'on fait autre chose (sauf la toucher elle-même)
@@ -61,9 +67,10 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     // depuis le détail d'une carte commune : le bâtiment qui la fait grandir (31 octobre 2026)
     case 'commune-batiment': ouvrir('archipel'); D.selection = id as typeof D.selection; break;
     case 'filtre': D.filtre = (id as typeof D.filtre) || 'tout'; window.scrollTo(0, 0); break;
-    case 'fermer': D.selection = null; break;
+    case 'fermer': D.selection = null; if (D.pseudoApresPoste) { D.pseudoApresPoste = false; demanderPseudo(); } break;
     case 'ameliorer': resultat(J.ameliorer(app.jeu, id as BatimentId, Date.now())); break;
-    case 'poster': resultat(J.poster(app.jeu, id, (b.dataset.poste as J.Poste) ?? null)); D.posteChanger = false; D.tourChanger = false; break;
+    case 'poster': if (D.pseudoApresPoste) { D.pseudoApresPoste = false; demanderPseudo(); }
+      resultat(J.poster(app.jeu, id, (b.dataset.poste as J.Poste) ?? null)); D.posteChanger = false; D.tourChanger = false; break;
     case 'liberer': resultat(J.poster(app.jeu, id, null)); break;
     // secourir une famille, au Port (12 novembre 2026)
     case 'basses-lieu': D.bassesLieu = D.bassesLieu === id ? null : id; D.choixTous = false; break;
@@ -324,17 +331,25 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'briefing-retour': D.etape = Math.max(D.etape - 1, 0); break;
     // « Ton district » : à l'arrivée après la chambre, et depuis le menu
     case 'accueil': ouvrir('accueil'); D.etape = 0; window.scrollTo(0, 0); break;
-    case 'accueil-suite': D.etape = Math.min(D.etape + 1, VISITE.length - 1); break;
-    case 'accueil-fin':
-      app.jeu.accueilVu = true; ouvrir('archipel'); window.scrollTo(0, 0);
-      // le pseudo, dès l'arrivée au district (3 novembre 2026 : une recrue restait « Sans pseudo ») ;
-      // seul à l'écran : le Générateur s'ouvre quand on l'a choisi (ou remis à plus tard)
-      if (app.uid && !app.jeu.directeur?.nom && !app.jeu.pseudoPropose && !app.pseudoDemande) {
-        app.pseudoDemande = true; app.jeu.pseudoPropose = true; G.edition = true; G.accueil = true; G.erreur = '';
-        D.apresPseudo = id === 'generateur' ? 'generateur' : null;
-      } else if (id === 'generateur') D.selection = 'generateur';
-      sauver();
+    case 'accueil-suite': {
+      const avancer = () => { D.etape = Math.min(D.etape + 1, VISITE.length - 1); };
+      if (toucherVisite(racine, () => { avancer(); afficher(); })) return 'fin';
+      avancer();
       break;
+    }
+    case 'accueil-fin': {
+      const fin = () => {
+        app.jeu.accueilVu = true; ouvrir('archipel'); window.scrollTo(0, 0);
+        // le pseudo (3 novembre 2026 : une recrue restait « Sans pseudo ») : plus jamais entre la visite et le Générateur
+        // (13 novembre 2026, game designer) ; il vient après la première action au Générateur, ou quand on le referme
+        if (id === 'generateur') { D.selection = 'generateur'; D.pseudoApresPoste = true; }
+        else demanderPseudo();
+        sauver();
+      };
+      if (id === 'generateur' && toucherVisite(racine, () => { fin(); afficher(); })) return 'fin';
+      fin();
+      break;
+    }
     case 'codex':
     case 'bibliotheque':
       D.retourBiblio = app.mode === 'titre' ? 'titre' : D.vue === 'coupe' ? 'coupe' : 'archipel';

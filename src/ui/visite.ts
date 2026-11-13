@@ -26,35 +26,27 @@ interface EtapeVisite {
   consigne?: string;
 }
 
+// 13 novembre 2026, après l'avis du game designer : 4 étapes au lieu de 6. La Forge et la Clinique se découvrent par l'objectif
+// du jour (leurs noms sont sur la carte), les cristaux par le Générateur ; la porte ouverte ce matin donne sa raison à la Tour.
 export const VISITE: EtapeVisite[] = [
   {
     qui: 'vela', titre: tr('Ta Cuvette'),
-    texte: tr('Dans les années 2060, chaque cuvette était un chantier : une digue en anneau autour d’un puits, pour creuser à sec. La ville a payé ses ouvriers avec les anneaux. Leurs familles y vivent encore, plus bas que la mer.'),
+    texte: tr('Un chantier des années 2060 : une digue en anneau, un puits au centre. Les ouvriers ont été payés en anneaux. Leurs familles vivent ici, plus bas que la mer.'),
   },
   {
-    // la face intérieure de l'anneau, derrière la Tour : la pierre tachée par les eaux d'avant
+    // le mur lisse de l'anneau, à droite : la pierre nue de la digue, côté mer
     qui: 'doran', titre: tr('La digue'),
-    texte: tr('Les pompes la gardent au sec depuis plus de cinquante ans. Mais cette année, la ligne bleue peinte sur la digue est passée sous la marée.'),
-    cible: { zone: [70, 80, 260, 128] }, consigne: tr('Touche la digue'),
+    texte: tr('Les pompes la gardent au sec depuis cinquante ans. Mais cette année, la ligne bleue peinte sur la digue est passée sous la marée.'),
+    cible: { zone: [354, 250, 46, 205] }, consigne: tr('Touche la digue'),
   },
   {
     qui: 'doran', titre: tr('La Tour du Noyau'),
-    texte: tr('Sous la Tour, le puits. C’est par là qu’on descend, Strate après Strate : chaque gardien vaincu ouvre l’étage suivant. La réponse est en bas.'),
+    texte: tr('Ce matin, on a ouvert la porte sous la Tour. Scellée depuis cinquante-cinq ans. Ce qu’il y a dessous, on va le chercher.'),
     cible: { lieux: ['noyau'] }, consigne: tr('Touche la Tour'),
   },
   {
-    qui: 'ilka', titre: tr('Ce qui fait tourner le district'),
-    texte: tr('La Forge pour tes cartes, la Clinique pour nos blessures, le Générateur pour tout le reste. Les cadenas s’ouvriront à mesure qu’on descend.'),
-    cible: { lieux: ['forge', 'clinique', 'generateur'] }, consigne: tr('Touche un bâtiment'),
-  },
-  {
-    qui: 'vela', titre: tr('Les cristaux'),
-    texte: tr('Le Générateur taille en cristaux le minerai qu’on remonte, même quand tu ne joues pas. Ils paient tout : bâtiments, cartes, entraînement.'),
-    cible: { sel: '.res.energie' }, consigne: tr('Touche tes cristaux'),
-  },
-  {
-    qui: 'vela', titre: tr('Au travail'),
-    texte: tr('Les recrues travaillent au district, nous trois on descend. Poste une recrue au Générateur. Ensuite, suis l’objectif en haut : il dit toujours quoi faire.'),
+    qui: 'vela', titre: tr('Le Générateur'),
+    texte: tr('Il taille nos cristaux, même quand tu dors. Et les cristaux paient tout. Mets-y une recrue.'),
     cible: { lieux: ['generateur'] }, consigne: tr('Touche le Générateur'),
   },
 ];
@@ -71,12 +63,12 @@ export function htmlVisite(etape: number): string {
     + `<div class="vi-garde" aria-hidden="true"></div>`
     + (e.cible ? `<button type="button" class="vi-trou" ${action} aria-label="${echap(e.consigne ?? tr('Suite'))}" data-cible="${echap(JSON.stringify(e.cible))}"><i class="vi-doigt" aria-hidden="true"></i></button>` : '')
     + `<section class="vi-bulle" style="--c:${COULEUR[d.lignee]}">`
-    + `<header class="vi-haut"><span class="vi-etape">${tr`La Cuvette`} <b>${i + 1}</b> / ${VISITE.length}</span>`
+    + `<header class="vi-haut"><span class="vi-points" aria-label="${tr`Étape ${i + 1} sur ${VISITE.length}`}">${VISITE.map((_, k) => `<i class="${k === i ? 'ici' : k < i ? 'vu' : ''}"></i>`).join('')}</span>`
     + `<button type="button" class="vi-passer" data-action="accueil-fin">${tr`Passer`}</button></header>`
     + `<div class="vi-parole"><figure class="vi-portrait" aria-hidden="true">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(e.qui, 56)}</figure>`
     + `<div class="vi-mots"><span class="vi-qui">${echap(d.nom)}</span><h2 id="vi-titre">${echap(e.titre)}</h2></div></div>`
     + `<p class="vi-texte">${echap(e.texte)}</p>`
-    + `<footer class="vi-bas"><span class="vi-points" aria-hidden="true">${VISITE.map((_, k) => `<i class="${k === i ? 'ici' : k < i ? 'vu' : ''}"></i>`).join('')}</span>`
+    + `<footer class="vi-bas">`
     + (e.cible ? `<span class="vi-consigne"><i class="vi-pouls" aria-hidden="true"></i>${echap(e.consigne ?? '')}</span>`
       : `<button type="button" class="btn prim vi-suite" ${action}>${tr`Visiter`}</button>`)
     + `</footer></section></div>`;
@@ -93,7 +85,8 @@ export function placerVisite(racine: HTMLElement) {
   const c = JSON.parse(trou.dataset.cible ?? '{}') as Cible;
   let r: { l: number; t: number; r: number; b: number } | null = null;
   const unir = (b: DOMRect) => { r = r ? { l: Math.min(r.l, b.left), t: Math.min(r.t, b.top), r: Math.max(r.r, b.right), b: Math.max(r.b, b.bottom) } : { l: b.left, t: b.top, r: b.right, b: b.bottom }; };
-  if ('lieux' in c) for (const l of c.lieux) racine.querySelectorAll<SVGElement>(`.zone-bat[data-lieu="${l}"]`).forEach((z) => unir(z.getBoundingClientRect()));
+  // le bâtiment et son repère (pastille de niveau, nom) : le cadre ne coupe jamais une étiquette
+  if ('lieux' in c) for (const l of c.lieux) racine.querySelectorAll<Element>(`.zone-bat[data-lieu="${l}"], .toile .balise[data-lieu="${l}"]`).forEach((z) => unir(z.getBoundingClientRect()));
   else if ('sel' in c) { const el = racine.querySelector<HTMLElement>(c.sel); if (el) unir(el.getBoundingClientRect()); }
   else {
     const t = racine.querySelector<HTMLElement>('.archipel .toile')?.getBoundingClientRect();
@@ -111,6 +104,21 @@ export function placerVisite(racine: HTMLElement) {
   trou.style.cssText = `left:${l}px;top:${t}px;width:${w}px;height:${h}px`;
   // la bulle va du côté où il reste le plus de place
   v.dataset.cote = t + h / 2 > H * 0.5 ? 'haut' : 'bas';
+}
+
+/**
+ * Le toucher répond avant d'avancer (game designer : « l'interactivité était factice ») : le bâtiment s'éclaire un instant
+ * dans le cadre, la pastille de niveau pulse, puis vient l'étape suivante. Renvoie faux si rien n'est à animer.
+ */
+export function toucherVisite(racine: HTMLElement, ensuite: () => void): boolean {
+  const v = racine.querySelector<HTMLElement>('.visite');
+  const trou = v?.querySelector<HTMLElement>('.vi-trou');
+  if (!v || !trou || v.classList.contains('touchee') || matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+  v.classList.add('touchee');
+  const c = JSON.parse(trou.dataset.cible ?? '{}') as Cible;
+  if ('lieux' in c) for (const l of c.lieux) racine.querySelectorAll(`.zone-bat[data-lieu="${l}"], .toile .balise[data-lieu="${l}"]`).forEach((z) => z.classList.add('vi-eclat'));
+  setTimeout(ensuite, 420);
+  return true;
 }
 
 let ecoute = false;

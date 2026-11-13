@@ -29,8 +29,6 @@
 .vi-bulle::before{content:"";position:absolute;left:14%;right:14%;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.9}
 
 .vi-haut{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-4px -6px -6px 0}
-.vi-etape{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--x-doux)}
-.vi-etape b{color:var(--x-or);font-weight:600}
 .vi-passer{min-height:40px;padding:0 6px;border:0;background:none;font:600 14px/1 inherit;font-family:inherit;color:var(--x-doux);cursor:pointer;
   text-decoration:underline;text-decoration-color:rgba(205,239,255,.3);text-underline-offset:4px}
 .vi-passer:hover{color:var(--x-glace)}
@@ -44,7 +42,7 @@
 .vi-mots h2{margin:0;font-family:var(--display);font-size:22px;line-height:1.1;font-weight:400;color:#F4EEDD}
 .vi-texte{margin:0;font-size:15px;line-height:1.5;color:var(--x-txt);text-wrap:pretty}
 
-.vi-bas{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.vi-bas{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-height:44px}
 .vi-points{display:flex;gap:5px}
 .vi-points i{width:14px;height:2px;border-radius:2px;background:rgba(205,239,255,.16)}
 .vi-points i.vu{background:rgba(242,213,140,.5)}
@@ -53,12 +51,25 @@
 .vi-pouls{width:10px;height:10px;border-radius:50%;background:var(--x-or);box-shadow:0 0 0 0 rgba(242,213,140,.6);animation:vi-pouls 1.8s ease-out infinite}
 .vi-suite{min-width:150px}
 
+/* Au survol, la bulle attend que la Cuvette se soit posée : on la regarde d'abord */
+.visite.survol .vi-bulle{animation-duration:.6s;animation-delay:1.5s}
+
+/* Le toucher répond : la lumière monte dans le cadre, la pastille du bâtiment pulse, puis l'étape suivante */
+.vi-trou::after{content:"";position:absolute;inset:0;border-radius:inherit;opacity:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 55%,rgba(150,232,255,.5),rgba(150,232,255,.12) 55%,transparent 75%)}
+.visite.touchee .vi-trou::after{animation:vi-flash .42s ease-out both}
+.visite.touchee .vi-trou{box-shadow:0 0 0 200vmax rgba(5,8,14,.68),inset 0 0 0 2px rgba(205,239,255,.95),inset 0 0 30px rgba(150,232,255,.45)}
+.visite.touchee .vi-doigt{animation:none;opacity:0}
+.toile .balise.vi-eclat .bal-cristal{animation:vi-pastille .42s ease-out}
+
 /* Le survol : la Cuvette descend doucement vers sa place, comme vue d'un bateau qui approche */
 .en-visite:has(.visite.survol) .archipel .toile{animation:vi-survol 6s cubic-bezier(.22,.6,.2,1) both;transform-origin:50% 45%}
 /* pendant la visite, rien d'autre ne parle par-dessus la carte */
 .en-visite .archipel-haut,.en-visite .bulle-bat{visibility:hidden}
 
 @keyframes vi-survol{from{scale:1.16;translate:0 4%;filter:brightness(.8)}to{scale:1;translate:0 0;filter:none}}
+@keyframes vi-flash{0%{opacity:0}35%{opacity:1}100%{opacity:.3}}
+@keyframes vi-pastille{0%{transform:scale(1)}40%{transform:scale(1.25);filter:brightness(1.5)}100%{transform:scale(1)}}
 @keyframes vi-entree{from{opacity:0}to{opacity:1}}
 @keyframes vi-bulle{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
 @keyframes vi-respire{0%,100%{opacity:.25;transform:scale(1)}50%{opacity:.9;transform:scale(1.03)}}

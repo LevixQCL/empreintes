@@ -137,6 +137,8 @@ export interface EcranDistrict {
   retourModif?: 'escouade' | 'pillages' | null;
   /** le bâtiment à ouvrir quand la feuille du pseudo se ferme (arrivée au district) */
   apresPseudo?: 'generateur' | null;
+  /** la visite finie au Générateur : le pseudo attend la première action (poster une recrue, ou refermer) */
+  pseudoApresPoste?: boolean;
   /** Tour du Noyau : le volet affiché sous la prochaine étape (par défaut, les Strates) */
   ongletTour?: 'strates' | 'epreuves' | 'missions';
   /** Tour du Noyau sur téléphone : l'étage déjà vaincu déplié (les autres restent fins) */
