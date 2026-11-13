@@ -1,3 +1,15 @@
+# Révision du 13 novembre 2026 : « objet-héros »
+
+Retour de Bryan : les scènes ne se comprennent pas au premier coup d'œil ; l'effet waouh d'une carte à collectionner vient
+d'un objet vraiment beau, abouti et lié au lore. La règle « un instant, pas un objet posé » est remplacée par :
+- **L'objet entier, en vedette**, de trois quarts, silhouette nette, matières soignées, « relique » ;
+- **un détail de lore** dessus (encoches, clé, pièce, anneaux gravés…) ;
+- **l'effet seulement en lueur** autour (éclats, anneaux de lumière), le lieu de la lignée flou derrière ;
+- les autres règles (moitié haute, quart du bas calme, fond en couleur, accent par lignée) restent.
+
+Refaites en objet-héros le 13 nov. : ruee, tir, tir-vif, bond, carapace, glande-ambre, charge, murmure, apaiser.
+Gardées telles quelles : eclat-chant, oeil-relais, eclat, stimulant, souffle, grogner, echo, regenerer, repli, morsure, esquive, jambes-ressort.
+
 # Deck de départ : 9 images à refaire (revue du 11 novembre 2026)
 
 Revue demandée par Bryan : « les cartes doivent donner envie de collectionner, être belles, originales, dans le thème ».
