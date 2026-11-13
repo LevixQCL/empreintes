@@ -204,8 +204,13 @@ function gerer(j: Jeu, now: number): void {
     .filter((c): c is NonNullable<typeof c> => !!c && j.eclats >= (c.eclats ?? 0)).reduce((m, c) => Math.min(m, c.energie), Infinity);
   // l'Exode (10 novembre 2026), une fois ouvert : il lance l'étape suivante dès qu'il le peut, et met de côté pour elle
   // comme pour un chantier (le grand projet passe avant les achats au Comptoir)
-  if (exodeOuvert(j) && !avancementExode(j).enCours) lancerExode(j, now);
-  const exo = exodeOuvert(j) && !avancementExode(j).enCours && j.eclats >= avancementExode(j).cout.eclats ? avancementExode(j).cout.cristaux : Infinity;
+  if (exodeOuvert(j) && !avancementExode(j).enCours) {
+    const c = avancementExode(j).cout;
+    // il complète ses Éclats au Comptoir, comme pour la Tour
+    while (j.batiments.comptoir && j.eclats < c.eclats && j.energie - prixEclatComptoir(j) >= c.cristaux && acheterEclat(j, now).ok);
+    lancerExode(j, now);
+  }
+  const exo = exodeOuvert(j) && !avancementExode(j).enCours ? avancementExode(j).cout.cristaux + Math.max(0, avancementExode(j).cout.eclats - j.eclats) * prixEclatComptoir(j) : Infinity;
   const aMettreDeCote = Math.min(prochain, exo);
   const reserve = Number.isFinite(aMettreDeCote) ? (aMettreDeCote === exo ? 1 : 0.6) * aMettreDeCote : 0;
   const libre = () => j.energie - reserve;

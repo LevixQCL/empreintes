@@ -19,16 +19,17 @@ export const EXODE = {
   noyau: 10,
   /** étapes par chantier */
   etapes: 10,
-  /** le prix d'une étape (n : de 0 à 49) : 1 000 cristaux et 5 Éclats la première, 6 880 et 30 la dernière.
-   *  En tout 197 000 cristaux et 860 Éclats : environ 65 jours de surplus pour un joueur occasionnel (simulation du 10 novembre 2026). */
-  cristaux: { base: 1000, parEtape: 120 },
+  /** le prix d'une étape (n : de 0 à 49) : 670 cristaux et 5 Éclats la première, 4 590 et 30 la dernière.
+   *  13 novembre 2026 (validé par Bryan) : un tiers de moins qu'au 10 novembre. Avec le Fond fermé au jeu gratuit, l'ancien barème
+   *  (197 000 cristaux) durait environ 100 jours pour un occasionnel ; `npx tsx scripts/exode.ts` donne la durée. */
+  cristaux: { base: 670, parEtape: 80 },
   eclats: { base: 5, parEtape: 0.5 },
   /** la durée d'une étape, en heures : de la première à la dernière */
   heures: { debut: 2, fin: 12 },
   /** ceux qu'une étape inscrit au départ : 50 étapes, tout le district */
   habitantsParEtape: 12,
   /** un convoi, une fois les cinq chantiers finis : deux à trois jours de surplus, dix familles des cuvettes voisines */
-  convoi: { cristaux: 8000, eclats: 40, heures: 12, familles: 10 },
+  convoi: { cristaux: 5300, eclats: 40, heures: 12, familles: 10 },
 } as const;
 
 export interface ChantierExode { id: string; nom: string; texte: string; fini: string }

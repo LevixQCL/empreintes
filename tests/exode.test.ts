@@ -28,11 +28,12 @@ describe('L’Exode', () => {
     expect(lancerExode(j, 0).ok).toBe(true);
   });
 
-  it('le barème : 1 000 cristaux et 5 Éclats la première étape, environ 197 000 et 860 en tout', () => {
-    expect(etapeExode(0)).toEqual({ cristaux: 1000, eclats: 5, heures: 2 });
+  it('le barème (13 novembre 2026) : 670 cristaux et 5 Éclats la première étape, environ 131 000 et 860 en tout', () => {
+    expect(etapeExode(0)).toEqual({ cristaux: 670, eclats: 5, heures: 2 });
     expect(etapeExode(49).heures).toBe(12);
     const total = Array.from({ length: ETAPES_EXODE }, (_, i) => etapeExode(i)).reduce((t, e) => ({ c: t.c + e.cristaux, e: t.e + e.eclats }), { c: 0, e: 0 });
-    expect(total.c).toBe(197_000);
+    expect(total.c).toBeGreaterThan(129_000);
+    expect(total.c).toBeLessThan(133_000);
     expect(total.e).toBeGreaterThan(820);
     expect(total.e).toBeLessThan(900);
   });
@@ -40,7 +41,7 @@ describe('L’Exode', () => {
   it('une étape se paie, prend du temps, et une seule tourne à la fois', () => {
     const j = pret();
     expect(lancerExode(j, 0).ok).toBe(true);
-    expect(j.energie).toBe(1_000_000 - 1000);
+    expect(j.energie).toBe(1_000_000 - 670);
     expect(j.eclats).toBe(5000 - 5);
     expect(lancerExode(j, 0).ok).toBe(false);
     expect(avancerExode(j, 2 * H - 1)).toEqual([]);

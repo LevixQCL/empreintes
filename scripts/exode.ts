@@ -30,7 +30,7 @@ console.log('convois au dernier jour', res.convois.join(' '), '· caisse', res.c
       if (!exodeOuvert(j) || vus.has(jour)) return; vus.add(jour);
       const a = avancementExode(j); if (a.enCours) return; att.total++;
       if (!a.fini && (j.exode?.etape ?? 0) >= 40 && (j.fleche?.record ?? 0) < 101) att.sommet++;
-      else if (j.energie < a.cout.cristaux) att.cristaux++; else if ((j.eclats ?? 0) < a.cout.eclats) att.eclats++;
+      else { if (j.energie < a.cout.cristaux) att.cristaux++; if ((j.eclats ?? 0) < a.cout.eclats) att.eclats++; }
     }, fin: (j) => rec.push(j.fleche?.record ?? 0) });
   }
   console.log('jours d\'attente', JSON.stringify(att), '· record de la Flèche au dernier jour', rec.join(' '));
