@@ -871,21 +871,33 @@ function blocPerles(j: Jeu): string {
   const enOr = Object.keys(j.collection).filter((k) => moduleDef(k).rarete === 'or');
   if (!enOr.length && !j.perles) return '';
   const perles = j.perles ?? 0;
-  const pretes = enOr.filter((k) => { const f = freinPromotion({ ...j, perles: 1 }, k); return !f; });
+  // les cartes prêtes : le choix se voit, une vignette par carte, qui ouvre sa fiche
+  const pretes = enOr.filter((k) => !freinPromotion({ ...j, perles: 1 }, k));
   const { copies, cristaux } = COLLECTION.perle.fonte;
-  const aFondre = copiesAFondre(j).reduce((s, x) => s + x.n, 0);
+  const aFondre = Math.floor(copiesAFondre(j).reduce((s, x) => s + x.n, 0));
   const peutFondre = aFondre >= copies && j.energie >= cristaux;
-  const choix = pretes.length
-    ? (perles ? tr`Choisis la carte qui passe en nacre : ${pretes.length} carte${pretes.length > 1 ? 's sont prêtes' : ' est prête'}.`
-      : tr`${pretes.length} carte${pretes.length > 1 ? 's' : ''} en or ${pretes.length > 1 ? 'attendent' : 'attend'} une Perle pour passer en nacre.`)
-    : tr('Une carte en or au niveau 3, avec 5 copies, passe en nacre avec une Perle.');
-  return `<div class="fg-perles"><span class="fg-perles-gemme" aria-hidden="true">${perle('fg-perle-img')}</span>`
-    + `<div><small>${tr`Perles de nacre`}</small><strong>${perles ? tr`${perles} Perle${perles > 1 ? 's' : ''}` : tr('Aucune Perle')}</strong>`
-    + `<small>${choix}</small>`
-    + `<small class="fg-perles-sources">${tr('Elles viennent des quais à nacre de la Flèche, des gardiens de −9 et −10, et un lundi sur deux une fois −10 vaincue.')}</small>`
-    + `<button type="button" class="btn sec" data-action="fondre-perle"${peutFondre ? '' : ' disabled'}>${ICO.recycler}${tr`Fondre ${copies} copies en or · ${prix('energie', cristaux, j.energie >= cristaux)}`}</button>`
-    + `<small>${tr`Copies en or à fondre : ${Math.floor(aFondre)}, il en faut ${copies} par Perle. Les cartes de l’escouade gardent les 5 de leur passage en nacre.`}</small>`
-    + `</div></div>`;
+  const MAX_JETONS = 6, MAX_VIGNETTES = 4;
+  const jetons = perles
+    ? Array.from({ length: Math.min(perles, MAX_JETONS) }, () => perle('fg-jeton')).join('') + (perles > MAX_JETONS ? `<b>+${perles - MAX_JETONS}</b>` : '')
+    : `<span class="fg-jeton vide"></span>`;
+  const vignettes = pretes.slice(0, MAX_VIGNETTES).map((k) => {
+    const m = moduleDef(k), c = j.collection[k]!;
+    return `<button type="button" class="fg-prete" data-action="carte" data-id="${k}" aria-label="${tr`Ouvrir ${echap(m.nom)}`}">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</button>`;
+  }).join('') + (pretes.length > MAX_VIGNETTES ? `<span class="fg-prete-plus">+${pretes.length - MAX_VIGNETTES}</span>` : '');
+  const source = (ic: Icone, texte: string) => `<span class="fg-source">${icone(ic)}<span>${texte}</span></span>`;
+  return `<div class="fg-perles">`
+    + `<div class="fg-perles-tete"><span class="fg-perles-gemme" aria-hidden="true">${perle('fg-perle-img')}</span>`
+    + `<div><small>${tr`Perles de nacre`}</small><strong>${perles ? tr`${perles} Perle${perles > 1 ? 's' : ''}` : tr('Aucune Perle')}</strong></div>`
+    + `<span class="fg-jetons" aria-hidden="true">${jetons}</span></div>`
+    + (pretes.length
+      ? `<div class="fg-perles-titre">${perles ? tr('Prêtes à passer en nacre : choisis') : tr('Elles attendent une Perle')}</div><div class="fg-pretes">${vignettes}</div>`
+      : `<p class="fg-perles-aide">${tr('Une carte en or au niveau 3, avec 5 copies, passe en nacre avec une Perle.')}</p>`)
+    + `<div class="fg-perles-titre">${tr('Où en trouver')}</div>`
+    + `<div class="fg-sources">${source('fleche', tr('Quais à nacre de la Flèche'))}${source('strate', tr('Gardiens de −9 et −10'))}${source('chrono', tr('Un lundi sur deux après −10'))}</div>`
+    + `<div class="fg-fonte"><div class="fg-fonte-jauge">${icone('marteau')}<div><span>${tr`${copies} copies en or = 1 Perle`}</span>`
+    + `${pastillesCopies(Math.min(aFondre, copies), copies, COULEUR_RARETE.or)}<small>${tr`À fondre : ${aFondre}`}</small></div></div>`
+    + `<button type="button" class="btn sec" data-action="fondre-perle"${peutFondre ? '' : ' disabled'}>${tr('Fondre')} · ${prix('energie', cristaux, j.energie >= cristaux)}</button></div>`
+    + `</div>`;
 }
 
 /** Le nom de l'onglet du quotidien, selon le bâtiment (12 novembre 2026) */

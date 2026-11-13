@@ -722,16 +722,8 @@
    "en": "See all {0} cards"
   },
   {
-   "fr": "Choisis la carte qui passe en nacre : {0} carte{1}.",
-   "en": "Choose the card that goes nacre: {0} card{1}."
-  },
-  {
-   "fr": "{0} carte{1} en or {2} une Perle pour passer en nacre.",
-   "en": "{0} gold card{1} {2} a Pearl to go nacre."
-  },
-  {
-   "fr": "Une carte en or au niveau 3, avec 5 copies, passe en nacre avec une Perle.",
-   "en": "A gold card at level 3 with 5 copies goes nacre with a Pearl."
+   "fr": "Ouvrir {0}",
+   "en": "Open {0}"
   },
   {
    "fr": "Perles de nacre",
@@ -746,16 +738,44 @@
    "en": "No Pearls"
   },
   {
-   "fr": "Elles viennent des quais à nacre de la Flèche, des gardiens de −9 et −10, et un lundi sur deux une fois −10 vaincue.",
-   "en": "They come from the Spire’s nacre quays, from the guardians of −9 and −10, and every other Monday once −10 is beaten."
+   "fr": "Prêtes à passer en nacre : choisis",
+   "en": "Ready to go nacre: choose"
   },
   {
-   "fr": "Fondre {0} copies en or · {1}",
-   "en": "Melt {0} gold copies · {1}"
+   "fr": "Elles attendent une Perle",
+   "en": "Waiting for a Pearl"
   },
   {
-   "fr": "Copies en or à fondre : {0}, il en faut {1} par Perle. Les cartes de l’escouade gardent les 5 de leur passage en nacre.",
-   "en": "Gold copies to melt: {0}, {1} needed per Pearl. Squad cards keep the 5 they need to go nacre."
+   "fr": "Une carte en or au niveau 3, avec 5 copies, passe en nacre avec une Perle.",
+   "en": "A gold card at level 3 with 5 copies goes nacre with a Pearl."
+  },
+  {
+   "fr": "Où en trouver",
+   "en": "Where to find them"
+  },
+  {
+   "fr": "Quais à nacre de la Flèche",
+   "en": "The Spire’s nacre quays"
+  },
+  {
+   "fr": "Gardiens de −9 et −10",
+   "en": "Guardians of −9 and −10"
+  },
+  {
+   "fr": "Un lundi sur deux après −10",
+   "en": "Every other Monday after −10"
+  },
+  {
+   "fr": "{0} copies en or = 1 Perle",
+   "en": "{0} gold copies = 1 Pearl"
+  },
+  {
+   "fr": "À fondre : {0}",
+   "en": "To melt: {0}"
+  },
+  {
+   "fr": "Fondre",
+   "en": "Melt"
   },
   {
    "fr": "Salle d’entraînement",
