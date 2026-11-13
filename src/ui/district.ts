@@ -20,7 +20,8 @@ import {
 import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, album, carteNiveau, composantsNiveau, copiesPromotion, doublonsRequis, copiesRequises, freinPromotion, metalSuivant, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
-import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront, finCreuse, gainCreuseurs, copiesAFondre } from '../core/jeu';
+import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront, finCreuse, gainCreuseurs, copiesAFondre, fondFerme } from '../core/jeu';
+import { exodeVisible as exodeVu } from '../core/partie/exode';
 import { bassesOuvertes, CONFIEE, REMUEE, apercuConfiee, confieesOuvertes, flecheOuverte, peutConfier, strateRemuee } from '../core/jeu';
 import { particularite } from '../core/strates';
 import { FAMILLES, FRAGMENTS } from '../core/fragments';
@@ -2027,6 +2028,13 @@ export function htmlCoupe(e: EcranDistrict): string {
   if (!j.frontVaincu) {
     etape = `<strong>${tr`Vaincs le gardien de la Strate −${j.strate}`}</strong><small>${tr`C’est lui qui garde le passage : une fois vaincu, tes creuseurs pourront attaquer la roche.`}</small>`
       + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.descendre}${tr`Descendre à −${j.strate}`}</button></div>`;
+  } else if (fondFerme(j)) {
+    // le Fond fermé au jeu gratuit (13 novembre 2026) : la descente s'arrête au Puits d'avant, l'histoire continue en haut
+    etape = `<strong>${tr('Sous le Puits d’avant, la roche ne cède plus')}</strong>`
+      + `<small>${tr('Ce que tu cherchais en bas n’y est plus. La suite se joue en haut : la Flèche, et l’Exode du district, sur la digue.')}</small>`
+      + `<small class="tr-creuse-aide">${tr('Le Fond, de −11 à −15, s’ouvrira avec le récit des Ossyra.')}</small>`
+      + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="fleche">${ICO.fleche}${tr`Monter à la Flèche`}</button>`
+      + `${exodeVu(j) ? `<button type="button" class="btn sec" data-action="exode-voir">${ICO.monter}${tr`Voir l’Exode`}</button>` : ''}</div>`;
   } else if (manque) {
     const morceaux: string[] = [];
     const auPort = !!manque.creuseurs && portOuvert(j) && naufragesDeLaStrate(j).restants > 0;

@@ -2,7 +2,7 @@
 // Les droits viennent du compte (achats/{uid}, écrit par le serveur) ; une copie reste sur l'appareil pour jouer hors ligne.
 // Tant que la vente n'est pas ouverte (src/net/vente.ts), rien de tout cela ne se voit : les récits restent en aperçu.
 
-import { aRecit, perleDesRecits, PRODUITS } from '../core/jeu';
+import { aRecit, DROIT_FOND, perleDesRecits, PRODUITS } from '../core/jeu';
 import { sauver } from './synchro';
 import { langue, t } from '../core/i18n';
 import { VENTE_OUVERTE, venteEssai } from '../net/vente';
@@ -46,7 +46,7 @@ async function estCompteAdmin(): Promise<boolean> {
     return [...new Uint8Array(h)].map((b) => b.toString(16).padStart(2, '0')).join('') === ADMIN;
   } catch { return false; }
 }
-const TOUS_LES_DROITS = [...new Set(Object.values(PRODUITS).flatMap((p) => p.droits))];
+const TOUS_LES_DROITS = [...new Set([...Object.values(PRODUITS).flatMap((p) => p.droits), DROIT_FOND])];
 
 /** de retour de la page de paiement : « ok » (payé, les droits arrivent) ou « annule » */
 let retour: 'ok' | 'annule' | null = null;
@@ -67,6 +67,8 @@ export function retourPaiement(): void {
  * Au retour d'un paiement, le serveur met parfois quelques secondes à inscrire le droit : on relit jusqu'à le voir.
  */
 export async function chargerAchats(uid: string | null): Promise<void> {
+  // le Fond (13 novembre 2026) : le compte d'administration le garde ouvert pour tester, même vente fermée
+  if (uid && !essai && !app.jeu.fond && await estCompteAdmin()) { app.jeu.fond = true; sauver(); }
   if (essai || !boutique.ouverte) return;
   majCompteAchat();
   if (!uid) { boutique.achats = []; return; }
@@ -90,6 +92,7 @@ export async function chargerAchats(uid: string | null): Promise<void> {
       else await new Promise((r) => setTimeout(r, 2500));
     }
   } catch { /* hors ligne : la copie de l'appareil suffit */ }
+  if (boutique.achats.includes(DROIT_FOND) && !app.jeu.fond) { app.jeu.fond = true; sauver(); }
   // le lot des trois Récits donne une Perle de nacre, une seule fois (13 novembre 2026)
   if (['ilka', 'doran', 'vela'].every((r) => aRecit(boutique.achats, r))) {
     const perle = perleDesRecits(app.jeu);

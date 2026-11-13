@@ -9,8 +9,8 @@
 // Rien ne se perd et rien ne se dégrade si on ne joue pas : une étape lancée se termine seule, la suivante attend.
 
 import { FLECHE } from '../classements';
-import { tirerChoix } from '../collection';
-import { log, non, porteursPresents, strateVaincue, type Jeu, type Resultat } from './etat';
+import { gagnerPerles } from './perles';
+import { log, non, strateVaincue, type Jeu, type Resultat } from './etat';
 import { t as tr } from '../i18n';
 
 export const EXODE = {
@@ -127,7 +127,8 @@ export function lancerExode(j: Jeu, now = j.dernierTick): Resultat {
   return { ok: true, message };
 }
 
-/** Le temps passe : l'étape ou le convoi en cours se termine. Un chantier fini donne une carte de nacre au choix. */
+/** Le temps passe : l'étape ou le convoi en cours se termine. Un chantier fini donne une Perle de nacre (13 novembre 2026 :
+ *  plus de carte de nacre au choix, pour que la nacre reste rare). */
 export function avancerExode(j: Jeu, now: number): string[] {
   const x = j.exode;
   if (!x || x.fin === undefined || now < x.fin) return [];
@@ -141,9 +142,8 @@ export function avancerExode(j: Jeu, now: number): string[] {
   x.etape++;
   if (x.etape % EXODE.etapes) return [tr`L’Exode avance : ${EXODE.habitantsParEtape} habitants de plus sont prêts à partir.`];
   const def = CHANTIERS_EXODE[x.etape / EXODE.etapes - 1]!;
-  j.choix.push({ source: 'exode', options: tirerChoix(j, Math.max(EXODE.strate, j.strate), 'nacre', undefined, porteursPresents(j), true) });
   log(j, def.fini);
-  return [def.fini];
+  return [def.fini, gagnerPerles(j, 1, def.nom)];
 }
 
 /** Sur la carte du district : une étape peut être lancée, ou une est en cours */

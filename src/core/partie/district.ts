@@ -5,7 +5,7 @@ import { batimentDef, porteurDef, PORTEURS, BATIMENTS, tirablesEn, moduleDe, mod
 import type { BatimentId, Rarete } from '../types';
 import { COLLECTION, RARETES, ajouterCarte, auMoins, NOMS_RARETE, composantsNiveau, doublonsRequis, metalDessus, metalTranche, niveauRequis, poidsCarte, freinPromotion, metalSuivant, promouvoirCarte, appliquerAttente } from '../collection';
 import { tireur } from '../rng';
-import { partPvClinique, CERCLE, CERCLE_OUVERTURE, CONFIANCE, accueillirFamille, nbFoyers, ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, heuresDeTaille, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, strateVaincue, cartesQuiEvoluent, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
+import { partPvClinique, CERCLE, CERCLE_OUVERTURE, CONFIANCE, accueillirFamille, nbFoyers, ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, heuresDeTaille, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, strateVaincue, fondFerme, cartesQuiEvoluent, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
 import { OBJECTIFS, objectifCourant } from './objectifs';
 import { ORDRE_FAMILLES, fragmentDef } from '../fragments';
 import { familleDef, familleDuFragment } from '../familles';
@@ -437,7 +437,7 @@ export function gagnerCreuseurs(j: Jeu, n: number, raison: string): number {
 
 /** Ce qui manque pour creuser l'étage suivant (null s'il ne manque rien, ou si le gardien n'est pas vaincu) */
 export function manquePourCreuser(j: Jeu): { creuseurs: number; noyau: number } | null {
-  if (!j.frontVaincu) return null;
+  if (!j.frontVaincu || fondFerme(j)) return null;
   const cible = j.strate + 1;
   const c = Math.max(0, creuseursRequis(cible) - j.creuseurs);
   const n = Math.max(0, noyauRequis(cible) - j.batiments.noyau);
@@ -463,13 +463,13 @@ export const gainCreuseurs = (creuseurs: number) => Math.min(CREUSE.plafond, CRE
 export const dureeCreuse = (j: Pick<Jeu, 'creuseurs'>, strate: number) => Math.round(heuresCreuse(strate) * 3_600_000 * (1 - gainCreuseurs(j.creuseurs ?? 0)));
 /** quand la galerie sera percée (null : le gardien n'est pas vaincu) ; les creuseurs arrivés en route accélèrent la fin */
 export function finCreuse(j: Jeu): number | null {
-  if (!j.frontVaincu) return null;
+  if (!j.frontVaincu || fondFerme(j)) return null;
   return (j.creuseDebut ?? j.dernierTick) + dureeCreuse(j, j.strate + 1);
 }
 
 /** Creuse l'étage suivant si tout est prêt et la galerie percée ; renvoie true si une Strate s'est ouverte */
 export function creuser(j: Jeu): boolean {
-  if (!j.frontVaincu || manquePourCreuser(j)) return false;
+  if (!j.frontVaincu || fondFerme(j) || manquePourCreuser(j)) return false;
   // une partie dont le gardien était vaincu avant la creuse : elle commence au premier passage
   j.creuseDebut ??= j.dernierTick;
   if (j.dernierTick < finCreuse(j)!) return false;

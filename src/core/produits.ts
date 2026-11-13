@@ -24,6 +24,10 @@ export const PRODUITS: Record<string, Produit> = {
   [LOT_RECITS]: { prix: 599, droits: RECITS_VENDUS.map(droitRecit) },
 };
 
+/** Le droit au Fond (−11 à −15), qu'inscrira le pack Ossyra (12 novembre 2026) : pas encore en vente ; le compte
+ *  d'administration l'a pour tester */
+export const DROIT_FOND = 'fond-ossyra';
+
 /** Ce récit est-il acquis sur ce compte ? */
 export const aRecit = (achats: readonly string[], recit: string): boolean => achats.includes(droitRecit(recit));
 

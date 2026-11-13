@@ -449,6 +449,9 @@ export interface Jeu {
   frontVaincu: boolean;
   /** quand les creuseurs ont attaqué la roche sous le gardien vaincu (12 novembre 2026 : la creuse prend du temps) */
   creuseDebut?: number;
+  /** le Fond (−11 et plus bas) est ouvert à cette partie : pack Ossyra, compte d'administration, ou partie déjà descendue
+   *  sous −10 avant sa fermeture (13 novembre 2026). Absent : le jeu gratuit s'arrête à −10. */
+  fond?: boolean;
   /** la fouille confiée en cours (12 novembre 2026, partie/confiees.ts) : une escouade fouille seule une Strate vaincue */
   confiee?: FouilleConfiee | null;
   /** le jour où la prime de la Strate remuée a été prise (12 novembre 2026, descentes.ts : REMUEE) */
@@ -901,6 +904,12 @@ export function escouadesDe(j: Jeu): string[][] {
 
 /** La Strate vaincue la plus profonde (le front compte s'il a été vaincu) */
 export const strateVaincue = (j: Jeu) => (j.frontVaincu ? j.strate : j.strate - 1);
+
+/** Le Fond (12 novembre 2026, Bryan : « pack Ossyra pour le Fond ») : le jeu gratuit se conclut à −10 ; plus bas, c'est l'extension.
+ *  Fermé, il ne s'ouvre pas à la creuse : la suite de l'histoire est en haut (la Flèche) et dans l'Exode. */
+export const FOND = { premiere: 11 } as const;
+/** La prochaine Strate à creuser est dans le Fond, et le Fond n'est pas ouvert à cette partie */
+export const fondFerme = (j: Jeu): boolean => j.strate + 1 >= FOND.premiere && !j.fond;
 /** Les premiers pas (12 novembre 2026, audit du début) : la chambre ouverte, le gardien de −1 pas encore vaincu.
  *  Le jeu n'y montre que ce qui sert tout de suite : ni cartes du district au départ, ni Marques, ni volets de la Tour */
 export const premiersPas = (j: Jeu) => !!j.chambre && strateVaincue(j) < 1;

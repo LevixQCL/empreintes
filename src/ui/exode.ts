@@ -5,7 +5,7 @@
 
 import { CHANTIERS_EXODE, ETAPES_EXODE, EXODE, FLECHE, avancementExode, etapeExode, exodeOuvert, raisonExode, sommetTenu, type Jeu } from '../core/jeu';
 import { decompte, jaugeTemps, prix, type EcranDistrict } from './coquille';
-import { ICO } from './icones';
+import { ICO, perle } from './icones';
 import { echap, texteReplie } from './outils';
 import { bloc, cle, etape, replie } from './presentation';
 import { t as tr, locale } from '../core/i18n';
@@ -66,7 +66,7 @@ function liste(j: Jeu): string {
       const dans = fait ? EXODE.etapes : ici ? a.dans : 0;
       const etat = fait ? `${ICO.ok}${tr`Fini`}` : ici ? `${dans} / ${EXODE.etapes}` : k === CHANTIERS_EXODE.length - 1 && !sommetTenu(j) ? `${ICO.verrou}${tr`Sommet de la Flèche`}` : tr('À venir');
       return `<li class="${fait ? 'fait' : ici ? 'ici' : 'apres'}"><b class="xo-rang">${ROMAIN[k]}</b><span><strong>${echap(c.nom)}</strong><small>${echap(fait ? c.fini : c.texte)}</small>`
-        + `<em>${ICO.cartes}${fait ? tr('Carte de nacre reçue') : tr('Une carte de nacre au choix')}</em></span><i class="xo-etat">${etat}</i></li>`;
+        + `<em>${perle('ico peinte xo-perle')}${fait ? tr('Perle de nacre reçue') : tr('Une Perle de nacre')}</em></span><i class="xo-etat">${etat}</i></li>`;
     }).join('') + `</ol>`;
 }
 
@@ -78,11 +78,11 @@ function presentation(premiere: boolean): string {
     + bloc(ICO.porteurs, tr('Préparer tout le district'), tr('Tu sais maintenant ce qu’il y a au fond. Reste à faire monter les gens : tous, pas seulement une escouade.'), [
       cle(ICO.marteau, `${CHANTIERS_EXODE.length}`, tr('chantiers')),
       cle(ICO.porteurs, ent(ETAPES_EXODE * EXODE.habitantsParEtape), tr('habitants à préparer')),
-      cle(ICO.cartes, `${CHANTIERS_EXODE.length}`, tr('cartes de nacre')),
+      cle(perle('ico peinte xo-perle'), `${CHANTIERS_EXODE.length}`, tr('Perles de nacre')),
     ])
     + replie(tr('Comment ça marche'), `<ul class="fl-pr-etapes">`
       + etape(ICO.marteau, tr('Une étape à la fois'), tr`Chaque chantier compte ${EXODE.etapes} étapes. Une étape se paie en cristaux et en Éclats, puis avance toute seule, même jeu fermé.`)
-      + etape(ICO.cartes, tr('Un chantier fini'), tr('Il donne une carte de nacre au choix, et le district change un peu : la digue s’ouvre vers la mer.'))
+      + etape(perle('ico peinte xo-perle'), tr('Un chantier fini'), tr('Il donne une Perle de nacre, et le district change un peu : la digue s’ouvre vers la mer.'))
       + etape(ICO.fleche, tr('Le Passage'), tr`Le dernier chantier demande le sommet de la Flèche (quai ${FLECHE.quais}) : elle donne le droit de passer, l’Exode prépare les gens.`)
       + etape(ICO.energie, tr('Rien ne presse'), tr`Rien ne se perd et rien ne s’abîme si tu ne joues pas. En tout, environ ${ent(total)} cristaux : un projet de plusieurs semaines.`)
       + `</ul>`, ICO.aide)

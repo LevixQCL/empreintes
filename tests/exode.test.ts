@@ -50,15 +50,13 @@ describe('L’Exode', () => {
     expect(raisonExode(j)).toBeNull();
   });
 
-  it('un chantier fini donne une carte de nacre au choix', () => {
+  it('un chantier fini donne une Perle de nacre (13 novembre 2026), plus de carte de nacre', () => {
     const j = pret();
     faire(j, 9);
-    expect(j.choix.filter((c) => c.source === 'exode').length).toBe(0);
+    expect(j.perles ?? 0).toBe(0);
     faire(j, 10);
-    const c = j.choix.filter((x) => x.source === 'exode');
-    expect(c.length).toBe(1);
-    expect(c[0]!.options.length).toBeGreaterThan(0);
-    expect(c[0]!.options.every((id) => id.endsWith('nacre') || id.includes('nacre'))).toBe(true);
+    expect(j.perles).toBe(1);
+    expect(j.choix.filter((x) => x.source === 'exode').length).toBe(0);
     expect(avancementExode(j).chantier).toBe(1);
   });
 

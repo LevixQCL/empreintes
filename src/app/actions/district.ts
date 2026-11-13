@@ -174,6 +174,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'bat-tous': D.porteursTous = !D.porteursTous; break;
     case 'onglet-bat': D.ongletBat = id === 'niveau' ? 'niveau' : 'salle'; requestAnimationFrame(() => document.querySelector('.fb-corps')?.scrollTo(0, 0)); break;
     case 'archipel': ouvrir('archipel'); break;
+    case 'exode-voir': ouvrir('archipel'); D.exode = true; D.selection = null; break;
     case 'coupe': ouvrir('coupe'); break;
     // les pillages (26 octobre 2026) : la carte des archipels, la fiche d'un archipel, puis le départ
     case 'pillages': ouvrir('pillages'); D.portAide = false; if (portOuvert(app.jeu)) lireCiblesEnLigne(); break;

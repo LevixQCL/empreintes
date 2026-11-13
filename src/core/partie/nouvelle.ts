@@ -5,7 +5,7 @@ import { PORTEURS, CARTE_CHAMBRE, MODULES, estCarteConnue, moduleDe, moduleDef, 
 import { RARETES, poidsCarte, valeurCopie } from '../collection';
 import { pointsVecu } from './vecu';
 import { graine } from '../rng';
-import { nbFoyers, DISTRICT, VERSION_JEU, XP, xpPourNiveau, chargeMax, chargePortee, enExpedition, confier, niveauConfiance, strateVaincue, jourDe, log, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
+import { FOND, nbFoyers, DISTRICT, VERSION_JEU, XP, xpPourNiveau, chargeMax, chargePortee, enExpedition, confier, niveauConfiance, strateVaincue, jourDe, log, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
 import { SCENES, sceneEnAttente, type ContexteCampagne } from '../campagne';
 import { ESCOUADE_DEPART } from './descentes';
 import { accorderSeance, comptoirVide } from './district';
@@ -340,6 +340,8 @@ function migrer(j: Jeu) {
     j.version = 14;
     fusionnerExemplaires(j);
   }
+  // 13 novembre 2026 : le Fond (−11 et plus bas) se ferme au jeu gratuit ; une partie qui y était déjà le garde
+  if (j.strate >= FOND.premiere) j.fond = true;
   allegerSelonCharge(j);
   // 10 novembre 2026 : les quais gravés déjà passés donnent leur carte au choix (une seule fois, notée dans fleche.cartes)
   rattraperCartesFleche(j);
