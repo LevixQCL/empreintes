@@ -21,9 +21,20 @@
 .cr-badge{align-self:flex-start;font:700 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#1C1406;background:var(--gold);padding:4px 8px;border-radius:999px}
 
 /* la page scellée de la fiche du Porteur */
-.fp-recit{position:relative;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;padding:12px 14px;border-radius:14px;background:rgba(216,180,101,.05);box-shadow:inset 0 0 0 1px rgba(216,180,101,.45)}
-.fp-sceau{width:34px;height:34px;margin-top:2px;border-radius:50%;background:radial-gradient(circle at 38% 35%,#FFE7A8,#D8B465 45%,#8A6A2E 80%);box-shadow:0 0 0 3px rgba(216,180,101,.2),0 2px 8px rgba(0,0,0,.5)}
-.fp-recit-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.fp-recit{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(216,180,101,.05);box-shadow:inset 0 0 0 1px rgba(216,180,101,.45)}
+.fp-sceau{width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 38% 35%,#FFE7A8,#D8B465 45%,#8A6A2E 80%);box-shadow:0 0 0 3px rgba(216,180,101,.2),0 2px 8px rgba(0,0,0,.5)}
+/* une seule ligne (13 novembre 2026) : le titre, une ligne de détail, le bouton à droite */
+.fp-recit-tete{display:flex;flex-direction:column;gap:2px;min-width:0}
+.fp-recit-tete strong{font:400 16px/1.15 var(--display);color:var(--fp-or)}
+.fp-recit-tete small{font-size:12px;line-height:1.35;color:var(--fp-doux)}
+.fp-recit-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.fp-recit-plus{grid-column:1/-1}
+/* l'onglet Histoire signale le récit (13 novembre 2026) : le même sceau doré, en petit, et le nom en or */
+.fp-onglet-recit{display:inline-flex;align-items:center;gap:7px;color:var(--fp-or)}
+.fp-mini-sceau{width:14px;height:14px;flex:none;border-radius:50%;background:radial-gradient(circle at 38% 35%,#FFE7A8,#D8B465 45%,#8A6A2E 80%);box-shadow:0 0 0 2px rgba(216,180,101,.22),0 0 10px rgba(242,213,140,.55);animation:fp-mini-sceau 2.2s ease-in-out infinite}
+@keyframes fp-mini-sceau{50%{box-shadow:0 0 0 2px rgba(216,180,101,.22),0 0 3px rgba(242,213,140,.2)}}
+@media (prefers-reduced-motion:reduce){.fp-mini-sceau{animation:none}}
+.fp-recit-plus .fp-recit-actions{justify-content:flex-start;margin-top:8px}
 /* le récit scellé (vente ouverte, 11 novembre 2026) : ce qu'on reçoit, puis le paiement */
 .fp-recit .btn .ico{width:14px;height:14px;margin-right:6px;vertical-align:-2px}
 .fp-offre{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:5px}
