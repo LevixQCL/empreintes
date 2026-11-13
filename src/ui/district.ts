@@ -876,19 +876,16 @@ function blocPerles(j: Jeu): string {
   const { copies, cristaux } = COLLECTION.perle.fonte;
   const aFondre = Math.floor(copiesAFondre(j).reduce((s, x) => s + x.n, 0));
   const peutFondre = aFondre >= copies && j.energie >= cristaux;
-  const MAX_JETONS = 6, MAX_VIGNETTES = 4;
-  const jetons = perles
-    ? Array.from({ length: Math.min(perles, MAX_JETONS) }, () => perle('fg-jeton')).join('') + (perles > MAX_JETONS ? `<b>+${perles - MAX_JETONS}</b>` : '')
-    : `<span class="fg-jeton vide"></span>`;
+  const MAX_VIGNETTES = 4;
   const vignettes = pretes.slice(0, MAX_VIGNETTES).map((k) => {
     const m = moduleDef(k), c = j.collection[k]!;
     return `<button type="button" class="fg-prete" data-action="carte" data-id="${k}" aria-label="${tr`Ouvrir ${echap(m.nom)}`}">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</button>`;
   }).join('') + (pretes.length > MAX_VIGNETTES ? `<span class="fg-prete-plus">+${pretes.length - MAX_VIGNETTES}</span>` : '');
   const source = (ic: Icone, texte: string) => `<span class="fg-source">${icone(ic)}<span>${texte}</span></span>`;
   return `<div class="fg-perles">`
-    + `<div class="fg-perles-tete"><span class="fg-perles-gemme" aria-hidden="true">${perle('fg-perle-img')}</span>`
-    + `<div><small>${tr`Perles de nacre`}</small><strong>${perles ? tr`${perles} Perle${perles > 1 ? 's' : ''}` : tr('Aucune Perle')}</strong></div>`
-    + `<span class="fg-jetons" aria-hidden="true">${jetons}</span></div>`
+    // la réserve : la grande perle porte son nombre, comme une pierre sertie (13 novembre 2026, Bryan : « l'option la plus esthétique »)
+    + `<div class="fg-perles-tete"><span class="fg-perles-gemme${perles ? '' : ' vide'}" role="img" aria-label="${tr`${perles} Perle${perles > 1 ? 's' : ''} de nacre`}">${perle('fg-perle-img')}<b class="fg-perles-nb">${perles}</b></span>`
+    + `<div><strong>${tr('Perles de nacre')}</strong><small>${perles ? tr('Ta réserve, pour faire passer une carte en or en nacre.') : tr('Aucune en réserve pour l’instant.')}</small></div></div>`
     + (pretes.length
       ? `<div class="fg-perles-titre">${perles ? tr('Prêtes à passer en nacre : choisis') : tr('Elles attendent une Perle')}</div><div class="fg-pretes">${vignettes}</div>`
       : `<p class="fg-perles-aide">${tr('Une carte en or au niveau 3, avec 5 copies, passe en nacre avec une Perle.')}</p>`)

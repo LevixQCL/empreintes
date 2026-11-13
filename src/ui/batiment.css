@@ -460,7 +460,7 @@ button.te-socle.vide:active{transform:scale(.97)}
 .bs-choix,.mr-choix{display:grid;gap:8px}
 .bs-lieu .tb-cs-txt strong,.bs-lieu .tb-cand strong{font-family:var(--display);font-weight:400;font-size:19px;color:#F6F2EA}
 .bs-lieu .tb-cand strong{font-size:15px}
-/* les Perles de nacre à la Forge (13 novembre 2026) : la réserve en jetons, les cartes prêtes en vignettes, les sources, la fonte */
+/* les Perles de nacre à la Forge (13 novembre 2026) : la réserve (le nombre serti sur la perle), les cartes prêtes en vignettes, les sources, la fonte */
 .fg-perles{--cut:8px;display:grid;gap:10px;margin-top:10px;padding:12px;border-radius:4px;
   background:radial-gradient(120% 80% at 0 0,rgba(236,226,255,.12),transparent 60%),linear-gradient(180deg,rgba(232,226,255,.06),rgba(232,226,255,.015));
   box-shadow:inset 0 0 0 1px rgba(226,220,255,.3)}
@@ -468,13 +468,14 @@ button.te-socle.vide:active{transform:scale(.97)}
 .fg-perles-tete{display:flex;align-items:center;gap:12px}
 .fg-perles-tete>div{flex:1;display:grid;gap:2px;min-width:0}
 .fg-perles-tete strong{font-family:var(--display);font-weight:400;font-size:21px;line-height:1.1;color:#F6F2EA}
-.fg-perles-gemme{flex:none;display:grid;place-items:center;width:56px;height:56px;border-radius:50%;
+.fg-perles-gemme{position:relative;flex:none;display:grid;place-items:center;width:64px;height:64px;border-radius:50%;
   background:radial-gradient(circle,rgba(236,230,255,.24),transparent 70%);box-shadow:inset 0 0 0 1px rgba(236,230,255,.4)}
-.fg-perles-gemme .fg-perle-img{width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
-.fg-jetons{display:flex;align-items:center;gap:2px;flex-wrap:wrap;justify-content:flex-end;max-width:45%}
-.fg-jetons .fg-jeton{width:24px;height:24px;object-fit:contain;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5))}
-.fg-jetons .fg-jeton.vide{display:block;width:20px;height:20px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(236,230,255,.35)}
-.fg-jetons b{font-family:var(--mono);font-size:13px;color:#EDE6FF;margin-left:2px}
+.fg-perles-gemme.vide .fg-perle-img{filter:grayscale(.7) brightness(.6)}
+.fg-perles-nb{position:absolute;right:-4px;bottom:-4px;min-width:26px;height:26px;padding:0 6px;border-radius:13px;display:grid;place-items:center;
+  font-family:var(--display);font-weight:400;font-size:16px;line-height:1;color:#2A1E08;
+  background:linear-gradient(180deg,#FBE7A8,#E2B85A);box-shadow:0 0 0 2px rgba(20,24,34,.9),0 2px 6px rgba(0,0,0,.5),0 0 10px rgba(242,213,140,.45)}
+.fg-perles-gemme.vide .fg-perles-nb{color:#E9E2F6;background:linear-gradient(180deg,#4B4560,#2E2A3C)}
+.fg-perles-gemme .fg-perle-img{width:50px;height:50px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
 .fg-perles-titre{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#E4DCFF}
 .fg-perles-aide{margin:0;font-size:13px;color:var(--fb-doux)}
 .fg-pretes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;align-items:center}

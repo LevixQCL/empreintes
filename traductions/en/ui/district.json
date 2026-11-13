@@ -726,16 +726,20 @@
    "en": "Open {0}"
   },
   {
+   "fr": "{0} Perle{1} de nacre",
+   "en": "{0} Nacre Pearl{1}"
+  },
+  {
    "fr": "Perles de nacre",
    "en": "Nacre Pearls"
   },
   {
-   "fr": "{0} Perle{1}",
-   "en": "{0} Pearl{1}"
+   "fr": "Ta réserve, pour faire passer une carte en or en nacre.",
+   "en": "Your stock, to turn a gold card into nacre."
   },
   {
-   "fr": "Aucune Perle",
-   "en": "No Pearls"
+   "fr": "Aucune en réserve pour l’instant.",
+   "en": "None in stock yet."
   },
   {
    "fr": "Prêtes à passer en nacre : choisis",
