@@ -28,15 +28,15 @@
 
 /* ================= Téléphone : la barre du bas ================= */
 @media not ((min-width:1100px) and (min-height:600px)){
-  .nav.nav-medaillon{grid-template-columns:1fr 1fr 1.55fr 1fr 1fr}
+  .nav.nav-medaillon{grid-template-columns:1fr 1fr 1.35fr 1fr 1fr}
   .nav .medaillon{min-height:58px}
-  /* le médaillon dépasse de la barre : le bas de chaque écran garde de quoi défiler au-dessus */
-  .ecran:has(> .nav-medaillon) .contenu{padding-bottom:calc(var(--nav-h) + 52px + var(--sab))}
-  .nav .med-image{bottom:19px;width:84px;height:84px}
+  /* le médaillon dépasse à peine de la barre (réduit le 13 nov. 2026 : il coupait l'écran) : le bas de chaque écran garde de quoi défiler au-dessus */
+  .ecran:has(> .nav-medaillon) .contenu{padding-bottom:calc(var(--nav-h) + 34px + var(--sab))}
+  .nav .med-image{bottom:18px;width:64px;height:64px}
   /* les zones de toucher montent jusqu'en haut de l'image */
-  .nav .med-moitie{top:-46px}
-  .nav .med-coupe .pastille-alerte{top:2px;right:30px}
-  .nav .med-fleche .pastille-alerte{top:2px;left:30px}
+  .nav .med-moitie{top:-16px}
+  .nav .med-coupe .pastille-alerte{top:-4px;right:20px}
+  .nav .med-fleche .pastille-alerte{top:-4px;left:20px}
   /* une encoche de lumière sur l'arête de la barre, sous la moitié ouverte */
   .nav .medaillon.actif::after{content:"";position:absolute;z-index:0;left:50%;top:-1px;width:64px;height:2px;transform:translateX(-50%);
     background:linear-gradient(90deg,transparent,#BFE2FF 30%,#fff 50%,#BFE2FF 70%,transparent);box-shadow:0 0 12px rgba(140,200,255,.9)}
