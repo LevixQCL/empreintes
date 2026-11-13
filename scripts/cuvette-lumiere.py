@@ -22,13 +22,19 @@ def grade(a, X, Y):
     d = np.sqrt(((X - 420) / 330) ** 2 + ((Y - 610) / 420) ** 2)
     halo = (np.clip(1 - d, 0, 1) ** 1.6)[..., None]
     rgb = rgb * (1 + P['halo'] * halo) + np.array([0.06, 0.04, 0.0]) * halo   # la Cuvette devient le point de lumière
-    # la grande tour dehors : son orange est calmé (moins saturé, moins chaud) et elle s'efface un peu
-    t = np.sqrt(((X - 735) / 210) ** 2 + ((Y - 110) / 280) ** 2)
-    m = (np.clip(1 - t, 0, 1) ** 0.9)[..., None]
+    # la grande tour dehors et le ciel du coin haut droit (13 novembre 2026, Bryan : « cette moche lueur, fais-la venir uniquement
+    # des fenêtres, pas sur tout le bâtiment ») : la pierre, les toits et l'eau perdent leur lavis orange et passent au bleu du
+    # soir ; seules les fenêtres et les lanternes (petits points clairs et chauds) gardent leur lumière, et un peu de leur halo.
+    hx = np.clip(1 - np.abs(X - 765) / 260, 0, 1) ** 0.7
+    hy = np.clip((470 - Y) / 220, 0, 1)
+    ciel = np.clip((X - 760) / 160, 0, 1) * np.clip((330 - Y) / 140, 0, 1)
+    m = np.clip(np.maximum(hx * hy, ciel), 0, 1) ** 0.8
+    m = m[..., None]
     l = rgb.mean(axis=2, keepdims=True)
-    calme = (l + (rgb - l) * 0.45) * np.array([0.93, 0.98, 1.06])
-    rgb = rgb * (1 - 0.5 * m) + calme * 0.5 * m
-    rgb = rgb * (1 - P['tour'] * m)
+    chaud = np.clip((rgb[..., :1] - rgb[..., 2:3] - 0.2) / 0.25, 0, 1)
+    fen = np.clip((l - 0.42) / 0.2, 0, 1) * chaud                       # une fenêtre : claire ET chaude
+    soir = l * np.array([0.62, 0.8, 0.92]) * 0.9 + np.array([0.02, 0.04, 0.06])   # la pierre sous le ciel du soir
+    rgb = rgb * (1 - m * (1 - fen)) + soir * m * (1 - fen)
     a = a.copy(); a[..., :3] = np.clip(rgb, 0, 1); return a
 
 def traiter(nom, ox=0.0, oy=0.0, ech=1.0):
