@@ -186,8 +186,8 @@ describe('Une carte, cinq métaux', () => {
     expect(moduleDef('crocs-fossiles@argent').effet).toEqual({ type: 'desarmer', part: 0.3 });
     expect(moduleDef('crocs-fossiles@or').effet).toEqual({ type: 'desarmer', part: 0.38 });
     expect(moduleDef('crocs-fossiles@nacre').effet).toEqual({ type: 'desarmer', part: 0.45 });
-    expect(moduleDef('bobine-recuperation@or').effet).toEqual({ type: 'flux', v: 1 });
-    expect(moduleDef('bobine-recuperation@nacre').effet).toEqual({ type: 'flux', v: 2 });
+    expect(moduleDef('tir-vif@or').effet).toEqual({ type: 'flux', v: 1 });
+    expect(moduleDef('tir-vif@nacre').effet).toEqual({ type: 'flux', v: 2 });
   });
 
   it('version 14 : les exemplaires d’une carte se fondent dans le plus haut métal, au meilleur niveau', () => {

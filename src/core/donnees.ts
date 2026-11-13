@@ -144,7 +144,7 @@ export const MODULES: ModuleDef[] = [
 
   // ---------- Les voies, étape 1 (27 octobre 2026, docs/familles-de-decks.md) : une voie par lignée ----------
   // Le Moteur (Liane) : remplir le Flux, puis tout vider d'un coup
-  c('bobine-recuperation', tr('Bobine de récupération'), 'tech', 'fer', 'bouclier', 9, [3, 2, 4], { type: 'flux', v: 1 }),
+  c('bobine-recuperation', tr('Bobine de récupération'), 'tech', 'fer', 'bouclier', 11, [3, 2, 4], { type: 'desarmer', part: 0.3 }),
   c('condensateur', tr('Condensateur'), 'tech', 'cuivre', 'atk', 12, [5, 4, 6], { type: 'flux', v: 1, mot: 'ouverture' }),
   c('decharge-arc', tr('Décharge d’arc'), 'tech', 'cuivre', 'atk', 16, [6, 7, 5], { type: 'decharge', part: 0.5 }),
   c('eclair-captif', tr('Éclair captif'), 'tech', 'argent', 'atk', 16, [4, 5, 7], { type: 'decharge', part: 0.9, max: 1 }),
@@ -155,7 +155,7 @@ export const MODULES: ModuleDef[] = [
   c('belier-os', tr('Bélier d’os'), 'bio', 'argent', 'bouclier', 20, [5, 4, 1], { type: 'riposte', part: 0.5 }, true),
   c('retour-maree', tr('Coquille de marée'), 'bio', 'or', 'bouclier', 18, [2, 3, 5], { type: 'riposte', part: 1.3, vide: true }),
   // Le Chœur (Joss) : répéter une même Fréquence (Écho)
-  c('diapason-cristal', tr('Diapason de cristal'), 'reso', 'fer', 'bouclier', 9, [9, 8, 7], { type: 'diapason' }),
+  c('diapason-cristal', tr('Note de cristal'), 'reso', 'fer', 'bouclier', 16, [9, 8, 7], { type: 'amorce', part: 0.5 }),
   c('voix-basse', tr('Voix basse'), 'reso', 'fer', 'atk', 9, [9, 8, 7], { type: 'unisson', part: 1.2 }),
   c('chorale-ombres', tr('Chorale des ombres'), 'reso', 'cuivre', 'atk', 12, [8, 9, 7], { type: 'unisson', part: 1.2, mot: 'final' }),
   c('cloche-abysses', tr('Cloche des abysses'), 'reso', 'argent', 'atk', 17, [9, 7, 8], { type: 'diapason', premiere: true }),
@@ -168,7 +168,7 @@ export const MODULES: ModuleDef[] = [
   c('chasse-aveugle', tr('Chasse à l’aveugle'), 'bio', 'argent', 'atk', 13, [5, 4, 2], { type: 'curee', part: 0.6, aveugle: 0.3 }),
   c('hallali', tr('Hallali'), 'bio', 'or', 'atk', 16, [4, 5, 1], { type: 'curee', part: 2, deux: true }),
   // La Lecture (Aurel) : briser la Fêlure à coup sûr, puis frapper dans la faille
-  c('regard-biais', tr('Regard en biais'), 'reso', 'fer', 'bouclier', 11, [6, 7, 9], { type: 'lecture' }),
+  c('regard-biais', tr('Regard en biais'), 'reso', 'fer', 'bouclier', 13, [6, 7, 9], { type: 'fissure', part: 0.25 }),
   c('lame-doute', tr('Lame de doute'), 'reso', 'fer', 'atk', 13, [7, 8, 6], { type: 'faille', part: 0.5 }),
   c('oeil-lecteur', tr('Œil du Lecteur'), 'reso', 'cuivre', 'atk', 15, [8, 7, 9], { type: 'lecture', zone: true }),
   c('verdict', tr('Verdict'), 'reso', 'argent', 'atk', 15, [6, 8, 7], { type: 'amorce', part: 0.5 }),

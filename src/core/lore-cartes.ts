@@ -75,7 +75,7 @@ export const LORE_CARTES: Record<string, string> = {
   'belier-os': t('Le front s’épaissit, la nuque se soude, et tout le corps devient une porte qui avance. Les piliers des Fondations portent encore la marque de ceux qui ont appris à s’en servir.'),
   'retour-maree': t('La mer recule, recule encore, et tout le monde croit qu’elle a renoncé. Puis elle revient avec tout ce qu’elle a retenu, et repart en laissant la grève nue. Les Génés des quais se battent comme elle.'),
   // Le Chœur
-  'diapason-cristal': t('Un diapason de verre clair qu’on frappe une fois, et qui oblige toutes les empreintes autour de lui à chanter la même note. Les Résonants l’appellent « mettre la salle d’accord ».'),
+  'diapason-cristal': t('Un diapason de verre clair qu’on frappe une fois, juste avant de frapper pour de bon : la note qu’il donne porte le coup suivant. Les Résonants appellent ça « donner le la ».'),
   'voix-basse': t('Une seule note, tenue très longtemps, si grave qu’on la sent dans les os avant de l’entendre. Seule, elle intrigue. Reprise par d’autres, elle fait céder les murs.'),
   // les cartes d'origine du Récit d'Ilka (11 novembre 2026)
   'cle-des-pompes': t('La clé de la station des pompes, que sa mère lui a passée autour du cou. Ilka ne l’a jamais rendue. Tant qu’on entend les pompes, on dort tranquille.'),

@@ -11,7 +11,7 @@ Robot relancé sur les 90 cartes (cuivre et argent, ennemis ×0,88), croisé ave
 - trop fortes, force/soin baissés : Souffle du wyrm 22→19, Pollen d'ambre 6→5, Queue-massue 11→9, Floraison des Fondations 13→11, Cœur de reprise 28→25, Gant à arc 13→12, Noyau instable 38→31, Mue totale 16→14, Poings-pistons 12→10, Lamproie des piliers 11→10 (ces deux dernières restent vers +9 : c'est leur effet qui les porte) ;
 - trop faibles, relevées : Nuée chorale 20→22, Bracelet de déviation 6→7, Pistolet à faisceau 5→6, Grappin à câble 8→12, Sablier inversé 8→10, Servo-bras 8→12, Cœur d'améthyste 7→9, Hallali 14→16 ;
 - Vérin hydraulique (bouclier 12 → attaque 12) et Exo de chantier (bouclier 38 → attaque 20, Flux +2 → +1) : plus de bouclier ne les relevait pas, en attaque ils rentrent dans le rang (+1 et +3) ;
-- restent faibles, à repenser : Diapason de cristal (−18), Regard en biais (−19), Bobine de récupération (−13) — boucliers chez les Résonants/Augmentés ; en attaque ils copieraient Éclat qui chante, Mèche d'or et Pistolet à faisceau (interdit par la refonte des quasi-doublons). Cristal d'écho (+8) : sa Fréquence libre le porte, la force n'y change rien.
+- nouvel effet (13 nov.) pour trois boucliers qui restaient faibles : Bobine de récupération bouclier 11, Désarmer 30 % (−13 → −4) ; Regard en biais bouclier 13, Fissure 25 % (−19 → −5) ; Diapason de cristal, renommé Note de cristal, bouclier 16, Amorce 50 % (−18 → −3). En attaque, ils auraient copié Éclat qui chante, Mèche d'or et Pistolet à faisceau ; le Rapt est réservé aux exclusives ; un Diapason en attaque, même en cuivre, ferait un « escalier » avec Éclat qui chante. Cristal d'écho (+8) : sa Fréquence libre le porte, la force n'y change rien.
 
 Le tableau ci-dessous est celui d'avant ces réglages.
 
