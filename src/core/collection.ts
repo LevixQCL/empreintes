@@ -45,7 +45,23 @@ export const COLLECTION = {
   promotion: {
     copies: 3,
     rapport: 3,
-    cristaux: { fer: 0, cuivre: 60, argent: 150, or: 400, nacre: 1000 } as Record<Rarete, number>,
+    cristaux: { fer: 0, cuivre: 60, argent: 150, or: 400, nacre: 2500 } as Record<Rarete, number>,
+  },
+  /**
+   * La Perle de nacre (13 novembre 2026, Bryan : « garder du fun, de la découverte, mais ne pas banaliser » ; « ça donne un vrai
+   * choix sur quelle carte monter ») : la promotion de l'or à la nacre demande 5 copies et 1 Perle. Avant, la moitié de la
+   * collection finissait en nacre (49 nacres au jour 120 d'un joueur occasionnel, 93 % par promotion) ; avec la Perle, 15.
+   * Les Perles : les quais à nacre de la Flèche, la première victoire de −9 et de −10, un lundi sur deux une fois −10 vaincue,
+   * la fonte de copies en or à la Forge, le pack Ossyra et le lot des trois Récits (une chacun).
+   */
+  perle: {
+    copiesNacre: 5,
+    /** fondre 8 copies en or (prises sur toutes les cartes en or, celles de l'escouade gardent les leurs) et des cristaux */
+    fonte: { copies: 8, cristaux: 2000 },
+    /** une Perle tous les deux lundis, une fois la Strate −10 vaincue */
+    semaines: 2,
+    /** la première victoire du gardien de ces Strates donne une Perle */
+    strates: [9, 10] as readonly number[],
   },
   /** composants rendus par le recyclage d'un doublon */
   recyclage: { fer: 5, cuivre: 15, argent: 40, or: 100, nacre: 250 } as Record<Rarete, number>,
@@ -59,7 +75,7 @@ export const COLLECTION = {
     nacre: { composants: 0, eclats: 12, minutes: 480, energie: 1330 },
   } as Record<Rarete, { composants: number; eclats: number; minutes: number; energie: number }>,
   /** garanties : après N cartes sans cette rareté (ou mieux), la suivante l'est forcément */
-  garanties: { argent: 40, or: 150, nacre: 600 },
+  garanties: { argent: 40, or: 150, nacre: 400 },
 } as const;
 
 /** Chances de rareté selon la profondeur (en %) */
@@ -107,6 +123,8 @@ export interface EtatCollection {
   actes?: { fin?: string };
   /** ce qui, dans la partie, désigne une carte par sa clé (pour la renommer quand elle change de métal) */
   porteurs?: Record<string, { modules: string[] } | undefined>;
+  /** les Perles de nacre en réserve (13 novembre 2026) */
+  perles?: number;
   vecu?: Record<string, unknown>;
   vus?: { cartes: string[] };
 }
@@ -275,16 +293,21 @@ export function freinPromotion(e: EtatCollection, id: string): string | null {
   const qui = porteurDeLaCarte(e, id);
   if (!qui) return tr('Confie-la à un Porteur : elle évolue avec lui.');
   if (NIVEAU_METAL[vers] > qui.niveau) return tr`Pour passer en ${NOMS_RARETE[vers].toLowerCase()}, son Porteur doit être niveau ${NIVEAU_METAL[vers]} (${porteurDef(qui.id).nom} est niveau ${qui.niveau}).`;
-  if (c.doublons < COLLECTION.promotion.copies) return tr`Il faut ${COLLECTION.promotion.copies} copies.`;
+  const copies = copiesPromotion(vers);
+  if (c.doublons < copies) return tr`Il faut ${copies} copies.`;
+  if (vers === 'nacre' && (e.perles ?? 0) < 1) return tr('Il faut une Perle de nacre.');
   return null;
 }
+
+/** Les copies qu'il faut pour passer à ce métal : 5 pour la nacre (avec une Perle), 3 sinon */
+export const copiesPromotion = (vers: Rarete): number => (vers === 'nacre' ? COLLECTION.perle.copiesNacre : COLLECTION.promotion.copies);
 
 /** Les copies qu'il faut pour le prochain pas d'une carte : le niveau suivant, ou la promotion au niveau maximum (null : plus rien) */
 export function copiesRequises(id: string, niveau: number): { n: number; promotion: boolean } | null {
   const d = doublonsRequis(id, niveau);
   if (d !== null) return { n: d, promotion: false };
   if (!monteAvecCopies(id) || !metalSuivant(moduleDef(id).rarete)) return null;
-  return { n: COLLECTION.promotion.copies, promotion: true };
+  return { n: copiesPromotion(metalSuivant(moduleDef(id).rarete)!), promotion: true };
 }
 
 /** Promeut une carte au métal suivant, au niveau 1 (le coût en cristaux se paie à côté) ; renvoie la nouvelle clé */
@@ -292,7 +315,7 @@ export function promouvoirCarte(e: EtatCollection, id: string): string {
   const vers = metalSuivant(moduleDef(id).rarete)!;
   const nouvelle = carteId(moduleDe(id), vers);
   const c = e.collection[id]!;
-  c.doublons = arrondi((c.doublons - COLLECTION.promotion.copies) * valeurCopie(moduleDef(id).rarete, vers));
+  c.doublons = arrondi((c.doublons - copiesPromotion(vers)) * valeurCopie(moduleDef(id).rarete, vers));
   c.niveau = COLLECTION.niveauDepart[vers];
   renommerCarte(e, id, nouvelle);
   return nouvelle;

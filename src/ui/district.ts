@@ -16,10 +16,10 @@ import {
   COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, gardienPourTour, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, plafondEntrainement, raffinageParHeure, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
-import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, album, carteNiveau, composantsNiveau, doublonsRequis, copiesRequises, freinPromotion, metalSuivant, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
+import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, album, carteNiveau, composantsNiveau, copiesPromotion, doublonsRequis, copiesRequises, freinPromotion, metalSuivant, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
-import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront, finCreuse, gainCreuseurs } from '../core/jeu';
+import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront, finCreuse, gainCreuseurs, copiesAFondre } from '../core/jeu';
 import { bassesOuvertes, CONFIEE, REMUEE, apercuConfiee, confieesOuvertes, flecheOuverte, peutConfier, strateRemuee } from '../core/jeu';
 import { particularite } from '../core/strates';
 import { FAMILLES, FRAGMENTS } from '../core/fragments';
@@ -822,6 +822,7 @@ function blocForge(e: EcranDistrict): string {
     h += `<div class="fg-etabli vide"><span class="fg-etabli-face" aria-hidden="true">${ICO.marteau}</span><div><strong>${forgeron ? tr('L’établi est libre') : tr('Personne à la Forge')}</strong>`
       + `<small>${forgeron ? tr('Choisis une carte : elle revient en doublon, pour la faire monter.') : tr('Poste d’abord un Porteur pour refabriquer une carte.')}</small></div></div>`;
   }
+  h += blocPerles(j);
   // les cartes : celles qui peuvent encore monter, les plus proches d'abord (moins de doublons manquants, puis moins chères)
   const ordre = (m: ModuleDef) => RARETES.indexOf(m.rarete);
   const cartes = Object.keys(j.collection).map((k) => ({ m: moduleDef(k), c: j.collection[k]! })).filter((x) => !x.m.legs && !x.m.origine)
@@ -860,6 +861,31 @@ function blocForge(e: EcranDistrict): string {
   }
   if (!toutes && utiles.length > FORGE_PROCHES) h += `<button type="button" class="btn sec fg-plus" data-action="forge-vue" data-id="toutes">${tr`Voir les ${cartes.length} cartes`}</button>`;
   return h + `</section>`;
+}
+
+/**
+ * Les Perles de nacre à la Forge (13 novembre 2026, Bryan : « ça donne un vrai choix sur quelle carte monter ») : le stock,
+ * les cartes en or prêtes qui n'attendent plus qu'une Perle (le choix, pas un mur), et la fonte des copies en or en trop.
+ */
+function blocPerles(j: Jeu): string {
+  const enOr = Object.keys(j.collection).filter((k) => moduleDef(k).rarete === 'or');
+  if (!enOr.length && !j.perles) return '';
+  const perles = j.perles ?? 0;
+  const pretes = enOr.filter((k) => { const f = freinPromotion({ ...j, perles: 1 }, k); return !f; });
+  const { copies, cristaux } = COLLECTION.perle.fonte;
+  const aFondre = copiesAFondre(j).reduce((s, x) => s + x.n, 0);
+  const peutFondre = aFondre >= copies && j.energie >= cristaux;
+  const choix = pretes.length
+    ? (perles ? tr`Choisis la carte qui passe en nacre : ${pretes.length} carte${pretes.length > 1 ? 's sont prêtes' : ' est prête'}.`
+      : tr`${pretes.length} carte${pretes.length > 1 ? 's' : ''} en or ${pretes.length > 1 ? 'attendent' : 'attend'} une Perle pour passer en nacre.`)
+    : tr('Une carte en or au niveau 3, avec 5 copies, passe en nacre avec une Perle.');
+  return `<div class="fg-perles"><span class="fg-perles-gemme" aria-hidden="true">${gemme('nacre')}</span>`
+    + `<div><small>${tr`Perles de nacre`}</small><strong>${perles ? tr`${perles} Perle${perles > 1 ? 's' : ''}` : tr('Aucune Perle')}</strong>`
+    + `<small>${choix}</small>`
+    + `<small class="fg-perles-sources">${tr('Elles viennent des quais à nacre de la Flèche, des gardiens de −9 et −10, et un lundi sur deux une fois −10 vaincue.')}</small>`
+    + `<button type="button" class="btn sec" data-action="fondre-perle"${peutFondre ? '' : ' disabled'}>${ICO.recycler}${tr`Fondre ${copies} copies en or · ${prix('energie', cristaux, j.energie >= cristaux)}`}</button>`
+    + `<small>${tr`Copies en or à fondre : ${Math.floor(aFondre)}, il en faut ${copies} par Perle. Les cartes de l’escouade gardent les 5 de leur passage en nacre.`}</small>`
+    + `</div></div>`;
 }
 
 /** Le nom de l'onglet du quotidien, selon le bâtiment (12 novembre 2026) */
@@ -1711,8 +1737,10 @@ function blocPromotion(j: Jeu, cle: string): string {
   const m = moduleDef(cle), c = j.collection[cle]!;
   const vers = metalSuivant(m.rarete)!;
   const apres = moduleDef(carteId(moduleDe(cle), vers));
-  const besoin = COLLECTION.promotion.copies, cout = COLLECTION.promotion.cristaux[vers];
+  const besoin = copiesPromotion(vers), cout = COLLECTION.promotion.cristaux[vers];
   const frein = freinPromotion(j, cle);
+  // la nacre demande aussi une Perle (13 novembre 2026) : elle s'affiche dans le prix
+  const perle = vers === 'nacre' ? ` · ${gemme('nacre')}${tr`1 Perle (tu en as ${j.perles ?? 0})`}` : '';
   const manqueC = Math.max(0, cout - j.energie);
   const nom = NOMS_RARETE[vers].toLowerCase();
   const etat = frein && c.doublons >= besoin ? echap(frein)
@@ -1722,7 +1750,7 @@ function blocPromotion(j: Jeu, cle: string): string {
   const f1 = carteNiveau(m, c.niveau).v, f2 = carteNiveau(apres, 1).v;
   return `<div class="progression">${pastillesCopies(c.doublons, besoin, COULEUR_RARETE[vers], 'grandes')}<span class="chiffre">${tr`${Math.floor(c.doublons + 1e-6)} copie${c.doublons >= 2 ? 's' : ''} sur ${besoin}`}</span></div>`
     + `<p class="fc-etat${pret ? ' or' : ''}">${etat} <span>${tr`En ${nom} : force ${f1} →`} <b>${f2}</b>${apres.f.length > m.f.length ? tr`, une Fréquence de plus` : ''}${tr`, puis de nouveau 3 niveaux`}.</span></p>`
-    + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="promouvoir" data-module="${cle}"${pret ? '' : ' disabled'}>${ICO.monter}${tr`Passer en ${nom} · ${prix('energie', cout, j.energie >= cout)}`}</button>`
+    + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="promouvoir" data-module="${cle}"${pret ? '' : ' disabled'}>${ICO.monter}${tr`Passer en ${nom} · ${prix('energie', cout, j.energie >= cout)}`}${perle}</button>`
     + (c.doublons >= besoin + 1 ? `<button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}${tr`Recycler 1 · +${COLLECTION.recyclage[m.rarete]} minerai`}</button>` : '')
     + `</div>`;
 }

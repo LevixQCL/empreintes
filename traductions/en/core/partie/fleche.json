@@ -38,6 +38,10 @@
    "en": "The squad challenges {0}, guardian of quay {1}."
   },
   {
+   "fr": "quai {0} de la Flèche",
+   "en": "quay {0} of the Spire"
+  },
+  {
    "fr": "{0} passe au niveau {1} !",
    "en": "{0} reaches level {1}!"
   },

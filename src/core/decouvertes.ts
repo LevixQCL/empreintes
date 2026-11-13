@@ -141,7 +141,7 @@ export function decouvertesExploration(x: Expedition, quetes: Record<number, num
     // le Fond (strates.ts, FOND) : expliqué une fois, à la première descente sous −10
     r.push({ id: 'fond', sur: tr`STRATE −${x.strate} · LE FOND`, titre: tr('Le Fond change chaque semaine'), ico: 'strate',
       texte: tr`Sous −10, les Strates n’ont plus de façon d’être à elles. Chaque semaine, chacune emprunte celle d’une Strate d’au-dessus, et en change le lundi.${p ? tr` Ici, cette semaine : ${p.nom.charAt(0).toLowerCase()}${p.nom.slice(1)} (Strate −${m}).` : ''}`,
-      conseil: tr`Le gardien du Fond paie mieux : un choix de cartes en argent et ${FOND.eclatsGardien} Éclats de plus à chaque victoire, une carte en or la première fois.` });
+      conseil: tr`Le gardien du Fond paie mieux : un choix de cartes en or et ${FOND.eclatsGardien} Éclats de plus à chaque victoire. La première fois, une carte en or, et à −11 et −15 une nacre au choix ; −11 donne aussi une Perle de nacre.` });
   } else if (x.remuee) {
     // la Strate remuée (descentes.ts, REMUEE) : expliquée une fois, à la première sortie dans une Strate remuée
     r.push({ id: 'remuee', sur: tr`STRATE −${x.strate} · REMUÉE`, titre: tr('La roche a bougé cette nuit'), ico: 'strate',

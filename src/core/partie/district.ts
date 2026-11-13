@@ -311,7 +311,7 @@ export function monter(j: Jeu, moduleId: string): Resultat {
   return { ok: true };
 }
 
-/** Promeut une carte au niveau maximum vers le métal suivant (12 novembre 2026) : 3 copies et des cristaux */
+/** Promeut une carte au niveau maximum vers le métal suivant (12 novembre 2026) : 3 copies et des cristaux ; la nacre : 5 copies et une Perle */
 export function promouvoir(j: Jeu, moduleId: string): Resultat & { cle?: string } {
   const frein = freinPromotion(j, moduleId);
   if (frein) return non(frein);
@@ -320,6 +320,8 @@ export function promouvoir(j: Jeu, moduleId: string): Resultat & { cle?: string 
   if (j.energie < cout) return non(tr`Il faut ${cout} cristaux.`);
   if (greffesDe(j, moduleId).some((id) => enExpedition(j, id))) return non(tr('Cette carte est en expédition.'));
   j.energie -= cout;
+  // la nacre consomme une Perle (13 novembre 2026, perles.ts)
+  if (vers === 'nacre') j.perles = (j.perles ?? 0) - 1;
   const nouvelle = promouvoirCarte(j, moduleId);
   log(j, tr`${moduleDef(nouvelle).nom} passe en ${NOMS_RARETE[vers].toLowerCase()}.`);
   return { ok: true, cle: nouvelle };

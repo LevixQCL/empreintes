@@ -12,6 +12,7 @@ import { recompenserFilleul } from './parrainage';
 import { retourDeContrat } from './marees';
 import { avancerBasses } from './basses';
 import { retourConfiee } from './confiees';
+import { perlesDuLundi } from './perles';
 import { t as tr } from '../i18n';
 
 /** Rattrape le temps écoulé : énergie, soins, Forge. Rien n'est perdu ni puni pendant l'absence. */
@@ -76,6 +77,8 @@ export function tick(j: Jeu, now: number): string[] {
   // la fouille confiée (12 novembre 2026) : l'escouade rentre, même jeu fermé
   if (j.confiee && now >= j.confiee.fin) nouvelles.push(retourConfiee(j));
   if (semaineDe(now) > j.epreuves.semaine) j.epreuves = { semaine: semaineDe(now), faites: [] };
+  const perle = perlesDuLundi(j, now);
+  if (perle) nouvelles.push(perle);
 
   // un objectif du jour de plus en réserve chaque jour, 3 au plus : rien ne se perd pendant une courte absence
   const jour = jourDe(now);

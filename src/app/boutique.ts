@@ -2,7 +2,8 @@
 // Les droits viennent du compte (achats/{uid}, écrit par le serveur) ; une copie reste sur l'appareil pour jouer hors ligne.
 // Tant que la vente n'est pas ouverte (src/net/vente.ts), rien de tout cela ne se voit : les récits restent en aperçu.
 
-import { aRecit, PRODUITS } from '../core/jeu';
+import { aRecit, perleDesRecits, PRODUITS } from '../core/jeu';
+import { sauver } from './synchro';
 import { langue, t } from '../core/i18n';
 import { VENTE_OUVERTE, venteEssai } from '../net/vente';
 import type { Boutique } from '../ui/coquille';
@@ -89,6 +90,11 @@ export async function chargerAchats(uid: string | null): Promise<void> {
       else await new Promise((r) => setTimeout(r, 2500));
     }
   } catch { /* hors ligne : la copie de l'appareil suffit */ }
+  // le lot des trois Récits donne une Perle de nacre, une seule fois (13 novembre 2026)
+  if (['ilka', 'doran', 'vela'].every((r) => aRecit(boutique.achats, r))) {
+    const perle = perleDesRecits(app.jeu);
+    if (perle) { D.message = perle; sauver(); }
+  }
   if (app.mode === 'district') afficher();
 }
 

@@ -19,6 +19,7 @@ import { noterCombat, noterExpedition } from './stats';
 import { noterOrigine, noterVecu } from './vecu';
 import { LIEUX, RECIT_BON, RECIT_MAUVAIS, RECIT_NEUTRE, affinite, lieuDef, type Affinite, type LieuDef, type SpecialiteLieu } from '../lieux';
 import { t as tr } from '../i18n';
+import { gagnerPerles } from './perles';
 
 // ---------- Expéditions ----------
 
@@ -896,7 +897,7 @@ export function remonter(j: Jeu): Retour {
     // le gardien est généreux (24 octobre 2026, Bryan : « toujours des cartes fer, on est un peu radin ») :
     // à partir de la Strate −3, la première des trois cartes est au moins en cuivre
     // le gardien éveillé d'une Strate déjà vaincue (explorer.ts) monte d'un cran : cuivre, argent dès −3, or à −9
-    // le gardien d'une Strate du Fond (strates.ts, FOND) paie en Éclats et en cartes : un choix en argent au moins, et des Éclats
+    // le gardien d'une Strate du Fond (strates.ts, FOND) paie en Éclats et en cartes : un choix au métal du dessus (l'or), et des Éclats
     const fond = estFond(x.strate);
     j.choix.push({ source: 'boss', options: tirerChoix(j, x.strate, x.eveille ? auMoins(metalEveille(x.strate), metalDessus(x.strate)) : metalDessus(x.strate), undefined, porteursPresents(j)) });
     eclats += (x.strate >= 5 ? 2 : 1) + (j.actes.chambre === 'orseve' ? 1 : 0) + (x.eveille ? EXPLORER.eveille.eclats : 0) + (fond ? FOND.eclatsGardien : 0);
@@ -914,8 +915,12 @@ export function remonter(j: Jeu): Retour {
     // dans les Seuils, les abris des années 2060 rendent deux papiers par Strate
     if (x.strate <= 3) ajouterFragment(j);
     j.energie += 20; // déjà taillés : une récompense, pas du brut (9 novembre 2026)
-    // le premier gardien vaincu d'une Strate du Fond laisse une carte en or (strates.ts, FOND)
-    cartes.push(tirerTrouvaille(j, x.strate, estFond(x.strate) ? 'or' : metalTranche(x.strate)));
+    // le premier gardien vaincu d'une Strate du Fond laisse une carte en or (strates.ts, FOND) ; ceux de −11 et −15 (le pack Ossyra),
+    // une nacre au choix parmi les cartes des Porteurs présents, sans tirage payant (13 novembre 2026)
+    if (FOND.nacreAuChoix.includes(x.strate)) j.choix.push({ source: 'boss', options: tirerChoix(j, x.strate, 'nacre', undefined, porteursPresents(j)) });
+    else cartes.push(tirerTrouvaille(j, x.strate, estFond(x.strate) ? 'or' : metalTranche(x.strate)));
+    // la Perle de nacre (perles.ts) : la première victoire de −9 et de −10, et l'entrée dans le Fond (−11)
+    if (COLLECTION.perle.strates.includes(x.strate) || x.strate === FOND.perleA) gagnerPerles(j, 1, tr`gardien de la Strate −${x.strate}`);
     eclats += 2;
   }
   // la Strate remuée (12 novembre 2026) : la première sortie réussie du jour y laisse une prime, hors fouille facile

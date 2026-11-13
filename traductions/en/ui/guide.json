@@ -454,6 +454,18 @@
    "en": "to the next, stronger metal, where it starts again at level 1. Depth opens the metals: silver at Stratum −3, gold at −7, nacre below −10."
   },
   {
+   "fr": "La nacre est rare : passer de l’or à la nacre demande {0} copies et une",
+   "en": "Nacre is rare: going from gold to nacre takes {0} copies and a"
+  },
+  {
+   "fr": "Perle de nacre",
+   "en": "Nacre Pearl"
+  },
+  {
+   "fr": ". Les Perles viennent des quais à nacre de la Flèche, des gardiens de −9 et −10, d’un lundi sur deux une fois −10 vaincue, et de la Forge, qui fond {0} copies en or en trop en une Perle. À toi de choisir quelle carte la mérite.",
+   "en": ". Pearls come from the Spire’s nacre quays, from the guardians of −9 and −10, from every other Monday once −10 is beaten, and from the Forge, which melts {0} spare gold copies into a Pearl. You choose which card deserves it."
+  },
+  {
    "fr": "Aucune copie n’est perdue : une copie d’un métal en dessous compte pour un tiers, et trouver la carte dans un meilleur métal l’y fait passer en gardant son niveau. Au niveau {0}, la carte est",
    "en": "No copy is ever wasted: a copy from a lower metal counts as a third, and finding the card in a better metal moves it there, keeping its level. At level {0}, the card is"
   },

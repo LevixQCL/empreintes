@@ -1,0 +1,29 @@
+{
+ "source": "src/core/partie/perles.ts",
+ "entrees": [
+  {
+   "fr": "{0} Perles de nacre ({1}) : à la Forge, chacune fait passer une carte en or en nacre.",
+   "en": "{0} Nacre Pearls ({1}): at the Forge, each one turns a gold card into nacre."
+  },
+  {
+   "fr": "Une Perle de nacre ({0}) : à la Forge, elle fait passer une carte en or en nacre.",
+   "en": "A Nacre Pearl ({0}): at the Forge, it turns a gold card into nacre."
+  },
+  {
+   "fr": "le lundi des Perles",
+   "en": "Pearl Monday"
+  },
+  {
+   "fr": "Il faut {0} copies en or à fondre.",
+   "en": "You need {0} gold copies to melt."
+  },
+  {
+   "fr": "{0} copies en or fondues",
+   "en": "{0} gold copies melted"
+  },
+  {
+   "fr": "les trois Récits des origines",
+   "en": "the three Origin Tales"
+  }
+ ]
+}

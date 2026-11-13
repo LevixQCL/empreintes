@@ -722,6 +722,42 @@
    "en": "See all {0} cards"
   },
   {
+   "fr": "Choisis la carte qui passe en nacre : {0} carte{1}.",
+   "en": "Choose the card that goes nacre: {0} card{1}."
+  },
+  {
+   "fr": "{0} carte{1} en or {2} une Perle pour passer en nacre.",
+   "en": "{0} gold card{1} {2} a Pearl to go nacre."
+  },
+  {
+   "fr": "Une carte en or au niveau 3, avec 5 copies, passe en nacre avec une Perle.",
+   "en": "A gold card at level 3 with 5 copies goes nacre with a Pearl."
+  },
+  {
+   "fr": "Perles de nacre",
+   "en": "Nacre Pearls"
+  },
+  {
+   "fr": "{0} Perle{1}",
+   "en": "{0} Pearl{1}"
+  },
+  {
+   "fr": "Aucune Perle",
+   "en": "No Pearls"
+  },
+  {
+   "fr": "Elles viennent des quais à nacre de la Flèche, des gardiens de −9 et −10, et un lundi sur deux une fois −10 vaincue.",
+   "en": "They come from the Spire’s nacre quays, from the guardians of −9 and −10, and every other Monday once −10 is beaten."
+  },
+  {
+   "fr": "Fondre {0} copies en or · {1}",
+   "en": "Melt {0} gold copies · {1}"
+  },
+  {
+   "fr": "Copies en or à fondre : {0}, il en faut {1} par Perle. Les cartes de l’escouade gardent les 5 de leur passage en nacre.",
+   "en": "Gold copies to melt: {0}, {1} needed per Pearl. Squad cards keep the 5 they need to go nacre."
+  },
+  {
    "fr": "Salle d’entraînement",
    "en": ""
   },
@@ -1768,6 +1804,10 @@
   {
    "fr": ", au Râtelier de l’escouade {0}",
    "en": ", in squad {0}’s Rack"
+  },
+  {
+   "fr": "1 Perle (tu en as {0})",
+   "en": "1 Pearl (you have {0})"
   },
   {
    "fr": "{0} copie{1}",

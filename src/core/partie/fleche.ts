@@ -27,6 +27,7 @@ import { escouadePrete, payerRatelier, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 import { PILLAGE, remonter as remonterPillage, type Garnison } from './pillages';
 import { t as tr } from '../i18n';
+import { gagnerPerles } from './perles';
 
 export { FLECHE };
 
@@ -41,8 +42,11 @@ export const ASCENSION = {
   // 9,0 au jour 60, 9,7 au jour 90 ; la meilleure possible, nacre niveau 5 et Porteurs niveau 20, vers 11,5). Avec l'ancienne
   // échelle (3,4 à 8,8), on arrivait au quai 64 dès le jour 10 et au sommet vers le jour 60. Au pied 5,5 : l'escouade qui sort
   // de −6. Au sommet 11,5 : la meilleure escouade, bien jouée.
+  // 13 novembre 2026 (Bryan : « le joueur gratuit doit pouvoir finir la Flèche » ; la Perle rend la nacre rare) : à 11,5 personne
+  // n'atteignait le sommet. À 10 (simulé, scripts/fond-fleche.ts) : sommet au jour 63 (assidu) et 129 (occasionnel) en gratuit,
+  // 53 et 143 avec le pack Ossyra ; tout le monde y arrive.
   forcePied: 5.5,
-  forceSommet: 11.5,
+  forceSommet: 10,
   /** les récompenses des quais gravés, une seule fois chacune */
   recompenses: {
     20: { composants: 150, eclats: 3 },
@@ -284,6 +288,8 @@ export function remonterFleche(j: Jeu, now: number): RetourFleche | null {
       // un quai gravé, c'est de la place gagnée sur les îles (30 octobre 2026)
       confier(j, CONFIANCE.quaiGrave, 'fleche', now);
       const metal = carteDuQuai(j, q);
+      // chaque quai à nacre donne aussi une Perle (13 novembre 2026, perles.ts)
+      if (ASCENSION.cartes[q] === 'nacre') gagnerPerles(j, 1, tr`quai ${q} de la Flèche`);
       paliers.push({ quai: q, ...r, ...(metal ? { metal } : {}) });
     }
   } else {

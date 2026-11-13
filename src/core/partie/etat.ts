@@ -384,6 +384,12 @@ export interface Jeu {
   /** la Flèche : le quai atteint, le record, les quais gravés reçus (fleche.ts) ; absente avant la première montée */
   fleche?: import('./fleche').EtatFleche;
   eclats: number;
+  /** les Perles de nacre en réserve (perles.ts, 13 novembre 2026) ; absent avant la première */
+  perles?: number;
+  /** la semaine du dernier lundi des Perles compté (perles.ts) */
+  perleSemaine?: number;
+  /** la Perle du lot des trois Récits a été donnée */
+  perleRecits?: boolean;
   /** les cartes possédées */
   collection: Record<string, CarteCollection>;
   /** ce que chaque carte a vécu : son empreinte (vecu.ts, 28 octobre 2026) ; absent avant le premier combat */
