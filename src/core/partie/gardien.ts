@@ -271,7 +271,7 @@ export function remonter(j: Jeu): Retour & { gardien?: RetourGardien } {
 
 // ---------- La jauge de la ville (lue sur le serveur) et ses paliers ----------
 
-/** Ce que le serveur publie pour la semaine (gardien/{semaine}) */
+/** La jauge de la semaine, additionnée à partir des fiches des directeurs (gardien/{semaine}/directeurs) */
 export interface VilleGardien {
   semaine: number;
   /** PV de la ville, en parts */
@@ -280,8 +280,58 @@ export interface VilleGardien {
   parts: number;
   /** directeurs qui ont frappé */
   frappeurs: number;
-  /** les dernières frappes (pseudo, Strate, parts) */
+  /** les dernières frappes (pseudo, Strate, parts) : réservé au serveur, le jour où il comptera lui-même */
   fil?: { nom: string; strate: number; parts: number }[];
+  /** le classement des dégâts de la semaine (les 10 premiers), et le rang de ce directeur (0 : pas encore frappé) */
+  classement?: LigneClassementGardien[];
+  rang?: number;
+  /** l'uid de ce directeur, pour le retrouver dans le classement */
+  moi?: string;
+}
+
+// ---------- Les fiches des directeurs (13 novembre 2026, sans serveur) ----------
+// Bryan préfère rester sur l'offre gratuite de Firebase tant que le jeu n'a pas pris : pas de Cloud Function, donc chaque
+// directeur écrit lui-même sa fiche de la semaine. firestore.rules en borne le contenu (une frappe de plus à la fois,
+// 3 parts au plus par frappe, pas plus de frappes que de jours écoulés + la réserve) : un tricheur ne dépasse jamais ce
+// qu'un très bon joueur peut faire, et le classement des dégâts le montre aussitôt. Le rejeu des combats (src/serveur)
+// reste prêt pour le jour où le serveur sera publié.
+
+/** La fiche d'un directeur pour la semaine (gardien/{semaine}/directeurs/{uid}) */
+export interface FicheGardien {
+  /** son pseudo s'il l'a rendu public, sinon null (« Un directeur ») */
+  nom: string | null;
+  strate: number;
+  parts: number;
+  frappes: number;
+  meilleure: number;
+  /** l'heure de la dernière frappe comptée : une frappe envoyée deux fois ne compte qu'une fois */
+  dernier: number;
+  maj: number;
+}
+
+/** Une ligne du classement des dégâts */
+export interface LigneClassementGardien { uid: string; nom: string | null; strate: number; parts: number; frappes: number }
+
+/** Combien de frappes un directeur peut avoir jouées cette semaine à cet instant : une par jour écoulé, plus sa réserve */
+export const frappesPermises = (now: number) => jourDe(now) - semaineDe(now) * 7 + GARDIEN_VILLE.reserve;
+
+/** Les PV de la ville : 4 parts par directeur qui a frappé la semaine d'avant, 40 au moins */
+export const pvDeLaVille = (frappeursAvant: number) => Math.max(GARDIEN_VILLE.pvVilleMin, GARDIEN_VILLE.partsParJoueur * Math.max(0, frappeursAvant));
+
+const dixieme = (n: number) => Math.round(n * 10) / 10;
+
+/** La fiche après une frappe, avec les bornes de firestore.rules ; null si elle est déjà comptée, d'une autre semaine ou de trop */
+export function ficheApres(avant: FicheGardien | null, f: Pick<FrappeGardien, 'semaine' | 'le' | 'parts'>, qui: { nom: string | null; strate: number }, now: number): FicheGardien | null {
+  if (f.semaine !== semaineDe(now)) return null;
+  if (avant && f.le <= avant.dernier) return null;
+  const frappes = (avant?.frappes ?? 0) + 1;
+  if (frappes > frappesPermises(now)) return null;
+  const p = dixieme(Math.min(GARDIEN_VILLE.partsMax, Math.max(0, f.parts)));
+  return {
+    nom: qui.nom, strate: Math.max(1, Math.min(200, Math.round(qui.strate))),
+    parts: dixieme((avant?.parts ?? 0) + p), frappes, meilleure: Math.max(avant?.meilleure ?? 0, p),
+    dernier: Math.min(Math.round(f.le), now), maj: now,
+  };
 }
 
 export type RecompensePalier =

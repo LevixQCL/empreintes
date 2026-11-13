@@ -1,25 +1,66 @@
 // Le Gardien de la ville, côté réseau (13 novembre 2026). Chargé à la demande, après compte.ts qui initialise Firebase.
-// - `gardien/{semaine}` : la jauge de la ville (PV, parts, directeurs, fil des dernières frappes), écrite par le serveur seul.
-// - `compterFrappes` : la fonction serveur qui rejoue les combats envoyés et inscrit les parts (functions/gardien.js).
+// Sans serveur (offre gratuite de Firebase) : chaque directeur écrit sa fiche `gardien/{semaine}/directeurs/{uid}`,
+// bornée par firestore.rules, et la jauge de la ville est la somme de toutes les fiches (requêtes d'agrégation :
+// une lecture pour mille fiches). Le classement des dégâts lit les 10 premières fiches.
+// La Cloud Function `compterFrappes` (functions/gardien.js, qui rejoue les combats) attend en réserve.
 
 import { getApp } from 'firebase/app';
-import { doc, getDoc, getFirestore } from 'firebase/firestore';
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import { REGION_FONCTIONS } from './vente';
-import type { FrappeGardien, VilleGardien } from '../core/jeu';
+import { collection, count, doc, getAggregateFromServer, getCountFromServer, getDoc, getDocs, getFirestore, limit, orderBy, query, runTransaction, sum, where } from 'firebase/firestore';
+import { ficheApres, pvDeLaVille, type FicheGardien, type FrappeGardien, type LigneClassementGardien, type VilleGardien } from '../core/jeu';
 
-/** La jauge de la ville pour une semaine (null : personne n'a encore frappé) */
-export async function lireVille(semaine: number): Promise<VilleGardien | null> {
-  const snap = await getDoc(doc(getFirestore(getApp()), 'gardien', String(semaine)));
-  if (!snap.exists()) return null;
-  const d = snap.data() as Partial<VilleGardien>;
-  return { semaine, pv: Number(d.pv) || 40, parts: Number(d.parts) || 0, frappeurs: Number(d.frappeurs) || 0, fil: Array.isArray(d.fil) ? d.fil.slice(0, 12) : [] };
+const db = () => getFirestore(getApp());
+const fiches = (semaine: number) => collection(db(), 'gardien', String(semaine), 'directeurs');
+
+/** Une fiche lue en ligne (les champs manquants valent zéro) */
+function ficheDe(d: Record<string, unknown> | undefined): FicheGardien | null {
+  if (!d) return null;
+  const n = (x: unknown) => (typeof x === 'number' && Number.isFinite(x) ? x : 0);
+  return { nom: typeof d.nom === 'string' ? d.nom : null, strate: n(d.strate), parts: n(d.parts), frappes: n(d.frappes), meilleure: n(d.meilleure), dernier: n(d.dernier), maj: n(d.maj) };
 }
 
-export interface ReponseFrappes { semaine: number; parts: number; acceptees: number; refus: string[]; ville: VilleGardien }
+/** La jauge seule (PV, parts, directeurs) : trois lectures, quel que soit le nombre de directeurs */
+export async function jaugeVille(semaine: number): Promise<VilleGardien> {
+  const [cette, avant] = await Promise.all([
+    getAggregateFromServer(fiches(semaine), { parts: sum('parts'), frappeurs: count() }),
+    getCountFromServer(fiches(semaine - 1)),
+  ]);
+  const a = cette.data();
+  return { semaine, pv: pvDeLaVille(avant.data().count), parts: Math.round((a.parts ?? 0) * 10) / 10, frappeurs: a.frappeurs };
+}
 
-/** Envoie les frappes jouées : le serveur les rejoue et rend ses parts et la jauge de la ville */
-export async function envoyerFrappes(frappes: FrappeGardien[]): Promise<ReponseFrappes> {
-  const f = httpsCallable<{ frappes: FrappeGardien[] }, ReponseFrappes>(getFunctions(getApp(), REGION_FONCTIONS), 'compterFrappes');
-  return (await f({ frappes })).data;
+/** La jauge, le classement des 10 premiers et le rang de ce directeur */
+export async function lireVille(semaine: number, uid: string): Promise<VilleGardien> {
+  const [v, top, moi] = await Promise.all([
+    jaugeVille(semaine),
+    getDocs(query(fiches(semaine), orderBy('parts', 'desc'), limit(10))),
+    getDoc(doc(fiches(semaine), uid)),
+  ]);
+  const classement: LigneClassementGardien[] = top.docs.map((d) => {
+    const f = ficheDe(d.data())!;
+    return { uid: d.id, nom: f.nom, strate: f.strate, parts: f.parts, frappes: f.frappes };
+  });
+  const mienne = ficheDe(moi.data());
+  let rang = 0;
+  if (mienne) {
+    const i = classement.findIndex((l) => l.uid === uid);
+    rang = i >= 0 ? i + 1 : (await getCountFromServer(query(fiches(semaine), where('parts', '>', mienne.parts)))).data().count + 1;
+  }
+  return { ...v, classement, rang, moi: uid };
+}
+
+/** Inscrit une frappe jouée dans la fiche de ce directeur ; rend ses parts de la semaine (null : frappe déjà comptée ou de trop) */
+export async function inscrireFrappe(uid: string, qui: { nom: string | null; strate: number }, frappe: FrappeGardien): Promise<number | null> {
+  const ref = doc(fiches(frappe.semaine), uid);
+  return runTransaction(db(), async (t) => {
+    const avant = ficheDe((await t.get(ref)).data());
+    const apres = ficheApres(avant, frappe, qui, Date.now());
+    if (!apres) return null;
+    t.set(ref, apres);
+    return apres.parts;
+  });
+}
+
+/** Les parts déjà inscrites pour ce directeur (après une frappe refusée ou déjà comptée) */
+export async function mesParts(semaine: number, uid: string): Promise<number> {
+  return ficheDe((await getDoc(doc(fiches(semaine), uid))).data())?.parts ?? 0;
 }

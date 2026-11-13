@@ -39,11 +39,22 @@
 .gv-envoi .ico,.gv-attente .ico{flex:none;width:14px;height:14px;margin-top:2px;color:#CDEFFF}
 
 /* le fil des dernières frappes */
-.gv-fil{display:grid;gap:4px;margin:0 0 14px;padding:0;list-style:none}
-.gv-fil li{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;padding:8px 10px;border-radius:8px;background:rgba(205,239,255,.04);font-size:13.5px}
-.gv-fil li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#E8EEF6}
-.gv-fil li small{font:500 12px/1 var(--mono);color:#93A3B8}
-.gv-fil li b{font:600 13px/1 var(--mono);color:#F2D58C}
+.gv-classement{display:grid;gap:4px;margin:0 0 6px;padding:0;list-style:none}
+.gv-classement li{display:grid;grid-template-columns:26px 1fr auto auto;gap:10px;align-items:center;min-height:38px;padding:6px 10px;
+  border-radius:8px;background:rgba(205,239,255,.04);font-size:13.5px}
+.gv-classement .gv-rang{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font:600 12px/1 var(--mono);color:#93A3B8;
+  box-shadow:inset 0 0 0 1px rgba(205,239,255,.14)}
+.gv-classement li span{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#E8EEF6}
+.gv-classement li span em{flex:none;padding:2px 6px;border-radius:6px;font:600 12px/1 var(--mono);font-style:normal;color:#0B1220;background:#CDEFFF}
+.gv-classement li small{min-width:30px;text-align:right;font:500 12px/1 var(--mono);color:#93A3B8}
+.gv-classement li>b:last-child{min-width:72px;text-align:right}
+.gv-classement li>b:last-child{font:600 13px/1 var(--mono);color:#F2D58C}
+.gv-classement li.podium .gv-rang{color:#0B1220;box-shadow:none}
+.gv-classement li.p1 .gv-rang{background:linear-gradient(160deg,#FBE7B0,#D9A84A)}
+.gv-classement li.p2 .gv-rang{background:linear-gradient(160deg,#EEF4FA,#A9B8C8)}
+.gv-classement li.p3 .gv-rang{background:linear-gradient(160deg,#F2C9A4,#B4754A)}
+.gv-classement li.moi{background:rgba(205,239,255,.09);box-shadow:inset 0 0 0 1px rgba(205,239,255,.32)}
+.gv-classement li.gv-ecart{display:block;min-height:0;padding:0;background:none;text-align:center;color:#93A3B8;letter-spacing:4px}
 
 /* les paliers de la ville */
 .gv-paliers{display:grid;gap:6px;margin:0 0 8px;padding:0;list-style:none}

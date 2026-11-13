@@ -38,6 +38,22 @@
    "en": "The gauge fills with every director’s shares."
   },
   {
+   "fr": "parts",
+   "en": "shares"
+  },
+  {
+   "fr": "part",
+   "en": "share"
+  },
+  {
+   "fr": "Le classement des dégâts",
+   "en": "Damage leaderboard"
+  },
+  {
+   "fr": "Remis à zéro chaque lundi. Une frappe compte au plus 3 parts.",
+   "en": "Resets every Monday. A strike counts for 3 shares at most."
+  },
+  {
    "fr": "10 Éclats",
    "en": "10 Shards"
   },
@@ -108,18 +124,6 @@
   {
    "fr": "Prochaine tentative",
    "en": "Next attempt"
-  },
-  {
-   "fr": "Les dernières frappes",
-   "en": "Latest strikes"
-  },
-  {
-   "fr": "parts",
-   "en": "shares"
-  },
-  {
-   "fr": "part",
-   "en": "share"
   },
   {
    "fr": "1 part, c’est à peu près un combat de gardien de ta Strate : un débutant compte autant qu’un vétéran. On ne peut pas perdre : l’escouade ne prend pas d’Usure.",

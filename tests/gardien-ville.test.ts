@@ -1,7 +1,8 @@
 // Le Gardien de la ville (13 novembre 2026) : la semaine, les tentatives, le combat de 12 tours, et le rejeu à l'identique
 // (c'est ce que fait le serveur pour compter les parts lui-même).
 import { describe, expect, it } from 'vitest';
-import { nouveauJeu, etatGardien, frapperGardien, gardienDeLaSemaine, GARDIEN_VILLE, rejouerGardien, remonter, departValide, combatGardienFini, prochaineTentative, recevoirPaliers, perleDeLaSemaine, reporterPerle } from '../src/core/jeu';
+import { readFileSync } from 'node:fs';
+import { nouveauJeu, etatGardien, frapperGardien, gardienDeLaSemaine, GARDIEN_VILLE, rejouerGardien, remonter, departValide, combatGardienFini, prochaineTentative, recevoirPaliers, perleDeLaSemaine, reporterPerle, ficheApres, frappesPermises, pvDeLaVille } from '../src/core/jeu';
 import { combatNote, type ActionCombat } from '../src/core/partie/gardien';
 import { debutJour, jourDe, semaineDe } from '../src/core/partie/etat';
 import type { CombatEtat } from '../src/core/types';
@@ -91,5 +92,43 @@ describe('Le Gardien de la ville', () => {
     etatGardien(k, LUNDI);
     reporterPerle(k, 2 * 500, false);
     expect(perleDeLaSemaine(k, 2 * 500 + 1)).toBe(true);
+  });
+});
+
+// 13 novembre 2026 : sans serveur, chaque directeur écrit sa fiche ; ficheApres suit les bornes de firestore.rules
+describe('La fiche du Gardien écrite par le directeur (offre gratuite de Firebase)', () => {
+  const lundi = debutJour(semaineDe(Date.UTC(2026, 10, 16, 12)) * 7) + 3_600_000;
+  const qui = { nom: 'Ilka', strate: 5 };
+  const frappe = (le: number, parts: number) => ({ semaine: semaineDe(le), le, parts });
+
+  it('une frappe de plus à la fois, 3 parts au plus, une frappe déjà comptée ne recompte pas', () => {
+    const a = ficheApres(null, frappe(lundi, 9), qui, lundi + 1000)!;
+    expect(a).toMatchObject({ frappes: 1, parts: 3, meilleure: 3, dernier: lundi });
+    expect(ficheApres(a, frappe(lundi, 1), qui, lundi + 2000)).toBeNull();
+    const b = ficheApres(a, frappe(lundi + 60_000, 1.25), qui, lundi + 70_000)!;
+    expect(b).toMatchObject({ frappes: 2, parts: 4.3, meilleure: 3 });
+  });
+
+  it('pas plus de frappes que de jours écoulés + la réserve, et seulement la semaine en cours', () => {
+    let f = null as ReturnType<typeof ficheApres>;
+    for (let i = 0; i < GARDIEN_VILLE.reserve; i++) f = ficheApres(f, frappe(lundi + i * 1000, 1), qui, lundi + 10_000);
+    expect(f!.frappes).toBe(3);
+    expect(frappesPermises(lundi)).toBe(3);
+    expect(ficheApres(f, frappe(lundi + 5000, 1), qui, lundi + 10_000)).toBeNull();
+    expect(ficheApres(f, frappe(lundi + 86_400_000, 1), qui, lundi + 86_400_000)!.frappes).toBe(4);
+    expect(ficheApres(null, frappe(lundi - 7 * 86_400_000, 1), qui, lundi)).toBeNull();
+  });
+
+  it('les PV de la ville : 4 parts par directeur de la semaine d’avant, 40 au moins', () => {
+    expect(pvDeLaVille(0)).toBe(40);
+    expect(pvDeLaVille(25)).toBe(100);
+  });
+
+  it('firestore.rules garde les mêmes bornes (3 parts, réserve de 3, jour du jeu)', () => {
+    const regles = readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8');
+    expect(GARDIEN_VILLE.partsMax).toBe(3);
+    expect(regles).toContain(`request.time.toMillis() - ${Date.UTC(2026, 0, 5, 3)}`);
+    expect(regles).toContain(`jourJeu() - int(jourJeu() / 7) * 7 + ${GARDIEN_VILLE.reserve}`);
+    expect(regles).toContain('request.resource.data.parts <= resource.data.parts + 3.0001');
   });
 });

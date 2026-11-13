@@ -2,8 +2,8 @@
  "source": "src/app/ville.ts",
  "entrees": [
   {
-   "fr": "La ville n’a pas compté ta frappe : {0}",
-   "en": "The city did not count your strike: {0}"
+   "fr": "La ville n’a pas pu compter ta frappe : vérifie l’heure de ton téléphone.",
+   "en": "The city could not count your strike: check your phone’s clock."
   },
   {
    "fr": "La ville a repoussé le Gardien à {0} % : ",

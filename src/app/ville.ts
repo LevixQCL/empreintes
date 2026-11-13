@@ -1,5 +1,5 @@
-// Le Gardien de la ville en ligne (13 novembre 2026) : envoyer les frappes jouées (le serveur les rejoue et compte les parts),
-// lire la jauge de la ville, recevoir les paliers atteints. Hors ligne, tout échoue sans bruit : les frappes attendent
+// Le Gardien de la ville en ligne (13 novembre 2026) : inscrire les frappes jouées dans la fiche du directeur,
+// lire la jauge de la ville et le classement des dégâts (au plus toutes les 5 minutes), recevoir les paliers atteints. Hors ligne, tout échoue sans bruit : les frappes attendent
 // dans la partie (gardienVille.aEnvoyer) et partent au prochain passage.
 
 import * as J from '../core/jeu';
@@ -17,7 +17,7 @@ let enCours: Promise<void> | null = null;
 /** la semaine d'avant, déjà réglée pour la Perle (une seule lecture par semaine) */
 let reglee = -1;
 
-/** Envoie les frappes en attente, relit la jauge (au plus toutes les 2 minutes, ou tout de suite si `force`), reçoit les paliers */
+/** Inscrit les frappes en attente, relit la jauge (au plus toutes les 5 minutes, ou tout de suite si `force`), reçoit les paliers */
 export function rafraichirVille(force = false): Promise<void> {
   if (!app.compte || !app.uid || !J.gardienOuvert(app.jeu)) return Promise.resolve();
   if (enCours) return enCours;
@@ -26,23 +26,37 @@ export function rafraichirVille(force = false): Promise<void> {
       const n = await reseau();
       const now = Date.now();
       const g = J.etatGardien(app.jeu, now);
-      if (g.aEnvoyer.length) {
-        const envoyees = g.aEnvoyer.length;
-        const r = await n.envoyerFrappes(g.aEnvoyer);
-        if (r.semaine === g.semaine) J.partsComptees(app.jeu, r.semaine, r.parts, envoyees);
-        else g.aEnvoyer = [];
-        D.ville = r.ville;
-        luLe = now;
-        if (r.refus.length && !r.acceptees) D.message = t`La ville n’a pas compté ta frappe : ${r.refus[0]}`;
-      } else if (force || now - luLe > 120_000) {
-        D.ville = await n.lireVille(g.semaine);
+      const uid = app.uid!;
+      // les frappes jouées, une à une (les règles n'acceptent qu'une frappe de plus à la fois)
+      let envoye = false;
+      for (let tour = 0; g.aEnvoyer.length && tour < 10; tour++) {
+        const f = g.aEnvoyer[0]!;
+        const d = app.jeu.directeur;
+        const qui = { nom: d?.public && d.nom ? d.nom : null, strate: Math.max(1, J.strateVaincue(app.jeu)) };
+        let parts: number | null;
+        try {
+          parts = await n.inscrireFrappe(uid, qui, f);
+        } catch (e) {
+          // refusée par les règles (pseudo pas encore réservé, horloge du téléphone très décalée) : sans le pseudo, sinon on l'abandonne
+          if ((e as { code?: string }).code !== 'permission-denied') throw e;
+          try { parts = await n.inscrireFrappe(uid, { ...qui, nom: null }, f); } catch (e2) {
+            if ((e2 as { code?: string }).code !== 'permission-denied') throw e2;
+            parts = null;
+            D.message = t('La ville n’a pas pu compter ta frappe : vérifie l’heure de ton téléphone.');
+          }
+        }
+        J.partsComptees(app.jeu, g.semaine, parts ?? (await n.mesParts(g.semaine, uid)), 1);
+        envoye = true;
+      }
+      if (envoye || force || now - luLe > 300_000) {
+        D.ville = await n.lireVille(g.semaine, uid);
         luLe = now;
       }
       // la semaine d'avant : la Perle due, si la ville n'a pas abattu son Gardien, attend le suivant
       const avant = semaineDe(now) - 1;
       if (reglee !== avant) {
-        const v = await n.lireVille(avant);
-        J.reporterPerle(app.jeu, avant, !!v && v.parts >= v.pv);
+        const v = await n.jaugeVille(avant);
+        J.reporterPerle(app.jeu, avant, v.frappeurs > 0 && v.parts >= v.pv);
         reglee = avant;
       }
       g.enLigne = true;

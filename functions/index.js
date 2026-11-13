@@ -14,8 +14,9 @@ const Stripe = require('stripe');
 const { PRODUITS, retourPermis, droitsNouveaux } = require('./droits');
 
 initializeApp();
-// le Gardien de la ville (13 novembre 2026) : les frappes, rejouées et comptées ici
-exports.compterFrappes = require('./gardien').compterFrappes;
+// le Gardien de la ville (13 novembre 2026) : le rejeu des frappes (./gardien.js) attend en réserve. Tant que le jeu reste
+// sur l'offre gratuite de Firebase, chaque directeur écrit sa fiche lui-même (src/net/gardien.ts, bornée par firestore.rules).
+// Pour le brancher : exports.compterFrappes = require('./gardien').compterFrappes; et revoir les règles de gardien/.
 const db = getFirestore();
 
 const STRIPE_CLE = defineSecret('STRIPE_CLE');

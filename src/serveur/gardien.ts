@@ -4,8 +4,8 @@
 // Le téléphone ne dit jamais combien il a frappé : il envoie de quoi rejouer le combat, et le serveur compte lui-même.
 
 import { estJeuValide } from '../core/partie/nouvelle';
-import { semaineDe, jourDe, debutJour, strateVaincue, type Jeu } from '../core/partie/etat';
-import { GARDIEN_VILLE, departValide, rejouerGardien, type FrappeGardien } from '../core/partie/gardien';
+import { semaineDe, debutJour, strateVaincue, type Jeu } from '../core/partie/etat';
+import { departValide, frappesPermises, pvDeLaVille, rejouerGardien, type FrappeGardien } from '../core/partie/gardien';
 
 /** Ce que le serveur garde pour un directeur, la semaine en cours (gardien/{semaine}/directeurs/{uid}) */
 export interface FicheDirecteur {
@@ -39,11 +39,7 @@ export function lirePartie(texte: unknown): Jeu | null {
   }
 }
 
-/** Combien de frappes ce directeur peut avoir jouées cette semaine à cet instant : une par jour écoulé, plus sa réserve (3) */
-export const frappesPermises = (now: number) => {
-  const lundi = semaineDe(now) * 7;
-  return jourDe(now) - lundi + GARDIEN_VILLE.reserve;
-};
+export { frappesPermises };
 
 /** Compte les frappes envoyées par un directeur : rejeu, vérification du départ contre sa sauvegarde, doublons, plafonds */
 export function compterFrappes(partie: Jeu, frappes: unknown, fiche: FicheDirecteur | null, now: number): BilanFrappes {
@@ -78,4 +74,4 @@ export function compterFrappes(partie: Jeu, frappes: unknown, fiche: FicheDirect
 /** Les PV de la ville pour une nouvelle semaine : 4 parts par directeur qui a frappé la semaine d'avant, 40 au moins */
 export { semaineDe };
 
-export const pvVille = (frappeursAvant: number) => Math.max(GARDIEN_VILLE.pvVilleMin, GARDIEN_VILLE.partsParJoueur * Math.max(0, frappeursAvant));
+export const pvVille = pvDeLaVille;
