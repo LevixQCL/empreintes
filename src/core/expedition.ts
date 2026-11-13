@@ -60,6 +60,8 @@ export interface Expedition {
   /** un combat de la Flèche (fleche.ts) : les gardiens d'un quai */
   fleche?: import('./partie/fleche').AscensionEnCours;
   epreuve?: string;
+  /** le Gardien de la ville (gardien.ts) : de quoi rejouer le combat, et les actions du joueur dans l'ordre */
+  gardienVille?: { depart: import('./partie/gardien').DepartGardien; journal: import('./partie/gardien').ActionCombat[] };
   /** l'Épreuve est tentée au palier Fêlé (plus fort, mieux récompensé) */
   felee?: boolean;
   /** les règles de combat de l'Épreuve, gardées pour chaque combat de l'enchaînement */
