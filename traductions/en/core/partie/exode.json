@@ -1,0 +1,105 @@
+{
+ "source": "src/core/partie/exode.ts",
+ "entrees": [
+  {
+   "fr": "Le Registre",
+   "en": "The Register"
+  },
+  {
+   "fr": "On recense toutes les familles du district, rue par rue, sans en oublier une.",
+   "en": "Every family in the district is counted, street by street, without missing a single one."
+  },
+  {
+   "fr": "Le Registre est clos : chaque famille du district y a son nom.",
+   "en": "The Register is closed: every family in the district has its name in it."
+  },
+  {
+   "fr": "Les Pontons",
+   "en": "The Pontoons"
+  },
+  {
+   "fr": "La digue s’ouvre vers la mer : des pontons où tout un district pourra embarquer.",
+   "en": "The Dike opens toward the sea: pontoons where a whole district can board."
+  },
+  {
+   "fr": "Les Pontons tiennent : la digue a désormais une porte sur la mer.",
+   "en": "The Pontoons hold: the Dike now has a door onto the sea."
+  },
+  {
+   "fr": "Les Barges",
+   "en": "The Barges"
+  },
+  {
+   "fr": "On construit de quoi transporter tout le monde jusqu’au pied de la Flèche.",
+   "en": "Enough is built to carry everyone to the foot of the Spire."
+  },
+  {
+   "fr": "Les Barges sont à flot : il y a une place à bord pour chacun.",
+   "en": "The Barges are afloat: there is a place on board for everyone."
+  },
+  {
+   "fr": "La Place là-haut",
+   "en": "The Place Up There"
+  },
+  {
+   "fr": "Des abris et des jardins à monter sur l’île : la réponse à ceux qui disent qu’une île ne porte pas une vie de plus.",
+   "en": "Shelters and gardens to raise on the island: the answer to those who say an island cannot carry one more life."
+  },
+  {
+   "fr": "La Place là-haut est prête : des abris et des jardins attendent d’être montés.",
+   "en": "The Place Up There is ready: shelters and gardens are waiting to be raised."
+  },
+  {
+   "fr": "Le Passage",
+   "en": "The Passage"
+  },
+  {
+   "fr": "Le jour où l’île passe, tout le district monte. Il faut tenir le sommet de la Flèche.",
+   "en": "The day the island passes, the whole district goes up. The summit of the Spire must be held."
+  },
+  {
+   "fr": "Le Passage est prêt : quand l’île passera, tout le district montera.",
+   "en": "The Passage is ready: when the island passes, the whole district will go up."
+  },
+  {
+   "fr": "L’Exode se décidera quand le gardien de la Strate −{0} sera tombé.",
+   "en": "The Exodus will be decided once the guardian of Stratum −{0} has fallen."
+  },
+  {
+   "fr": "Un projet pareil se dirige depuis une Tour du Noyau au niveau {0} : il lui faut toute sa hauteur pour voir la mer et la Flèche à la fois.",
+   "en": "A project like this is run from a Core Tower at level {0}: it needs its full height to see the sea and the Spire at once."
+  },
+  {
+   "fr": "Un convoi est déjà en route.",
+   "en": "A convoy is already on its way."
+  },
+  {
+   "fr": "Une étape est déjà en cours.",
+   "en": "A stage is already under way."
+  },
+  {
+   "fr": "Le Passage se prépare depuis le sommet de la Flèche : ton escouade doit avoir atteint le quai {0}.",
+   "en": "The Passage is prepared from the summit of the Spire: your squad must have reached quay {0}."
+  },
+  {
+   "fr": "Pas assez de cristaux ou d’Éclats.",
+   "en": "Not enough crystals or Shards."
+  },
+  {
+   "fr": "Un convoi se prépare aux Pontons.",
+   "en": "A convoy is getting ready at the Pontoons."
+  },
+  {
+   "fr": "{0} : l’étape {1} sur {2} est lancée.",
+   "en": "{0}: stage {1} of {2} has started."
+  },
+  {
+   "fr": "Le convoi est passé : {0} familles des cuvettes voisines ont embarqué.",
+   "en": "The convoy has passed: {0} families from neighboring Basins have boarded."
+  },
+  {
+   "fr": "L’Exode avance : {0} habitants de plus sont prêts à partir.",
+   "en": "The Exodus moves forward: {0} more residents are ready to leave."
+  }
+ ]
+}

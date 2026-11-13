@@ -121,6 +121,9 @@ export interface EcranDistrict {
   famille?: string | null;
   /** secourir une famille (au Port) : le lieu dont on choisit le Porteur */
   bassesLieu?: string | null;
+  /** la feuille de l'Exode est ouverte ; `exodeAide` : sa présentation relue à la demande */
+  exode?: boolean;
+  exodeAide?: boolean;
   /** onglet Escouade : le volet « Porteurs » (tous les Porteurs) est affiché au lieu de l’escouade */
   reserve?: boolean;
   /** onglet Escouade : la place de l'escouade (0 à 2) dont on choisit le Porteur, volet ouvert */

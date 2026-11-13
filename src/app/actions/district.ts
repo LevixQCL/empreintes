@@ -67,6 +67,11 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     // secourir une famille, au Port (12 novembre 2026)
     case 'basses-lieu': D.bassesLieu = D.bassesLieu === id ? null : id; D.choixTous = false; break;
     case 'basses-envoyer': if (D.bassesLieu) { const r = J.envoyerBasses(app.jeu, D.bassesLieu, id, Date.now()); resultat(r); if (r.ok) { D.bassesLieu = null; D.message = t`${porteurDef(id).nom} part secourir une famille.`; } } break;
+    // l'Exode, sur la digue (10 novembre 2026)
+    case 'exode': D.exode = !D.exode; D.exodeAide = false; D.selection = null; D.ressource = null; D.menu = false; break;
+    case 'exode-entrer': J.etatExode(app.jeu).vu = true; D.exodeAide = false; sauver(); break;
+    case 'exode-aide': D.exodeAide = !D.exodeAide; break;
+    case 'exode-lancer': { const r = J.lancerExode(app.jeu, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
     // le Mur des empreintes : ouvrir une famille, confier son souvenir à une carte
     case 'famille': D.famille = D.famille === id ? null : id; break;
     case 'souvenir-confier': if (D.famille && J.confierSouvenir(app.jeu, id, D.famille)) { D.message = t('Le souvenir est gravé dans le journal de la carte.'); sauver(); } break;

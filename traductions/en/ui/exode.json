@@ -1,0 +1,169 @@
+{
+ "source": "src/ui/exode.ts",
+ "entrees": [
+  {
+   "fr": "Ceux qui partent avec toi : {0} habitants sur {1}",
+   "en": "Those leaving with you: {0} of {1} residents"
+  },
+  {
+   "fr": "Ceux qui partent avec toi",
+   "en": "Those leaving with you"
+  },
+  {
+   "fr": "sur {0} habitants",
+   "en": "of {0} residents"
+  },
+  {
+   "fr": "et {0} familles des cuvettes voisines, en {1} convoi{2}",
+   "en": "and {0} families from neighboring Basins, in {1} convoy{2}"
+  },
+  {
+   "fr": "Les convois",
+   "en": "The convoys"
+  },
+  {
+   "fr": "Les cinq chantiers sont finis : le district est prêt. Les Pontons servent maintenant aux cuvettes voisines : chaque convoi fait passer {0} familles de plus.",
+   "en": "The five works are finished: the district is ready. The Pontoons now serve the neighboring Basins: each convoy takes {0} more families across."
+  },
+  {
+   "fr": "APRÈS LE PASSAGE",
+   "en": "AFTER THE PASSAGE"
+  },
+  {
+   "fr": "CHANTIER {0} SUR {1}",
+   "en": "WORK {0} OF {1}"
+  },
+  {
+   "fr": "Étape {0} sur {1}",
+   "en": "Stage {0} of {1}"
+  },
+  {
+   "fr": "Un convoi se prépare aux Pontons",
+   "en": "A convoy is getting ready at the Pontoons"
+  },
+  {
+   "fr": "L’étape avance",
+   "en": "The stage is under way"
+  },
+  {
+   "fr": "encore ",
+   "en": "still "
+  },
+  {
+   "fr": " · continue même jeu fermé",
+   "en": " · keeps going while the game is closed"
+  },
+  {
+   "fr": "Lancer un convoi",
+   "en": "Send a convoy"
+  },
+  {
+   "fr": "Lancer l’étape",
+   "en": "Start the stage"
+  },
+  {
+   "fr": "Les cinq chantiers",
+   "en": "The five works"
+  },
+  {
+   "fr": "Fini",
+   "en": "Done"
+  },
+  {
+   "fr": "Sommet de la Flèche",
+   "en": "Summit of the Spire"
+  },
+  {
+   "fr": "À venir",
+   "en": "To come"
+  },
+  {
+   "fr": "Carte de nacre reçue",
+   "en": "Nacre card received"
+  },
+  {
+   "fr": "Une carte de nacre au choix",
+   "en": "A nacre card of your choice"
+  },
+  {
+   "fr": "La Clause de la Flèche dit que le district dont l’escouade tient le sommet, quand une île passe, y est reçu. Quelqu’un avait ajouté en marge : « Pas les nôtres. Tout le monde. »",
+   "en": "The Spire Clause says that the district whose squad holds the summit as an island passes is received there. Someone had added in the margin: “Not ours. Everyone.”"
+  },
+  {
+   "fr": "Préparer tout le district",
+   "en": "Getting the whole district ready"
+  },
+  {
+   "fr": "Tu sais maintenant ce qu’il y a au fond. Reste à faire monter les gens : tous, pas seulement une escouade.",
+   "en": "You now know what lies at the bottom. What remains is getting people up there: all of them, not just one squad."
+  },
+  {
+   "fr": "chantiers",
+   "en": "works"
+  },
+  {
+   "fr": "habitants à préparer",
+   "en": "residents to get ready"
+  },
+  {
+   "fr": "cartes de nacre",
+   "en": "nacre cards"
+  },
+  {
+   "fr": "Comment ça marche",
+   "en": "How it works"
+  },
+  {
+   "fr": "Une étape à la fois",
+   "en": "One stage at a time"
+  },
+  {
+   "fr": "Chaque chantier compte {0} étapes. Une étape se paie en cristaux et en Éclats, puis avance toute seule, même jeu fermé.",
+   "en": "Each work has {0} stages. A stage is paid for in crystals and Shards, then moves forward on its own, even while the game is closed."
+  },
+  {
+   "fr": "Un chantier fini",
+   "en": "A finished work"
+  },
+  {
+   "fr": "Il donne une carte de nacre au choix, et le district change un peu : la digue s’ouvre vers la mer.",
+   "en": "It gives a nacre card of your choice, and the district changes a little: the Dike opens toward the sea."
+  },
+  {
+   "fr": "Le dernier chantier demande le sommet de la Flèche (quai {0}) : elle donne le droit de passer, l’Exode prépare les gens.",
+   "en": "The last work requires the summit of the Spire (quay {0}): the Spire grants the right to pass, the Exodus gets people ready."
+  },
+  {
+   "fr": "Rien ne presse",
+   "en": "No rush"
+  },
+  {
+   "fr": "Rien ne se perd et rien ne s’abîme si tu ne joues pas. En tout, environ {0} cristaux : un projet de plusieurs semaines.",
+   "en": "Nothing is lost and nothing decays if you don’t play. In all, about {0} crystals: a project of several weeks."
+  },
+  {
+   "fr": "Ouvrir le premier chantier",
+   "en": "Open the first work"
+  },
+  {
+   "fr": "LE PROJET DU DISTRICT",
+   "en": "THE DISTRICT’S PROJECT"
+  },
+  {
+   "fr": "L’Exode",
+   "en": "The Exodus"
+  },
+  {
+   "fr": "Retour à l’Exode",
+   "en": "Back to the Exodus"
+  },
+  {
+   "fr": "Comment marche l’Exode",
+   "en": "How the Exodus works"
+  },
+  {
+   "fr": "Le fond a parlé, et l’eau ne s’arrêtera pas. Les îles passent encore au-dessus de la Flèche : le district se prépare à y monter en entier, famille après famille.",
+   "en": "The depths have spoken, and the water will not stop. The islands still pass above the Spire: the district is getting ready to go up there whole, family after family."
+  }
+ ]
+}

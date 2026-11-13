@@ -7,6 +7,7 @@ import { ETOILES, releveDef, vestigesDe } from '../core/explorer';
 import { htmlBestiaire } from './bestiaire';
 import { visageGarde } from './acces';
 import { pillagesOuverts, portOuvert } from './acces';
+import { bulleExode, exodeOuvert, exodeVisible } from '../core/partie/exode';
 import { epitheteAffiche, epithetesDe, journalCarte, NOMS_PALIER, palierDe, vecuDe, versPalierSuivant, PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons, chanceQuai, etatFleche, FLECHE, gardiensQuai, pas } from '../core/jeu';
 import { NOMS_EFFET, effetsDe, formuleEffet, texteEffet } from '../core/effets';
 import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe, deNom, ilElle } from '../core/donnees';
@@ -26,6 +27,7 @@ import { FAMILLES, FRAGMENTS } from '../core/fragments';
 import { CONFIANCE, CERCLE, CERCLE_OUVERTURE, cercleOuvert, echangesParJour, metalMax, ouvertesMax, vitrineMax, niveauConfiance, nbFoyers } from '../core/jeu';
 import { blocSecours } from './secours';
 import { LECTURE_PROFONDE, premiersPas } from '../core/partie/etat';
+import { feuilleExode } from './exode';
 import { RANG_METAL, loreCarte } from '../core/lore-cartes';
 import { rumeurDuJour } from '../core/rumeurs';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
@@ -148,6 +150,9 @@ if (CUVETTE) for (const a of [1, 2, 3, 4] as const) ZONES[a] = ZONES_CUVETTE;
  */
 const ZONE_HABITANTS = '318,40 356,0 400,0 400,200 372,214 330,192 300,150 304,90';
 const BALISE_HABITANTS = { x: 356, y: 200 };
+/** L'Exode se dirige depuis la digue, côté mer (10 novembre 2026) : son repère est posé sur le haut du mur, à droite */
+const BALISE_EXODE = { x: 372, y: 292 };
+
 function zonesBatiments(age: 1 | 2 | 3 | 4, selection: string | null, p: Record<string, PalierCuvette> | null = null): string {
   // un bâtiment au palier haut a grandi : sa zone suit la silhouette peinte
   const zone = (id: Lieu) => (p?.[id] === 'haut' ? CALQUES_CUVETTE.find((c) => c.lieu === id)?.zoneHaut : null) ?? ZONES[age][id];
@@ -354,6 +359,18 @@ function balises(e: EcranDistrict): string {
     const n = niveauConfiance(f);
     h += `<button type="button" class="balise habitants" ${pos(BALISE_HABITANTS)} data-action="ressource" data-id="confiance" data-lieu="habitants" aria-label="${tr`Habitations : ${f} familles sur ${CONFIANCE.population} te suivent, palier ${n.niveau}`}">`
       + `<b class="bal-cristal glace">${ICO.porteurs}</b><span class="bal-nom">${tr`Familles · ${f}`}</span></button>`;
+    // l'Exode (10 novembre 2026) : son repère n'apparaît qu'une fois le gardien de −10 vaincu ; la bulle dit ce qui attend
+    if (j.chambre && exodeVisible(j)) {
+      const ouvert = exodeOuvert(j);
+      h += `<button type="button" class="balise exode${ouvert ? ' ouverte' : ' fermee'}${e.exode ? ' choisie' : ''}" ${pos(BALISE_EXODE)} data-action="exode" data-lieu="exode" aria-label="${tr`L’Exode : le projet du district${ouvert ? '' : tr(', pas encore ouvert')}`}">`
+        + `<b class="bal-cristal glace">${ouvert ? ICO.monter : ICO.verrou}</b><span class="bal-nom">${tr`Exode`}</span></button>`;
+      const bx = bulleExode(j);
+      const px = { x: BALISE_EXODE.x - 6, y: BALISE_EXODE.y - 40 };
+      const bulleX = (classe: string, contenu: string, label: string) =>
+        `<button type="button" class="bulle-bat ${classe}" ${pos(px)} data-action="exode" data-lieu="exode" aria-label="${label}">${contenu}</button>`;
+      if (bx.enCours) h += bulleX('info', `${ICO.chrono}<em>${decompte(j.exode!.fin!, e.now)}</em>`, tr('Une étape de l’Exode avance'));
+      else if (bx.pret) h += bulleX('alerte', `${ICO.marteau}<em>!</em>`, tr('Une étape de l’Exode peut être lancée'));
+    }
   }
   return h;
 }
@@ -1139,7 +1156,7 @@ export function htmlArchipel(e: EcranDistrict): string {
     + bulles(e)
     + (e.bulle ? `<button type="button" class="bulle-voile" data-action="bulle" data-id="" aria-label="${tr`Replier`}"></button>` : '')
     + `<div class="archipel-haut"${e.bulle ? ` data-bulle="${e.bulle}"` : ''}${!e.j.chambre ? ' data-porte' : ''}>${mission(e)}${appel(e)}</div></section>`;
-  h += feuilleBatiment(e);
+  h += feuilleBatiment(e) + feuilleExode(e);
   const acte = decisionEnAttente(j);
   // le rapport d'expédition passe d'abord : la carte au choix s'ouvre une fois qu'il est lu
   if (e.expedition) { /* rien d'autre par-dessus */ }
@@ -1255,7 +1272,7 @@ function fenetreLegs(e: EcranDistrict): string {
 
 function fenetreChoix(j: Jeu): string {
   const c = j.choix[0]!;
-  const titre = c.source === 'releve' ? tr('La Strate est complète') : c.source === 'etoiles' ? tr('Les étoiles des Strates') : c.source === 'rodeur' ? tr('Le trophée du Rôdeur') : c.source === 'boss' ? tr('Le boss laisse des empreintes') : c.source === 'quotidien' ? tr('Objectif du jour') : c.source === 'ravitaillement' ? tr('Le septième colis') : c.source === 'fouille' ? tr('Le filon de la fouille') : c.source === 'epreuve' ? tr('Épreuve réussie') : c.source === 'parrainage' ? tr('Le parrainage') : c.source === 'maree' ? tr('La prise de la marée') : c.source === 'remuee' ? tr('La prime de la Strate remuée') : c.source === 'fleche' ? tr('Un quai gravé de la Flèche') : tr('Butin de la semaine');
+  const titre = c.source === 'releve' ? tr('La Strate est complète') : c.source === 'etoiles' ? tr('Les étoiles des Strates') : c.source === 'rodeur' ? tr('Le trophée du Rôdeur') : c.source === 'exode' ? tr('Un chantier de l’Exode est fini') : c.source === 'boss' ? tr('Le boss laisse des empreintes') : c.source === 'quotidien' ? tr('Objectif du jour') : c.source === 'ravitaillement' ? tr('Le septième colis') : c.source === 'fouille' ? tr('Le filon de la fouille') : c.source === 'epreuve' ? tr('Épreuve réussie') : c.source === 'parrainage' ? tr('Le parrainage') : c.source === 'maree' ? tr('La prise de la marée') : c.source === 'fleche' ? tr('Un quai gravé de la Flèche') : tr('Butin de la semaine');
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">${tr`RÉCOMPENSE${j.choix.length > 1 ? tr` · ENCORE ${j.choix.length - 1} APRÈS` : ''}`}</span><h2 id="choix-titre">${titre}</h2><p>${tr`Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.`}</p><small class="aide choix-loupe">${tr`Reste appuyé sur une carte pour lire son effet.`}</small><div class="cartes-choix">`
     + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}" data-carte="${id}"`, true)).join('')
     + `</div>${aVenir(c.options, j)}${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">${tr`Prendre ${prix('eclats', c.eclats)} à la place`}</button>` : ''}</div></div>`;
