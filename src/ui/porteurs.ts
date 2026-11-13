@@ -522,7 +522,7 @@ export function feuillePorteur(e: EcranDistrict): string {
       }).join('')}</ul>`;
       if (bq!.compte === 'pret') {
         h += `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="achat-payer" data-id="${droitRecit(recit)}"${bq!.occupe ? ' disabled' : ''}>${tr`Ce récit · ${prix}`}</button>`
-          + (lotProposable(bq!.achats) ? `<button type="button" class="btn sec petit" data-action="achat-payer" data-id="${LOT_RECITS}"${bq!.occupe ? ' disabled' : ''}>${tr`Les trois récits · ${prixEuros(PRODUITS[LOT_RECITS]!.prix)}`}</button>` : '') + `</div>`
+          + (lotProposable(bq!.achats) ? `<button type="button" class="btn sec petit" data-action="achat-payer" data-id="${LOT_RECITS}"${bq!.occupe ? ' disabled' : ''}>${tr`Les trois récits · ${prixEuros(PRODUITS[LOT_RECITS]!.prix)} + 1 Perle de nacre`}</button>` : '') + `</div>`
           + `<p class="fp-legal">${bq!.occupe ? tr('Ouverture du paiement…') : tr('Paiement sécurisé par Stripe, en une fois, sans abonnement. Le récit s’ouvre tout de suite : en payant, tu demandes cet accès immédiat et tu renonces à ton droit de rétractation.')}</p>`;
       } else if (bq!.compte === 'a-relier') {
         h += `<p class="fp-legal">${tr`Relie d’abord ta partie à un compte Google ou à un e-mail : ton achat y restera attaché, même si tu changes d’appareil.`}</p>`
