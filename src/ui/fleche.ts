@@ -6,7 +6,7 @@ import { GARDES_FLC, ennemiDef, porteurDef } from '../core/donnees';
 import { ASCENSION, chanceQuai, chanceVictoire, cibleDefiDe, etatFleche, FLECHE, flecheOuverte, forceEscouade, forceGarnison, forceQuai, gageEnCaisse, gageJour, gardiensQuai, voixDuQuartier, jourDe, pas, plancher, prochainPalier, quaiLibreDe, quaiMaxTenable, escouadePourDepart, type EtatFleche, type GardienQuai, type Jeu, strateVaincue } from '../core/jeu';
 import { avatar, coquille, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
-import { ICO } from './icones';
+import { ICO, perle } from './icones';
 import { artFleche, fondFleche, miniature } from './art';
 
 /** Les chefs de quai : ils mènent le trio au combat qui passe un quai gravé */
@@ -85,7 +85,7 @@ function fleche(j: Jeu, f: EtatFleche, top: GardienQuai[]): string {
 const recompense = (q: number) => {
   const r = ASCENSION.recompenses[q];
   const m = ASCENSION.cartes[q];
-  return r ? `${ICO.energie}${ent(r.composants)} ${ICO.eclats}${r.eclats}${m ? ` ${ICO.cartes}${NOMS_RARETE[m]}` : ''}` : '';
+  return r ? `${ICO.energie}${ent(r.composants)} ${ICO.eclats}${r.eclats}${m ? ` ${ICO.cartes}${NOMS_RARETE[m]}` : ''}${m === 'nacre' ? ` ${perle('ico peinte fl-perle')}${t('Perle')}` : ''}` : '';
 };
 
 /**
@@ -247,7 +247,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', recit = false): stri
       + etape(ICO.atk, t('Un combat par quai'), t('Ton escouade affronte les trois gardiens du quai. Pas de jeton : tu montes autant que tu veux, seule l’Usure te freine.'))
       + etape(ICO.monter, t('Vite en bas, lentement en haut'), t`Une victoire fait monter de ${FLECHE.montee[0]!.quais} quais jusqu’au ${FLECHE.montee[0]!.jusqua}, de ${FLECHE.montee[1]!.quais} jusqu’au ${FLECHE.montee[1]!.jusqua}, puis d’un seul.`)
       + etape(ICO.descendre, t('Une défaite fait redescendre'), t('D’autant de quais, mais jamais sous le dernier quai gravé que tu as atteint.'))
-      + etape(ICO.cristal, t('Les quais gravés'), t`${FLECHE.paliers.join(', ')} : chacun donne des cristaux, des Éclats et une carte au choix parmi trois du même métal (argent, puis or, puis nacre à partir du quai 75), une seule fois. Ton record compte au Grand Tableau.`)
+      + etape(ICO.cristal, t('Les quais gravés'), t`${FLECHE.paliers.join(', ')} : chacun donne des cristaux, des Éclats et une carte au choix parmi trois du même métal (argent, puis or, puis nacre à partir du quai 75, avec une Perle de nacre), une seule fois. Ton record compte au Grand Tableau.`)
       + `</ul>`, ICO.aide)
 
     + replie(t('La garde des quais · compétition'), `<p>${t`Les Hauts préfèrent payer un directeur qui tient bon plutôt qu’un gardien de location. Les meilleurs directeurs se disputent les quais : le but, tenir le plus haut.`}</p><ul class="fl-pr-etapes">`

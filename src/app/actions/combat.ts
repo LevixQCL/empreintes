@@ -156,7 +156,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
     // falls through : remonter avec 75 % du butin
     case 'remonter': {
       // pour le rapport d'expédition : ce que le joueur avait avant de remonter
-      const avant = { cartes: new Set(Object.keys(app.jeu.collection)), choix: app.jeu.choix.length, creuseurs: app.jeu.creuseurs ?? 0 };
+      const avant = { cartes: new Set(Object.keys(app.jeu.collection)), choix: app.jeu.choix.length, creuseurs: app.jeu.creuseurs ?? 0, perles: app.jeu.perles ?? 0 };
       const xr = app.jeu.expedition;
       const issue = !xr ? 'retraite' : xr.fuite ? 'fuite' : xr.retraite ? 'retraite' : xr.combat.issue === 'defaite' ? 'defaite' : xr.terminee && xr.combat.issue === 'victoire' ? 'victoire' : 'retraite';
       const type = !xr ? t('Descente') : xr.fouille ? t`Fouille · ${J.CIBLES_FOUILLE[xr.fouille].nom.toLowerCase()}` : xr.epreuve ? t`Épreuve · ${J.epreuveDef(xr.epreuve)?.nom ?? ''}` : t('Descente');
@@ -178,7 +178,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
         if (f.defi) synchroGarde();
         D.message = f.defi ? (f.victoire ? t`${f.defi.nom} est battu : ton escouade tient désormais le quai ${f.defi.quai}.` : t`${f.defi.nom} garde le quai ${f.defi.quai}. Ta montée ne bouge pas.`)
           : f.victoire
-          ? t`Quai ${f.a} atteint${f.record ? t(' : nouveau record') : ''}.${f.paliers.map((p) => t` Quai gravé ${p.quai} : +${p.composants} cristaux, +${p.eclats} Éclats${p.metal ? t`, une carte ${NOMS_RARETE[p.metal].toLowerCase()} au choix` : ''}.`).join('')}`
+          ? t`Quai ${f.a} atteint${f.record ? t(' : nouveau record') : ''}.${f.paliers.map((p) => t` Quai gravé ${p.quai} : +${p.composants} cristaux, +${p.eclats} Éclats${p.metal ? t`, une carte ${NOMS_RARETE[p.metal].toLowerCase()} au choix` : ''}${p.metal === 'nacre' ? t(' et une Perle de nacre (à la Forge)') : ''}.`).join('')}`
           : f.a < f.de ? t`Repoussés au quai ${f.de} : l’escouade redescend au quai ${f.a}.` : t`Repoussés au quai ${f.de} : l’escouade garde son quai.`;
       } else if (r.pillage) {
         const p = r.pillage;
@@ -205,6 +205,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
           nouvelles: [...new Set(r.cartes)].filter((c) => !avant.cartes.has(c)),
           choix: Math.max(0, app.jeu.choix.length - avant.choix),
           creuseurs: Math.max(0, (app.jeu.creuseurs ?? 0) - avant.creuseurs),
+          perles: Math.max(0, (app.jeu.perles ?? 0) - avant.perles),
         };
       }
       sauver();

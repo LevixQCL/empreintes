@@ -927,7 +927,7 @@ function blocPerles(j: Jeu): string {
       ? `<div class="fg-perles-titre">${perles ? tr('Prêtes à passer en nacre : choisis') : tr('Elles attendent une Perle')}</div><div class="fg-pretes">${vignettes}</div>`
       : `<p class="fg-perles-aide">${tr('Une carte en or au niveau 3, avec 5 copies, passe en nacre avec une Perle.')}</p>`)
     + `<div class="fg-perles-titre">${tr('Où en trouver')}</div>`
-    + `<div class="fg-sources">${source('fleche', tr('Quais à nacre de la Flèche'))}${source('strate', tr('Gardiens de −9 et −10'))}${source('chrono', tr('Un lundi sur deux après −10'))}</div>`
+    + `<div class="fg-sources">${source('fleche', tr('Quais à nacre de la Flèche'))}${source('strate', tr('Gardiens de −9 et −10'))}${source('chrono', tr('Après −10 : un lundi sur deux, chantiers de l’Exode'))}</div>`
     + `<div class="fg-fonte"><div class="fg-fonte-jauge">${icone('marteau')}<div><span>${tr`${copies} copies en or = 1 Perle`}</span>`
     + `${pastillesCopies(Math.min(aFondre, copies), copies, COULEUR_RARETE.or)}<small>${tr`À fondre : ${aFondre}`}</small></div></div>`
     + `<button type="button" class="btn sec" data-action="fondre-perle"${peutFondre ? '' : ' disabled'}>${tr('Fondre')} · ${prix('energie', cristaux, j.energie >= cristaux)}</button></div>`

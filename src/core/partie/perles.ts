@@ -4,6 +4,7 @@
 // un lundi sur deux une fois −10 vaincue, et la fonte des copies en or à la Forge.
 
 import { COLLECTION } from '../collection';
+import { FOND } from '../strates';
 import { moduleDef } from '../donnees';
 import { log, non, semaineDe, strateVaincue, type Jeu, type Resultat } from './etat';
 import { t as tr } from '../i18n';
@@ -62,4 +63,21 @@ export function perleDesRecits(j: Jeu): string | null {
   if (j.perleRecits) return null;
   j.perleRecits = true;
   return gagnerPerles(j, 1, tr('les trois Récits des origines'));
+}
+
+/**
+ * Les parties déjà avancées le 13 novembre 2026 (vérification de Bryan : « j'ai peur qu'on ait oublié des endroits ») :
+ * les gardiens de −9, −10 et −11 et les quais à nacre passés avant l'arrivée des Perles n'en avaient rien donné.
+ * Rendu une seule fois ; une Perle déjà notée au journal pour le même exploit n'est pas donnée deux fois.
+ */
+export function rattraperPerles(j: Jeu, quaisNacre: readonly number[]): string | null {
+  if (j.perlesRattrapees) return null;
+  j.perlesRattrapees = true;
+  const deja = (raison: string) => j.journal.some((l) => l.includes(`(${raison})`));
+  const v = strateVaincue(j);
+  const raisons = [...COLLECTION.perle.strates, FOND.perleA].filter((s) => v >= s).map((s) => tr`gardien de la Strate −${s}`)
+    .concat(quaisNacre.filter((q) => j.fleche?.recus.includes(q)).map((q) => tr`quai ${q} de la Flèche`))
+    .filter((r) => !deja(r));
+  if (!raisons.length) return null;
+  return gagnerPerles(j, raisons.length, tr('tes exploits d’avant les Perles'));
 }

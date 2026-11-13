@@ -12,7 +12,8 @@ import { recompenserFilleul } from './parrainage';
 import { retourDeContrat } from './marees';
 import { avancerBasses } from './basses';
 import { retourConfiee } from './confiees';
-import { perlesDuLundi } from './perles';
+import { perlesDuLundi, rattraperPerles } from './perles';
+import { ASCENSION } from './fleche';
 import { avancerExode } from './exode';
 import { t as tr } from '../i18n';
 
@@ -81,6 +82,8 @@ export function tick(j: Jeu, now: number): string[] {
   if (semaineDe(now) > j.epreuves.semaine) j.epreuves = { semaine: semaineDe(now), faites: [] };
   const perle = perlesDuLundi(j, now);
   if (perle) nouvelles.push(perle);
+  const rattrapage = rattraperPerles(j, Object.keys(ASCENSION.cartes).map(Number).filter((q) => ASCENSION.cartes[q] === 'nacre'));
+  if (rattrapage) nouvelles.push(rattrapage);
 
   // un objectif du jour de plus en réserve chaque jour, 3 au plus : rien ne se perd pendant une courte absence
   const jour = jourDe(now);

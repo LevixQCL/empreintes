@@ -392,6 +392,8 @@ export interface Jeu {
   perleSemaine?: number;
   /** la Perle du lot des trois Récits a été donnée */
   perleRecits?: boolean;
+  /** les Perles des exploits faits avant leur arrivée (−9, −10, −11, quais à nacre) ont été rendues une fois */
+  perlesRattrapees?: boolean;
   /** les cartes possédées */
   collection: Record<string, CarteCollection>;
   /** ce que chaque carte a vécu : son empreinte (vecu.ts, 28 octobre 2026) ; absent avant le premier combat */
