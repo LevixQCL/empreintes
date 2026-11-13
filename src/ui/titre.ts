@@ -74,6 +74,8 @@ export function htmlTitre(introVue: boolean, mouvement: boolean, c: TitreCompte 
     + `<div class="titre-voile" aria-hidden="true"></div>`
     + choixLangueTitre()
     + `<header class="titre-haut"><img class="titre-logo" src="./art/logo.webp" alt="" width="640" height="854" decoding="async"><h1 class="titre-nom">${LOGOTYPE}</h1>`
+    // le sous-titre du jeu (13 novembre 2026, Bryan) : le même dans toutes les langues, comme le nom Ossyra
+    + `<p class="titre-devise">${t`Echoes of the Deep`}</p>`
     + `<p class="titre-sous">${t`2121 · Sous les eaux, d’autres se souviennent encore.`}</p></header>`
     + basTitre(introVue, c) + `</section>`
     + (c?.panneau ? `<div class="titre-voile-feuille" data-action="titre-compte" aria-hidden="true"></div>`

@@ -208,6 +208,7 @@
   .titre-voile{display:none}
   .titre-haut{grid-column:2;grid-row:2;position:relative;z-index:2;text-align:center;justify-items:center;gap:20px;padding:0 clamp(32px,6vw,120px)}
   .titre-nom svg{width:min(100%,680px);max-width:none;margin-inline:auto;filter:drop-shadow(0 6px 30px rgba(0,0,0,.6))}
+  .titre-devise{font-size:clamp(18px,1.5vw,26px);margin-top:-6px}
   .titre-sous{font-size:15px;letter-spacing:.06em;padding-inline:0;max-width:34em;opacity:.9;text-align:center}
   #app .titre .titre-sous{text-align:center;margin-inline:auto}
   #app .titre .titre-nom svg{width:min(100%,clamp(560px,40vw,820px))}
