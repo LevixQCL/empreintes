@@ -214,7 +214,7 @@ function blocMarque(j: Jeu, id: string): string {
   return `<button type="button" class="eq-marque${m.acquise ? ' acquise' : ''}" data-action="porteur" data-id="${id}" aria-label="${tr`Marque ${echap(m.nom)} : ${echap(effet)} Voir la fiche ${echap(deNom(p.nom))}`}">`
     + `<span class="eq-marque-ico" aria-hidden="true">${m.acquise ? ICO.ok : ICO.cristal}</span><span class="eq-marque-txt">`
     // allégé le 28 octobre 2026 : le nom et l'effet sur une ligne, la progression en chiffres ; le détail est sur la fiche
-    + `<strong>${echap(m.nom)}${m.acquise ? badgePalier(m.palier) : `<small class="eq-marque-compte">${fr(fait)} / ${fr(m.seuil)} ${echap(m.quoi)}</small>`}</strong>`
+    + `<strong><small class="eq-marque-lib">${tr`Marque`}</small>${echap(m.nom)}${m.acquise ? badgePalier(m.palier) : `<small class="eq-marque-compte">${fr(fait)} / ${fr(m.seuil)} ${echap(m.quoi)}</small>`}</strong>`
     + `<span class="eq-marque-effet">${echap((m.acquise && m.palier ? m.courtEffectif : effet).replace(/^./, (x) => x.toUpperCase()))}</span>`
     + (m.acquise ? '' : `<i class="eq-jauge"><i style="width:${(100 * fait) / m.seuil}%"></i></i>`)
     + `</span></button>`;
@@ -248,14 +248,15 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
     : '<p class="eq-alerte"></p>';
   const bat = LIGNEES.find((l) => BATTU_PAR[l] === p.lignee)!;
   return `<section class="eq-porteur" style="--c:${COULEUR[p.lignee]}" aria-label="${echap(p.nom)}">`
-    + `<header class="eq-tete">`
+    // le Porteur et sa Marque dans un même cadre (13 novembre 2026) : le pouvoir se lit comme le sien
+    + `<div class="eq-ident"><header class="eq-tete">`
     + `<button type="button" class="eq-portrait" data-action="porteur" data-id="${id}" aria-label="${tr`Fiche ${echap(deNom(p.nom))}`}">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 64)}<span class="eq-rang" aria-hidden="true">${i + 1}</span></button>`
     + `<div class="eq-id"><button type="button" class="eq-nom" data-action="porteur" data-id="${id}"><strong>${echap(p.nom)}</strong><small>${tr`${NOM_LIGNEE[p.lignee]} · Niv. ${n.niveau}`}</small></button>`
     + `<span class="eq-pv">${jaugePv(pv, pvM, d.usure, usureMax(j, id))}<small><b>${pv}</b> ${tr`/ ${pvM} PV`}</small></span>`
     + `<small class="eq-fort" style="--l:${COULEUR[bat]}">${tr`Fort contre les ${sigle(bat)}`}<b>${NOM_LIGNEES[bat]}</b></small></div>`
     + (verrou ? '' : `<button type="button" class="eq-changer" data-action="escouade-place" data-index="${i}" aria-label="${tr`Changer ${echap(p.nom)}`}">${ICO.recycler}<span>${tr`Changer`}</span></button>`)
     + `</header>`
-    + blocMarque(j, id) + alerte
+    + blocMarque(j, id) + `</div>` + alerte
     // le compte des cartes et « Gérer » sur une seule ligne, juste au-dessus des cartes (12 novembre 2026 : plus de Charge)
     + `<div class="eq-cartes-tete eq-charge-ligne"><span class="eq-compte${nc >= DISTRICT.cartesMax ? ' plein' : ''}">${ICO.cartes}<b>${nc} / ${DISTRICT.cartesMax}</b> ${tr`cartes`}</span>`
     + `<button type="button" class="eq-gerer" data-action="deck" data-id="${id}"${parti ? ' disabled' : ''} aria-label="${parti ? tr('Ses cartes changeront à son retour') : tr`Gérer ses cartes (${nc} sur ${DISTRICT.cartesMax})`}">${ICO.greffe}<span>${parti ? tr('À son retour') : tr('Gérer')}</span></button></div>`

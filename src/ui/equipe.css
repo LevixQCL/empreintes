@@ -89,7 +89,7 @@
 
 /* ---------- un Porteur de l'escouade ---------- */
 .eq-trio{display:grid;gap:22px}
-.eq-porteur{position:relative;display:grid;gap:10px;padding-top:14px;box-shadow:inset 0 1px 0 color-mix(in srgb,var(--c) 40%,transparent)}
+.eq-porteur{position:relative;display:grid;gap:10px}
 .eq-tete{display:grid;grid-template-columns:76px minmax(0,1fr) auto;gap:12px;align-items:center}
 .eq-portrait{position:relative;width:76px;aspect-ratio:3/4;padding:0;border:0;border-radius:4px;overflow:hidden;cursor:pointer;
   background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--c) 35%,#141A2E),#0B0F1C 75%);
@@ -97,8 +97,8 @@
 .eq-portrait:active{transform:scale(.97)}
 .eq-portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 16%;display:block}
 .eq-portrait>.avatar{margin:18% auto 0}
-.eq-rang{position:absolute;top:4px;left:4px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;font-family:var(--mono);font-size:12px;font-weight:700;color:#2A1A04;
-  background:linear-gradient(180deg,#F8E3A6,#D4A54E);box-shadow:0 0 8px rgba(242,200,110,.5)}
+.eq-rang{position:absolute;top:0;left:0;width:30px;height:30px;padding:3px 0 0 5px;font-family:var(--mono);font-size:13px;font-weight:700;line-height:1;color:#2A1A04;text-align:left;
+  background:linear-gradient(135deg,#F8E3A6,#D4A54E);clip-path:polygon(0 0,100% 0,0 100%);font-variant-numeric:tabular-nums}
 .eq-id{display:grid;gap:5px;min-width:0}
 .eq-nom{display:grid;gap:1px;padding:0;border:0;background:none;text-align:left;cursor:pointer;color:inherit}
 .eq-nom strong{font-family:var(--display);font-weight:400;font-size:23px;line-height:1.05;color:#F6F2EA}
@@ -114,16 +114,21 @@
 .eq-changer:hover{background:rgba(205,239,255,.1)}
 .eq-changer .ico{width:17px;height:17px}
 
-/* la Marque, en toutes lettres */
-.eq-marque{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;width:100%;padding:10px 12px;border:0;border-radius:4px;font:inherit;text-align:left;cursor:pointer;color:var(--x-txt);
-  background:linear-gradient(90deg,rgba(205,239,255,.06),rgba(205,239,255,.015));box-shadow:inset 0 22px 22px -18px color-mix(in srgb,rgba(205,239,255,.35) 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,rgba(205,239,255,.35) 28%,color-mix(in srgb,rgba(205,239,255,.35) 60%,white) 50%,rgba(205,239,255,.35) 72%,transparent 98%) 1}
-.eq-marque:hover{background:linear-gradient(90deg,rgba(205,239,255,.1),rgba(205,239,255,.02))}
-.eq-marque.acquise{background:linear-gradient(90deg,rgba(242,213,140,.13),rgba(242,213,140,.02));box-shadow:inset 0 22px 22px -18px color-mix(in srgb,var(--x-or) 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,var(--x-or) 28%,color-mix(in srgb,var(--x-or) 60%,white) 50%,var(--x-or) 72%,transparent 98%) 1}
+/* le Porteur et sa Marque dans un même cadre (13 novembre 2026) */
+.eq-ident{display:grid;grid-template-rows:auto 1fr;border-radius:6px;overflow:hidden;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--c) 11%,rgba(12,16,30,.6)),rgba(12,16,30,.55));
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 32%,transparent),0 10px 24px rgba(0,0,0,.3)}
+.eq-ident>.eq-tete{padding:10px 10px 10px}
+.eq-marque{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;width:100%;padding:10px 12px 11px;border:0;border-radius:0;font:inherit;text-align:left;cursor:pointer;color:var(--x-txt);
+  background:rgba(6,9,18,.32);box-shadow:inset 0 1px 0 color-mix(in srgb,var(--c) 30%,transparent)}
+.eq-marque:hover{background:rgba(6,9,18,.2)}
+.eq-marque.acquise{background:linear-gradient(90deg,rgba(242,213,140,.1),rgba(6,9,18,.3) 70%)}
 .eq-marque-ico{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;color:var(--x-glace);background:rgba(205,239,255,.08)}
 .eq-marque.acquise .eq-marque-ico{color:#2A1A04;background:linear-gradient(180deg,#F8E3A6,#D4A54E)}
 .eq-marque-ico .ico{width:15px;height:15px}
 .eq-marque-txt{display:grid;gap:2px;min-width:0}
 .eq-marque strong{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;font-size:15px;font-weight:600;color:#F6F2EA}
+.eq-marque-lib{flex-basis:100%;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:color-mix(in srgb,var(--c) 55%,white)}
 .eq-marque-compte{margin-left:auto;text-align:right;font-family:var(--mono);font-size:12px;font-weight:500;color:var(--x-or)}
 .eq-marque-txt>.eq-jauge{margin-top:4px}
 .eq-marque-effet{font-size:13.5px;line-height:1.4;color:var(--x-txt)}
@@ -190,7 +195,7 @@
 .eq-porteur.vide{box-shadow:none;padding-top:0}
 .eq-choisir{position:relative;display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:12px;align-items:center;width:100%;min-height:76px;padding:12px 14px;border:1px dashed rgba(205,239,255,.28);border-radius:4px;
   background:rgba(205,239,255,.03);text-align:left;color:var(--x-txt);cursor:pointer}
-.eq-choisir .eq-rang{position:static}
+.eq-choisir .eq-rang{position:static;display:grid;place-items:center;width:22px;height:22px;padding:0;border-radius:50%;clip-path:none;text-align:center}
 .eq-choisir>.ico{width:22px;height:22px;color:var(--x-glace)}
 .eq-choisir strong{display:block;font-family:var(--display);font-weight:400;font-size:19px;color:#F6F2EA}
 .eq-choisir small{font-size:12.5px;color:var(--x-doux)}
@@ -210,10 +215,10 @@
   /* chaque Porteur occupe les 6 mêmes rangées (tête, Marque, alerte, titre, Charge, cartes) : les colonnes s’alignent */
   .eq-descend{max-width:720px}
   .eq-trio{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:26px;row-gap:0;align-items:start}
-  .eq-porteur{grid-row:span 5;grid-template-rows:subgrid;row-gap:10px}
+  .eq-porteur{grid-row:span 4;grid-template-rows:subgrid;row-gap:10px}
   .eq-porteur.vide{grid-template-rows:auto}
   .eq-alerte:empty{display:block}
-  .eq-marque{align-self:stretch}
+  .eq-ident{align-self:stretch}
   .eq-district .eq-cartes{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 26px}
 }
 
