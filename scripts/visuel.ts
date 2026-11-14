@@ -226,7 +226,7 @@ async function main() {
       revanches: [{ id: 'kessandre', nom: 'Kessandre', jusqua: T + 50_000_000 }], historique: [
       { sens: 'defense', nom: 'Directeur anonyme', gagne: true, composants: 6, le: T - 1_800_000 },
       { sens: 'attaque', nom: 'Cendrevigne', gagne: true, composants: 84, le: T - 7_200_000, bot: true, carte: 'ruee@cuivre' },
-      { sens: 'defense', nom: 'Kessandre', gagne: false, composants: -12, le: T - 30_000_000 },
+      { sens: 'defense', nom: 'Kessandre', gagne: false, composants: -12, le: T - 30_000_000, recit: { tours: 11, abattus: 2, carte: 'carapace@fer' } },
       { sens: 'defense', nom: 'Kessandre', gagne: true, composants: 0, le: T - 29_000_000, refusee: true },
       { sens: 'attaque', nom: 'Haut-Treuil', gagne: false, composants: -5, le: T - 90_000_000, bot: true },
     ] };

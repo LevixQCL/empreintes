@@ -1,6 +1,7 @@
 // L'état de l'application : la partie en cours (app.jeu), l'écran affiché, et l'état de chaque écran (district, combat, Grand Tableau, compte).
 // Tout ce qui change pendant la partie est dans `app` : les autres modules le lisent et le modifient.
 
+import { t } from '../core/i18n';
 import type { Entree } from '../core/classements';
 import { estTri } from '../core/collection';
 import * as J from '../core/jeu';
@@ -81,6 +82,9 @@ const avantAbsence: J.Jeu = structuredClone(app.jeu);
 const nouvellesAbsence = J.tick(app.jeu, Date.now());
 /** résumé « Pendant ton absence », seulement après plus de 10 minutes */
 const retourInitial = sauvegarde && absence > 10 * 60_000 && app.jeu.introVue ? J.resumeAbsence(avantAbsence, app.jeu, nouvellesAbsence) : [];
+// un pillage en duel resté en plan (application fermée pendant la traversée ou le duel) : il compte perdu (14 novembre 2026)
+const pillagePerdu = J.pillageEnSuspens(app.jeu, Date.now());
+if (pillagePerdu) retourInitial.push(t`Le pillage de ${pillagePerdu.nom} n’a pas été mené à terme : il compte comme perdu.`);
 
 export const apresTitre = (): Mode => !app.jeu.introVue ? 'intro' : app.jeu.expedition ? 'combat' : 'district';
 

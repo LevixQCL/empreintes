@@ -2,6 +2,10 @@
  "source": "src/core/partie/pillages.ts",
  "entrees": [
   {
+   "fr": "Consigne inconnue.",
+   "en": ""
+  },
+  {
    "fr": "Équilibré",
    "en": "Balanced"
   },
@@ -118,6 +122,10 @@
    "en": "No raid tokens left: the next one is coming soon."
   },
   {
+   "fr": "Un pillage est déjà en cours.",
+   "en": ""
+  },
+  {
    "fr": "{0} a déjà été attaqué aujourd’hui.",
    "en": "{0} has already been attacked today."
   },
@@ -130,12 +138,12 @@
    "en": ""
   },
   {
-   "fr": "La garnison de {0} sort à ta rencontre : {1}.",
-   "en": "{0}’s garrison comes out to meet you: {1}."
-  },
-  {
    "fr": "En attaquant un directeur, ton district hisse le pavillon pirate.",
    "en": ""
+  },
+  {
+   "fr": "La garnison de {0} sort à ta rencontre : {1}.",
+   "en": "{0}’s garrison comes out to meet you: {1}."
   },
   {
    "fr": "L’escouade part prendre sa revanche sur {0}.",
@@ -144,6 +152,10 @@
   {
    "fr": "L’escouade part piller {0}.",
    "en": "The squad sets off to raid {0}."
+  },
+  {
+   "fr": "Ce district ne se pille pas en duel.",
+   "en": ""
   },
   {
    "fr": "Pillage réussi à {0} : +{1} minerai{2}.",

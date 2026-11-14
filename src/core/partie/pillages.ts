@@ -27,6 +27,7 @@ import { CONFIANCE, XP, facteurXp, bonusPv, confier, jourDe, escouadeDefense, es
 import { escouadePrete, payerRatelier, remonter as remonterDescente, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 import { t as tr } from '../i18n';
+import type { Consigne, EscouadeDuel } from '../duel';
 
 const HEURE = 3_600_000;
 
@@ -128,6 +129,8 @@ export interface Garnison {
   coffre: number;
   pavillon?: Pavillon;
   renom?: number;
+  /** la consigne que suit la garnison (14 novembre 2026) */
+  consigne?: Consigne;
 }
 
 /** Le minerai qu'un pirate expose : 3 % de son minerai, plafonné à 4 combats de sa Strate */
@@ -153,7 +156,16 @@ export function garnisonDe(j: Jeu): Garnison {
     coffre: e.pavillon === 'pirate' ? exposeDe(j.composants, strate) : 0,
     pavillon: e.pavillon ?? 'neutre',
     renom: e.renom ?? 0,
+    consigne: consigneDe(j),
   };
+}
+
+/** La consigne de la garnison : Riposte tant qu'on n'en a pas choisi */
+export const consigneDe = (j: Jeu): Consigne => etatPillage(j).consigne ?? 'riposte';
+export function choisirConsigne(j: Jeu, c: Consigne): Resultat {
+  if (!['rempart', 'riposte', 'harcelement'].includes(c)) return non(tr('Consigne inconnue.'));
+  etatPillage(j).consigne = c;
+  return { ok: true };
 }
 
 /** La force d'une garnison (ou d'une escouade) : K × √(puissance des cartes × PV) */
@@ -209,8 +221,11 @@ export function choisirDefense(j: Jeu, n: number): Resultat {
 
 // ---------- L'état du joueur : pavillon, jetons, Renom ----------
 
+/** Le récit d'une défense, vu par le défenseur : la durée, les Porteurs qu'elle a mis à terre, la carte qui a le plus compté */
+export interface RecitDefense { tours: number; abattus: number; carte?: string }
+
 /** Un pillage joué, à envoyer au défenseur (le réseau s'en charge ; rien pour un district sans directeur) */
-export interface PillageJoue { cible: string; victoire: boolean; vol: number; perte: number; le: number }
+export interface PillageJoue { cible: string; victoire: boolean; vol: number; perte: number; le: number; recit?: RecitDefense }
 
 export interface EtatPillage {
   /** plus utilisé depuis le 14 novembre 2026 (le minerai exposé se calcule) ; gardé pour les sauvegardes */
@@ -241,6 +256,10 @@ export interface EtatPillage {
   renom?: number;
   /** les revanches ouvertes : qui t'a pillé, et jusqu'à quand */
   revanches?: { id: string; nom: string; jusqua: number }[];
+  /** la consigne de la garnison */
+  consigne?: Consigne;
+  /** un pillage contre un directeur en cours (le duel se joue dans l'application) : s'il n'est jamais fini, il compte perdu */
+  enCours?: PillageEnCours & { escouade: string[]; debut: number };
 }
 
 /** Une ligne du journal du port, vue du joueur : `gagne` dit s'il l'a emporté, `composants` ce que son minerai a gagné (+) ou perdu (−) */
@@ -262,6 +281,8 @@ export interface EntreeHistorique {
   par?: string;
   /** une revanche */
   revanche?: boolean;
+  /** le récit d'une défense */
+  recit?: RecitDefense;
 }
 
 /** Les lignes gardées dans le journal du port */
@@ -365,6 +386,8 @@ export interface Cible {
   renom?: number;
   /** la distance en milles depuis son district */
   milles?: number;
+  /** la garnison complète d'un directeur (ses Porteurs, leurs PV, leurs cartes et sa consigne) : son escouade en duel */
+  garnison?: Garnison;
   /** une revanche (l'écran la prépare) */
   revanche?: boolean;
 }
@@ -399,7 +422,7 @@ export function ciblesDuJour(j: Jeu, escouade: string[], now: number, enLigne: C
 
 /** Une cible à partir de la garnison publiée d'un directeur */
 export const cibleDe = (id: string, nom: string, g: Garnison): Cible => ({
-  id, nom, porteurs: g.porteurs.map((p) => p.id), cartes: g.porteurs.flatMap((p) => p.cartes.map((c) => c.id)),
+  id, nom, garnison: g, porteurs: g.porteurs.map((p) => p.id), cartes: g.porteurs.flatMap((p) => p.cartes.map((c) => c.id)),
   force: forceGarnison(g), strate: g.strate, coffre: g.coffre, pavillon: g.pavillon ?? 'neutre', renom: g.renom ?? 0,
 });
 
@@ -493,22 +516,46 @@ export function peutPiller(j: Jeu, now: number, revanche = false): Resultat {
   return { ok: true };
 }
 
-/** Part piller une cible : un seul combat contre les gardes de sa garnison, après la traversée */
-export function piller(j: Jeu, escouade: string[], cible: Cible, now: number, rng = graine(), opts: { revanche?: boolean } = {}): Resultat {
-  const etat = etatPillage(j);
+/** Ce que les deux sortes de pillage vérifient et paient au départ (jeton, district du jour, pavillon) */
+function preparerPillage(j: Jeu, escouade: string[], cible: Cible, now: number, opts: { revanche?: boolean }):
+  { ok: false; message?: string } | { ok: true; revanche: boolean; ecart: number; butin: { base: number; vol: number }; e: Extract<ReturnType<typeof escouadePrete>, { ok: true }> } {
   const revanche = !!(opts.revanche ?? cible.revanche) && !cible.bot && revanchesOuvertes(j, now).some((r) => r.id === cible.id);
   const p = peutPiller(j, now, revanche);
-  if (!p.ok) return p;
+  if (!p.ok) return { ok: false, ...(p.message ? { message: p.message } : {}) };
+  if (etatPillage(j).enCours) return { ok: false, message: tr('Un pillage est déjà en cours.') };
   const faits = faitsDuJour(j, now);
-  if (!revanche && faits.includes(cible.id)) return non(tr`${cible.nom} a déjà été attaqué aujourd’hui.`);
+  if (!revanche && faits.includes(cible.id)) return { ok: false, message: tr`${cible.nom} a déjà été attaqué aujourd’hui.` };
   const force = forceEscouade(j, escouade);
   const portee = porteeDe(cible, force, revanche);
-  if (portee === 'neutre') return non(tr`${cible.nom} vogue sous pavillon neutre : on ne l’attaque pas.`);
-  if (portee !== 'ok') return non(tr`${cible.nom} n’est pas à ta portée.`);
+  if (portee === 'neutre') return { ok: false, message: tr`${cible.nom} vogue sous pavillon neutre : on ne l’attaque pas.` };
+  if (portee !== 'ok') return { ok: false, message: tr`${cible.nom} n’est pas à ta portée.` };
   const e = escouadePrete(j, escouade, undefined, undefined, 'courte');
-  if (!e.ok) return e;
+  if (!e.ok) return { ok: false, ...(e.message ? { message: e.message } : {}) };
   const ecart = cible.force / Math.max(0.01, force);
-  const butin = butinPillage(cible, ecart);
+  return { ok: true, revanche, ecart, butin: butinPillage(cible, ecart), e };
+}
+
+/** Le départ payé : postes quittés, jeton dépensé (sauf revanche), pavillon hissé contre un directeur */
+function payerDepart(j: Jeu, escouade: string[], cible: Cible, now: number, revanche: boolean) {
+  const etat = etatPillage(j);
+  payerRatelier(j, escouade, 'courte');
+  quitterPostes(j, escouade);
+  if (!revanche) {
+    faitsDuJour(j, now).push(cible.id);
+    if (etat.jetons >= PILLAGE.jetonsMax) etat.jetonsLe = now;
+    etat.jetons--;
+  } else etat.revanches = (etat.revanches ?? []).filter((r) => r.id !== cible.id);
+  if (!cible.bot) {
+    if (etat.pavillon !== 'pirate') { etat.pavillon = 'pirate'; log(j, tr('En attaquant un directeur, ton district hisse le pavillon pirate.')); }
+    etat.pirateLe = now;
+  }
+}
+
+/** Part piller une cible en combat contre ses gardes (les districts sans directeur ; un directeur se pille en duel) */
+export function piller(j: Jeu, escouade: string[], cible: Cible, now: number, rng = graine(), opts: { revanche?: boolean } = {}): Resultat {
+  const pr = preparerPillage(j, escouade, cible, now, opts);
+  if (!pr.ok) return non(pr.message ?? '');
+  const { revanche, ecart, butin, e } = pr;
   const gardes = cible.porteurs.slice(0, 3).map((id) => `garde-${porteurDef(id).lignee}`);
   const x = nouvelleExpedition({ porteurs: e.porteurs, deck: e.deck, strate: Math.max(1, cible.strate), rng, sequence: [gardes[0]!], force: cible.force * PILLAGE.gardes });
   // un groupe de gardes, un par Porteur de la garnison, aux PV d'un groupe ordinaire (14 novembre 2026 : plus de PV pleins)
@@ -519,18 +566,7 @@ export function piller(j: Jeu, escouade: string[], cible: Cible, now: number, rn
   x.combat.ennemi.porteur = cible.porteurs[0];
   x.combat.autres?.forEach((en, k) => { en.porteur = cible.porteurs[k + 1]; });
   x.combat.journal = [tr`La garnison de ${cible.nom} sort à ta rencontre : ${gardes.map((id) => ennemiDef(id).nom).join(', ')}.`];
-  payerRatelier(j, escouade, 'courte');
-  quitterPostes(j, escouade);
-  if (!revanche) {
-    faits.push(cible.id);
-    if (etat.jetons >= PILLAGE.jetonsMax) etat.jetonsLe = now;
-    etat.jetons--;
-  } else etat.revanches = (etat.revanches ?? []).filter((r) => r.id !== cible.id);
-  // attaquer un vrai directeur hisse le pavillon pirate
-  if (!cible.bot) {
-    if (etat.pavillon !== 'pirate') { etat.pavillon = 'pirate'; log(j, tr('En attaquant un directeur, ton district hisse le pavillon pirate.')); }
-    etat.pirateLe = now;
-  }
+  payerDepart(j, escouade, cible, now, revanche);
   const milles = cible.milles ?? 0;
   j.expedition = {
     ...x,
@@ -565,6 +601,105 @@ export function empreinteVolee(j: Jeu, pi: PillageEnCours, rng: number): string 
     try { moduleDef(id); return id; } catch { /* pas dans ce métal */ }
   }
   return null;
+}
+
+// ---------- Le pillage d'un directeur : un duel contre sa vraie escouade (14 novembre 2026) ----------
+// Bryan : « avoir une influence sur la défense et faire des choix ». La garnison d'un directeur se bat avec ses vrais Porteurs et
+// ses vraies cartes, jouées par le robot du duel selon sa consigne. Le duel se joue dans l'application ; ici, le départ et le retour.
+
+/** Ce qu'il faut pour lancer le duel : les deux escouades, la graine et la consigne du défenseur */
+export interface DepartDuel { attaque: EscouadeDuel; defense: EscouadeDuel; graine: number; consigne: Consigne; secondes: number }
+
+/** L'escouade qui attaque, en duel : PV du moment (Usure comprise), cartes à leur niveau */
+function escouadeAttaque(j: Jeu, escouade: string[]): EscouadeDuel {
+  return {
+    nom: j.directeur?.nom || tr('Directeur'),
+    porteurs: escouade.map((id) => ({
+      id,
+      pv: Math.max(1, pvNiveau(j, id) + bonusPv(j, id) - Math.floor(j.porteurs[id]?.usure ?? 0)),
+      cartes: (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).map((k) => ({ id: metalJouable(k, niveauPorteur(j, id).niveau), niveau: j.collection[k]!.niveau })),
+    })),
+  };
+}
+
+/** Part piller un directeur : le jeton, le pavillon, puis le duel (que l'application joue) */
+export function lancerPillageDuel(j: Jeu, escouade: string[], cible: Cible, now: number, rng = graine(), opts: { revanche?: boolean } = {}): Resultat & { depart?: DepartDuel } {
+  if (cible.bot || !cible.garnison) return non(tr('Ce district ne se pille pas en duel.'));
+  const pr = preparerPillage(j, escouade, cible, now, opts);
+  if (!pr.ok) return non(pr.message ?? '');
+  const { revanche, ecart, butin } = pr;
+  payerDepart(j, escouade, cible, now, revanche);
+  const secondes = traversee(cible.milles ?? 0);
+  etatPillage(j).enCours = {
+    cible: cible.id, nom: cible.nom, ecart: Math.round(ecart * 1000) / 1000, base: butin.base, vol: butin.vol,
+    perte: perteDe(j.composants, strateVaincue(j)), arrivee: now + secondes * 1000,
+    ...(cible.cartes?.length ? { cartes: cible.cartes.slice(0, 18) } : {}), ...(revanche ? { revanche: true } : {}),
+    escouade: escouade.slice(), debut: now,
+  };
+  log(j, revanche ? tr`L’escouade part prendre sa revanche sur ${cible.nom}.` : tr`L’escouade part piller ${cible.nom}.`);
+  const g = cible.garnison;
+  return {
+    ok: true,
+    depart: {
+      attaque: escouadeAttaque(j, escouade),
+      defense: { nom: cible.nom, porteurs: g.porteurs.map((p) => ({ id: p.id, pv: p.pv, cartes: p.cartes.map((c) => ({ ...c })) })) },
+      graine: rng >>> 0, consigne: g.consigne ?? 'riposte', secondes,
+    },
+  };
+}
+
+/** Ce que le duel a donné : l'issue, les PV restants de l'escouade (à l'échelle du duel), et de quoi faire le récit du défenseur */
+export interface FinDuel { victoire: boolean; porteurs: { id: string; pv: number; pvMax: number }[]; recit: RecitDefense }
+
+/** Le retour d'un pillage joué en duel : butin ou perte, Renom, empreinte volée, Usure (la moitié de la part de PV perdue) et XP */
+export function finirPillageDuel(j: Jeu, fin: FinDuel, now: number): RetourPillage | null {
+  const etat = etatPillage(j);
+  const pi = etat.enCours;
+  if (!pi) return null;
+  delete etat.enCours;
+  const victoire = fin.victoire;
+  let gain = 0, perte = 0, renom = 0, carte: string | null = null, nouvelle = false;
+  if (victoire) {
+    gain = pi.base + pi.vol;
+    j.composants += gain;
+    etat.gagnes++;
+    carte = empreinteVolee(j, pi, (now ^ pi.debut) >>> 0);
+    if (carte) nouvelle = ajouterCarte(j, carte);
+    renom = ajouterRenom(j, Math.round(PILLAGE.renom.attaque * multButin(pi.ecart)));
+  } else {
+    perte = Math.min(pi.perte ?? 0, j.composants);
+    j.composants -= perte;
+    etat.perdus++;
+    renom = ajouterRenom(j, PILLAGE.renom.attaqueRatee);
+  }
+  etat.aEnvoyer.push({ cible: pi.cible, victoire, vol: victoire ? pi.vol : 0, perte, le: now, recit: fin.recit });
+  noterHistorique(j, { sens: 'attaque', nom: pi.nom, gagne: victoire, composants: victoire ? gain : -perte, le: now,
+    ...(renom ? { renom } : {}), ...(carte ? { carte } : {}), ...(pi.revanche ? { revanche: true } : {}) });
+  // l'Usure : la part de PV perdue en duel, ramenée aux PV du district, et réduite de moitié comme tout pillage
+  const xp = victoire ? Math.round(XP.combat * facteurXp(Math.max(1, strateVaincue(j))) * 0.75) : 0;
+  for (const id of pi.escouade) {
+    const d = j.porteurs[id];
+    if (!d) continue;
+    const f = fin.porteurs.find((p) => p.id === id);
+    const pvMax = pvNiveau(j, id) + bonusPv(j, id);
+    const part = f ? 1 - Math.max(0, f.pv) / Math.max(1, f.pvMax) : 0;
+    const avantUsure = d.usure;
+    usureAuRetour(j, { id, pv: Math.round(pvMax * (1 - part)), pvMax });
+    d.usure = avantUsure + (d.usure - avantUsure) * PILLAGE.usure;
+    if (xp) { const avant = niveauPorteur(j, id).niveau; const n = gagnerXp(j, id, xp); if (n && n > avant) log(j, tr`${porteurDef(id).nom} passe au niveau ${n} !`); }
+    if (victoire) { const fa = (d.faits ??= {}); fa.combats = (fa.combats ?? 0) + 1; }
+  }
+  log(j, victoire
+    ? tr`Pillage réussi à ${pi.nom} : +${gain} minerai${pi.vol ? tr`, dont ${pi.vol} pris à ses réserves` : ''}.`
+    : tr`Pillage repoussé à ${pi.nom}.${perte ? tr` L’escouade y laisse ${perte} minerai.` : ''}`);
+  return { nom: pi.nom, victoire, gain, perte, renom, carte, nouvelle };
+}
+
+/** Un duel de pillage jamais terminé (application fermée en plein combat) : il compte perdu */
+export function pillageEnSuspens(j: Jeu, now: number): RetourPillage | null {
+  const pi = etatPillage(j).enCours;
+  if (!pi) return null;
+  return finirPillageDuel(j, { victoire: false, porteurs: [], recit: { tours: 0, abattus: 0 } }, now);
 }
 
 /** Ce que le retour d'un pillage a donné */
@@ -612,7 +747,7 @@ export function remonterPillage(j: Jeu, now: number): RetourPillage | null {
 }
 
 /** Une attaque subie, reçue du réseau à l'ouverture du jeu (id : celui du document en ligne ; par : l'attaquant) */
-export interface PillageSubi { id?: string; par?: string; nom: string; victoire: boolean; vol: number; perte: number; le: number }
+export interface PillageSubi { id?: string; par?: string; nom: string; victoire: boolean; vol: number; perte: number; le: number; recit?: RecitDefense }
 
 /**
  * Applique les attaques subies pendant l'absence. Le défenseur fait lui-même respecter les limites (un attaquant tricheur ne
@@ -635,7 +770,7 @@ export function subirPillages(j: Jeu, subis: PillageSubi[]): string[] {
       const pris = Math.min(Math.max(0, Math.floor(s.vol)), exposeDe(j.composants, strate), plafond);
       j.composants -= pris;
       const renom = ajouterRenom(j, PILLAGE.renom.defenseRatee);
-      noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: false, composants: -pris, le: s.le, ...(renom ? { renom } : {}), ...(s.par ? { par: s.par } : {}) });
+      noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: false, composants: -pris, le: s.le, ...(renom ? { renom } : {}), ...(s.par ? { par: s.par } : {}), ...(s.recit ? { recit: s.recit } : {}) });
       if (s.par) {
         const r = (etat.revanches ??= []).filter((x) => x.id !== s.par);
         r.push({ id: s.par, nom: s.nom, jusqua: s.le + PILLAGE.revancheMs });
@@ -646,7 +781,7 @@ export function subirPillages(j: Jeu, subis: PillageSubi[]): string[] {
       const gagne = Math.min(Math.max(0, Math.floor(s.perte)), plafond);
       j.composants += gagne;
       const renom = ajouterRenom(j, PILLAGE.renom.defense);
-      noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: true, composants: gagne, le: s.le, ...(renom ? { renom } : {}) });
+      noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: true, composants: gagne, le: s.le, ...(renom ? { renom } : {}), ...(s.recit ? { recit: s.recit } : {}) });
       const venus = confier(j, CONFIANCE.defense, 'defense');
       l.push(tr`Ta garnison a repoussé ${s.nom}${gagne ? tr` : +${gagne} minerai laissé sur tes quais` : ''}.${venus ? tr` Le quartier l’a vu : ${venus > 1 ? tr`${venus} familles te rejoignent` : tr('une famille te rejoint')}.` : tr(' Le quartier l’a vu.')}`);
     }

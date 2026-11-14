@@ -18,6 +18,26 @@
    "en": "Your friend"
   },
   {
+   "fr": "{0} est pillé : +{1} minerai{2}{3}.",
+   "en": ""
+  },
+  {
+   "fr": ", empreinte « {0} »{1}",
+   "en": ""
+  },
+  {
+   "fr": "{0} tient bon{1}{2}.",
+   "en": ""
+  },
+  {
+   "fr": " : −{0} minerai",
+   "en": ""
+  },
+  {
+   "fr": ", {0} Renom",
+   "en": ""
+  },
+  {
    "fr": "+{0} cristaux · +{1} Éclat{2} : première victoire de la semaine contre {3}",
    "en": "+{0} crystals · +{1} Shard{2}: first win of the week against {3}"
   },

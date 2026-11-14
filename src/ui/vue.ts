@@ -701,11 +701,16 @@ function traverseePillage(x: Expedition): string {
   const p = x.pillage;
   const reste = p?.arrivee ? p.arrivee - Date.now() : 0;
   if (!p || reste <= 0 || x.combat.tour > 1) return '';
+  return htmlTraversee(p.nom, reste, !!p.revanche);
+}
+
+/** La barque qui traverse vers un district (pillage en combat ou en duel) */
+export function htmlTraversee(nom: string, reste: number, revanche = false): string {
   const total = Math.max(1, Math.ceil(reste / 1000));
   return `<div class="pl-traversee" role="status" style="--d:${reste}ms"><div class="pl-tr-boite">`
-    + `<span class="surtitre">${tr`Traversée de la mer des piliers`}</span><strong>${echap(p.nom)}</strong>`
+    + `<span class="surtitre">${tr`Traversée de la mer des piliers`}</span><strong>${echap(nom)}</strong>`
     + `<div class="pl-tr-mer" aria-hidden="true"><i class="pl-tr-barque"></i></div>`
-    + `<small>${p.revanche ? tr`Ta barque file prendre sa revanche · ${total} s` : tr`Le passeur rame vers la garnison · ${total} s`}</small></div></div>`;
+    + `<small>${revanche ? tr`Ta barque file prendre sa revanche · ${total} s` : tr`Le passeur rame vers la garnison · ${total} s`}</small></div></div>`;
 }
 
 /** les illustrations déjà demandées au navigateur (3 novembre 2026 : la main s'affichait noire une seconde au premier combat) */

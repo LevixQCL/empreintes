@@ -174,12 +174,36 @@
    "en": "Squad defending the port"
   },
   {
-   "fr": "Elle se défend seule quand d’autres directeurs t’attaquent. L’escouade qui attaque se choisit au départ du pillage{0}.",
-   "en": "It defends on its own when other directors attack you. The attacking squad is chosen when the raid sets off{0}."
+   "fr": "Elle se défend seule, avec ses vraies cartes, quand d’autres directeurs t’attaquent. L’escouade qui attaque se choisit au départ du pillage{0}.",
+   "en": "",
+   "ancien": {
+    "fr": "Elle se défend seule quand d’autres directeurs t’attaquent. L’escouade qui attaque se choisit au départ du pillage{0}.",
+    "en": "It defends on its own when other directors attack you. The attacking squad is chosen when the raid sets off{0}."
+   }
   },
   {
    "fr": " : la même peut faire les deux",
    "en": ": the same one can do both"
+  },
+  {
+   "fr": "Boucliers et soins d’abord : elle tient le plus longtemps possible.",
+   "en": ""
+  },
+  {
+   "fr": "Elle frappe fort et achève le premier Porteur qui faiblit.",
+   "en": ""
+  },
+  {
+   "fr": "Harcèlement",
+   "en": ""
+  },
+  {
+   "fr": "Longues chaînes, suites et cartes qui affaiblissent l’attaquant.",
+   "en": ""
+  },
+  {
+   "fr": "Consigne de la garnison",
+   "en": ""
   },
   {
    "fr": "il y a {0} min",
@@ -250,6 +274,14 @@
    "en": "No raids yet. Your attacks and the ones your garrison suffers will be logged here."
   },
   {
+   "fr": "{0} Porteur{1} adverse{2} à terre",
+   "en": ""
+  },
+  {
+   "fr": "« {0} » a le plus compté",
+   "en": ""
+  },
+  {
    "fr": "Pavillon neutre : ce directeur ne se pille pas.",
    "en": ""
   },
@@ -286,8 +318,16 @@
    "en": ""
   },
   {
+   "fr": "Son escouade · consigne {0} · en duel",
+   "en": ""
+  },
+  {
    "fr": "La garnison",
    "en": "The garrison"
+  },
+  {
+   "fr": "{0} · {1} cartes",
+   "en": ""
   },
   {
    "fr": "Garnison",

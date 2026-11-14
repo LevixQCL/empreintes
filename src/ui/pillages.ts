@@ -3,8 +3,8 @@
 // autour, reliés par les routes des passeurs ; toucher un archipel affiche sa fiche juste dessous (garnison, chances, butin).
 // Les règles sont dans src/core/partie/pillages.ts.
 
-import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, difficulte, escouadeActive, escouadeDefense, escouadesDe, etatPillage, forceEscouade, majJetons, MISSIONS, barquesMax, MAREES, bulleBasses, contratsDuMoment, mareesDe, pavillonDe, neutreDes, rangRenom, revanchesOuvertes, porteeDe, angleDe, traversee, exposeDe, perteDe, strateVaincue, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
-import { moduleDef } from '../core/donnees';
+import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, difficulte, escouadeActive, escouadeDefense, escouadesDe, etatPillage, forceEscouade, majJetons, MISSIONS, barquesMax, MAREES, bulleBasses, contratsDuMoment, mareesDe, pavillonDe, consigneDe, neutreDes, type Consigne, type RecitDefense, rangRenom, revanchesOuvertes, porteeDe, angleDe, traversee, exposeDe, perteDe, strateVaincue, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
+import { moduleDef, porteurDef } from '../core/donnees';
 import { ageArchipel, bandeauPort, vignetteArchipel, vignetteDistrict, visuel } from './art';
 import { avatar, avatarGarde, gardesGarnison, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
@@ -174,7 +174,22 @@ function garde(j: Jeu): string {
         + `<strong>${t`Escouade ${k + 1}`}</strong>${l.length ? `<span class="pl-garde-visages">${[0, 1, 2].map((i) => (l[i] ? avatar(l[i]!, 28) : '<i class="pl-garde-place"></i>')).join('')}</span>` : '<span class="esc-serti" aria-hidden="true"></span>'}`
         + `<small>${l.length ? `Force ${f}` : t('À former')}</small></button>`;
     }).join('') + `</div>`
-    + `<small class="pl-garde-aide">${t`Elle se défend seule quand d’autres directeurs t’attaquent. L’escouade qui attaque se choisit au départ du pillage${escouadeActive(j) === def ? t(' : la même peut faire les deux') : ''}.`}</small></section>`;
+    + `<small class="pl-garde-aide">${t`Elle se défend seule, avec ses vraies cartes, quand d’autres directeurs t’attaquent. L’escouade qui attaque se choisit au départ du pillage${escouadeActive(j) === def ? t(' : la même peut faire les deux') : ''}.`}</small>`
+    + consignes(j) + `</section>`;
+}
+
+/** Les consignes de la garnison (14 novembre 2026) : comment le robot joue tes cartes en défense */
+export const NOMS_CONSIGNE: Record<Consigne, { nom: string; texte: string }> = {
+  rempart: { nom: t('Rempart'), texte: t('Boucliers et soins d’abord : elle tient le plus longtemps possible.') },
+  riposte: { nom: t('Riposte'), texte: t('Elle frappe fort et achève le premier Porteur qui faiblit.') },
+  harcelement: { nom: t('Harcèlement'), texte: t('Longues chaînes, suites et cartes qui affaiblissent l’attaquant.') },
+};
+function consignes(j: Jeu): string {
+  const c = consigneDe(j);
+  return `<div class="pl-consigne"><span class="surtitre">${ICO.atk}${t`Consigne de la garnison`}</span>`
+    + `<div class="pl-consigne-choix" role="radiogroup" aria-label="${t`Consigne de la garnison`}">`
+    + (['rempart', 'riposte', 'harcelement'] as Consigne[]).map((k) => `<button type="button" role="radio" class="pl-consigne-btn${k === c ? ' actif' : ''}" data-action="consigne" data-id="${k}" aria-checked="${k === c}">${NOMS_CONSIGNE[k].nom}</button>`).join('')
+    + `</div><small>${NOMS_CONSIGNE[c].texte}</small></div>`;
 }
 
 /** Le journal du port (27 octobre 2026) : les derniers pillages faits et subis, du plus récent au plus ancien */
@@ -194,10 +209,18 @@ function journal(h: EntreeHistorique[], now: number): string {
     + (lignes.length
       ? `<ul>${lignes.map((x) => `<li class="${x.sens}${x.gagne ? ' gagne' : ' perdu'}">`
         + `<span class="pl-j-ico" aria-label="${x.sens === 'attaque' ? t('Ton attaque') : t('Attaque subie')}">${x.sens === 'attaque' ? ICO.grappin : ICO.bouclier}</span>`
-        + `<span class="pl-j-txt"><span>${texte(x)}${x.carte ? t` · empreinte « ${moduleDef(x.carte).nom} »` : ''}</span><small>${x.revanche ? t('Revanche · ') : x.sens === 'attaque' ? (x.bot ? t('District sans directeur · ') : t('Directeur · ')) : t('En défense · ')}${x.renom ? `${x.renom > 0 ? '+' : '−'}${Math.abs(x.renom)} ${t('Renom')} · ` : ''}${ilYa(x.le)}</small></span>`
+        + `<span class="pl-j-txt"><span>${texte(x)}${x.carte ? t` · empreinte « ${moduleDef(x.carte).nom} »` : ''}${x.recit ? recit(x.recit) : ''}</span><small>${x.revanche ? t('Revanche · ') : x.sens === 'attaque' ? (x.bot ? t('District sans directeur · ') : t('Directeur · ')) : t('En défense · ')}${x.renom ? `${x.renom > 0 ? '+' : '−'}${Math.abs(x.renom)} ${t('Renom')} · ` : ''}${ilYa(x.le)}</small></span>`
         + `<b class="pl-j-val${x.composants > 0 ? ' plus' : x.composants < 0 ? ' moins' : ''}">${x.composants > 0 ? '+' : x.composants < 0 ? '−' : ''}${x.composants ? ent(Math.abs(x.composants)) : '—'}</b></li>`).join('')}</ul>`
       : `<p class="pl-j-vide">${t`Aucun pillage pour l’instant. Tes attaques et celles que ta garnison subit s’inscriront ici.`}</p>`)
     + `</section>`;
+}
+
+/** Le récit d'une défense : combien de tours, combien de Porteurs mis à terre, la carte qui a le plus compté */
+function recit(r: RecitDefense): string {
+  let nom = '';
+  try { nom = r.carte ? moduleDef(r.carte).nom : ''; } catch { /* carte inconnue de cette version */ }
+  const parts = [t`${r.tours} tours`, r.abattus ? t`${r.abattus} Porteur${r.abattus > 1 ? 's' : ''} adverse${r.abattus > 1 ? 's' : ''} à terre` : '', nom ? t`« ${nom} » a le plus compté` : ''].filter(Boolean);
+  return `<em class="pl-recit">${parts.join(' · ')}</em>`;
 }
 
 /** La fiche de l'archipel choisi : sa garnison, tes chances, ce que tu gagnes ou laisses */
@@ -216,7 +239,9 @@ function ficheCible(j: Jeu, c: Cible, force: number, fait: boolean, jetons: numb
   return `<section class="pl-fiche d${d.niveau}" aria-label="${echap(c.nom)}">`
     + `<header><div><span class="surtitre">${t`${qui} · Strate −${c.strate} · traversée ${traversee(c.milles ?? 0)}\u00a0s`}</span><h2>${echap(c.nom)}</h2></div>`
     + `<span class="pl-badge">${d.nom}<small>${t`${chance < 1 ? '< 1' : chance > 99 ? '> 99' : chance} % de chances`}</small></span></header>`
-    + `<div class="pl-garnison"><span class="surtitre">${t`La garnison`}</span><ul>${gardesGarnison(c.porteurs).map((g) => `<li style="--c:${COULEUR[g.lignee]}">${avatarGarde(g, 40)}<span><strong>${echap(g.nom)}</strong><small>${NOM_LIGNEE[g.lignee]}</small></span></li>`).join('')}</ul>`
+    + `<div class="pl-garnison"><span class="surtitre">${c.garnison ? t`Son escouade · consigne ${NOMS_CONSIGNE[c.garnison.consigne ?? 'riposte'].nom} · en duel` : t`La garnison`}</span><ul>${c.garnison
+      ? c.garnison.porteurs.map((p) => { const d = porteurDef(p.id); return `<li style="--c:${COULEUR[d.lignee]}">${avatar(p.id, 40)}<span><strong>${echap(d.nom)}</strong><small>${t`${NOM_LIGNEE[d.lignee]} · ${p.cartes.length} cartes`}</small></span></li>`; }).join('')
+      : gardesGarnison(c.porteurs).map((g) => `<li style="--c:${COULEUR[g.lignee]}">${avatarGarde(g, 40)}<span><strong>${echap(g.nom)}</strong><small>${NOM_LIGNEE[g.lignee]}</small></span></li>`).join('')}</ul>`
     + `<div class="pl-forces"><span>${t`Garnison`} <b>${Math.round(c.force * 100)}</b></span><span class="pl-jauge" aria-hidden="true"><i style="width:${Math.min(100, Math.round((50 * c.force) / force))}%"></i></span><span>${t`Escouade ${escouadeActive(j) + 1}`} <b>${Math.round(force * 100)}</b></span></div></div>`
     + `<dl class="pl-enjeu"><div class="pl-gain"><dt>${t`Si tu gagnes`}</dt><dd>${ICO.composants}<b>+${ent(butin.base + butin.vol)}</b><small>${butin.vol ? t`minerai, dont ${ent(butin.vol)} pris à ses réserves` : t('minerai')}</small></dd>`
     + `<p class="pl-plus">${c.bot ? t`une chance sur trois d’emporter l’empreinte d’une carte` : t`+ l’empreinte d’une de ses cartes et du Renom`}</p></div>`

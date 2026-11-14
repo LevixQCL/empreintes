@@ -2,6 +2,7 @@
 
 import { cartePillages, portOuvert } from '../../ui/acces';
 import { cibleRevanche, lireCiblesEnLigne, planifierGarnison, sousBouclier } from '../pillages';
+import { lancerPillage } from '../duel';
 import { relireVitrines, suivreCercle } from '../cercle';
 import { afficher } from '../rendu';
 import { cibleDefi, lireGardiensEnLigne, recevoirAssauts, synchroGarde } from '../fleche';
@@ -300,6 +301,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       break;
     }
     case 'pavillon-avis': D.pavillonAvis = null; break;
+    case 'consigne': resultat(J.choisirConsigne(app.jeu, id as J.Consigne)); planifierGarnison(); break;
     case 'pillage-revanche': {
       const c = await cibleRevanche(id);
       if (!c) { D.message = t('Impossible de retrouver ce district pour l’instant : réessaie dans un moment.'); break; }
@@ -352,6 +354,13 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       break;
     }
     case 'partir': {
+      // un directeur se pille en duel contre sa vraie escouade (14 novembre 2026)
+      if (D.pillage && !D.pillage.bot) {
+        const r = J.lancerPillageDuel(app.jeu, D.escouade, D.pillage, Date.now());
+        resultat(r);
+        if (r.ok && r.depart) { sauver(); lancerPillage(r.depart, !!D.pillage.revanche); D.pillage = null; }
+        break;
+      }
       const r = D.villeDepart ? J.frapperGardien(app.jeu, D.escouade, Date.now()) : D.fleche ? (D.defi ? J.defierGardien(app.jeu, D.escouade, D.defi) : J.monterFleche(app.jeu, D.escouade))
         : D.pillage ? J.piller(app.jeu, D.escouade, D.pillage, Date.now())
         : D.epreuve ? J.partirEpreuve(app.jeu, D.escouade, D.epreuve, Date.now(), undefined, !!D.felee)

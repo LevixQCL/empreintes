@@ -118,6 +118,8 @@ export interface DuelEtat {
   journal: LigneDuel[];
   /** ce qui s'est passé au dernier tour (animation, récapitulatif) */
   derniers: EvDuel[];
+  /** ce que chaque carte a fait pendant tout le duel (dégâts, bouclier, soin), par camp : le récit d'une défense (14 novembre 2026) */
+  bilan?: [Record<string, number>, Record<string, number>];
 }
 
 /**
@@ -499,6 +501,7 @@ export function resoudreTour(s: DuelEtat): EvDuel[] {
   if (s.issue !== 'en-cours' || !deuxPrets(s)) return [];
   const ev: EvDuel[] = [];
   const camps: Camp[] = [0, 1];
+  const carteDe = new Map(camps.flatMap((k) => s.cotes[k].chaine.map((g) => [g.uid, g.carte ?? ''] as const)));
   const ctx = camps.map((k) => contexte(s, k)) as [Contexte, Contexte];
   const forces = camps.map((k) => ctx[k].chaine.map((g, rang) => (g.vide ? { v: 0, effets: [] as (Effet | undefined)[] } : forceCarte(ctx[k], g, rang)))) as [ReturnType<typeof forceCarte>[], ReturnType<typeof forceCarte>[]];
   const analyse = camps.map((k) => analyserChaine(ctx[k].chaine));
@@ -684,6 +687,13 @@ export function resoudreTour(s: DuelEtat): EvDuel[] {
   for (const k of camps) finirTour(s.cotes[k], forces[k]);
   s.tour++;
   s.derniers = ev;
+  const bilan = (s.bilan ??= [{}, {}]);
+  for (const e of ev) {
+    if ((e.sorte === 'coup' || e.sorte === 'bouclier' || e.sorte === 'soin') && e.uid) {
+      const carte = carteDe.get(e.uid);
+      if (carte) bilan[e.camp][carte] = (bilan[e.camp][carte] ?? 0) + e.v;
+    }
+  }
   return ev;
 }
 
@@ -752,7 +762,22 @@ export function regleMise(s: DuelEtat, mises: [string | null, string | null]): {
  * Le robot cherche la meilleure chaîne de sa main (toutes les suites de cartes qui tiennent dans la chaîne, et chaque cible) :
  * dégâts qui passent, Porteur achevé, bouclier et soins utiles. Il ne voit pas la chaîne de l'adversaire.
  */
-export function choixRobot(s: DuelEtat, camp: Camp): ChoixTour {
+/**
+ * La consigne d'une garnison (14 novembre 2026, Bryan : avoir une influence sur sa défense et faire des choix) : le robot qui la
+ * joue pèse autrement ce qu'il cherche. Rempart : boucliers et soins ; Riposte : frapper fort et achever ; Harcèlement : les longues
+ * chaînes (suites, Échos) et les cartes qui affaiblissent l'adversaire. Sans consigne : le robot d'entraînement, équilibré.
+ */
+export type Consigne = 'rempart' | 'riposte' | 'harcelement';
+export const CONSIGNES: Record<Consigne, { degats: number; acheve: number; bouclier: number; soin: number; chaine: number; trouble: number }> = {
+  rempart: { degats: 0.75, acheve: 0.6, bouclier: 1.15, soin: 1.25, chaine: 0, trouble: 0 },
+  riposte: { degats: 1.2, acheve: 1.5, bouclier: 0.35, soin: 0.6, chaine: 0, trouble: 0 },
+  harcelement: { degats: 0.9, acheve: 0.8, bouclier: 0.55, soin: 0.7, chaine: 3, trouble: 8 },
+};
+const EQUILIBRE = { degats: 1, acheve: 1, bouclier: 1, soin: 1, chaine: 0, trouble: 0 };
+const TROUBLES = new Set(['desarmer', 'sourdine', 'fissure', 'breche', 'rapt']);
+
+export function choixRobot(s: DuelEtat, camp: Camp, consigne?: Consigne): ChoixTour {
+  const w = consigne ? CONSIGNES[consigne] : EQUILIBRE;
   const base = clone(s);
   const c = base.cotes[camp];
   if (c.pret || base.issue !== 'en-cours') return CHOIX_VIDE;
@@ -775,7 +800,10 @@ export function choixRobot(s: DuelEtat, camp: Camp): ChoixTour {
       const passe = Math.max(0, a.degats - adv.bouclier * 0.5);
       const acheve = passe >= cp.pv ? 40 + cp.pvMax * 0.3 : 0;
       const manque = debout(t.cotes[camp]).reduce((n, p) => n + (p.pvMax - p.pv), 0);
-      const score = Math.min(passe, cp.pv) + acheve + a.bouclier * 0.6 * menace + Math.min(a.soin, manque) * 0.8 + t.cotes[camp].chaine.length * 0.01;
+      const ch = t.cotes[camp].chaine;
+      const troubles = w.trouble ? ch.filter((g) => [g.effet?.type, g.effet2?.type].some((x) => x && TROUBLES.has(x))).length : 0;
+      const score = Math.min(passe, cp.pv) * w.degats + acheve * w.acheve + a.bouclier * 0.6 * menace * w.bouclier + Math.min(a.soin, manque) * 0.8 * w.soin
+        + ch.length * (0.01 + w.chaine) + troubles * w.trouble;
       if (score > meilleur.score) meilleur = { score, choix: choixDe(t, camp) };
     }
   };

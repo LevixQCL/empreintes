@@ -5,7 +5,10 @@
 // Pendant un duel, l'application est en mode « duel » : le district ne se redessine plus chaque seconde, seul le chrono bouge.
 
 import * as J from '../core/jeu';
-import { DUEL, creerDuel, graineDuel, validerEscouade, type Camp, type DuelEtat, type EscouadeDuel } from '../core/duel';
+import { DUEL, creerDuel, graineDuel, validerEscouade, type Camp, type Consigne, type DuelEtat, type EscouadeDuel } from '../core/duel';
+import { moduleDef } from '../core/donnees';
+import { htmlTraversee } from '../ui/vue';
+import { envoyerPillages, planifierGarnison } from './pillages';
 import { escouadeDuelDe } from '../core/duel-escouade';
 import { SessionDuel, transportRobot, type Transport } from '../duel/session';
 import { transportEnLigne } from '../duel/en-ligne';
@@ -37,10 +40,15 @@ export const DL: {
   gain: { composants: number; eclats: number } | null;
   note: boolean;
   arreterSalon: (() => void) | null;
+  /** un pillage en duel (14 novembre 2026) : le district attaqué, la traversée en cours, ce que le retour a donné */
+  pillage?: { nom: string; consigne: Consigne } | null;
+  traversee?: { nom: string; fin: number; revanche: boolean } | null;
+  retourPillage?: J.RetourPillage | null;
 } = { session: null, transport: null, mode: 'libre', attente: false, message: '', gain: null, note: false, arreterSalon: null };
 
 /** L'écran du mode duel */
 export function htmlModeDuel(): string {
+  if (DL.traversee && !DL.session) return `<div class="ecran duel-traversee"></div>` + htmlTraversee(DL.traversee.nom, DL.traversee.fin - Date.now(), DL.traversee.revanche);
   const E = ecransDifferes();
   if (!E) return `<div class="ecran chargement"><p class="chargement-ecran" role="status">${tr`Chargement du duel…`}</p></div>`;
   const { htmlDuel, htmlAttenteDuel } = E;
@@ -53,6 +61,14 @@ export function htmlModeDuel(): string {
 function finCercle(): { recompense?: string; revanche?: boolean } {
   const s = DL.session;
   if (!s?.fini) return {};
+  if (DL.pillage) {
+    const r = DL.retourPillage;
+    if (!r) return {};
+    const carte = r.carte ? moduleDef(r.carte).nom : '';
+    return { recompense: r.victoire
+      ? tr`${r.nom} est pillé : +${r.gain} minerai${r.renom ? tr`, +${r.renom} Renom` : ''}${carte ? tr`, empreinte « ${carte} »${r.nouvelle ? tr(' (nouvelle carte !)') : ''}` : ''}.`
+      : tr`${r.nom} tient bon${r.perte ? tr` : −${r.perte} minerai` : ''}${r.renom ? tr`, ${r.renom} Renom` : ''}.` };
+  }
   const g = DL.gain;
   return {
     ...(g ? { recompense: tr`+${g.composants} cristaux · +${g.eclats} Éclat${g.eclats > 1 ? 's' : ''} : première victoire de la semaine contre ${DL.nomAmi}` } : {}),
@@ -89,7 +105,19 @@ export function rendreDuel() {
   const s = DL.session;
   if (s?.fini && !DL.note) {
     DL.note = true;
-    if (DL.ami) {
+    if (DL.pillage) {
+      const c = s.commun;
+      const bilan = c.bilan?.[1] ?? {};
+      const meilleure = Object.entries(bilan).sort((a, b) => b[1] - a[1])[0]?.[0];
+      DL.retourPillage = J.finirPillageDuel(app.jeu, {
+        victoire: s.gagne,
+        porteurs: c.cotes[0].porteurs.map((p) => ({ id: p.id, pv: p.pv, pvMax: p.pvMax })),
+        recit: { tours: Math.max(1, c.tour - 1), abattus: c.cotes[0].porteurs.filter((p) => p.pv <= 0).length, ...(meilleure ? { carte: meilleure } : {}) },
+      }, Date.now());
+      sauver();
+      envoyerPillages();
+      planifierGarnison();
+    } else if (DL.ami) {
       DL.gain = J.finirDuelAmi(app.jeu, DL.ami, s.gagne, Date.now());
       sauver();
       publierVitrine();
@@ -156,6 +184,23 @@ export function duelRobot() {
   lancer(creerDuel(e, { ...e, nom: tr('Robot d’entraînement') }, graineDuel()), 0, transportRobot(1));
 }
 
+/**
+ * Piller un directeur (14 novembre 2026) : la barque traverse quelques secondes, puis le duel s'ouvre contre sa vraie escouade,
+ * jouée par le robot selon sa consigne. La fin du duel règle le pillage (rendreDuel).
+ */
+export function lancerPillage(depart: J.DepartDuel, revanche = false) {
+  Object.assign(DL, { ami: undefined, nomAmi: undefined, defi: undefined, code: undefined, mode: 'libre', message: '', retourPillage: null });
+  DL.pillage = { nom: depart.defense.nom, consigne: depart.consigne };
+  DL.traversee = { nom: depart.defense.nom, fin: Date.now() + depart.secondes * 1000, revanche };
+  app.mode = 'duel';
+  afficher();
+  setTimeout(() => {
+    if (!DL.pillage || DL.session) return;
+    DL.traversee = null;
+    lancer(creerDuel(depart.attaque, depart.defense, depart.graine), 0, transportRobot(1, undefined, depart.consigne));
+  }, depart.secondes * 1000);
+}
+
 /** La revanche : le même ami, le même mode */
 export async function revanche() {
   const ami = DL.ami, mode = DL.mode;
@@ -165,6 +210,15 @@ export async function revanche() {
 
 /** Quitter l'écran du duel (fin, ou attente annulée) et revenir au Cercle */
 export function quitterDuel() {
+  if (DL.pillage) {
+    DL.transport?.fermer?.();
+    DL.session = null; DL.transport = null; DL.pillage = null; DL.traversee = null; DL.retourPillage = null; DL.message = '';
+    app.mode = 'district';
+    D.vue = 'pillages';
+    D.voletPort = 'pillages';
+    afficher();
+    return;
+  }
   DL.transport?.fermer?.();
   DL.arreterSalon?.();
   DL.arreterSalon = null;

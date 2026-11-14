@@ -378,7 +378,7 @@ service cloud.firestore {
     }
 
     function garnisonValide(d) {
-      return d.keys().hasOnly(['nom', 'porteurs', 'strate', 'coffre', 'force', 'maj', 'pavillon', 'renom'])
+      return d.keys().hasOnly(['nom', 'porteurs', 'strate', 'coffre', 'force', 'maj', 'pavillon', 'renom', 'consigne'])
         && d.nom is string && d.nom.size() >= 1 && d.nom.size() <= 24
         && d.porteurs is list && d.porteurs.size() >= 1 && d.porteurs.size() <= 3
         && porteurBorne(d.porteurs[0]) && (d.porteurs.size() < 2 || porteurBorne(d.porteurs[1])) && (d.porteurs.size() < 3 || porteurBorne(d.porteurs[2]))
@@ -388,6 +388,7 @@ service cloud.firestore {
         // 14 novembre 2026 : le pavillon (neutre ou pirate) et le Renom des pirates
         && d.get('pavillon', 'neutre') in ['neutre', 'pirate']
         && d.get('renom', 0) is int && d.get('renom', 0) >= 0 && d.get('renom', 0) <= 1000000
+        && d.get('consigne', 'riposte') in ['rempart', 'riposte', 'harcelement']
         && maintenant(d.maj);
     }
 
@@ -424,8 +425,12 @@ service cloud.firestore {
     }
 
     function subiValide(d, defenseur) {
-      return d.keys().hasOnly(['attaquant', 'nom', 'victoire', 'vol', 'perte', 'le'])
+      return d.keys().hasOnly(['attaquant', 'nom', 'victoire', 'vol', 'perte', 'le', 'tours', 'abattus', 'carte'])
         && d.attaquant == request.auth.uid
+        // 14 novembre 2026 : le récit de la défense (durée du duel, Porteurs mis à terre, carte du défenseur qui a le plus compté)
+        && d.get('tours', 0) is int && d.get('tours', 0) >= 0 && d.get('tours', 0) <= 99
+        && d.get('abattus', 0) is int && d.get('abattus', 0) >= 0 && d.get('abattus', 0) <= 3
+        && d.get('carte', '') is string && d.get('carte', '').size() <= 40
         && d.nom is string && d.nom.size() >= 1 && d.nom.size() <= 24
         && d.victoire is bool
         && d.vol is int && d.vol >= 0

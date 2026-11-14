@@ -2,6 +2,7 @@
 // le chrono du tour, et le transport qui apporte le choix de l'adversaire : un robot (entraînement) ou un ami en ligne (src/net/duel.ts).
 // Aucun affichage ici : l'écran (src/ui/duel.ts) lit la session et appelle ses méthodes.
 
+import type { Consigne } from '../core/duel';
 import {
   CHOIX_VIDE, DUEL, abandonner, allongerDuel, appliquerChoix, autre, choixDe, choixRobot, deplacerDuel, poserDuel, repiocherDuel, reprendreDuel,
   resoudreTour, soignerDuel, viserDuel, gagnant, type Camp, type ChoixTour, type DuelEtat, type EvDuel, type Resultat,
@@ -134,7 +135,7 @@ export class SessionDuel {
 }
 
 /** L'adversaire d'entraînement : le robot de duel, qui prend quelques secondes pour composer sa chaîne */
-export function transportRobot(camp: Camp, delai: (tour: number) => number = (t) => 1500 + ((t * 2654435761) >>> 0) % 4000): Transport {
+export function transportRobot(camp: Camp, delai: (tour: number) => number = (t) => 1500 + ((t * 2654435761) >>> 0) % 4000, consigne?: Consigne): Transport {
   let recevoir: ((tour: number, choix: ChoixTour) => void) | null = null;
   let minuterie: ReturnType<typeof setTimeout> | undefined;
   return {
@@ -142,7 +143,7 @@ export function transportRobot(camp: Camp, delai: (tour: number) => number = (t)
     envoyer() {},
     nouveauTour(s) {
       clearTimeout(minuterie);
-      const choix = choixRobot(s, camp);
+      const choix = choixRobot(s, camp, consigne);
       minuterie = setTimeout(() => recevoir?.(s.tour, choix), delai(s.tour));
     },
     fermer() { clearTimeout(minuterie); },

@@ -4,9 +4,11 @@ import {
   ESCOUADES_STRATE,
   PILLAGE, butinPillage, chanceVictoire, choisirDefense, cibleDe, escouadeDefense, escouadesDe, placerDansEscouade, ciblesBots, etatPillage, forceEscouade, garnisonDe, majJetons, multButin,
   nouveauJeu, piller, protege, remonter, subirPillages, type Cible,
-  changerPavillon, pavillonDe, exposeDe, perteDe, porteeDe, placeDe, distance, traversee, revanchesOuvertes,
+  changerPavillon, pavillonDe, lancerPillageDuel, finirPillageDuel, pillageEnSuspens, choisirConsigne, exposeDe, perteDe, porteeDe, placeDe, distance, traversee, revanchesOuvertes,
 } from '../src/core/jeu';
 import { jouerTourMoyen } from '../src/core/robot';
+import { choixRobot, creerDuel } from '../src/core/duel';
+import { escouadeDuelDe } from '../src/core/duel-escouade';
 
 const ESC = ['ilka', 'doran', 'vela'];
 // les pillages s'ouvrent après le gardien de −3 (2 novembre 2026)
@@ -214,5 +216,68 @@ describe('Les pillages', () => {
     expect(protege([{ victoire: true, le: 0 }], 9 * h)).toBe(false);
     expect(protege([{ victoire: false, le: 0 }], h)).toBe(false);
     expect(protege([{ victoire: false, le: 0 }, { victoire: false, le: 1 }, { victoire: false, le: 2 }], h)).toBe(true);
+  });
+});
+
+describe('Le pillage d’un directeur, en duel contre sa vraie escouade (14 novembre 2026)', () => {
+  const pirate = (j: ReturnType<typeof pret>, id = 'rival'): Cible => {
+    const g = { ...garnisonDe(j), pavillon: 'pirate' as const, consigne: 'rempart' as const, coffre: 9 };
+    return { ...cibleDe(id, 'Rival', g), milles: 120 };
+  };
+
+  it('le départ donne les deux escouades, la consigne du défenseur et la traversée ; le retour règle le pillage', () => {
+    const j = pret();
+    j.composants = 1000;
+    const c = pirate(pret());
+    const r = lancerPillageDuel(j, ESC, c, 1000, 42);
+    expect(r.ok).toBe(true);
+    expect(r.depart!.defense.porteurs.map((p) => p.id)).toEqual(ESC);
+    expect(r.depart!.consigne).toBe('rempart');
+    expect(r.depart!.secondes).toBe(traversee(120));
+    expect(pavillonDe(j)).toBe('pirate');
+    expect(etatPillage(j).jetons).toBe(PILLAGE.jetonsMax - 1);
+    // un seul pillage à la fois
+    expect(lancerPillageDuel(j, ESC, { ...c, id: 'autre' }, 1000).ok).toBe(false);
+    const avant = j.composants;
+    const fin = finirPillageDuel(j, { victoire: true, porteurs: ESC.map((id) => ({ id, pv: 50, pvMax: 100 })), recit: { tours: 9, abattus: 1, carte: 'carapace@fer' } }, 2000)!;
+    expect(fin.victoire).toBe(true);
+    expect(j.composants).toBe(avant + fin.gain);
+    expect(fin.gain).toBe(c.coffre + butinPillage(c, c.force / forceEscouade(pret(), ESC)).base);
+    expect(fin.carte).not.toBeNull();
+    expect(etatPillage(j).enCours).toBeUndefined();
+    expect(j.pillage!.aEnvoyer[0]).toMatchObject({ cible: 'rival', victoire: true, vol: 9, recit: { tours: 9, abattus: 1, carte: 'carapace@fer' } });
+    // la moitié de la part de PV perdue en duel devient de l'Usure
+    for (const id of ESC) expect(j.porteurs[id]!.usure).toBeGreaterThan(0);
+  });
+
+  it('un duel jamais fini compte perdu ; un district sans directeur ne se pille pas en duel', () => {
+    const j = pret();
+    j.composants = 1000;
+    expect(lancerPillageDuel(j, ESC, ciblesBots(j, 5, 0, 5)[0]!, 0).ok).toBe(false);
+    expect(lancerPillageDuel(j, ESC, pirate(pret()), 0).ok).toBe(true);
+    const r = pillageEnSuspens(j, 10)!;
+    expect(r.victoire).toBe(false);
+    expect(j.composants).toBe(1000 - perteDe(1000, PILLAGE.strateMin));
+    expect(pillageEnSuspens(j, 20)).toBeNull();
+  });
+
+  it('le défenseur choisit sa consigne et lit le récit de sa défense', () => {
+    const j = pret();
+    expect(garnisonDe(j).consigne).toBe('riposte');
+    expect(choisirConsigne(j, 'harcelement').ok).toBe(true);
+    expect(garnisonDe(j).consigne).toBe('harcelement');
+    changerPavillon(j, 'pirate', 0);
+    j.composants = 500;
+    subirPillages(j, [{ id: 'a', par: 'u1', nom: 'Ilse', victoire: false, vol: 0, perte: 4, le: 1, recit: { tours: 11, abattus: 2, carte: 'carapace@fer' } }]);
+    expect(etatPillage(j).historique![0]!.recit).toEqual({ tours: 11, abattus: 2, carte: 'carapace@fer' });
+  });
+
+  it('la consigne change ce que le robot de la garnison joue', () => {
+    const a = escouadeDuelDe(pret()), b = escouadeDuelDe(pret());
+    const differents = [1, 2, 3, 4, 5, 6, 7, 8].some((g) => {
+      const s = creerDuel(a, b, g);
+      return JSON.stringify(choixRobot(s, 1, 'rempart')) !== JSON.stringify(choixRobot(s, 1, 'riposte'));
+    });
+    expect(differents).toBe(true);
   });
 });

@@ -15,7 +15,7 @@ export interface GarnisonPubliee extends Garnison { nom: string; force: number; 
 export async function publierGarnison(uid: string, g: GarnisonPubliee): Promise<void> {
   await setDoc(doc(db(), 'garnisons', uid), {
     nom: g.nom, strate: g.strate, coffre: Math.floor(g.coffre), force: g.force, maj: g.maj,
-    pavillon: g.pavillon === 'pirate' ? 'pirate' : 'neutre', renom: Math.max(0, Math.floor(g.renom ?? 0)),
+    pavillon: g.pavillon === 'pirate' ? 'pirate' : 'neutre', renom: Math.max(0, Math.floor(g.renom ?? 0)), consigne: g.consigne ?? 'riposte',
     porteurs: g.porteurs.map((p) => ({ id: p.id, pv: p.pv, cartes: p.cartes.map((c) => ({ id: c.id, niveau: c.niveau })) })),
   });
 }
@@ -31,7 +31,8 @@ function garnisonDe(d: Record<string, unknown>): (Garnison & { nom: string }) | 
     return [{ id: x.id, pv: x.pv, cartes }];
   });
   if (!porteurs.length) return null;
-  return { nom: d.nom, strate: d.strate, coffre: d.coffre, porteurs, pavillon: d.pavillon === 'pirate' ? 'pirate' : 'neutre', renom: typeof d.renom === 'number' ? d.renom : 0 };
+  const consigne = d.consigne === 'rempart' || d.consigne === 'harcelement' ? d.consigne : 'riposte';
+  return { nom: d.nom, strate: d.strate, coffre: d.coffre, porteurs, pavillon: d.pavillon === 'pirate' ? 'pirate' : 'neutre', renom: typeof d.renom === 'number' ? d.renom : 0, consigne };
 }
 
 /**
@@ -75,7 +76,8 @@ export async function lireSubis(uid: string, depuis: number): Promise<PillageSub
   snap.forEach((s) => {
     const d = s.data();
     if (typeof d.nom === 'string' && typeof d.victoire === 'boolean' && typeof d.vol === 'number' && typeof d.perte === 'number' && typeof d.le === 'number') {
-      l.push({ id: s.id, ...(typeof d.attaquant === 'string' ? { par: d.attaquant } : {}), nom: d.nom, victoire: d.victoire, vol: d.vol, perte: d.perte, le: d.le });
+      const recit = typeof d.tours === 'number' ? { tours: d.tours, abattus: typeof d.abattus === 'number' ? d.abattus : 0, ...(typeof d.carte === 'string' ? { carte: d.carte } : {}) } : undefined;
+      l.push({ id: s.id, ...(typeof d.attaquant === 'string' ? { par: d.attaquant } : {}), nom: d.nom, victoire: d.victoire, vol: d.vol, perte: d.perte, le: d.le, ...(recit ? { recit } : {}) });
     }
   });
   return l;
@@ -85,7 +87,8 @@ export async function lireSubis(uid: string, depuis: number): Promise<PillageSub
 export async function envoyerPillage(uid: string, nom: string, p: PillageJoue): Promise<void> {
   const le = Date.now();
   // un identifiant par attaquant et par demi-journée (3 novembre 2026) : les règles refusent les rafales contre un même défenseur
-  await setDoc(doc(db(), 'garnisons', p.cible, 'subis', `${uid}_${Math.floor(le / DEMI_JOURNEE)}`), { attaquant: uid, nom, victoire: p.victoire, vol: p.vol, perte: p.perte, le });
+  await setDoc(doc(db(), 'garnisons', p.cible, 'subis', `${uid}_${Math.floor(le / DEMI_JOURNEE)}`), { attaquant: uid, nom, victoire: p.victoire, vol: p.vol, perte: p.perte, le,
+    ...(p.recit ? { tours: Math.min(99, Math.max(0, Math.floor(p.recit.tours))), abattus: Math.min(3, Math.max(0, Math.floor(p.recit.abattus))), ...(p.recit.carte ? { carte: p.recit.carte.slice(0, 40) } : {}) } : {}) });
 }
 const DEMI_JOURNEE = 12 * 3_600_000;
 
