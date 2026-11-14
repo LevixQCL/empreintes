@@ -7,8 +7,20 @@
 .nav .medaillon{position:relative;z-index:2;min-width:0;-webkit-tap-highlight-color:transparent}
 .nav .med-image{position:absolute;z-index:1;left:50%;pointer-events:none;transform:translateX(-50%);
   filter:drop-shadow(0 0 12px rgba(95,168,255,.35)) drop-shadow(0 4px 8px rgba(0,0,0,.7));transition:filter .25s ease,transform .25s cubic-bezier(.2,1.4,.4,1)}
-.nav .medaillon.actif .med-image{filter:drop-shadow(0 0 16px rgba(140,200,255,.6)) drop-shadow(0 0 22px rgba(255,200,120,.25)) drop-shadow(0 4px 8px rgba(0,0,0,.7))}
-.nav .medaillon:has(.med-moitie:active) .med-image{transform:translateX(-50%) scale(.95)}
+/* les deux moitiés de l'image (le halo sur l'enveloppe, la découpe sur l'image, pour que la lueur ne soit pas coupée), découpées le long du milieu de l'arête de bronze en S (14 nov. 2026) */
+.nav .med-image>img{display:block;width:100%;height:100%}
+.nav .med-g>img{clip-path:polygon(0 0,52% 0,52% 8%,45% 17%,42.5% 26%,44% 35%,48.6% 43%,54% 52%,57.3% 61%,57.3% 69%,55.5% 78%,53% 87%,50% 94%,50% 100%,0 100%)}
+.nav .med-g{transform-origin:38% 55%}
+.nav .med-d>img{clip-path:polygon(100% 0,52% 0,52% 8%,45% 17%,42.5% 26%,44% 35%,48.6% 43%,54% 52%,57.3% 61%,57.3% 69%,55.5% 78%,53% 87%,50% 94%,50% 100%,100% 100%)}
+.nav .med-d{transform-origin:62% 45%}
+/* la moitié ouverte grandit, passe devant et s'allume à sa couleur ; l'autre recule et s'éteint */
+.nav .medaillon.ouvert-coupe .med-g,.nav .medaillon.ouvert-fleche .med-d{z-index:2;transform:translateX(-50%) scale(1.16)}
+.nav .medaillon.ouvert-coupe .med-g{filter:brightness(1.12) drop-shadow(0 0 10px rgba(120,200,255,.95)) drop-shadow(0 0 22px rgba(95,168,255,.6)) drop-shadow(0 4px 8px rgba(0,0,0,.7))}
+.nav .medaillon.ouvert-fleche .med-d{filter:brightness(1.1) drop-shadow(0 0 10px rgba(255,205,130,.95)) drop-shadow(0 0 22px rgba(255,180,90,.55)) drop-shadow(0 4px 8px rgba(0,0,0,.7))}
+.nav .medaillon.ouvert-coupe .med-d,.nav .medaillon.ouvert-fleche .med-g{transform:translateX(-50%) scale(.92);
+  filter:saturate(.5) brightness(.7) drop-shadow(0 4px 8px rgba(0,0,0,.7))}
+/* au toucher, seule la moitié touchée s'enfonce */
+.nav .medaillon:has(.med-coupe:active) .med-g,.nav .medaillon:has(.med-fleche:active) .med-d{transform:translateX(-50%) scale(1.02)}
 
 /* les deux moitiés : chacune couvre sa moitié de l'image et son nom dessous */
 .nav .med-moitie{position:absolute;bottom:0;width:50%;margin:0;padding:0 0 3px;border:0;background:none;cursor:pointer;

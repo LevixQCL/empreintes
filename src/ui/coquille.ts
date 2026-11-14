@@ -523,8 +523,12 @@ export function navigation(e: EcranDistrict): string {
     const moitie = (cote: 'coupe' | 'fleche', action: string, nom: string, etiquette: string, alerteCote: boolean) =>
       `<button type="button" class="med-moitie med-${cote}${actif === cote ? ' actif' : ''}" data-action="${action}" aria-label="${etiquette}"${actif === cote ? ' aria-current="page"' : ''}>`
       + (alerteCote ? pastille : '') + `<span class="onglet-nom">${nom}</span></button>`;
-    return `<div class="medaillon${ouverte ? '' : ' scelle'}${actif === 'coupe' || actif === 'fleche' ? ' actif' : ''}">`
-      + `<img class="med-image" src="${baseIcones}${ouverte ? 'medaillon' : 'medaillon-scelle'}.webp" alt="" aria-hidden="true" decoding="async">`
+    // l'image est posée deux fois, chaque copie découpée le long de l'arête en S : la moitié ouverte grandit et s'allume,
+    // l'autre s'efface un peu (14 novembre 2026, Bryan : on doit voir sur quoi on touche)
+    const image = `${baseIcones}${ouverte ? 'medaillon' : 'medaillon-scelle'}.webp`;
+    return `<div class="medaillon${ouverte ? '' : ' scelle'}${actif === 'coupe' || actif === 'fleche' ? ` actif ouvert-${actif}` : ''}">`
+      + `<span class="med-image med-g" aria-hidden="true"><img src="${image}" alt="" decoding="async"></span>`
+      + `<span class="med-image med-d" aria-hidden="true"><img src="${image}" alt="" decoding="async"></span>`
       + moitie('coupe', 'coupe', tr('Strates'), tr`Descendre dans les Strates (−${j.strate})`, !!alerte.coupe)
       + moitie('fleche', accessible ? 'fleche' : 'fleche-scellee', tr('Flèche'),
         ouverte && ef ? tr`Monter à la Flèche (quai ${ef.quai})` : tr('La Flèche, encore endormie'), !!alerte.fleche)
