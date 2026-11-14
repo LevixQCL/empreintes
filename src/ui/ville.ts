@@ -99,7 +99,9 @@ function piste(j: Jeu, ville: VilleGardien | null | undefined, semaine: number):
 function classement(j: Jeu, ville: VilleGardien | null | undefined, semaine: number, mesDegats: number): string {
   const v = ville && ville.semaine === semaine ? ville : null;
   const lignes = v?.classement ?? [];
-  if (!lignes.length) return '';
+  const titre = `<h3 class="titre-bloc">${tr`Les dégâts de la semaine`}</h3>`;
+  // toujours consultable (Bryan, 14 novembre 2026) : en attendant la lecture en ligne, ou si personne n'a encore frappé
+  if (!lignes.length) return titre + `<p class="gv-vide">${v && v.frappeurs ? tr('Le classement se charge… Il s’affiche dès que tu es en ligne.') : tr('Personne n’a encore frappé cette semaine : le premier coup ouvre le classement.')}</p>`;
   const nom = (n: string | null) => echap(n ?? tr('Un directeur'));
   const toi = `<em>${tr`toi`}</em>`;
   const podium = lignes.slice(0, 3).map((l, i) => {
@@ -112,7 +114,7 @@ function classement(j: Jeu, ville: VilleGardien | null | undefined, semaine: num
     `<li class="${moi ? 'moi' : ''}"><b class="gv-rang">${rang}</b><span>${nom(n)}${moi ? toi : ''}</span><small>−${strate}</small><b>${nombre(d)}</b></li>`;
   let suite = lignes.slice(3).map((l, i) => ligne(i + 4, l.nom, l.strate, l.degats, l.uid === v!.moi)).join('');
   if (v!.rang && v!.rang > lignes.length) suite += `<li class="gv-ecart" aria-hidden="true">···</li>` + ligne(v!.rang, j.directeur?.nom || tr('Un directeur'), Math.max(1, strateVaincue(j)), mesDegats, true);
-  return `<h3 class="titre-bloc">${tr`Les dégâts de la semaine`}</h3><ol class="gv-podium">${podium}</ol>`
+  return titre + `<ol class="gv-podium">${podium}</ol>`
     + (suite ? `<ol class="gv-classement">${suite}</ol>` : '');
 }
 

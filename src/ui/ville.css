@@ -111,3 +111,4 @@
   .gv-appel strong{display:block;font:400 17px/1.2 var(--display);color:#F6F2EA}
   .gv-appel small{font-size:12.5px;color:#C9D6E6}
 }
+.gv-vide{margin:0 0 8px;padding:12px 14px;border-radius:12px;background:rgba(205,239,255,.05);font-size:13px;line-height:1.45;color:#C9D6E6;text-align:center}

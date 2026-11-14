@@ -208,7 +208,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       const ouvre = !D.villeOuverte || D.vue !== 'archipel';
       if (D.vue !== 'archipel') ouvrir('archipel');
       D.villeOuverte = ouvre; D.exode = false; D.selection = null; D.bulle = null;
-      if (ouvre) void rafraichirVille();
+      if (ouvre) void rafraichirVille(!D.ville?.classement?.length);
       break;
     }
     case 'ville-preparer': {

@@ -35,10 +35,19 @@ export async function lireVille(semaine: number, uid: string): Promise<VilleGard
     getDocs(query(fiches(semaine), orderBy('degats', 'desc'), limit(10))),
     getDoc(doc(fiches(semaine), uid)),
   ]);
-  const classement: LigneClassementGardien[] = top.docs.map((d) => {
+  const ligne = (d: { id: string; data: () => Record<string, unknown> }): LigneClassementGardien => {
     const f = ficheDe(d.data())!;
     return { uid: d.id, nom: f.nom, strate: f.strate, parts: f.parts, frappes: f.frappes, degats: f.degats };
-  });
+  };
+  const classement: LigneClassementGardien[] = top.docs.map(ligne);
+  // les fiches écrites avant le classement des dégâts n'ont pas de champ `degats` : Firestore les écarte d'un tri sur ce
+  // champ. Tant qu'il manque des directeurs, on les reprend triés par parts (toujours présentes), à la suite.
+  if (classement.length < Math.min(10, v.frappeurs)) {
+    const parParts = await getDocs(query(fiches(semaine), orderBy('parts', 'desc'), limit(10)));
+    for (const d of parParts.docs) if (!classement.some((l) => l.uid === d.id)) classement.push(ligne(d));
+    classement.sort((a, b) => b.degats - a.degats || b.parts - a.parts);
+    classement.splice(10);
+  }
   const mienne = ficheDe(moi.data());
   let rang = 0;
   if (mienne) {
