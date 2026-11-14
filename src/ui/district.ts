@@ -2263,8 +2263,8 @@ function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof m
       + `<div class="tr-infos"><strong>${nom}</strong><small>${echap(zone.nom)}${vaincue ? tr` · ${ICO.ok}vaincue` : ` · <em>${tr`front : son gardien t’attend`}</em>`}</small>`
       + (remuee?.strate === n ? `<small class="tr-remuee">${ICO.strate}${tr`Remuée aujourd’hui`}${particularite(remuee.modele) ? ` : ${echap(particularite(remuee.modele)!.nom.charAt(0).toLowerCase() + particularite(remuee.modele)!.nom.slice(1))}` : ''}</small>` : '')
       + contenuStrate(j, n)
-      + `<div class="tr-actions">${vaincue ? `<button type="button" class="btn sec tr-btn fouiller" data-action="fouiller-choix" data-strate="${n}"${off ? ' disabled' : ''}>${icone('composants')}<span>${tr`Fouiller`}</span></button>` : ''}`
-      + `<button type="button" class="btn ${front && !j.frontVaincu ? 'prim' : 'sec'} tr-btn explorer" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}>${icone('traces')}<span>${tr`Explorer`}</span></button></div></div></li>`;
+      + `<div class="tr-actions">${vaincue ? `<button type="button" class="btn sec tr-btn fouiller" data-action="fouiller-choix" data-strate="${n}"${off ? ' disabled' : ''}><img class="ico peinte" src="${baseIcones}fouiller.webp" alt="" aria-hidden="true" decoding="async"><span>${tr`Fouiller`}</span></button>` : ''}`
+      + `<button type="button" class="btn ${front && !j.frontVaincu ? 'prim' : 'sec'} tr-btn explorer" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}><img class="ico peinte" src="${baseIcones}explorer.webp" alt="" aria-hidden="true" decoding="async"><span>${tr`Explorer`}</span></button></div></div></li>`;
   }
   // la roche, tout en bas
   const requis = creuseursRequis(cible);
