@@ -14,7 +14,7 @@ import { NOMS_EFFET, effetsDe, formuleEffet, texteEffet } from '../core/effets';
 import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe, deNom, ilElle } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, EVEIL_ORIGINE, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, EPREUVES_STRATE, epreuvesOuvertes, vestigesOuverts, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, chanceCreuseurFouille, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, pvNiveau, bonusPv, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, EPREUVES_STRATE, epreuvesOuvertes, vestigesOuverts, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, chanceCreuseurFouille, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, arretSeance, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, pvNiveau, bonusPv, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, gainsAmelioration, type GainNiveau,
   COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, gardienPourTour, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, plafondEntrainement, raffinageParHeure, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
@@ -556,7 +556,13 @@ const multPoste = (b: Exclude<Poste, 'noyau'>, id: string) => {
 };
 
 /** Le petit marteau sur un portrait : ce Porteur travaille ailleurs et quittera son poste (28 octobre 2026) */
-const badgePris = (j: Jeu, id: string) => { const b = j.porteurs[id]!.poste; return b ? `<span class="te-pris" title="${tr`Au travail : ${echap(batimentDef(b).nom)}`}">${ICO.marteau}</span>` : ''; };
+const badgePris = (j: Jeu, id: string) => {
+  const b = j.porteurs[id]!.poste;
+  if (!b) return '';
+  // à l'entraînement (14 novembre 2026) : une flèche bleue, pas le marteau du travail
+  if (b === 'noyau') return `<span class="te-pris entr" title="${tr('À l’entraînement à la Tour du Noyau')}">${ICO.monter}</span>`;
+  return `<span class="te-pris" title="${tr`Au travail : ${echap(batimentDef(b).nom)}`}">${ICO.marteau}</span>`;
+};
 
 /** Le portrait d'un Porteur en tuile (12 novembre 2026, refonte des feuilles de bâtiment) : l'image en haut, liseré de sa lignée */
 function tuilePortrait(j: Jeu, id: string): string {
@@ -571,6 +577,18 @@ function tousPorteurs(e: EcranDistrict, n: number): string {
   return `<button type="button" class="te-fermer tb-tous" data-action="bat-tous" aria-expanded="${e.porteursTous ? 'true' : 'false'}">${e.porteursTous ? tr('Moins de Porteurs') : tr`Voir les ${n - 6} autres`}</button>`;
 }
 
+/** Poster ailleurs un Porteur à l'entraînement arrête sa séance : on le dit avant (14 novembre 2026) */
+function confirmeSeance(e: EcranDistrict, poste: Exclude<Poste, 'noyau'>): string {
+  const id = e.confirmeSeance;
+  const a = id ? arretSeance(e.j, id) : null;
+  if (!id || !a) return '';
+  const nom = echap(porteurDef(id).nom);
+  return `<div class="tb-confirme" role="alert">${ICO.monter}<span><strong>${tr`${nom} s’entraîne à la Tour`}</strong>`
+    + `${tr`Séance vers le niveau ${a.cible}, encore ${duree(a.heuresRestantes * 3_600_000)}. Le poster ici l’arrête : l’XP déjà gagnée reste${a.rendu ? tr`, ${a.rendu} cristaux rendus` : ''}.`}</span>`
+    + `<span class="tb-confirme-btns"><button type="button" class="btn sec" data-action="seance-garder">${tr`Le laisser s’entraîner`}</button>`
+    + `<button type="button" class="btn prim" data-action="poster" data-id="${id}" data-poste="${poste}" data-confirme="1">${tr`Arrêter et poster`}</button></span></div>`;
+}
+
 /** Un Porteur qu'on peut poster : son portrait, ce que donnerait le poste avec lui (et l'écart), un marteau s'il travaille ailleurs */
 function candidat(j: Jeu, id: string, poste: Exclude<Poste, 'noyau'>, actuel: number, conseille = false): string {
   const d = porteurDef(id);
@@ -579,8 +597,8 @@ function candidat(j: Jeu, id: string, poste: Exclude<Poste, 'noyau'>, actuel: nu
   const ecart = Math.round((r.v - actuel) * 10) / 10;
   const signe = ecart > 0 ? 'plus' : ecart < 0 ? 'moins' : 'egal';
   const delta = poste === 'forge' || poste === 'generateur' || ecart === 0 ? '' : `<i>${ecart > 0 ? '+' : '−'}${virgule(Math.abs(ecart))}</i>`;
-  return `<button type="button" class="tb-cand ${signe}${conseille ? ' conseille' : ''}" data-action="poster" data-id="${id}" data-poste="${poste}" aria-label="${tr`Poster ${echap(d.nom)} : ${r.long}${ailleurs ? tr`, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}`}">`
-    + `${tuilePortrait(j, id)}${multPoste(poste, id)}${conseille ? `<span class="tb-conseil">${tr`Conseillé`}</span>` : ''}`
+  return `<button type="button" class="tb-cand ${signe}${conseille ? ' conseille' : ''}" data-action="poster" data-id="${id}" data-poste="${poste}" aria-label="${tr`Poster ${echap(d.nom)} : ${r.long}${ailleurs === 'noyau' ? tr(', arrête son entraînement') : ailleurs ? tr`, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}`}">`
+    + `${tuilePortrait(j, id)}${multPoste(poste, id)}${ailleurs === 'noyau' ? `<span class="tb-conseil tb-seance">${tr`En séance`}</span>` : conseille ? `<span class="tb-conseil">${tr`Conseillé`}</span>` : ''}`
     + `<span class="tb-cand-txt"><strong>${echap(d.nom.split(' ')[0]!)}</strong><span class="tb-eff">${r.court}${delta}</span></span></button>`;
 }
 
@@ -1086,7 +1104,9 @@ function feuilleBatiment(e: EcranDistrict): string {
       if (utiles.length) {
         // poste vide : le premier (la recrue la mieux placée) est mis en avant, c'est lui que l'objectif demande
         h += `<div class="tb-cands">${utiles.slice(0, e.porteursTous ? undefined : 6).map((x, i) => candidat(j, x.p.id, poste, actuel.v, !occupant && i === 0)).join('')}</div>${tousPorteurs(e, utiles.length)}`;
-        if (utiles.some((x) => j.porteurs[x.p.id]!.poste)) h += `<p class="te-note">${ICO.marteau}${tr`quitte son poste au district`}</p>`;
+        if (utiles.some((x) => j.porteurs[x.p.id]!.poste && j.porteurs[x.p.id]!.poste !== 'noyau')) h += `<p class="te-note">${ICO.marteau}${tr`quitte son poste au district`}</p>`;
+        if (utiles.some((x) => j.porteurs[x.p.id]!.poste === 'noyau')) h += `<p class="te-note entr">${ICO.monter}${tr`à l’entraînement : le poster ici arrête sa séance`}</p>`;
+        h += confirmeSeance(e, poste);
       } else if (occupant) {
         h += `<p class="te-note">${tr`Personne de disponible ne ferait mieux que ${echap(porteurDef(occupant).nom)}.`}</p>`;
       }

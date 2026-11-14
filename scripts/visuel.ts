@@ -42,6 +42,13 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   // le Cercle des quais (refonte du 14 novembre 2026) : trois tuiles, les métaux échangeables, « Entrer » au pied
   { nom: 'cercle', sauvegarde: 'cercle', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="cercle"]', { force: true }); await p.waitForTimeout(800); await p.click('.cr-niveau'); await p.waitForTimeout(300); } },
   { nom: 'noyau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="noyau"]'); } },
+  // poster ailleurs un Porteur à l'entraînement (14 novembre 2026) : sa tuile le dit, et on prévient avant d'arrêter la séance
+  { nom: 'poste-seance', sauvegarde: 'tour', faire: async (p) => {
+    await ENTRER(p); await p.click('button.balise[data-id="noyau"]'); await p.click('[data-poste="noyau"]:not([disabled]) >> nth=0'); await p.click('.fb-fermer', { force: true }); await p.waitForTimeout(200);
+    await p.click('button.balise[data-id="generateur"]'); await p.waitForTimeout(300);
+    if (await p.$('.fb-travail [data-action="poste-changer"]')) { await p.click('.fb-travail [data-action="poste-changer"]'); await p.click('.fb-travail [data-action="liberer"]'); await p.waitForTimeout(200); }
+    if (!(await p.$('.tb-cand:has(.tb-seance)'))) await p.click('.tb-tous');
+    await p.click('.tb-cand:has(.tb-seance) >> nth=0'); await p.waitForTimeout(200); await p.$eval('.tb-confirme', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
   { nom: 'noyau-places', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="noyau"]'); await p.locator('.fb-bloc.te').scrollIntoViewIfNeeded(); } },
   // le Butin de la semaine (28 octobre 2026) : sur téléphone, on déplie d'abord la bulle de l'objectif, puis on touche le bandeau
   { nom: 'butin', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.objectif:visible').first(); if (await d.count()) { await d.click(); await p.waitForTimeout(250); } await p.click('.mission.jour .archive'); } },

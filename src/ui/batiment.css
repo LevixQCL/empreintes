@@ -597,3 +597,14 @@ button.te-socle.vide:active{transform:scale(.97)}
 @keyframes ce-flotte{50%{translate:0 -3px}}
 @keyframes ce-souffle{50%{opacity:.65;scale:.92}}
 @media (prefers-reduced-motion:reduce){.ce-halo,.ce-cristal{animation:none}}
+
+/* ---------- À l'entraînement (14 novembre 2026) : se distingue du travail, et on prévient avant d'arrêter la séance ---------- */
+.te-pris.entr,.tb-visage .te-pris.entr{color:#8FDcff;box-shadow:inset 0 0 0 1px rgba(127,212,255,.7)}
+.te-pris.entr{background:#10202C}
+.tb-seance{color:#06202C;background:linear-gradient(180deg,#BDEBFF,#7FD4FF)}
+.te-note.entr .ico{color:#7FD4FF}
+.tb-confirme{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:start;margin-top:10px;padding:12px;border-radius:14px;
+  background:rgba(127,212,255,.07);box-shadow:inset 0 0 0 1px rgba(127,212,255,.4);font-size:13px;line-height:1.4;color:var(--fb-txt)}
+.tb-confirme>.ico{width:20px;height:20px;color:#7FD4FF;margin-top:1px}
+.tb-confirme strong{display:block;margin-bottom:2px;color:#F6F2EA;font-size:14px}
+.tb-confirme-btns{grid-column:1 / -1;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px}

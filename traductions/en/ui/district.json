@@ -322,6 +322,10 @@
    "en": "Other lineage"
   },
   {
+   "fr": "À l’entraînement à la Tour du Noyau",
+   "en": "Training at the Core Tower"
+  },
+  {
    "fr": "Au travail : {0}",
    "en": "At work: {0}"
   },
@@ -334,12 +338,40 @@
    "en": ""
   },
   {
+   "fr": "{0} s’entraîne à la Tour",
+   "en": "{0} is training at the Tower"
+  },
+  {
+   "fr": "Séance vers le niveau {0}, encore {1}. Le poster ici l’arrête : l’XP déjà gagnée reste{2}.",
+   "en": "Session toward level {0}, {1} left. Posting them here stops it: XP already earned is kept{2}."
+  },
+  {
+   "fr": ", {0} cristaux rendus",
+   "en": ", {0} crystals refunded"
+  },
+  {
+   "fr": "Le laisser s’entraîner",
+   "en": "Keep training"
+  },
+  {
+   "fr": "Arrêter et poster",
+   "en": "Stop and post"
+  },
+  {
    "fr": "Poster {0} : {1}{2}",
    "en": "Assign {0}: {1}{2}"
   },
   {
+   "fr": ", arrête son entraînement",
+   "en": ", stops their training"
+  },
+  {
    "fr": ", quitte {0}",
    "en": ", leaves {0}"
+  },
+  {
+   "fr": "En séance",
+   "en": "Training"
   },
   {
    "fr": "Conseillé",
@@ -960,6 +992,10 @@
   {
    "fr": "la Forge ne peut pas fabriquer",
    "en": "the Forge can’t craft"
+  },
+  {
+   "fr": "à l’entraînement : le poster ici arrête sa séance",
+   "en": "training: posting them here stops their session"
   },
   {
    "fr": "Personne de disponible ne ferait mieux que {0}.",

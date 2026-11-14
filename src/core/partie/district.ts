@@ -558,6 +558,15 @@ function ouvrirSeance(j: Jeu, id: string, energie: number): boolean {
   return true;
 }
 
+/** Ce que coûte d'arrêter la séance d'un Porteur (null : il ne s'entraîne pas) : la cible manquée, les heures restantes,
+ * l'énergie rendue (14 novembre 2026, Bryan : rien n'avertissait qu'on coupait l'entraînement en le postant ailleurs) */
+export function arretSeance(j: Jeu, id: string): { cible: number; heuresRestantes: number; rendu: number } | null {
+  const s = seanceDe(j, id);
+  if (!s) return null;
+  const reste = s.xpTotale > 0 ? Math.max(0, 1 - s.xpGagnee / s.xpTotale) : 0;
+  return { cible: s.cible, heuresRestantes: s.xpHeure > 0 ? (s.xpTotale - s.xpGagnee) / s.xpHeure : 0, rendu: Math.max(0, Math.floor(s.energie * reste)) };
+}
+
 /** Arrête la séance d'un Porteur : l'XP gagnée reste, l'énergie des heures non faites est rendue. Renvoie l'énergie rendue. */
 export function interrompreSeance(j: Jeu, id: string): number {
   const s = seanceDe(j, id);

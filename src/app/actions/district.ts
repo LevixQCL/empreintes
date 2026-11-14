@@ -69,10 +69,15 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     // depuis le détail d'une carte commune : le bâtiment qui la fait grandir (31 octobre 2026)
     case 'commune-batiment': ouvrir('archipel'); D.selection = id as typeof D.selection; break;
     case 'filtre': D.filtre = (id as typeof D.filtre) || 'tout'; window.scrollTo(0, 0); break;
-    case 'fermer': D.selection = null; if (D.pseudoApresPoste) { D.pseudoApresPoste = false; demanderPseudo(); } break;
+    case 'fermer': D.selection = null; D.confirmeSeance = null; if (D.pseudoApresPoste) { D.pseudoApresPoste = false; demanderPseudo(); } break;
     case 'ameliorer': resultat(J.ameliorer(app.jeu, id as BatimentId, Date.now())); break;
-    case 'poster': if (D.pseudoApresPoste) { D.pseudoApresPoste = false; demanderPseudo(); }
+    case 'poster':
+      // à l'entraînement : on prévient avant d'arrêter la séance (14 novembre 2026)
+      if ((b.dataset.poste ?? 'noyau') !== 'noyau' && J.seanceDe(app.jeu, id) && !b.dataset.confirme) { D.confirmeSeance = id; break; }
+      D.confirmeSeance = null;
+      if (D.pseudoApresPoste) { D.pseudoApresPoste = false; demanderPseudo(); }
       resultat(J.poster(app.jeu, id, (b.dataset.poste as J.Poste) ?? null)); D.posteChanger = false; D.tourChanger = false; break;
+    case 'seance-garder': D.confirmeSeance = null; break;
     case 'liberer': resultat(J.poster(app.jeu, id, null)); break;
     // secourir une famille, au Port (12 novembre 2026)
     case 'basses-lieu': D.bassesLieu = D.bassesLieu === id ? null : id; D.choixTous = false; break;
@@ -92,7 +97,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'acheter': resultat(J.acheter(app.jeu, Number(b.dataset.index ?? -1), Date.now())); break;
     case 'comptoir-renouveler': resultat(J.renouvelerComptoir(app.jeu, Date.now())); break;
     case 'comptoir-eclat': { const r = J.acheterEclat(app.jeu, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
-    case 'poste-changer': D.posteChanger = !D.posteChanger; break;
+    case 'poste-changer': D.posteChanger = !D.posteChanger; D.confirmeSeance = null; break;
     case 'tour-changer': D.tourChanger = !D.tourChanger; break;
     case 'forge-vue': D.forgeVue = id === 'toutes' || id === 'pretes' ? id : 'proches'; break;
     case 'fabriquer': resultat(J.fabriquer(app.jeu, b.dataset.module ?? '', Date.now())); break;
