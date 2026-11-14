@@ -2,7 +2,7 @@
 // Chaque lundi, ce qui remonte du réseau des Strates menace toutes les cuvettes. Toute la ville le combat jusqu'au dimanche :
 // les dégâts de chacun, convertis en parts, remplissent une jauge commune (écrite par le serveur, jamais par le téléphone).
 // - Une tentative par jour, cumulable jusqu'à 3 : rater deux jours ne fait rien perdre.
-// - Un combat normal, avec son escouade et son deck, de 12 tours au plus. On ne peut pas perdre : seuls les dégâts comptent.
+// - Un combat normal, avec son escouade et son deck, de 8 tours au plus (12 jusqu'au 14 novembre 2026, jugé trop long par Bryan). On ne peut pas perdre : seuls les dégâts comptent.
 // - Le Gardien s'adapte à la Strate de chacun : 1 part = les dégâts d'un combat de gardien de sa Strate, joué en temps normal.
 // - Une règle de salle par semaine (CONDITIONS), pour retoucher son deck.
 // Ici : les règles, sans réseau. Le combat se rejoue à l'identique (rejouerGardien) : c'est ce que fait le serveur pour compter
@@ -12,8 +12,8 @@ import { CONDITIONS, ZONES, ennemiDef } from '../donnees';
 import * as C from '../combat';
 import { forceStrate, nouvelleExpedition } from '../expedition';
 import { graine } from '../rng';
-import { tirerChoix } from '../collection';
-import type { BonusMarques, CombatEtat, GesteDef, PorteurEtat } from '../types';
+import { RARETES, tableRarete, tirerChoix } from '../collection';
+import type { BonusMarques, CombatEtat, GesteDef, PorteurEtat, Rarete } from '../types';
 import { bonusPv, debutJour, enMission, escouadeDe, jourDe, log, niveauPorteur, non, porteursPresents, pvNiveau, semaineDe, strateVaincue, type Jeu, type Resultat } from './etat';
 import { porteurDef } from '../donnees';
 import { deckEscouade, escouadePrete, indiceEscouade } from './descentes';
@@ -28,11 +28,12 @@ export const GARDIEN_VILLE = {
   /** tentatives : une de plus chaque jour (4 h du matin), jamais plus de 3 en réserve */
   parJour: 1,
   reserve: 3,
-  /** un combat de 12 tours au plus */
-  tours: 12,
+  /** un combat de 8 tours au plus (14 novembre 2026 : 12 jugé trop long, plus long qu'un combat de gardien entier). Les parts
+   *  restent les mêmes : elles sont ramenées au nombre de tours (scripts/gardien-ville.ts, médiane 0,9 à −3, 1,4 à −10) */
+  tours: 8,
   /** ses PV : ceux du gardien de la Strate du joueur, multipliés (personne ne l'abat seul) */
   pvFacteur: 40,
-  /** 1 part = les PV d'un gardien de sa Strate, abattus en ce nombre de tours, ramenés aux 12 tours du combat.
+  /** 1 part = les PV d'un gardien de sa Strate, abattus en ce nombre de tours, ramenés aux tours du combat.
    *  10 : un joueur moyen fait environ 1 part par frappe à −3, 1,3 à −10 (scripts/gardien-ville.ts, 13 novembre 2026) */
   toursReference: 10,
   /** le classement de la semaine compte les dégâts purs (Bryan, 13 novembre 2026 : « plus clair ») ; une frappe n'en inscrit
@@ -158,7 +159,7 @@ export function combatGardien(d: DepartGardien): CombatEtat {
   const s = C.creerCombat({
     porteurs: d.porteurs.map((p) => ({ ...p })), deck: d.deck.map((g) => ({ ...g })), ennemiId: d.ennemi, rng: d.rng,
     force: d.force, condition: d.condition, troisiemePhase: false,
-    // au bout de 12 tours, il replonge dans le puits avec ses blessures (le mécanisme des Rôdeurs) : le combat compte comme fini
+    // au bout de ses tours, il replonge dans le puits avec ses blessures (le mécanisme des Rôdeurs) : le combat compte comme fini
     fuyard: { tours: GARDIEN_VILLE.tours, part: 1 },
     ...(d.bonus && Object.keys(d.bonus).length ? { bonus: d.bonus } : {}),
   });
@@ -178,13 +179,13 @@ export function pvReference(d: Pick<DepartGardien, 'ennemi' | 'force' | 'conditi
 /** Les dégâts infligés (tous les ennemis du combat) */
 export const degatsInfliges = (s: CombatEtat) => C.tousEnnemis(s).reduce((n, en) => n + Math.max(0, en.pvMax - en.pv), 0);
 
-/** Les dégâts en parts : 1 part = un gardien de sa Strate abattu en 10 tours, ramené aux 12 tours du combat */
+/** Les dégâts en parts : 1 part = un gardien de sa Strate abattu en 10 tours, ramené aux tours du combat */
 export function partsDe(d: DepartGardien, degats: number): number {
   const ref = (pvReference(d) * GARDIEN_VILLE.tours) / GARDIEN_VILLE.toursReference;
   return Math.min(GARDIEN_VILLE.partsMax, Math.round((degats / Math.max(1, ref)) * 10) / 10);
 }
 
-/** Le combat est-il fini (12 tours joués, ou l'escouade à terre) ? */
+/** Le combat est-il fini (tous ses tours joués, ou l'escouade à terre) ? */
 export const combatGardienFini = (s: CombatEtat) => s.issue !== 'en-cours' || s.tour > GARDIEN_VILLE.tours;
 
 /** Rejoue un combat à l'identique, action par action. Une action refusée arrête tout (journal faux ou falsifié). */
@@ -248,7 +249,7 @@ export function peutFrapper(j: Jeu, now: number): Resultat {
   return { ok: true };
 }
 
-/** Part affronter le Gardien de la semaine : une tentative, un combat de 12 tours au plus */
+/** Part affronter le Gardien de la semaine : une tentative, un combat de GARDIEN_VILLE.tours au plus */
 export function frapperGardien(j: Jeu, escouade: string[], now: number, rng = graine()): Resultat {
   const p = peutFrapper(j, now);
   if (!p.ok) return p;
@@ -265,7 +266,7 @@ export function frapperGardien(j: Jeu, escouade: string[], now: number, rng = gr
   };
   const x = nouvelleExpedition({ porteurs: e.porteurs, deck: e.deck, strate: Math.max(1, strateVaincue(j)), rng, sequence: [sem.ennemi], force: depart.force });
   x.combat = combatGardien(depart);
-  x.combat.journal = [tr`${sem.nom} remonte par le puits. Douze tours pour le repousser : chaque coup compte pour la ville.`];
+  x.combat.journal = [tr`${sem.nom} remonte par le puits. ${GARDIEN_VILLE.tours} tours pour le repousser : chaque coup compte pour la ville.`];
   x.gardienVille = { depart, journal: [] };
   g.tentatives--;
   j.expedition = x;
@@ -374,9 +375,16 @@ export function ficheApres(avant: FicheGardien | null, f: Pick<FrappeGardien, 's
 export type RecompensePalier =
   | { palier: number; type: 'cristaux'; n: number }
   | { palier: number; type: 'eclats'; n: number }
-  | { palier: number; type: 'carte' }
-  | { palier: number; type: 'perle' }
-  | { palier: number; type: 'decor' };
+  | { palier: number; type: 'carte'; metal?: Rarete }
+  | { palier: number; type: 'perle' };
+
+/** Le métal garanti de la carte des 150 % (14 novembre 2026, à la place d'un « décor » qui n'existait pas) : un cran au-dessus
+ *  du métal le plus courant à sa Strate (cuivre à −3 et −4, argent de −5 à −8, or dès −9), jamais la nacre (elle reste rare) */
+export function metalBonus(strate: number): Rarete {
+  const table = tableRarete(Math.max(1, strate));
+  const courant = RARETES.reduce((a, r) => (table[r] > table[a] ? r : a), 'fer' as Rarete);
+  return RARETES[Math.min(RARETES.indexOf('or'), RARETES.indexOf(courant) + 1)]!;
+}
 
 /** Les paliers touchés et non encore reçus (le joueur a frappé au moins une fois cette semaine) : on les donne ici */
 export function recevoirPaliers(j: Jeu, ville: VilleGardien, now: number): RecompensePalier[] {
@@ -394,7 +402,12 @@ export function recevoirPaliers(j: Jeu, ville: VilleGardien, now: number): Recom
     else if (p === 1) {
       const n = jour; j.energie += n; dons.push({ palier: p, type: 'cristaux', n });
       if (perleDeLaSemaine(j, g.semaine)) { gagnerPerles(j, 1, tr('le Gardien de la ville')); g.perleDue = false; dons.push({ palier: p, type: 'perle' }); }
-    } else dons.push({ palier: p, type: 'decor' });
+    } else {
+      // 150 % : une deuxième carte au choix, les trois d'un métal au-dessus de l'ordinaire
+      const metal = metalBonus(strateVaincue(j));
+      j.choix.push({ source: 'gardien', options: tirerChoix(j, Math.max(1, strateVaincue(j)), metal, undefined, porteursPresents(j), true) });
+      dons.push({ palier: p, type: 'carte', metal });
+    }
   }
   return dons;
 }

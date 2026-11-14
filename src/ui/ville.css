@@ -5,71 +5,100 @@
 .gv-bulle .bulle-med{overflow:hidden}
 .gv-bulle .bulle-med img{width:100%;height:100%;object-fit:cover;object-position:50% 22%;border-radius:inherit}
 
-.gv-scene{display:grid;gap:10px;margin:4px 0 14px}
-.gv-scene img{width:100%;height:170px;object-fit:cover;object-position:50% 22%;border-radius:12px;box-shadow:inset 0 0 0 1px rgba(205,239,255,.18)}
-.gv-scene p{margin:0;font-size:13.5px;line-height:1.5;color:#C9D6E6}
-.gv-regle{display:flex;gap:10px;align-items:flex-start;margin:0 0 14px;font-size:13px;line-height:1.45;color:#C9D6E6}
-.gv-regle .ico{flex:none;width:16px;height:16px;margin-top:2px;color:#CDEFFF}
-.gv-regle strong{display:block;color:#fff;font-weight:600}
+/* la feuille : des blocs qui gardent leur hauteur, espacés par leurs propres marges */
+.gv-feuille .feuille-corps{gap:0}
+.gv-feuille .feuille-corps>*{flex:none}
 
-/* la jauge de la ville, avec ses paliers */
-.gv-ville{display:grid;gap:8px;margin:0 0 14px;padding:14px;border-radius:12px;
-  background:linear-gradient(180deg,rgba(242,213,140,.1),rgba(242,213,140,.03));box-shadow:inset 0 0 0 1px rgba(242,213,140,.28)}
-.gv-ville-tete{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-.gv-ville-tete .surtitre{display:flex;align-items:center;gap:6px;color:#F2D58C}
-.gv-ville-tete .surtitre .ico{width:14px;height:14px}
-.gv-ville-tete b{font:600 15px/1 var(--mono);color:#FFF6DC}
-.gv-ville small{font-size:12.5px;color:#C9D6E6}
-.gv-barre{position:relative;display:block;height:10px;margin:2px 0 18px;border-radius:999px;background:rgba(242,213,140,.14)}
-.gv-barre>i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#C99A3F,#F2D58C)}
-.gv-cran{position:absolute;top:-3px;width:2px;height:16px;margin-left:-1px;background:rgba(205,239,255,.35)}
-.gv-cran b{position:absolute;top:18px;left:50%;transform:translateX(-50%);font:600 12px/1 var(--mono);color:#93A3B8;white-space:nowrap}
-.gv-cran.atteint{background:#FFF6DC}
-.gv-cran.atteint b{color:#F2D58C}
-.gv-cran:last-child b{transform:translateX(-100%)}
+/* le haut (14 novembre 2026) : le Gardien en grand, la règle en pastille, la ville écrite sur l'image comme la vie d'un boss */
+.gv-hero{position:relative;margin:2px 0 10px;border-radius:14px;overflow:hidden;aspect-ratio:4/3.3;max-height:340px;
+  background:#0B1220;box-shadow:inset 0 0 0 1px rgba(205,239,255,.16),0 10px 30px rgba(0,0,0,.35)}
+.gv-hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 25%}
+.gv-hero::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(6,10,18,.45) 0,rgba(6,10,18,0) 26%,rgba(6,10,18,0) 48%,rgba(6,10,18,.92) 100%);
+  box-shadow:inset 0 0 0 1px rgba(205,239,255,.16);border-radius:inherit}
+.gv-regle-pastille{position:absolute;z-index:1;top:10px;left:10px;display:inline-flex;align-items:center;gap:6px;padding:6px 10px 6px 8px;
+  border-radius:999px;font:600 12px/1 var(--mono);letter-spacing:.04em;color:#E8F7FF;background:rgba(9,16,28,.72);
+  box-shadow:inset 0 0 0 1px rgba(205,239,255,.3);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.gv-regle-pastille .ico{width:14px;height:14px;color:#CDEFFF}
+.gv-hero-bas{position:absolute;z-index:1;left:14px;right:14px;bottom:12px;display:flex;align-items:flex-end;gap:12px}
+.gv-pct{font:600 46px/.85 var(--mono);color:#FFF6DC;text-shadow:0 2px 14px rgba(242,213,140,.45),0 1px 2px rgba(0,0,0,.8);font-variant-numeric:tabular-nums}
+.gv-pct small{margin-left:2px;font-size:22px;color:#F2D58C}
+.gv-hero-bas span{display:grid;gap:3px;padding-bottom:3px}
+.gv-hero-bas strong{font:400 17px/1.15 var(--display);color:#F6F2EA;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.gv-hero-bas small{font-size:12.5px;color:#C9D6E6}
+.gv-hero.abattu .gv-pct{color:#FFF;text-shadow:0 0 18px rgba(242,213,140,.8),0 1px 2px rgba(0,0,0,.8)}
+.gv-regle{margin:0 2px 14px;font-size:13px;line-height:1.45;color:#C9D6E6}
+.gv-regle strong{color:#fff;font-weight:600}
 
-/* ce que ce directeur a fait */
-.gv-moi{display:grid;gap:12px}
-.gv-chiffres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.gv-chiffres span{display:grid;gap:4px;padding:10px 8px;border-radius:10px;background:rgba(205,239,255,.05);text-align:center}
-.gv-chiffres b{font:600 22px/1 var(--mono);color:#FFF6DC;font-variant-numeric:tabular-nums}
-.gv-chiffres b i{font:500 13px/1 var(--mono);font-style:normal;color:#93A3B8}
-.gv-chiffres small{font-size:12px;color:#93A3B8}
-.gv-envoi,.gv-attente{display:flex;gap:8px;align-items:flex-start;margin:0;font-size:13px;line-height:1.45;color:#C9D6E6}
+/* la piste des paliers : cinq crans à égale distance, reliés par la jauge de la ville */
+.gv-piste{--n:5;position:relative;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));margin:0 0 18px;padding:0;list-style:none}
+.gv-piste::before,.gv-piste::after{content:"";position:absolute;top:21px;left:0;height:4px;border-radius:999px}
+.gv-piste::before{right:10%;background:rgba(205,239,255,.12)}
+/* --rempli : la largeur remplie, en % de la piste (le premier cran est à 10 %, les suivants tous les 20 %) */
+.gv-piste::after{width:calc(var(--rempli) * 1%);background:linear-gradient(90deg,#C99A3F,#F2D58C);box-shadow:0 0 10px rgba(242,213,140,.5)}
+.gv-piste li{position:relative;z-index:1;display:grid;justify-items:center;gap:3px;text-align:center}
+.gv-noeud{position:relative;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;
+  background:radial-gradient(circle at 50% 35%,#1A2638,#0D1626);box-shadow:inset 0 0 0 1.5px rgba(205,239,255,.22),0 4px 10px rgba(0,0,0,.4)}
+.gv-noeud .ico{width:28px;height:28px;filter:grayscale(.55) brightness(.8)}
+.gv-noeud img.ico{object-fit:contain}
+.gv-piste li b{margin-top:3px;font:600 12px/1 var(--mono);color:#93A3B8}
+.gv-piste li small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;line-height:1.2;color:#C9D6E6}
+.gv-piste li.bonus .gv-noeud{box-shadow:inset 0 0 0 1.5px rgba(242,213,140,.4),0 4px 10px rgba(0,0,0,.4)}
+.gv-piste li.atteint .gv-noeud,.gv-piste li.recu .gv-noeud{background:radial-gradient(circle at 50% 35%,#3A2F17,#16110A);
+  box-shadow:inset 0 0 0 2px #F2D58C,0 0 16px rgba(242,213,140,.45)}
+.gv-piste li.atteint .ico,.gv-piste li.recu .ico{filter:none}
+.gv-piste li.atteint b,.gv-piste li.recu b{color:#F2D58C}
+.gv-piste li.atteint small,.gv-piste li.recu small{color:#FFF6DC}
+.gv-coche{position:absolute;right:-3px;bottom:-3px;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;
+  background:#9FE3B4;box-shadow:0 0 0 2px #0D1626}
+.gv-coche .ico{width:11px;height:11px;color:#0B1220;filter:none}
+
+/* frapper : les tentatives en losanges dans le bouton */
+.gv-frapper{display:grid;gap:8px;margin:0 0 18px}
+.gv-go{display:flex;align-items:center;justify-content:center;gap:10px}
+.gv-losanges{display:inline-flex;gap:5px;margin-left:4px}
+.gv-losanges i{width:9px;height:9px;transform:rotate(45deg);border-radius:2px;box-shadow:inset 0 0 0 1.5px rgba(40,26,6,.55)}
+.gv-losanges i.plein{background:#3A2608;box-shadow:none}
+.gv-moi{margin:0;text-align:center;font-size:13px;line-height:1.45;color:#93A3B8}
+.gv-moi b{font:600 13px/1 var(--mono);color:#FFF6DC}
+.gv-envoi,.gv-attente{display:flex;gap:8px;align-items:flex-start;justify-content:center;margin:0;font-size:13px;line-height:1.45;color:#C9D6E6}
+.gv-attente{padding:14px;border-radius:12px;background:rgba(205,239,255,.05)}
 .gv-envoi .ico,.gv-attente .ico{flex:none;width:14px;height:14px;margin-top:2px;color:#CDEFFF}
 
-/* le fil des dernières frappes */
-.gv-classement{display:grid;gap:4px;margin:0 0 6px;padding:0;list-style:none}
+/* le podium des dégâts (2 · 1 · 3), puis la suite */
+.gv-podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;gap:8px;margin:0 0 8px;padding:0;list-style:none}
+.gv-podium li{display:grid;justify-items:center;gap:4px;min-width:0;padding:12px 6px 10px;border-radius:12px 12px 6px 6px;text-align:center;
+  background:linear-gradient(180deg,rgba(205,239,255,.08),rgba(205,239,255,.02));box-shadow:inset 0 0 0 1px rgba(205,239,255,.12)}
+.gv-podium li.p1{order:2;padding-top:20px;background:linear-gradient(180deg,rgba(242,213,140,.16),rgba(242,213,140,.03));box-shadow:inset 0 0 0 1px rgba(242,213,140,.4)}
+.gv-podium li.p2{order:1}
+.gv-podium li.p3{order:3}
+.gv-podium li.moi{box-shadow:inset 0 0 0 1.5px rgba(205,239,255,.55)}
+.gv-medaille{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;font:600 14px/1 var(--mono);color:#0B1220}
+.gv-podium .p1 .gv-medaille{width:36px;height:36px;font-size:16px;background:linear-gradient(160deg,#FBE7B0,#D9A84A);box-shadow:0 0 14px rgba(242,213,140,.5)}
+.gv-podium .p2 .gv-medaille{background:linear-gradient(160deg,#EEF4FA,#A9B8C8)}
+.gv-podium .p3 .gv-medaille{background:linear-gradient(160deg,#F2C9A4,#B4754A)}
+.gv-nom{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13.5px;color:#E8EEF6}
+.gv-podium em,.gv-classement em{flex:none;padding:2px 6px;border-radius:6px;font:600 12px/1 var(--mono);font-style:normal;color:#0B1220;background:#CDEFFF}
+.gv-podium b{font:600 18px/1 var(--mono);color:#FFF6DC;font-variant-numeric:tabular-nums}
+.gv-podium .p1 b{font-size:21px;color:#F2D58C}
+.gv-podium small{font-size:12px;color:#93A3B8}
+.gv-classement{display:grid;gap:4px;margin:0 0 16px;padding:0;list-style:none}
 .gv-classement li{display:grid;grid-template-columns:26px 1fr auto auto;gap:10px;align-items:center;min-height:38px;padding:6px 10px;
   border-radius:8px;background:rgba(205,239,255,.04);font-size:13.5px}
 .gv-classement .gv-rang{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font:600 12px/1 var(--mono);color:#93A3B8;
   box-shadow:inset 0 0 0 1px rgba(205,239,255,.14)}
 .gv-classement li span{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#E8EEF6}
-.gv-classement li span em{flex:none;padding:2px 6px;border-radius:6px;font:600 12px/1 var(--mono);font-style:normal;color:#0B1220;background:#CDEFFF}
 .gv-classement li small{min-width:30px;text-align:right;font:500 12px/1 var(--mono);color:#93A3B8}
-.gv-classement li>b:last-child{min-width:72px;text-align:right}
-.gv-classement li>b:last-child{font:600 13px/1 var(--mono);color:#F2D58C}
-.gv-classement li.podium .gv-rang{color:#0B1220;box-shadow:none}
-.gv-classement li.p1 .gv-rang{background:linear-gradient(160deg,#FBE7B0,#D9A84A)}
-.gv-classement li.p2 .gv-rang{background:linear-gradient(160deg,#EEF4FA,#A9B8C8)}
-.gv-classement li.p3 .gv-rang{background:linear-gradient(160deg,#F2C9A4,#B4754A)}
+.gv-classement li>b:last-child{min-width:56px;text-align:right;font:600 13px/1 var(--mono);color:#F2D58C}
 .gv-classement li.moi{background:rgba(205,239,255,.09);box-shadow:inset 0 0 0 1px rgba(205,239,255,.32)}
 .gv-classement li.gv-ecart{display:block;min-height:0;padding:0;background:none;text-align:center;color:#93A3B8;letter-spacing:4px}
 
-/* les paliers de la ville */
-.gv-paliers{display:grid;gap:6px;margin:0 0 8px;padding:0;list-style:none}
-.gv-paliers li{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;min-height:44px;padding:6px 12px;border-radius:10px;
-  background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.08)}
-.gv-paliers li>b{font:600 13px/1 var(--mono);color:#93A3B8}
-.gv-paliers li span{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#E8EEF6}
-.gv-paliers li span .ico{flex:none;width:18px;height:18px}
-.gv-paliers li i{display:inline-flex;align-items:center;gap:4px;font:600 12px/1 var(--mono);font-style:normal;color:#93A3B8}
-.gv-paliers li i .ico{width:12px;height:12px}
-.gv-paliers li.atteint{box-shadow:inset 0 0 0 1px rgba(242,213,140,.4)}
-.gv-paliers li.atteint>b,.gv-paliers li.atteint i{color:#F2D58C}
-.gv-paliers li.recu{opacity:.7}
-.gv-paliers li.recu i{color:#9FE3B4}
-.gv-note{margin:0 0 12px;font-size:12.5px;line-height:1.5;color:#93A3B8}
+/* l'aide, repliée */
+.gv-aide{margin:0 0 12px;border-radius:10px;background:rgba(205,239,255,.04)}
+.gv-aide summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;font-size:13px;color:#C9D6E6;cursor:pointer;list-style:none}
+.gv-aide summary::-webkit-details-marker{display:none}
+.gv-aide summary .ico{width:15px;height:15px;color:#CDEFFF}
+.gv-aide p{margin:0;padding:0 12px 10px;font-size:12.5px;line-height:1.5;color:#93A3B8}
 
 /* l'écran de départ */
 .es-pillage-visages .gv-visage{width:34px;height:34px;border-radius:50%;object-fit:cover;object-position:50% 20%}

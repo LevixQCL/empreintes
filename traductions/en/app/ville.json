@@ -18,16 +18,16 @@
    "en": "+{0} Shards"
   },
   {
+   "fr": "une carte au choix en {0}",
+   "en": "a card of your choice in {0}"
+  },
+  {
    "fr": "une carte au choix",
    "en": "a card of your choice"
   },
   {
    "fr": "une Perle de nacre",
    "en": "a Nacre Pearl"
-  },
-  {
-   "fr": "un décor pour la Cuvette",
-   "en": "a decoration for the Basin"
   }
  ]
 }

@@ -6,20 +6,12 @@
    "en": "The City Guardian: {0}, {1} attempt{2}"
   },
   {
-   "fr": "La ville contre le Gardien",
-   "en": "The city against the Guardian"
+   "fr": "Abattu par la ville",
+   "en": "Brought down by the city"
   },
   {
-   "fr": "Toute la ville",
-   "en": "The whole city"
-  },
-  {
-   "fr": "{0} % repoussé",
-   "en": "{0} % driven back"
-  },
-  {
-   "fr": "Personne n’a encore frappé",
-   "en": "No one has struck yet"
+   "fr": "Repoussé par la ville",
+   "en": "Driven back by the city"
   },
   {
    "fr": "{0} directeurs ont frappé",
@@ -30,20 +22,12 @@
    "en": "{0} director has struck"
   },
   {
-   "fr": "{0} parts sur {1}",
-   "en": "{0} shares out of {1}"
+   "fr": "Personne n’a encore frappé",
+   "en": "No one has struck yet"
   },
   {
-   "fr": "La jauge se remplit des parts de chaque directeur.",
-   "en": "The gauge fills with every director’s shares."
-  },
-  {
-   "fr": "Le classement des dégâts",
-   "en": "Damage leaderboard"
-  },
-  {
-   "fr": "Les dégâts de toutes tes frappes de la semaine, additionnés. Remis à zéro chaque lundi.",
-   "en": "The damage of all your strikes this week, added up. Resets every Monday."
+   "fr": "Règle de la semaine",
+   "en": "Rule of the week"
   },
   {
    "fr": "10 Éclats",
@@ -54,20 +38,20 @@
    "en": "{0} crystals and a Nacre Pearl"
   },
   {
-   "fr": "Un décor pour la Cuvette",
-   "en": "A decoration for the Basin"
+   "fr": "Une carte au choix en {0}",
+   "en": "A card of your choice in {0}"
   },
   {
    "fr": "Ce que la ville gagne",
    "en": "What the city earns"
   },
   {
-   "fr": "Atteint",
-   "en": "Reached"
+   "fr": "atteint",
+   "en": "reached"
   },
   {
-   "fr": "Chaque palier atteint par la ville revient à tous ceux qui ont frappé au moins une fois cette semaine.",
-   "en": "Every tier the city reaches goes to everyone who struck at least once this week."
+   "fr": "Les dégâts de la semaine",
+   "en": "This week's damage"
   },
   {
    "fr": "Le Gardien de la ville",
@@ -82,24 +66,28 @@
    "en": "THE CITY GUARDIAN · THIS WEEK"
   },
   {
-   "fr": "Il remonte par le puits et menace toutes les cuvettes. Chaque directeur a douze tours pour le frapper : la ville additionne les coups.",
-   "en": "It rises through the shaft and threatens every basin. Each director has twelve turns to strike it: the city adds up the blows."
+   "fr": "Frapper le Gardien",
+   "en": "Strike the Guardian"
   },
   {
-   "fr": "Règle de la semaine · {0}",
-   "en": "Rule of the week · {0}"
+   "fr": "{0} tentative{1} sur {2}",
+   "en": "{0} attempt{1} out of {2}"
   },
   {
-   "fr": "tes dégâts",
-   "en": "your damage"
+   "fr": "Prochaine tentative",
+   "en": "Next attempt"
   },
   {
-   "fr": "ta plus belle frappe",
-   "en": "your best strike"
+   "fr": "Ta semaine",
+   "en": "Your week"
   },
   {
-   "fr": "tentatives",
-   "en": "attempts"
+   "fr": "plus beau coup",
+   "en": "best hit"
+  },
+  {
+   "fr": "{0} tours pour frapper. Tu ne peux pas perdre : seuls les dégâts comptent.",
+   "en": "{0} turns to strike. You can't lose: only damage counts."
   },
   {
    "fr": "{0} frappes en route vers la ville : elles comptent dès que tu es en ligne.",
@@ -110,16 +98,20 @@
    "en": "A strike on its way to the city: it counts as soon as you are online."
   },
   {
-   "fr": "Frapper le Gardien",
-   "en": "Strike the Guardian"
+   "fr": "Il remonte par le puits chaque lundi et menace toutes les cuvettes. Une tentative par jour, trois au plus en réserve : {0} tours.",
+   "en": "It rises through the shaft every Monday and threatens every basin. One attempt a day, up to three in reserve: {0} turns."
   },
   {
-   "fr": "Prochaine tentative",
-   "en": "Next attempt"
+   "fr": "Choisis librement tes 3 Porteurs pour ce combat, sans toucher à tes escouades. On ne peut pas perdre : tout le monde part à PV pleins et ne prend pas d’Usure.",
+   "en": "Pick any 3 Bearers for this fight, without touching your squads. You can’t lose: everyone goes in at full HP and takes no Strain."
   },
   {
-   "fr": "Choisis librement tes 3 Porteurs pour ce combat, sans toucher à tes escouades. On ne peut pas perdre : tout le monde part à PV pleins et ne prend pas d’Usure. Pour la jauge de la ville, tes dégâts sont ramenés à ta Strate : un débutant y pèse autant qu’un vétéran.",
-   "en": "Pick any 3 Bearers for this fight, without touching your squads. You can’t lose: everyone goes in at full HP and takes no Wear. For the city gauge, your damage is scaled to your Stratum: a newcomer weighs as much as a veteran."
+   "fr": "La ville additionne les coups de tous les directeurs. Pour la jauge, chaque frappe est ramenée à ta Strate (un débutant compte autant qu’un vétéran) et compte au plus 3 parts.",
+   "en": "The city adds up every director's blows. For the gauge, each strike is scaled to your Stratum (a newcomer counts as much as a veteran) and counts at most 3 shares."
+  },
+  {
+   "fr": "Chaque palier atteint revient à tous ceux qui ont frappé au moins une fois cette semaine. Le classement, lui, compte les dégâts purs. Tout repart à zéro le lundi.",
+   "en": "Every tier the city reaches goes to everyone who struck at least once this week. The ranking, however, counts raw damage. Everything resets on Monday."
   },
   {
    "fr": "Gardien de la ville · {0}",

@@ -34,8 +34,8 @@
    "en": "{0} can’t strike the Guardian: they’re out at sea."
   },
   {
-   "fr": "{0} remonte par le puits. Douze tours pour le repousser : chaque coup compte pour la ville.",
-   "en": "{0} rises through the shaft. Twelve turns to drive it back: every blow counts for the city."
+   "fr": "{0} remonte par le puits. {1} tours pour le repousser : chaque coup compte pour la ville.",
+   "en": "{0} rises through the shaft. {1} turns to drive it back: every blow counts for the city."
   },
   {
    "fr": "L’escouade descend au puits repousser {0}.",

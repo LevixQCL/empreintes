@@ -1,4 +1,4 @@
-// Le Gardien de la ville (13 novembre 2026) : la semaine, les tentatives, le combat de 12 tours, et le rejeu à l'identique
+// Le Gardien de la ville (13 novembre 2026) : la semaine, les tentatives, le combat de 8 tours, et le rejeu à l'identique
 // (c'est ce que fait le serveur pour compter les parts lui-même).
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -43,12 +43,13 @@ describe('Le Gardien de la ville', () => {
     expect(jourDe(LUNDI) >= 0 && semaineDe(LUNDI) >= 0).toBe(true);
   });
 
-  it('un combat de 12 tours au plus, sans défaite qui coûte, et le serveur le rejoue à l’identique', () => {
+  it('un combat de 8 tours au plus, sans défaite qui coûte, et le serveur le rejoue à l’identique', () => {
     const j = pret();
     expect(frapperGardien(j, ESC, LUNDI, 12345).ok).toBe(true);
     const x = j.expedition!;
     jouerNote(x.combat, x.gardienVille!.journal);
     expect(combatGardienFini(x.combat)).toBe(true);
+    expect(x.combat.tour).toBeLessThanOrEqual(GARDIEN_VILLE.tours + 1);
     expect(x.combat.ennemi.pv).toBeGreaterThan(0);
     const usureAvant = ESC.map((id) => j.porteurs[id]!.usure);
     const r = remonter(j);
@@ -83,6 +84,10 @@ describe('Le Gardien de la ville', () => {
     const sem = semaineDe(LUNDI);
     const dons = recevoirPaliers(j, { semaine: sem, pv: 100, parts: 120, frappeurs: 30 }, LUNDI);
     expect([...new Set(dons.map((d) => d.palier))]).toEqual([0.25, 0.5, 0.75, 1]);
+    // 150 % (14 novembre 2026) : une deuxième carte au choix, les trois cartes d'un métal au-dessus (de l'or à −11)
+    const plus = recevoirPaliers(j, { semaine: sem, pv: 100, parts: 150, frappeurs: 30 }, LUNDI);
+    expect(plus).toEqual([{ palier: 1.5, type: 'carte', metal: 'or' }]);
+    expect(j.choix.at(-1)!.options.every((id) => /@(or|nacre)$/.test(id))).toBe(true);
     expect(recevoirPaliers(j, { semaine: sem, pv: 100, parts: 120, frappeurs: 30 }, LUNDI)).toEqual([]);
     expect(dons.some((d) => d.type === 'perle')).toBe(sem % 2 === 0);
     // la Perle ratée attend le Gardien suivant

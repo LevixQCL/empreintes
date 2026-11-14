@@ -8,11 +8,14 @@ import { app, D } from './etat';
 import { afficher } from './rendu';
 import { sauver } from './synchro';
 import { t } from '../core/i18n';
+import { NOMS_RARETE } from '../core/collection';
 
 let net: typeof import('../net/gardien') | null = null;
 const reseau = async () => (net ??= await import('../net/gardien'));
 
 let luLe = 0;
+// en développement seulement (captures d'écran) : poser une jauge et un classement de démonstration, sans réseau
+if (import.meta.env.DEV) (window as unknown as { __ville: (v: J.VilleGardien) => void }).__ville = (v) => { D.ville = v; afficher(); };
 let enCours: Promise<void> | null = null;
 /** la semaine d'avant, déjà réglée pour la Perle (une seule lecture par semaine) */
 let reglee = -1;
@@ -76,8 +79,7 @@ function texteDon(d: J.RecompensePalier): string {
   switch (d.type) {
     case 'cristaux': return t`+${d.n} cristaux`;
     case 'eclats': return t`+${d.n} Éclats`;
-    case 'carte': return t('une carte au choix');
+    case 'carte': return d.metal ? t`une carte au choix en ${NOMS_RARETE[d.metal].toLowerCase()}` : t('une carte au choix');
     case 'perle': return t('une Perle de nacre');
-    default: return t('un décor pour la Cuvette');
   }
 }
