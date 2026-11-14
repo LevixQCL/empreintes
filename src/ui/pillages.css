@@ -291,6 +291,7 @@
 
 .pl-fanion{right:-6px;top:6px;width:104px;transform-origin:8% 100%;animation:pl-vent 4.5s ease-in-out infinite;
   filter:drop-shadow(0 6px 10px rgba(0,0,0,.55)) grayscale(1) brightness(1.55) contrast(.9) sepia(.15) hue-rotate(170deg)}
+.pl-fanion.peint{filter:drop-shadow(0 6px 10px rgba(0,0,0,.55))}
 .pl-pavillon.pirate .pl-fanion{filter:drop-shadow(0 6px 12px rgba(0,0,0,.6)) hue-rotate(-28deg) saturate(1.7) brightness(.72) contrast(1.15)}
 @keyframes pl-vent{0%,100%{rotate:0deg;scale:1 1}50%{rotate:-2.5deg;scale:.97 1.02}}
 @media (prefers-reduced-motion:reduce){.pl-coque-art,.pl-fanion{animation:none}}

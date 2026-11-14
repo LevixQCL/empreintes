@@ -354,6 +354,8 @@ export const decorLieu = (i: number): string | null => {
 };
 export const BARQUE_PEINTE = true;
 export const barque = `${base}missions/barque.webp`;
+/** Les pavillons peints du Port (14 novembre 2026) : neutre (drap blanc) ; le pirate attend son image */
+export const pavillonNeutre = `${base}fleche/pavillon-neutre.webp`;
 /**
  * Le large, faute de décor peint : la mer du premier âge (4000 × 1500) et un de ses piliers abandonnés (centre x, y en pixels).
  * Seuls les piliers du bord servent : le district, au centre du panorama, reste hors du cadre ; le premier est vu en miroir.

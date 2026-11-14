@@ -5,7 +5,7 @@
 
 import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, difficulte, escouadeActive, escouadeDefense, escouadesDe, etatPillage, forceEscouade, majJetons, MISSIONS, barquesMax, MAREES, bulleBasses, contratsDuMoment, mareesDe, pavillonDe, consigneDe, neutreDes, type Consigne, type RecitDefense, rangRenom, revanchesOuvertes, porteeDe, angleDe, traversee, exposeDe, perteDe, strateVaincue, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
 import { moduleDef, porteurDef } from '../core/donnees';
-import { ageArchipel, artFleche, bandeauPort, barque, vignetteArchipel, vignetteDistrict, visuel } from './art';
+import { ageArchipel, artFleche, bandeauPort, barque, pavillonNeutre, vignetteArchipel, vignetteDistrict, visuel } from './art';
 import { avatar, avatarGarde, gardesGarnison, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
 import { ICO, icone } from './icones';
@@ -134,7 +134,7 @@ function pavillon(j: Jeu, now: number): string {
   const p = pavillonDe(j);
   const e = etatPillage(j);
   if (p === 'neutre') {
-    return `<div class="pl-pavillon neutre"><img class="pl-fanion" src="${artFleche('fanion')}" alt="" decoding="async"><span class="surtitre">${t`Pavillon neutre`}</span>`
+    return `<div class="pl-pavillon neutre"><img class="pl-fanion peint" src="${pavillonNeutre}" alt="" decoding="async"><span class="surtitre">${t`Pavillon neutre`}</span>`
       + `<small>${t`Personne ne t’attaque. Hisse-le pirate pour piller les autres directeurs et gagner du Renom.`}</small>`
       + `<button type="button" class="btn sec pl-hisser" data-action="pavillon" data-id="pirate">${t`Hisser le pavillon pirate`}</button></div>`;
   }
