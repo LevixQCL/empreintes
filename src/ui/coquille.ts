@@ -18,6 +18,7 @@ import { miniature, portrait, visageGarnison } from './art';
 import { feuilleGuide, trouveesDe } from './guide';
 import { ICO, baseIcones, icone, perle, type Icone } from './icones';
 import { feuilleNom } from './classements';
+import { portOuvert } from './acces';
 import { cristalAllume, cristalRail, entreeFiche, feuilleFiche } from './fiche';
 import { COULEUR, ICONE_MUET, ICONE_SON, panneauCompte, type Compte } from './vue';
 import { echap, virgule, texteReplie } from './outils';
@@ -480,6 +481,8 @@ const ONGLETS: { vue: Vue | 'plus' | 'medaillon'; nom: string; icone: Icone }[] 
   // Porteurs et Cartes ne font plus qu'un onglet (25 octobre 2026) : l'escouade, ses Porteurs et leurs cartes au même endroit
   { vue: 'porteurs', nom: tr('Escouade'), icone: 'porteurs' },
   { vue: 'medaillon', nom: '', icone: 'strate' },
+  // sur PC seulement, le rail a la place : le Port a son onglet, avant les Chroniques (14 novembre 2026, Bryan)
+  { vue: 'pillages', nom: tr('Port'), icone: 'carte' },
   // les Chroniques juste avant Plus (28 octobre 2026, Bryan) : on y va moins souvent qu'au reste
   { vue: 'codex', nom: tr('Chroniques'), icone: 'codex' },
   { vue: 'plus', nom: tr('Plus'), icone: 'plus' },
@@ -518,8 +521,13 @@ export function navigation(e: EcranDistrict): string {
   // le Port et le Cercle sont des lieux du district : leur écran garde l'onglet District allumé
   const actif = e.menu || e.vue === 'classements' || e.vue === 'recruter' ? 'plus' : e.vue === 'escouade' ? (e.fleche ? 'fleche' : e.pillage || e.villeDepart ? 'archipel' : 'coupe')
     : e.vue === 'cartes' ? 'porteurs' : e.vue === 'pillages' || e.vue === 'cercle' ? 'archipel' : e.vue;
-  // ce qui attend au Port s'annonce sur l'onglet District, puisque le Port n'a plus d'onglet
-  if (alerte.pillages) alerte.archipel = true;
+  // sur PC, le Port a son onglet dans le rail (dès qu'il est ouvert) ; sur téléphone, il vit sur la carte du district
+  const surPC = typeof matchMedia === 'function' && matchMedia('(min-width:1100px) and (min-height:600px)').matches;
+  const portRail = surPC && !!portOuvert(j);
+  const auPort = e.vue === 'pillages' || (e.vue === 'escouade' && !!(e.pillage || e.villeDepart));
+  const actifOnglet = portRail && auPort ? 'pillages' : actif;
+  // ce qui attend au Port s'annonce sur l'onglet District quand le Port n'a pas d'onglet
+  if (alerte.pillages && !portRail) alerte.archipel = true;
   // sur PC (rail.css) : le cristal en tête (il ouvre la fiche du directeur et s'allume quand une récompense attend), puis les onglets et le médaillon
   const pastille = '<i class="pastille-alerte" aria-label="nouveau"></i>';
   const medaillon = () => {
@@ -543,8 +551,10 @@ export function navigation(e: EcranDistrict): string {
   };
   return `<nav class="nav nav-medaillon noms" aria-label="${tr`Navigation`}">${cristalRail(e)}` + ONGLETS.map((t) => {
     if (t.vue === 'medaillon') return medaillon();
+    if (t.vue === 'pillages' && !portRail) return '';
     const action = t.vue === 'plus' ? 'menu' : t.vue;
-    return `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${actif === t.vue ? ' aria-current="page"' : ''}>`
+    const ici = actifOnglet === t.vue;
+    return `<button type="button" class="onglet${ici ? ' actif' : ''}" data-action="${action}"${ici ? ' aria-current="page"' : ''}>`
       + `<span class="onglet-ico">${icone(t.icone)}${alerte[t.vue as Vue | 'plus'] ? pastille
         // sur téléphone, le cristal n'existe pas : c'est l'onglet Plus (où vit la fiche) qui porte l'appel
         : t.vue === 'plus' && cristalAllume(e) ? `<i class="pastille-alerte appel-fiche" aria-label="${tr('une récompense t’attend')}"></i>` : ''}</span><span class="onglet-nom">${t.nom}</span></button>`;

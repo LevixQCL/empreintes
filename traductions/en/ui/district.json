@@ -2,10 +2,6 @@
  "source": "src/ui/district.ts",
  "entrees": [
   {
-   "fr": "Port",
-   "en": "Port"
-  },
-  {
    "fr": "Le bateau du passeur reste amarré sous les pilotis du Port, devant le sas de la digue : tant que le gardien de la Strate −1 tient le puits, personne ne laisse le district sans défense pour prendre la mer.",
    "en": "The ferryman’s boat stays moored under the Port’s stilts, by the Dike airlock: as long as the guardian of Stratum −1 holds the shaft, no one leaves the district undefended to put out to sea."
   },
