@@ -7,7 +7,7 @@ import { DECK_DEPART, porteurDef } from '../core/donnees';
 import type { Geste } from '../core/types';
 import { portrait } from './art';
 import { avatar } from './coquille';
-import { ICO } from './icones';
+import { ICO, baseIcones } from './icones';
 import { COULEUR, carteDemo } from './vue';
 import { echap } from './outils';
 import { t as tr } from '../core/i18n';
@@ -60,7 +60,7 @@ const portraitParole = (id: string) => {
 /** Les explications d'avant la chambre (le combat) */
 const SUITES = {
   chambre: { etapes: ETAPES, nom: tr('Avant d’ouvrir'), passer: 'ouvrir-chambre', action: 'briefing',
-    fin: `<button type="button" class="btn prim large appel-porte" data-action="ouvrir-chambre">${ICO.porte}${tr`Ouvrir la porte`}</button>` },
+    fin: `<button type="button" class="btn prim large appel-porte" data-action="ouvrir-chambre"><img class="ico peinte action" src="${baseIcones}porte.webp" alt="" aria-hidden="true" decoding="async">${tr`Ouvrir la porte`}</button>` },
 };
 export type Suite = keyof typeof SUITES;
 export const nbEtapes = (s: Suite) => SUITES[s].etapes.length;

@@ -463,7 +463,7 @@ function htmlPorte(x: Expedition, choisies: readonly number[]): string {
   }
   r += `</div>`
     + (!possible ? `<p class="px-aide">${ICO.aide}<span>${tr`Aucune suite de ${n} dans cette main.${p.relance ? tr(' La porte reste fermée pour cette fois.') : tr(' Tu peux tirer une autre main.')}`}</span></p>` : '')
-    + `<div class="px-actions"><button type="button" class="btn prim large" data-action="porte-ouvrir"${sel.length === n ? '' : ' disabled'}>${ICO.porte}${tr`Ouvrir la porte`}</button>`
+    + `<div class="px-actions"><button type="button" class="btn prim large" data-action="porte-ouvrir"${sel.length === n ? '' : ' disabled'}><img class="ico peinte action" src="${baseIcones}porte.webp" alt="" aria-hidden="true" decoding="async">${tr`Ouvrir la porte`}</button>`
     + `<div class="px-sec">${p.relance ? '' : `<button type="button" class="btn sec" data-action="porte-relancer">${ICO.repiocher}${tr`Autre main`}</button>`}`
     + `<button type="button" class="btn sec" data-action="porte-passer">${tr`Laisser la porte`}</button></div></div></div>`;
   return r;

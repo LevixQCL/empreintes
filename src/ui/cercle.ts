@@ -122,7 +122,7 @@ function presentation(e: EcranDistrict, ferme: boolean): string {
     + `<li>${ICO.echange}<div><strong>${t`Des échanges`}</strong><small>${t`Une carte en double contre une carte du même métal. Ta carte ne part jamais, seulement un exemplaire en double. Fer et cuivre gratuits ; argent et or contre des cristaux ; jamais la nacre.`}</small></div></li>`
     + `</ul>`
     + (ferme ? ''
-      : !J.cercleConstruit(j) ? `<button type="button" class="btn prim large" data-action="cercle-batiment">${ICO.marteau}${t`Construire le Cercle`}</button>`
+      : !J.cercleConstruit(j) ? `<button type="button" class="btn prim large" data-action="cercle-batiment"><img class="ico peinte action" src="${baseIcones}marteau.webp" alt="" aria-hidden="true" decoding="async">${t`Construire le Cercle`}</button>`
         : `<button type="button" class="btn prim large" data-action="cercle-entrer">${ICO.cercle}${e.cercle?.aide ? t('Retour au Cercle') : t('Entrer au Cercle')}</button>`);
 }
 

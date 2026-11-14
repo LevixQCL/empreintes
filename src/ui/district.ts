@@ -443,7 +443,7 @@ function mission(e: EcranDistrict): string {
       : '';
     h += `<div class="mission-tete"><span class="surtitre mob">${tr`OBJECTIF DU JOUR${q.reserve > 1 ? tr` · ${q.reserve} EN RÉSERVE` : ''}`}</span><span class="surtitre pc">${tr`OBJECTIF DU JOUR`}</span>${reserve}<span class="chiffre mob">${q.progres} / ${def.objectif}</span></div><strong>${echap(def.titre)}</strong>`
       + (quotidienFait(j)
-        ? `<button type="button" class="btn prim" data-action="reclamer-jour">${ICO.coffre}${tr`Récupérer : une carte ou 2 Éclats`}</button>`
+        ? `<button type="button" class="btn prim" data-action="reclamer-jour"><img class="ico peinte action" src="${baseIcones}coffre.webp" alt="" aria-hidden="true" decoding="async">${tr`Récupérer : une carte ou 2 Éclats`}</button>`
         : `<div class="mj-progres"><div class="jauge"><i style="width:${(100 * q.progres) / def.objectif}%"></i></div><span class="chiffre pc"><b>${q.progres}</b> / ${def.objectif}</span></div>`
           + `<button type="button" class="btn sec mj-y-aller mob" data-action="objectif-aller" data-id="${q.type}">${ICO.lancer}${tr`Y aller`}</button>`
           + `<p class="mj-gain pc">${icone('coffre')}<span>${tr`Récompense :`} <b>${tr`une carte`}</b> ${tr`ou`} <b>${tr`2 Éclats`}</b>${tr`, au choix`}</span></p>`);
@@ -1052,7 +1052,7 @@ function feuilleBatiment(e: EcranDistrict): string {
     h += `</div>`;
     const pied = !a.ch && a.cout
       ? `<button type="button" class="btn ${a.pret ? 'prim' : 'sec'} large tb-ameliorer" data-action="ameliorer" data-id="${b}"${a.pret ? '' : ' disabled'}>${ICO.monter}${tr`Passer au niveau ${niv + 1}`}</button>`
-      : b === 'noyau' ? `<button type="button" class="btn prim large fb-entrer" data-action="entrer">${ICO.tour}${tr`Entrer dans la tour`}</button>` : '';
+      : b === 'noyau' ? `<button type="button" class="btn prim large fb-entrer" data-action="entrer"><img class="ico peinte action" src="${baseIcones}tour.webp" alt="" aria-hidden="true" decoding="async">${tr`Entrer dans la tour`}</button>` : '';
     return h + (pied ? `<footer class="feuille-pied fb-pied"><div class="fb-barre">${pied}</div></footer>` : '') + `</section>`;
   }
 
@@ -1128,7 +1128,7 @@ function feuilleBatiment(e: EcranDistrict): string {
   if (b === 'cercle' && cercleOuvert(j) && niv) {
     const n = e.cercle?.aRepondre ?? 0;
     h += `<footer class="feuille-pied fb-pied"><div class="fb-barre"><button type="button" class="btn prim large fb-entrer" data-action="cercle">${ICO.cercle}${tr`Entrer au Cercle`}${n ? ` <span class="pastille-n">${n}</span>` : ''}</button></div></footer>`;
-  } else if (b === 'noyau') h += `<footer class="feuille-pied fb-pied"><div class="fb-barre"><button type="button" class="btn prim large fb-entrer" data-action="entrer">${ICO.tour}${tr`Entrer dans la tour`}</button></div></footer>`;
+  } else if (b === 'noyau') h += `<footer class="feuille-pied fb-pied"><div class="fb-barre"><button type="button" class="btn prim large fb-entrer" data-action="entrer"><img class="ico peinte action" src="${baseIcones}tour.webp" alt="" aria-hidden="true" decoding="async">${tr`Entrer dans la tour`}</button></div></footer>`;
   else if (!onglets) h += `<footer class="feuille-pied fb-pied">${barreAmelioration(e, b, a, true)}</footer>`;
   return h + `</section>`;
 }
@@ -1912,7 +1912,7 @@ export function htmlRencontre(n = 0): string {
   // Avant, le gros bouton faisait passer la seule explication du trio. Un petit « Passer » reste pour qui rejoue.
   h += `<footer class="rencontre-bas">`
     + (fini
-      ? `<button type="button" class="btn prim large appel-porte" data-action="briefing">${ICO.porte}${tr`Ouvrir la porte`}</button>`
+      ? `<button type="button" class="btn prim large appel-porte" data-action="briefing"><img class="ico peinte action" src="${baseIcones}porte.webp" alt="" aria-hidden="true" decoding="async">${tr`Ouvrir la porte`}</button>`
       // 14 novembre 2026 : plus de bouton « Écouter la suite », on touche l'image (à gauche pour revenir), comme dans l'intro
       : `<span class="indice-bulle">${n ? tr`Touche l’écran pour la suite` : tr`Touche l’écran pour les écouter`} <small class="compte-repliques">${n} / ${REPLIQUES.length}</small></span>`
         + `<button type="button" class="lien-passer" data-action="briefing">${tr`Passer`}</button>`)
@@ -2144,7 +2144,7 @@ export function htmlCoupe(e: EcranDistrict): string {
         + `<li>${ICO.porteurs}<span>${auPort ? tr`Autre mission en mer` : tr`Mission`}</span><b>${Math.round(CREUSEURS.missionCourte * 100)} à ${Math.round(CREUSEURS.missionLongue * 100)} %</b></li>`
         // les Épreuves n'ouvrent qu'après la Strate −EPREUVES_STRATE : on ne les cite qu'à partir de là (test critique du 4 novembre 2026)
         + (j.chambre && epreuvesOuvertes(j) ? `<li>${ICO.boost}<span>${tr`Épreuve`} <em>${tr`(1re victoire de la semaine)`}</em></span><b>${tr`assuré`}</b></li>` : '') + `</ul>` : '')
-      + `<div class="tr-boutons">${auPort ? `<button type="button" class="btn prim" data-action="batiment" data-id="port">${ICO.ouvrier}${tr`Aller au Port`}</button>` : ''}${manque.creuseurs ? `<button type="button" class="btn ${auPort ? 'sec' : 'prim'}" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}><img class="ico peinte action" src="${baseIcones}fouiller.webp" alt="" aria-hidden="true" decoding="async">${tr`Fouiller la Strate −${j.strate}`}</button>` : ''}`
+      + `<div class="tr-boutons">${auPort ? `<button type="button" class="btn prim" data-action="batiment" data-id="port"><img class="ico peinte action" src="${baseIcones}ouvrier.webp" alt="" aria-hidden="true" decoding="async">${tr`Aller au Port`}</button>` : ''}${manque.creuseurs ? `<button type="button" class="btn ${auPort ? 'sec' : 'prim'}" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}><img class="ico peinte action" src="${baseIcones}fouiller.webp" alt="" aria-hidden="true" decoding="async">${tr`Fouiller la Strate −${j.strate}`}</button>` : ''}`
       + `${manque.noyau ? `<button type="button" class="btn ${manque.creuseurs ? 'sec' : 'prim'}" data-action="batiment" data-id="noyau" data-amelio>${ICO.tour}${tr`Améliorer la Tour`}</button>` : ''}</div>`;
   } else if (j.frontVaincu && (finCreuse(j) ?? 0) > e.now) {
     // la creuse (12 novembre 2026) : un temps fixe et affiché, pendant lequel on joue à autre chose

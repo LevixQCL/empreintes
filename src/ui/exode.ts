@@ -5,7 +5,7 @@
 
 import { CHANTIERS_EXODE, ETAPES_EXODE, EXODE, FLECHE, avancementExode, etapeExode, exodeOuvert, raisonExode, sommetTenu, type Jeu } from '../core/jeu';
 import { decompte, jaugeTemps, prix, type EcranDistrict } from './coquille';
-import { ICO, perle } from './icones';
+import { ICO, perle, baseIcones } from './icones';
 import { echap, texteReplie } from './outils';
 import { bloc, cle, etape, replie } from './presentation';
 import { t as tr, locale } from '../core/i18n';
@@ -49,7 +49,7 @@ function enCours(e: EcranDistrict): string {
     // seul un vrai blocage se dit en phrase : les ressources manquantes se lisent déjà en rouge dans le prix
     const bloque = raison && (assezC && assezE || (!a.fini && a.chantier === CHANTIERS_EXODE.length - 1 && !sommetTenu(j)));
     h += `<div class="xo-lancer"><span class="xo-prix">${prix('energie', a.cout.cristaux, assezC)}${prix('eclats', a.cout.eclats, assezE)}<span class="xo-duree">${ICO.chrono}${a.cout.heures} h</span></span>`
-      + `<button type="button" class="btn prim" data-action="exode-lancer"${raison ? ' disabled' : ''}>${ICO.marteau}${a.fini ? tr`Lancer un convoi` : tr`Lancer l’étape`}</button></div>`
+      + `<button type="button" class="btn prim" data-action="exode-lancer"${raison ? ' disabled' : ''}><img class="ico peinte action" src="${baseIcones}marteau.webp" alt="" aria-hidden="true" decoding="async">${a.fini ? tr`Lancer un convoi` : tr`Lancer l’étape`}</button></div>`
       + (bloque ? `<p class="xo-raison">${ICO.verrou}<span>${echap(raison!)}</span></p>` : '');
   }
   return h + `</section>`;
@@ -86,7 +86,7 @@ function presentation(premiere: boolean): string {
       + etape(ICO.fleche, tr('Le Passage'), tr`Le dernier chantier demande le sommet de la Flèche (quai ${FLECHE.quais}) : elle donne le droit de passer, l’Exode prépare les gens.`)
       + etape(ICO.energie, tr('Rien ne presse'), tr`Rien ne se perd et rien ne s’abîme si tu ne joues pas. En tout, environ ${ent(total)} cristaux : un projet de plusieurs semaines.`)
       + `</ul>`, ICO.aide)
-    + (premiere ? `<button type="button" class="btn prim large" data-action="exode-entrer">${ICO.marteau}${tr`Ouvrir le premier chantier`}</button>` : '') + `</div>`;
+    + (premiere ? `<button type="button" class="btn prim large" data-action="exode-entrer"><img class="ico peinte action" src="${baseIcones}marteau.webp" alt="" aria-hidden="true" decoding="async">${tr`Ouvrir le premier chantier`}</button>` : '') + `</div>`;
 }
 
 /** La feuille de l'Exode */

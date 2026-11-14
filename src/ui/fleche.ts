@@ -173,7 +173,7 @@ function garde(f: EtatFleche, libre: number | null): string {
     + `<dl class="fl-enjeu"><div class="gain"><dt>${t`Gage par jour`}</dt><dd>${ICO.chrono}<b>${gage(g.quai)}</b><small>${jours ? t`tenu depuis ${jours} jour${jours > 1 ? 's' : ''}` : t('tenu depuis aujourd’hui')}</small></dd></div>`
     + `<div class="gain"><dt>${t`Dans la caisse`}</dt><dd>${ICO.coffre}<b>${ent(caisse.composants)}${caisse.eclats ? ` ${ICO.eclats}${caisse.eclats}` : ''}</b><small>${pleine ? t`pleine : ${ASCENSION.caisseJours} jours au plus` : t`jusqu’à ${ASCENSION.caisseJours} jours de gage`}</small></dd></div></dl>`
     + `<p class="fl-regle">${ICO.porteurs}<span>${t`Une copie figée de ton escouade (force ${Math.round(forceGarnison(g.garnison) * 100)}) se défend seule. Chaque défense tenue rapporte un quart de jour de gage ; battue, elle perd le quai, jamais ta montée.`}</span></p>`
-    + `<div class="fl-garde-actions"><button type="button" class="btn prim large" data-action="fleche-gage"${caisse.composants || caisse.eclats ? '' : ' disabled'}>${ICO.coffre}${t`Recevoir le gage`}</button>`
+    + `<div class="fl-garde-actions"><button type="button" class="btn prim large" data-action="fleche-gage"${caisse.composants || caisse.eclats ? '' : ' disabled'}><img class="ico peinte action" src="${baseIcones}coffre.webp" alt="" aria-hidden="true" decoding="async">${t`Recevoir le gage`}</button>`
     + (plusHaut ? `<button type="button" class="btn sec" data-action="fleche-tenir" data-quai="${plusHaut}">${ICO.monter}${t`Monter ta garde au quai ${plusHaut}`}</button>` : '')
     + `<button type="button" class="btn sec petit" data-action="fleche-quitter">${t`Quitter le quai`}</button></div></div>`;
 }

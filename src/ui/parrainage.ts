@@ -5,7 +5,7 @@
 import { moduleDef, PARRAINAGE_CARTE } from '../core/donnees';
 import { codeAffiche, PARRAINAGE, peutEtreParraine, recrueActive, recruesRecompensees, type Recrue } from '../core/jeu';
 import { coquille, entete, type EcranDistrict } from './coquille';
-import { ICO } from './icones';
+import { ICO, baseIcones } from './icones';
 import { echap } from './outils';
 import { faceCarte } from './carte';
 import { COLLECTION } from '../core/collection';
@@ -42,7 +42,7 @@ export function htmlRecruter(e: EcranDistrict, r: EtatRecruter, enLigne: boolean
   else if (!code) h += `<strong class="rc-valeur rc-attente">${r.etat === 'erreur' ? '— — —' : t('Gravure…')}</strong>${r.etat === 'erreur' ? `<p class="aide">${echap(r.erreur)}</p><button type="button" class="btn sec" data-action="rc-actualiser">${t`Réessayer`}</button>` : ''}`;
   else {
     h += `<strong class="rc-valeur">${codeAffiche(code)}</strong>`
-      + `<div class="rc-boutons"><button type="button" class="btn prim" data-action="rc-partager">${ICO.porteurs}${t`Envoyer le lien`}</button>`
+      + `<div class="rc-boutons"><button type="button" class="btn prim" data-action="rc-partager"><img class="ico peinte action" src="${baseIcones}porteurs.webp" alt="" aria-hidden="true" decoding="async">${t`Envoyer le lien`}</button>`
       + `<button type="button" class="btn sec" data-action="rc-copier">${t`Copier`}</button></div>`
       + `<small class="aide">${t`Le lien ouvre le jeu avec ton code déjà entré. Ton ami peut aussi le saisir lui-même, au début de sa partie.`}</small>`;
   }

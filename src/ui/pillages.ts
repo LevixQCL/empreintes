@@ -304,7 +304,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', pillOk = true): stri
       + `</ul>`, ICO.aide)
 
     + (etat === 'fermee' ? ''
-      : `<button type="button" class="btn prim large" data-action="port-entrer">${ICO.carte}${etat === 'premiere' ? t('Larguer les amarres') : t('Retour au Port')}</button>`);
+      : `<button type="button" class="btn prim large" data-action="port-entrer"><img class="ico peinte action" src="${baseIcones}carte.webp" alt="" aria-hidden="true" decoding="async">${etat === 'premiere' ? t('Larguer les amarres') : t('Retour au Port')}</button>`);
 }
 
 /** Un radoub contre des cristaux (le « jeton » acheté du 31 octobre 2026) : visible seulement quand la coque est usée */
