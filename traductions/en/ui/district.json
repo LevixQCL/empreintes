@@ -558,6 +558,14 @@
    "en": ""
   },
   {
+   "fr": "jamais",
+   "en": "never"
+  },
+  {
+   "fr": "niv. {0}",
+   "en": "lvl {0}"
+  },
+  {
    "fr": "échanges par jour",
    "en": "trades per day"
   },
@@ -566,12 +574,12 @@
    "en": "cards on display"
   },
   {
-   "fr": "Échanges jusqu’à l’{0}{1} · jamais la nacre.",
-   "en": "Trades up to {0}{1} · never nacre."
+   "fr": "Ce qui s’échange",
+   "en": "What can be traded"
   },
   {
-   "fr": " (l’or au niveau {0})",
-   "en": " (gold at level {0})"
+   "fr": "Métaux échangeables",
+   "en": "Tradable metals"
   },
   {
    "fr": "Une fois rouvert",
@@ -1516,10 +1524,6 @@
   {
    "fr": "(aujourd’hui, ton plus avancé est niveau {0}).",
    "en": "(right now, your most advanced is level {0})."
-  },
-  {
-   "fr": "niv. {0}",
-   "en": "lvl {0}"
   },
   {
    "fr": "Éveil complet",

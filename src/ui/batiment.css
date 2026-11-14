@@ -499,3 +499,24 @@ button.te-socle.vide:active{transform:scale(.97)}
 .fg-fonte-jauge>div{display:grid;gap:4px;min-width:0}
 .fg-fonte-jauge span:first-child{font-size:13px;color:#F1ECE2}
 .fg-fonte .btn{flex:none}
+
+/* ---------- Le Cercle des quais (refonte du 14 novembre 2026) : trois tuiles de verre, les métaux en pastilles peintes ---------- */
+.cq-tuiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cq-tuile{display:grid;justify-items:center;align-content:start;gap:3px;padding:12px 6px 11px;border-radius:12px;text-align:center;
+  background:linear-gradient(180deg,rgba(205,239,255,.07),rgba(205,239,255,.015));box-shadow:inset 0 0 0 1px rgba(205,239,255,.13),inset 0 1px 0 rgba(255,255,255,.08)}
+.cq-tuile>.ico{width:20px;height:20px;color:var(--fb-or);filter:drop-shadow(0 0 6px rgba(242,200,110,.4))}
+.cq-tuile b{font-family:var(--mono);font-size:28px;line-height:1.05;color:#fff;font-variant-numeric:tabular-nums}
+.cq-tuile small{font-size:12px;line-height:1.25;color:var(--fb-doux)}
+.cq-metaux ul{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:0;padding:0;list-style:none}
+.cq-metal{display:grid;justify-items:center;gap:4px;text-align:center}
+.cq-metal i{width:34px;height:34px;border-radius:50%;background:var(--tex) center/cover;
+  box-shadow:0 0 0 1.5px color-mix(in srgb,var(--r) 75%,transparent),0 3px 6px rgba(0,0,0,.6),0 0 14px color-mix(in srgb,var(--r) 30%,transparent)}
+.cq-metal span{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:color-mix(in srgb,var(--r) 70%,white)}
+.cq-metal small{display:inline-flex;align-items:center;min-height:16px;font-family:var(--mono);font-size:12px;color:var(--fb-doux)}
+.cq-metal small .ico{width:14px;height:14px;color:#8FE3B0}
+.cq-metal.plus-tard i{filter:saturate(.35) brightness(.6);box-shadow:0 0 0 1.5px rgba(205,239,255,.18),0 3px 6px rgba(0,0,0,.6)}
+.cq-metal.plus-tard span{color:var(--fb-doux)}
+.cq-metal.plus-tard small{color:var(--fb-or)}
+.cq-metal.jamais{opacity:.5}
+.cq-metal.jamais i{filter:grayscale(1) brightness(.5);box-shadow:0 0 0 1.5px rgba(205,239,255,.12)}
+.cq-metal.jamais span{color:var(--fb-doux)}

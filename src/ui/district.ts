@@ -40,7 +40,7 @@ import { htmlListeScenes } from './campagne';
 import { COULEUR } from './vue';
 import type { Affinite } from '../core/lieux';
 import { htmlVisite, suivreVisite } from './visite';
-import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteDistrict, decor, decorStrate, illustrationBatiment, illustrationModule, interieurBatiment, portrait, prochainVisuel, prochainPalier, palierCuvette, type PalierCuvette, CALQUES_CUVETTE, calquePalier, FUMEE_FORGE, reflets, sceneDistrict, CUVETTE, visuel, portraitYse, illustrationEnnemi } from './art';
+import { textureMetal, LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteDistrict, decor, decorStrate, illustrationBatiment, illustrationModule, interieurBatiment, portrait, prochainVisuel, prochainPalier, palierCuvette, type PalierCuvette, CALQUES_CUVETTE, calquePalier, FUMEE_FORGE, reflets, sceneDistrict, CUVETTE, visuel, portraitYse, illustrationEnnemi } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence, pastillesCopies, texteCopies } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { avecMots } from './lexique';
@@ -748,16 +748,22 @@ function blocEntrainement(e: EcranDistrict): string {
  * Le Comptoir (23 octobre 2026) : les cartes du jour, à prix fixe. On voit la carte avant de payer ; chaque offre
  * ne s'achète qu'une fois, tout se renouvelle demain. L'or et la nacre restent à trouver dans les Strates.
  */
-/** Le Cercle des quais dans sa feuille (3 novembre 2026) : ce qu'il permet à ce niveau, et la porte de l'écran du Cercle */
+/**
+ * Le Cercle des quais dans sa feuille (3 novembre 2026, refonte du 14 novembre 2026) : trois tuiles pour ce qu'il permet
+ * à ce niveau, les métaux qui s'échangent en pastilles de métal peint ; la porte de l'écran du Cercle passe dans le pied.
+ */
 function blocCercle(e: EcranDistrict): string {
   const j = e.j;
   if (!cercleOuvert(j) || !j.batiments.cercle) return '';
-  const n = e.cercle?.aRepondre ?? 0;
-  return `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.echange}<b>${echangesParJour(j)}</b><small>${tr`échanges par jour`}</small></div>`
-    + `<div class="fb-chiffre">${ICO.chrono}<b>${ouvertesMax(j)}</b><small>${tr`propositions en attente`}</small></div>`
-    + `<div class="fb-chiffre">${ICO.cartes}<b>${vitrineMax(j)}</b><small>${tr`cartes en vitrine`}</small></div></div>`
-    + `<p class="fb-note">${tr`Échanges jusqu’à l’${NOMS_RARETE[metalMax(j)].toLowerCase()}${metalMax(j) === 'argent' ? tr` (l’or au niveau ${CERCLE.orAuNiveau})` : ''} · jamais la nacre.`}</p>`
-    + `<button type="button" class="btn prim large fb-entrer" data-action="cercle">${ICO.cercle}${tr`Entrer au Cercle`}${n ? ` <span class="pastille-n">${n}</span>` : ''}</button>`;
+  const tuile = (ic: string, n: number, lib: string) => `<div class="cq-tuile">${ic}<b>${n}</b><small>${lib}</small></div>`;
+  const max = RARETES.indexOf(metalMax(j));
+  const metaux = RARETES.map((r, i) => {
+    const etat = r === 'nacre' ? 'jamais' : i <= max ? 'oui' : 'plus-tard';
+    const sous = etat === 'oui' ? ICO.ok : etat === 'jamais' ? tr('jamais') : tr`niv. ${CERCLE.orAuNiveau}`;
+    return `<li class="cq-metal ${etat}" style="--r:${COULEUR_RARETE[r]}"><i style="--tex:url(${textureMetal(r)})"></i><span>${NOMS_RARETE[r]}</span><small>${sous}</small></li>`;
+  }).join('');
+  return `<div class="cq-tuiles">${tuile(ICO.echange, echangesParJour(j), tr`échanges par jour`)}${tuile(ICO.chrono, ouvertesMax(j), tr`propositions en attente`)}${tuile(ICO.cartes, vitrineMax(j), tr`cartes en vitrine`)}</div>`
+    + `<section class="fb-bloc cq-metaux"><h3 class="titre-bloc">${tr`Ce qui s’échange`}</h3><ul aria-label="${tr`Métaux échangeables`}">${metaux}</ul></section>`;
 }
 
 function blocComptoir(e: EcranDistrict): string {
@@ -942,7 +948,7 @@ function blocPerles(j: Jeu): string {
 
 /** Le nom de l'onglet du quotidien, selon le bâtiment (12 novembre 2026) */
 function ongletSalle(b: BatimentId): string {
-  return b === 'noyau' ? tr('Salle d’entraînement') : b === 'forge' ? tr('Établi') : b === 'comptoir' ? tr('Étals du jour') : tr('Au travail');
+  return b === 'noyau' ? tr('Salle d’entraînement') : b === 'forge' ? tr('Établi') : b === 'comptoir' ? tr('Étals du jour') : b === 'cercle' ? tr('Les quais') : tr('Au travail');
 }
 
 /** Le coût d'une amélioration en deux pastilles « ce que j'ai / ce qu'il faut » ; le rouge dit ce qui manque */
@@ -1085,7 +1091,10 @@ function feuilleBatiment(e: EcranDistrict): string {
   if (gainsBas) h += `<section class="tb-niveau-corps"><div class="tb-tete"><h3 class="titre-bloc">${niv ? tr`Au niveau ${niv + 1}` : tr`Une fois construit`}</h3></div>${gainsBas}</section>`;
   h += `</div>`;
   // le pied : à la Tour, « Entrer dans la tour » ; ailleurs, rien quand l'amélioration a son onglet
-  if (b === 'noyau') h += `<footer class="feuille-pied fb-pied"><div class="fb-barre"><button type="button" class="btn prim large fb-entrer" data-action="entrer">${ICO.tour}${tr`Entrer dans la tour`}</button></div></footer>`;
+  if (b === 'cercle' && cercleOuvert(j) && niv) {
+    const n = e.cercle?.aRepondre ?? 0;
+    h += `<footer class="feuille-pied fb-pied"><div class="fb-barre"><button type="button" class="btn prim large fb-entrer" data-action="cercle">${ICO.cercle}${tr`Entrer au Cercle`}${n ? ` <span class="pastille-n">${n}</span>` : ''}</button></div></footer>`;
+  } else if (b === 'noyau') h += `<footer class="feuille-pied fb-pied"><div class="fb-barre"><button type="button" class="btn prim large fb-entrer" data-action="entrer">${ICO.tour}${tr`Entrer dans la tour`}</button></div></footer>`;
   else if (!onglets) h += `<footer class="feuille-pied fb-pied">${barreAmelioration(e, b, a, true)}</footer>`;
   return h + `</section>`;
 }

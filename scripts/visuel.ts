@@ -28,7 +28,7 @@ const ENTRER = async (p: Page) => {
     await p.waitForTimeout(300);
   }
 };
-const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer' | 'comptoir' | 'creuse' | 'autour' | 'confier' | 'choix'; faire: (p: Page) => Promise<void> }[] = [
+const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer' | 'comptoir' | 'cercle' | 'creuse' | 'autour' | 'confier' | 'choix'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
   { nom: 'recompense-choix', sauvegarde: 'choix', faire: async (p) => { await p.click('.titre-go'); await p.waitForTimeout(600); } },
@@ -38,6 +38,8 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'generateur', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="generateur"]'); } },
   // le Comptoir (1er novembre 2026) : les étals du jour et le bouton pour les renouveler une fois par jour
   { nom: 'comptoir', sauvegarde: 'comptoir', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="comptoir"]'); await p.waitForTimeout(300); await p.$eval('.cp-renouveler', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
+  // le Cercle des quais (refonte du 14 novembre 2026) : trois tuiles, les métaux échangeables, « Entrer » au pied
+  { nom: 'cercle', sauvegarde: 'cercle', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="cercle"]', { force: true }); await p.waitForTimeout(800); await p.click('.cr-niveau'); await p.waitForTimeout(300); } },
   { nom: 'noyau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="noyau"]'); } },
   { nom: 'noyau-places', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="noyau"]'); await p.locator('.fb-bloc.te').scrollIntoViewIfNeeded(); } },
   // le Butin de la semaine (28 octobre 2026) : sur téléphone, on déplie d'abord la bulle de l'objectif, puis on touche le bandeau
@@ -271,6 +273,9 @@ async function main() {
     cp.data.batiments.comptoir = 3;
     cp.data.composants = Math.max(cp.data.composants ?? 0, 500);
     (saves as Record<string, unknown>).comptoir = cp;
+    const ce = JSON.parse(JSON.stringify(saves.district));
+    ce.data.batiments.cercle = 3;
+    (saves as Record<string, unknown>).cercle = ce;
     // la creuse en cours (12 novembre 2026) : gardien vaincu, la galerie se perce depuis deux heures
     const cr = JSON.parse(JSON.stringify(saves.district));
     cr.data.frontVaincu = true;
