@@ -13,7 +13,7 @@ import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
 import { NOMS_EFFET, effetsDe, nomsEffets, texteEffet } from '../core/effets';
 import { multNiveau } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
-import { illustrationBatiment, portrait } from './art';
+import { fondLignee, illustrationBatiment, portrait, portraitDetoure } from './art';
 import { ICONES_ACTION, faceCarte } from './carte';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, decompte, ongletsFiche, entete, voletsEscouade, type EcranDistrict } from './coquille';
 import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugePv, plusLongueSuite } from './district';
@@ -230,7 +230,8 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
   }
   const p = porteurDef(id);
   const d = j.porteurs[id]!;
-  const img = portrait(id);
+  const detoure = portraitDetoure(id);
+  const img = detoure ?? portrait(id);
   const n = niveauPorteur(j, id);
   const pv = pvMaxCombat(j, id);
   const pvM = pvNiveau(j, id) + bonusPv(j, id);
@@ -254,7 +255,8 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
   const bat = LIGNEES.find((l) => BATTU_PAR[l] === p.lignee)!;
   return `<section class="eq-porteur${raison && !j.expedition ? ' absent' : ''}" style="--c:${COULEUR[p.lignee]}" aria-label="${echap(p.nom)}">`
     // le Porteur et sa Marque dans un même cadre (13 novembre 2026) : le pouvoir se lit comme le sien
-    + `<div class="eq-ident"><header class="eq-tete">`
+    // un portrait détouré : le fond peint de sa lignée se voit autour de lui
+    + `<div class="eq-ident${detoure ? ' detoure' : ''}">${detoure ? `<i class="eq-fond" aria-hidden="true" style="background-image:url(${fondLignee(p.lignee)})"></i>` : ''}<header class="eq-tete">`
     // refonte du 14 novembre 2026 (Bryan : « ça fait cheap », « collage », les 1 2 3 lus comme un classement) :
     // le portrait fondu dans la fiche, sans numéro ; la lignée nommée avec son symbole ; l'avantage de lignée en duel de symboles
     + `<button type="button" class="eq-portrait" data-action="porteur" data-id="${id}" aria-label="${tr`Fiche ${echap(deNom(p.nom))}`}">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 64)}${raison && !j.expedition ? `<span class="eq-absent-sceau" aria-hidden="true">${ICO.chrono}</span>` : ''}</button>`

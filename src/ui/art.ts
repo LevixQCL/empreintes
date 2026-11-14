@@ -187,6 +187,10 @@ const CADRAGE: Record<string, number> = { vela: 52, nuit: 25, sasha: 25, coursie
 export const cadragePortrait = (id: string): number => CADRAGE[id] ?? 18;
 /** La miniature d'un portrait (120 × 132 px, le visage cadré comme dans les avatars) : pour les petits hexagones, quelques Ko au lieu de 80 */
 export const miniature = (id: string): string | null => (PORTEURS_ILLUSTRES.has(id) ? `${base}porteurs/mini/${id}.webp?v=${VERSION_PORTRAITS}` : null);
+/** Les portraits détourés sur fond uni (14 novembre 2026) : posés sur le fond peint de leur lignée, dans la fiche de l'escouade */
+const PORTRAITS_DETOURES = new Set(['doran']);
+export const portraitDetoure = (id: string): string | null => (PORTRAITS_DETOURES.has(id) ? `${base}porteurs/detoures/${id}.webp` : null);
+export const fondLignee = (l: string): string => `${base}lignees/fond-${l}.webp`;
 export const portrait = (id: string): string | null => (PORTEURS_ILLUSTRES.has(id) ? `${base}porteurs/${id}.webp?v=${VERSION_PORTRAITS}` : null);
 /** l'illustration ne dépend pas du métal : « jambes-ressort@or » reprend celle de « jambes-ressort » */
 export const illustrationModule = (cle: string): string | null => {
