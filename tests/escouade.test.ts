@@ -166,5 +166,15 @@ describe('Les trois escouades', () => {
     expect(escouadesDe(j)[0]).toEqual(['vela']);
     expect(choisirEscouade(j, 0).ok).toBe(false);
   });
+  it('un absent garde sa place : son remplaçant part, puis il la retrouve (14 novembre 2026)', () => {
+    const j = pret();
+    j.missions = [{ porteur: 'ilka', strate: 1, duree: 'courte', debut: 0, fin: Date.now() + 3_600_000 }];
+    const depart = escouadePourDepart(j);
+    expect(depart[0]).not.toBe('ilka');
+    expect(depart.slice(1)).toEqual(['doran', 'vela']);
+    expect(partir(j, depart, 1).ok).toBe(true);
+    expect(j.expedition!.porteurs.map((p) => p.id)).toEqual(depart);
+    expect(escouadeDe(j)).toEqual(['ilka', 'doran', 'vela']);
+  });
 });
 

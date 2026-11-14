@@ -255,3 +255,5 @@ button.es-place.vide{width:100%;border:0;font:inherit;cursor:pointer;color:inher
 .es-remplace-ruban .ico{width:12px;height:12px;flex-shrink:0}
 @media (max-width:420px){.es-absent{grid-template-columns:auto minmax(0,1fr)}.es-absent-btn{grid-column:1/-1;justify-content:center}}
 .es-absent-vide{color:var(--es-rouge);font-weight:700}
+.es-absent-txt small.es-absent-rempl{display:block}
+.es-absent-txt small.es-absent-rempl.doux{color:var(--es-doux)}

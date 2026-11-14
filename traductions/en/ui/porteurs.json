@@ -202,8 +202,12 @@
    "en": "Pick a Bearer: they bring their cards to the deck"
   },
   {
-   "fr": "Au prochain départ, un autre Porteur prendra sa place.",
-   "en": "On the next departure, another Bearer will take their place."
+   "fr": "Un autre Porteur partira à sa place ; elle garde la sienne dans l’escouade.",
+   "en": "Another Bearer will go in her place; she keeps her spot in the squad."
+  },
+  {
+   "fr": "Un autre Porteur partira à sa place ; il garde la sienne dans l’escouade.",
+   "en": "Another Bearer will go in his place; he keeps his spot in the squad."
   },
   {
    "fr": "Au départ, {0}",

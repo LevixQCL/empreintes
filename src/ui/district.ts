@@ -2836,7 +2836,6 @@ const ICO_ABSENCE: Record<Absence['quoi'], string> = { mer: ICO.chrono, mission:
 
 /** Qui ne part pas, pourquoi, quand il revient, et qui prend sa place (choix du remplaçant d'un toucher) */
 function blocAbsents(j: Jeu, e: EcranDistrict, absents: { id: string; place: number; absence: Absence }[]): string {
-  const esc = escouadeActive(j) + 1;
   let h = `<section class="es-absents" aria-label="${tr`Porteurs absents`}">`;
   for (const a of absents) {
     const p = porteurDef(a.id);
@@ -2846,8 +2845,9 @@ function blocAbsents(j: Jeu, e: EcranDistrict, absents: { id: string; place: num
     h += `<div class="es-absent" style="--c:${COULEUR[p.lignee]}"><span class="es-absent-visage">${visageAbsent(j, a.id, 46)}</span>`
       + `<span class="es-absent-txt"><strong>${tr`${echap(p.nom)} ne part pas`}</strong>`
       + `<small>${ICO_ABSENCE[a.absence.quoi]}<span>${echap(a.absence.texte)}${a.absence.fin ? ` · ${decompte(a.absence.fin, e.now, tr('retour dans '))}` : ''}</span></small>`
-      + `<small class="es-absent-rempl">${rempl ? tr`${echap(porteurDef(rempl).nom)} prend sa place dans l’Escouade ${esc}` : tr('Personne de libre pour le remplacer')}`
-      + (rempl && !j.porteurs[rempl]!.modules.length ? ` · <b class="es-absent-vide">${tr`sans aucune carte`}</b>` : '') + `</small></span>`
+      + `<small class="es-absent-rempl">${rempl ? (p.feminin ? tr`${echap(porteurDef(rempl).nom)} la remplace pour ce départ` : tr`${echap(porteurDef(rempl).nom)} le remplace pour ce départ`) : tr('Personne de libre pour le remplacer')}`
+      + (rempl && !j.porteurs[rempl]!.modules.length ? ` · <b class="es-absent-vide">${tr`sans aucune carte`}</b>` : '') + `</small>`
+      + (rempl ? `<small class="es-absent-rempl doux">${tr`${echap(p.nom)} retrouvera sa place au retour`}</small>` : '') + `</span>`
       + `<button type="button" class="btn sec es-absent-btn${ouvert ? ' actif' : ''}" data-action="depart-remplacer" data-index="${a.place}" aria-expanded="${ouvert}">${ouvert ? ICO.fermer : ICO.recycler}<span>${ouvert ? tr('Fermer') : rempl ? tr('Changer le remplaçant') : tr('Choisir un remplaçant')}</span></button></div>`;
     if (ouvert) {
       const libres = disponibles(j).filter((id) => !raisonHorsEscouade(j, id) && !e.escouade.includes(id))

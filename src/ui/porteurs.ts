@@ -245,7 +245,7 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
   // l'absent (14 novembre 2026, Bryan : « en tout petit, ce n'est vraiment pas clair ») : un bandeau ambre, son retour, et ce qui se passera au départ
   const alerte = raison && !j.expedition
     ? `<div class="eq-absent">${ICO.chrono}<span><strong>${abs ? echap(abs.texte) : echap(raison.replace(/\.$/, ''))}${abs?.fin ? ` · ${decompte(abs.fin, Date.now(), tr('retour dans '))}` : ''}</strong>`
-      + `<small>${tr`Au prochain départ, un autre Porteur prendra sa place.`}</small></span></div>`
+      + `<small>${(p.feminin ? tr`Un autre Porteur partira à sa place ; elle garde la sienne dans l’escouade.` : tr`Un autre Porteur partira à sa place ; il garde la sienne dans l’escouade.`)}</small></span></div>`
     : textePosteQuitte(j, id) && !j.expedition ? `<p class="eq-alerte doux">${ICO.ouvrier}<span>${tr`Au départ, ${echap(textePosteQuitte(j, id)!)}`}</span></p>`
     : tropBlesse(j, id) && !j.expedition ? `<p class="eq-alerte">${ICO.soin}<span>${tr`${echap(tropBlesse(j, id)!.replace(/\.$/, ''))} : soins intensifs possibles à la Clinique.`}</span></p>`
     : d.usure >= usureMax(j, id) * 0.5 ? `<p class="eq-alerte">${ICO.soin}<span>${tr`Usure élevée : −${Math.floor(d.usure)} PV en combat. La Clinique la soigne au district.`}</span></p>`

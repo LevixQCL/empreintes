@@ -3346,8 +3346,12 @@
    "en": "{0} isn’t going"
   },
   {
-   "fr": "{0} prend sa place dans l’Escouade {1}",
-   "en": "{0} takes their place in Squad {1}"
+   "fr": "{0} la remplace pour ce départ",
+   "en": "{0} stands in for her this time"
+  },
+  {
+   "fr": "{0} le remplace pour ce départ",
+   "en": "{0} stands in for him this time"
   },
   {
    "fr": "Personne de libre pour le remplacer",
@@ -3356,6 +3360,10 @@
   {
    "fr": "sans aucune carte",
    "en": "with no cards"
+  },
+  {
+   "fr": "{0} retrouvera sa place au retour",
+   "en": "{0} gets the spot back on return"
   },
   {
    "fr": "Changer le remplaçant",

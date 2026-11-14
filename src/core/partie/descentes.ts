@@ -242,11 +242,15 @@ function ranger(j: Jeu, toutes: string[][]): void {
 }
 
 /** Retient l'escouade qui part (l'écran de départ a pu la changer) : elle devient celle qui descend,
- * et ses Porteurs quittent les autres escouades */
+ * et ses Porteurs quittent les autres escouades.
+ * Un absent (en mission, en fouille…) garde sa place (14 novembre 2026, Bryan) : son remplaçant ne part que pour cette fois,
+ * et reste enregistré dans sa propre escouade. */
 function retenirDepart(j: Jeu, escouade: string[], sortie: Sortie = 'explorer'): void {
   payerRatelier(j, escouade, sortie);
   const a = escouadeActive(j);
-  ranger(j, escouadesDe(j).map((l, k) => (k === a ? [...escouade] : l.filter((id) => !escouade.includes(id)))));
+  const avant = escouadesDe(j)[a] ?? [];
+  const garde = escouade.map((id, k) => (avant[k] && avant[k] !== id && absence(j, avant[k]!) ? avant[k]! : id));
+  ranger(j, escouadesDe(j).map((l, k) => (k === a ? garde : l.filter((id) => !garde.includes(id)))));
 }
 
 /**
