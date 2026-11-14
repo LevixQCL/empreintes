@@ -183,8 +183,11 @@
 
   .titre,.intro{border-radius:0;min-height:100dvh;padding:0;
     grid-template-columns:minmax(24px,1fr) calc((100dvh - 64px) * 816 / 1456) minmax(380px,540px) minmax(24px,1fr);column-gap:clamp(40px,5vw,88px)}
-  .titre::before,.intro::before{content:"";position:absolute;inset:-90px;z-index:-4;background:var(--image,none) center/cover #070915;
-    filter:blur(56px) brightness(.38) saturate(1.25);transition:background-image .8s ease}
+  /* Fond flouté : un flou de 56 px sur toute la fenêtre se découpait en bandes horizontales sur certains PC (14 novembre 2026).
+     On floute une copie quatre fois plus petite, agrandie ensuite : même rendu, sans lignes, et bien plus léger. */
+  .titre::before,.intro::before{content:"";position:absolute;left:-200px;top:-200px;width:calc((100% + 400px) / 4);height:calc((100% + 400px) / 4);
+    z-index:-4;background:var(--image,none) center/cover #070915;transform:scale(4);transform-origin:0 0;
+    filter:blur(14px) brightness(.38) saturate(1.25);transition:background-image .8s ease}
   .titre::after,.intro::after{content:"";position:absolute;inset:0;z-index:-4;pointer-events:none;
     background:radial-gradient(60% 80% at 38% 50%,transparent 40%,rgba(4,6,14,.75))}
 
