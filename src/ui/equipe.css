@@ -102,8 +102,13 @@
   -webkit-mask-image:linear-gradient(180deg,#000 75%,transparent);mask-image:linear-gradient(180deg,#000 75%,transparent)}
 .eq-fond::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 25%,rgba(9,12,24,.5) 60%,rgba(9,12,24,.75))}
 /* détouré : pas de cadre ni de fondu, le personnage sort de son décor */
-.eq-ident.detoure .eq-portrait{background:none;-webkit-mask-image:linear-gradient(180deg,#000 80%,transparent);mask-image:linear-gradient(180deg,#000 80%,transparent)}
-.eq-ident.detoure .eq-portrait img{inset:4px auto auto -18%;width:150%;height:auto;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.55))}
+.eq-ident.detoure .eq-portrait{overflow:visible;background:none;-webkit-mask-image:none;mask-image:none}
+/* le personnage déborde sous le texte et s'efface doucement vers la droite et vers le bas : aucune coupe nette */
+.eq-ident.detoure .eq-portrait img{inset:4px auto auto -18%;width:150%;max-width:none;height:auto;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.55));
+  -webkit-mask-image:linear-gradient(90deg,#000 55%,transparent 96%),linear-gradient(180deg,#000 60%,transparent 88%);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(90deg,#000 55%,transparent 96%),linear-gradient(180deg,#000 60%,transparent 88%);mask-composite:intersect}
+.eq-ident.detoure .eq-tete{overflow:hidden}
+.eq-ident.detoure .eq-id{position:relative;z-index:1}
 .eq-tete{display:grid;grid-template-columns:104px minmax(0,1fr);align-items:stretch;min-height:128px}
 .eq-portrait{position:relative;width:100%;height:100%;padding:0;border:0;border-radius:0;overflow:hidden;cursor:pointer;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--c) 35%,#141A2E),#0B0F1C 75%);
   -webkit-mask-image:linear-gradient(90deg,#000 62%,transparent);mask-image:linear-gradient(90deg,#000 62%,transparent);transition:filter .15s}
