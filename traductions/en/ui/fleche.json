@@ -30,8 +30,12 @@
    "en": "The story of the islands will open once the deep has spoken: defeat the guardian of Stratum −10."
   },
   {
-   "fr": "Pas de jeton : monte autant que tu veux. La Clinique soigne l’Usure entre deux assauts.",
-   "en": "No tokens: climb as much as you like. The Clinic heals Strain between assaults."
+   "fr": "Aucune limite : monte autant que tu veux. La Clinique soigne l’Usure entre deux assauts.",
+   "en": "",
+   "ancien": {
+    "fr": "Pas de jeton : monte autant que tu veux. La Clinique soigne l’Usure entre deux assauts.",
+    "en": "No tokens: climb as much as you like. The Clinic heals Strain between assaults."
+   }
   },
   {
    "fr": "{0} · quai {1}",
@@ -338,8 +342,12 @@
    "en": "One fight per quay"
   },
   {
-   "fr": "Ton escouade affronte les trois gardiens du quai. Pas de jeton : tu montes autant que tu veux, seule l’Usure te freine.",
-   "en": "Your squad faces the quay’s three guardians. No tokens: climb as much as you like, only Strain slows you down."
+   "fr": "Ton escouade affronte les trois gardiens du quai. Aucune limite : tu montes autant que tu veux, seule l’Usure te freine.",
+   "en": "",
+   "ancien": {
+    "fr": "Ton escouade affronte les trois gardiens du quai. Pas de jeton : tu montes autant que tu veux, seule l’Usure te freine.",
+    "en": "Your squad faces the quay’s three guardians. No tokens: climb as much as you like, only Strain slows you down."
+   }
   },
   {
    "fr": "Vite en bas, lentement en haut",

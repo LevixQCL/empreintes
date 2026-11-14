@@ -56,7 +56,7 @@ export function htmlFleche(e: EcranDistrict): string {
   // l'histoire : la montée contre les gardiens payés ; puis la compétition : la garde, le défi, les gardiens
   h += paliers(f.quai, f.recus);
   if (!sommet) h += sieges(false);
-  h += `<p class="fl-regle">${ICO.chrono}<span>${t`Pas de jeton : monte autant que tu veux. La Clinique soigne l’Usure entre deux assauts.`}</span></p></div>`;
+  h += `<p class="fl-regle">${ICO.chrono}<span>${t`Aucune limite : monte autant que tu veux. La Clinique soigne l’Usure entre deux assauts.`}</span></p></div>`;
   h += `<div class="fl-col fl-d">${sommet ? sieges(true) : assaut(j, f.quai, f.record)}${competition(e, f)}</div>`;
   return coquille(e, h, 'fle');
 }
@@ -244,7 +244,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', recit = false): stri
     + (recit ? replie(t('Les Îles ouvertes'), `<p>${t`Le Noyé, vieux saboteur rescapé du Levage, garde un brouillon de la Clause, écrit à la main pendant la Grève des pompes : « le district dont l’escouade tient le sommet au passage d’une île y est reçu ». Pas l’escouade : le district.`}</p>`
       + `<p>${t`Ceux qui sont montés ont tous accepté le palais qu’on leur offrait. Le Noyé attend un directeur qui tiendra le sommet, puis refusera, pour réclamer l’île au nom de tous. Le sommet et ses Sièges arrivent bientôt ; l’histoire complète t’attend dans les Chroniques (« Il y est reçu »).`}</p>`, ICO.porte) : '')
     + replie(t('Les règles en détail'), `<ul class="fl-pr-etapes">`
-      + etape(ICO.atk, t('Un combat par quai'), t('Ton escouade affronte les trois gardiens du quai. Pas de jeton : tu montes autant que tu veux, seule l’Usure te freine.'))
+      + etape(ICO.atk, t('Un combat par quai'), t('Ton escouade affronte les trois gardiens du quai. Aucune limite : tu montes autant que tu veux, seule l’Usure te freine.'))
       + etape(ICO.monter, t('Vite en bas, lentement en haut'), t`Une victoire fait monter de ${FLECHE.montee[0]!.quais} quais jusqu’au ${FLECHE.montee[0]!.jusqua}, de ${FLECHE.montee[1]!.quais} jusqu’au ${FLECHE.montee[1]!.jusqua}, puis d’un seul.`)
       + etape(ICO.descendre, t('Une défaite fait redescendre'), t('D’autant de quais, mais jamais sous le dernier quai gravé que tu as atteint.'))
       + etape(ICO.cristal, t('Les quais gravés'), t`${FLECHE.paliers.join(', ')} : chacun donne des cristaux, des Éclats et une carte au choix parmi trois du même métal (argent, puis or, puis nacre à partir du quai 75, avec une Perle de nacre), une seule fois. Ton record compte au Grand Tableau.`)
