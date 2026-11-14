@@ -94,8 +94,20 @@ body{background:
 .btn.large.prim::before{display:none}
 
 /* ---------- Jauges : segmentées, lumineuses ---------- */
-.jauge{background:repeating-linear-gradient(90deg,#1E2530 0 6px,#161B23 6px 7px)}
-.jauge>i:not(.cran){box-shadow:0 0 8px var(--jc,var(--gold));-webkit-mask-image:repeating-linear-gradient(90deg,#000 0 6px,transparent 6px 7px);mask-image:repeating-linear-gradient(90deg,#000 0 6px,transparent 6px 7px)}
+/* 14 novembre 2026 (Bryan : « la barre de progression est encore en code tout moche ») : plus de tirets de règle graduée.
+   Une rainure de verre fumé, et un trait de lumière plein qui s'éclaircit vers sa pointe, où brille une étincelle ;
+   un reflet lent la parcourt tant que ça avance. La couleur suit --jc (or par défaut). */
+.jauge{background:linear-gradient(180deg,rgba(4,8,14,.85),rgba(20,30,44,.75));box-shadow:inset 0 0 0 1px rgba(205,239,255,.1),inset 0 1px 2px rgba(0,0,0,.6)}
+.jauge>i:not(.cran){position:relative;border-radius:inherit;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--jc,var(--gold)) 35%,#0B1824),var(--jc,var(--gold)) 70%,color-mix(in srgb,var(--jc,var(--gold)) 45%,white));
+  box-shadow:0 0 8px color-mix(in srgb,var(--jc,var(--gold)) 55%,transparent),inset 0 1px 0 rgba(255,255,255,.35)}
+.jauge>i:not(.cran)::before{content:"";position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%) -150% 0/60% 100% no-repeat;animation:jauge-reflet 3.2s ease-in-out infinite}
+.jauge>i:not(.cran)::after{content:"";position:absolute;right:0;top:50%;width:6px;height:6px;border-radius:50%;transform:translate(40%,-50%);
+  background:#fff;box-shadow:0 0 6px 2px color-mix(in srgb,var(--jc,var(--gold)) 80%,white)}
+.jauge>i[style*="width:0%"]::after,.jauge>i[style*="width:100%"]::after{display:none}
+@keyframes jauge-reflet{0%{background-position:-150% 0}60%,100%{background-position:250% 0}}
+@media (prefers-reduced-motion:reduce){.jauge>i:not(.cran)::before{animation:none;display:none}}
 .jauge-pv{background:#1A2029;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
 .jauge-pv .pv{box-shadow:0 0 8px rgba(143,207,122,.6)}
 

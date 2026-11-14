@@ -122,6 +122,8 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'port-marees-choix', sauvegarde: 'marees', faire: async (p) => { await ENTRER(p); await p.$eval('button.balise[data-lieu="port"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('[data-action="port-volet"][data-id="marees"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.click('.mr-poste >> nth=1'); await p.waitForTimeout(200); await p.$eval('.mr-choix', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'port-marees-mer', sauvegarde: 'mareesMer', faire: async (p) => { await ENTRER(p); await p.$eval('button.balise[data-lieu="port"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('[data-action="port-volet"][data-id="marees"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); } },
   // la famille à secourir en carte illustrée (12 novembre 2026), fermée puis le choix du Porteur déplié
+  // le choix du Porteur pour une destination (14 novembre 2026 : en fiches sur PC)
+  { nom: 'port-missions-porteurs', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-lieu="port"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('.ds-lieu', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('.missions-libres', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'port-secours', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-lieu="port"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('.sc-bloc', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'port-secours-ouvert', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-lieu="port"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.click('.sc-lieu'); await p.waitForTimeout(300); await p.$eval('.sc-carte', (e) => e.scrollIntoView({ block: 'start' })); } },
   { nom: 'port-destinations', sauvegarde: 'port', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-lieu="port"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('.ds-lieux', (e) => e.scrollIntoView({ block: 'center' })); } },
@@ -407,6 +409,7 @@ async function main() {
               photo = encore;
             }
             photos.push(photo);
+            if (process.env.VISUEL_TOUT) writeFileSync(resolve(sortie, `${scene.nom}-${w}-${port === 4401 ? "avant" : "apres"}-brut.png`), photo);
             // VISUEL_LANGUE : le texte visible de la version traduite, pour repérer ce qui reste en français
             if (process.env.VISUEL_LANGUE && port === 4402) writeFileSync(resolve(sortie, `${scene.nom}-${w}-texte.txt`), await p.evaluate(() => document.body.innerText));
             // la lisibilité (audit du 7 novembre 2026) : petits textes, coins coupés, petites cibles, ancienne police

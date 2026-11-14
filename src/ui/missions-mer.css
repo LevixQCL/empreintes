@@ -183,3 +183,18 @@
   .ds-lieux,.ds-lieux.n2,.ds-lieux.n4,.ds-lieux.n5{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
   .ds-lieux.n5>.ds-lieu,.ds-lieux.n5>.ds-lieu:nth-child(4){grid-column:auto}
 }
+
+/* 14 novembre 2026 (Bryan, capture PC : « toujours pas très ergonomique ») : sur grand écran, les Porteurs ne s'étirent plus
+   sur toute la largeur avec les boutons collés au bord opposé. Chacun devient une fiche compacte, rangée en grille :
+   le Porteur en haut, ses deux départs côte à côte dessous, à portée d'œil et de clic. */
+@media (min-width:700px){
+  .missions-libres{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+  .missions-libres li{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1fr);grid-template-areas:"av txt txt" "d1 d1 d2";align-content:start;gap:10px;padding:12px;border-radius:12px}
+  .missions-libres li>.avatar{grid-area:av}
+  .missions-libres li>span:not(.avatar){grid-area:txt}
+  .missions-libres li>.mission-duree:nth-of-type(1){grid-area:d1}
+  .missions-libres li>.mission-duree:nth-of-type(2){grid-area:d2}
+  .missions-libres .btn.mission-duree{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:42px;padding:6px 12px;border-radius:10px}
+  .missions-libres .mission-duree>span:first-child{white-space:nowrap;font-family:var(--mono);font-weight:700;font-size:14px;color:#fff}
+  .missions-libres .mission-duree .ds-gain{flex-direction:row;flex-wrap:wrap;justify-content:flex-end;gap:2px 8px}
+}
