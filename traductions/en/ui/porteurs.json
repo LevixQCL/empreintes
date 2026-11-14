@@ -222,16 +222,20 @@
    "en": "High Strain: −{0} HP in combat. The Clinic heals it in the district."
   },
   {
+   "fr": "Changer {0}",
+   "en": "Change {0}"
+  },
+  {
    "fr": "/ {0} PV",
    "en": "/ {0} HP"
   },
   {
-   "fr": "Fort contre les {0}",
-   "en": "Strong against the {0}"
+   "fr": "Fort contre les",
+   "en": "Strong against the"
   },
   {
-   "fr": "Changer {0}",
-   "en": "Change {0}"
+   "fr": "+{0} % dégâts",
+   "en": ""
   },
   {
    "fr": "Ses cartes changeront à son retour",
@@ -616,10 +620,6 @@
   {
    "fr": ", surtout {0}",
    "en": ", mostly {0}"
-  },
-  {
-   "fr": "Fort contre les",
-   "en": "Strong against the"
   },
   {
    "fr": "de dégâts pour ses cartes",

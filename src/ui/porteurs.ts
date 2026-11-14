@@ -226,7 +226,7 @@ function blocMarque(j: Jeu, id: string): string {
 function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string | null, prete: (cle: string) => boolean): string {
   if (!id) {
     return `<section class="eq-porteur vide"><button type="button" class="eq-choisir" data-action="escouade-place" data-index="${i}"${verrou ? ' disabled' : ''}>`
-      + `<span class="eq-rang">${i + 1}</span>${ICO.porteurs}<span><strong>${tr`Place libre`}</strong><small>${verrou ? tr('L’escouade est en descente') : tr('Choisir un Porteur : il apporte ses cartes au deck')}</small></span></button></section>`;
+      + `${ICO.porteurs}<span><strong>${tr`Place libre`}</strong><small>${verrou ? tr('L’escouade est en descente') : tr('Choisir un Porteur : il apporte ses cartes au deck')}</small></span></button></section>`;
   }
   const p = porteurDef(id);
   const d = j.porteurs[id]!;
@@ -255,12 +255,15 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
   return `<section class="eq-porteur${raison && !j.expedition ? ' absent' : ''}" style="--c:${COULEUR[p.lignee]}" aria-label="${echap(p.nom)}">`
     // le Porteur et sa Marque dans un même cadre (13 novembre 2026) : le pouvoir se lit comme le sien
     + `<div class="eq-ident"><header class="eq-tete">`
-    + `<button type="button" class="eq-portrait" data-action="porteur" data-id="${id}" aria-label="${tr`Fiche ${echap(deNom(p.nom))}`}">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 64)}<span class="eq-rang" aria-hidden="true">${i + 1}</span>${raison && !j.expedition ? `<span class="eq-absent-sceau" aria-hidden="true">${ICO.chrono}</span>` : ''}</button>`
-    + `<div class="eq-id"><button type="button" class="eq-nom" data-action="porteur" data-id="${id}"><strong>${echap(p.nom)}</strong><small>${tr`${NOM_LIGNEE[p.lignee]} · Niv. ${n.niveau}`}</small></button>`
-    + `<span class="eq-pv">${jaugePv(pv, pvM, d.usure, usureMax(j, id))}<small><b>${pv}</b> ${tr`/ ${pvM} PV`}</small></span>`
-    + `<small class="eq-fort" style="--l:${COULEUR[bat]}">${tr`Fort contre les ${sigle(bat)}`}<b>${NOM_LIGNEES[bat]}</b></small></div>`
-    + (verrou ? '' : `<button type="button" class="eq-changer" data-action="escouade-place" data-index="${i}" aria-label="${tr`Changer ${echap(p.nom)}`}">${ICO.recycler}<span>${tr`Changer`}</span></button>`)
+    // refonte du 14 novembre 2026 (Bryan : « ça fait cheap », « collage », les 1 2 3 lus comme un classement) :
+    // le portrait fondu dans la fiche, sans numéro ; la lignée nommée avec son symbole ; l'avantage de lignée en duel de symboles
+    + `<button type="button" class="eq-portrait" data-action="porteur" data-id="${id}" aria-label="${tr`Fiche ${echap(deNom(p.nom))}`}">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 64)}${raison && !j.expedition ? `<span class="eq-absent-sceau" aria-hidden="true">${ICO.chrono}</span>` : ''}</button>`
+    + `<div class="eq-id"><div class="eq-l1"><button type="button" class="eq-nom" data-action="porteur" data-id="${id}"><strong>${echap(p.nom)}</strong></button>`
+    + (verrou ? '' : `<button type="button" class="eq-changer" data-action="escouade-place" data-index="${i}" aria-label="${tr`Changer ${echap(p.nom)}`}">${ICO.recycler}<span>${tr`Changer`}</span></button>`) + `</div>`
+    + `<span class="eq-lignee"><span class="eq-lg">${sigle(p.lignee)}${NOM_LIGNEE[p.lignee]}</span><span class="eq-niv">${tr`Niv. ${n.niveau}`}</span></span>`
+    + `<span class="eq-pv">${jaugePv(pv, pvM, d.usure, usureMax(j, id))}<small><b>${pv}</b> ${tr`/ ${pvM} PV`}</small></span></div>`
     + `</header>`
+    + `<div class="eq-avantage" style="--l:${COULEUR[bat]}">${sigle(p.lignee)}<i class="eq-av-fleche" aria-hidden="true"></i>${sigle(bat)}<span>${tr`Fort contre les`} <b>${NOM_LIGNEES[bat]}</b></span><b class="eq-av-bonus">${tr`+${Math.round((REGLES.bonusLignee - 1) * 100)} % dégâts`}</b></div>`
     // l'absent : son bandeau juste sous le portrait, avant la Marque (visible sans défiler)
     + (abs && raison && !j.expedition ? alerte + blocMarque(j, id) + `</div>` : blocMarque(j, id) + `</div>` + alerte)
     // le compte des cartes et « Gérer » sur une seule ligne, juste au-dessus des cartes (12 novembre 2026 : plus de Charge)
