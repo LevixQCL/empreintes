@@ -266,9 +266,12 @@ export function htmlIntro(i: number, k: number, mouvement = true, texteCache = f
     + `<button type="button" class="btn-sec" data-action="intro-passer">${film ? tr('Quitter') : tr('Passer')}</button></div></div>`
     + `<div class="intro-corps${n === 1 ? ' entree' : ''}"><div class="intro-date"><span class="epoque">${echap(fr(p.epoque))}</span>${p.epoque.includes(String(a)) ? '' : compteur(de, a)}</div><h2>${echap(fr(p.titre))}</h2>`
     + `<p class="ligne neuve" aria-live="polite">${echap(fr(p.lignes[n - 1]!))}</p>${pas}`
-    + `</div><div class="intro-bas">${i > 0 || n > 1 ? `<button type="button" class="btn-sec" data-action="intro-precedent">${tr`Retour`}</button>` : '<span></span>'}`
-    + (i === 0 ? `<span class="intro-indice">${tr`Touche l’écran pour continuer`}</span>` : '<span></span>')
-    + `<button type="button" class="prim" data-action="${dernier && complet ? 'intro-passer' : 'intro-suivant'}">${dernier && complet ? (film?.fin ?? tr('Descendre vers la porte')) : complet ? tr('Suite') : tr('Continuer')}</button></div></section>`;
+    + `</div>`
+    // plus de boutons Retour / Continuer (Bryan, 14 novembre 2026, « à la Instagram ») : on touche à droite pour avancer,
+    // à gauche (le premier tiers) pour revenir ; seul le dernier écran garde son bouton, qui mène à la suite
+    + (dernier && complet ? `<div class="intro-bas"><button type="button" class="prim" data-action="intro-passer">${film?.fin ?? tr('Descendre vers la porte')}</button></div>`
+      : i === 0 && n === 1 ? `<div class="intro-bas"><span class="intro-indice">${tr`Touche à droite pour avancer, à gauche pour revenir`}</span></div>` : '')
+    + `</section>`;
 }
 
 const OEIL = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';

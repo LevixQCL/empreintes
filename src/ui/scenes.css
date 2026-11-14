@@ -126,7 +126,14 @@
 .intro-corps.entree h2{animation:titre 1s cubic-bezier(.2,.7,.2,1) .8s both}
 .intro-corps.entree .ligne.neuve{animation:apparait .8s cubic-bezier(.2,.7,.2,1) 1.35s both}
 @keyframes titre{from{opacity:0;letter-spacing:.12em;filter:blur(4px)}to{opacity:1;letter-spacing:.005em;filter:none}}
-.intro-bas{min-height:48px}
+.intro-bas{min-height:48px;justify-content:center}
+.intro-bas .prim{margin-left:auto}
+/* Sur téléphone, le film prend tout l'écran, bord à bord (14 novembre 2026) : plus de cadre ni de marges autour de l'image */
+@media not ((min-width:1100px) and (min-height:600px)){
+  #app[data-mode="intro"]:has(> .intro){max-width:none;padding:0}
+  #app[data-mode="intro"] > .intro{border-radius:0;min-height:100vh;min-height:100dvh;
+    padding:calc(14px + var(--sat)) max(16px,env(safe-area-inset-right,0px)) calc(18px + var(--sab)) max(16px,env(safe-area-inset-left,0px))}
+}
 .intro-indice{font-family:var(--mono);font-size:var(--t-min);letter-spacing:.06em;opacity:0;text-align:center;animation:indice 2.4s ease-in-out 3.5s infinite}
 @keyframes indice{0%,100%{opacity:0}40%,60%{opacity:.75}}
 

@@ -11,6 +11,7 @@ import { afficher } from '../rendu';
 import { sauver } from '../synchro';
 import { noterAge } from '../../save/age';
 import type { Clic, Suite } from './commun';
+import { pleinEcran } from '../plein-ecran';
 
 export async function agirIntro(a: string, c: Clic): Promise<Suite> {
   const { ev } = c;
@@ -31,9 +32,16 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
       if (compteEtat.actif && !compteEtat.age) { compteEtat.ageDemande = true; compteEtat.ouvert = false; break; }
       app.mode = apresTitre();
       if (app.mode === 'combat') K.fin = finPour();
-      if (app.mode === 'intro') { app.recit = null; app.introLongue = false; app.plan = 0; app.lignesVues = 1; app.texteCache = false; }
+      if (app.mode === 'intro') { app.recit = null; app.introLongue = false; app.plan = 0; app.lignesVues = 1; app.texteCache = false; pleinEcran(true); }
       break;
-    case 'intro-suivant': if (app.texteCache) app.texteCache = false; else avancerIntro(); break;
+    // toucher l'image : le premier tiers à gauche revient en arrière, le reste avance ; au tout dernier écran, on passe à la suite
+    case 'intro-suivant': {
+      if (app.texteCache) { app.texteCache = false; break; }
+      const r = c.b.getBoundingClientRect();
+      if (c.b.classList.contains('intro') && c.ev.clientX > 0 && c.ev.clientX < r.left + r.width / 3) { reculerIntro(); break; }
+      if (!avancerIntro()) return agirIntro('intro-passer', c);
+      break;
+    }
     case 'intro-precedent': app.texteCache = false; reculerIntro(); break;
     case 'intro-oeil': app.texteCache = !app.texteCache; break;
     case 'intro-passer':
@@ -41,9 +49,11 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
       // au bout du récit, la dernière scène : choisir la carte d'origine ; « Quitter » avant la fin ramène au district
       if (app.recit) {
         const fin = app.plan === (filmActif()?.plans.length ?? 1) - 1 && app.lignesVues >= (filmActif()?.plans[app.plan]?.lignes.length ?? 1);
+        pleinEcran(false);
         if (fin && RECITS_ORIGINES[app.recit]) { app.recitChoix = true; window.scrollTo(0, 0); break; }
         app.recit = null; app.mode = 'district'; window.scrollTo(0, 0); break;
       }
+      pleinEcran(false);
       app.jeu.introVue = true;
       app.mode = app.jeu.expedition ? 'combat' : 'district';
       D.vue = app.jeu.chambre ? 'archipel' : 'rencontre';
@@ -64,8 +74,8 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
       app.recit = c.id; app.recitChoix = true; app.mode = 'intro'; D.menu = false; window.scrollTo(0, 0); break;
     case 'recit-lire': if (!RECITS_ORIGINES[c.id]) break;
       if (!recitOuvert(c.id)) { majCompteAchat(); boutique.offre = c.id; break; }
-      app.recitChoix = false; app.recit = c.id; app.introLongue = true; app.plan = 0; app.lignesVues = 1; app.texteCache = false; app.mode = 'intro'; D.menu = false; break;
-    case 'intro': app.recit = null; app.introLongue = true; app.plan = 0; app.lignesVues = 1; app.texteCache = false; app.mode = 'intro'; D.menu = false; break;
+      app.recitChoix = false; app.recit = c.id; app.introLongue = true; app.plan = 0; app.lignesVues = 1; app.texteCache = false; app.mode = 'intro'; D.menu = false; pleinEcran(true); break;
+    case 'intro': app.recit = null; app.introLongue = true; app.plan = 0; app.lignesVues = 1; app.texteCache = false; app.mode = 'intro'; D.menu = false; pleinEcran(true); break;
     default: return 'inconnu';
   }
   return 'afficher';
