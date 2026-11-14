@@ -40,7 +40,7 @@ import { htmlListeScenes } from './campagne';
 import { COULEUR } from './vue';
 import type { Affinite } from '../core/lieux';
 import { htmlVisite, suivreVisite } from './visite';
-import { textureMetal, LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteDistrict, decor, decorStrate, illustrationBatiment, illustrationModule, interieurBatiment, portrait, prochainVisuel, prochainPalier, palierCuvette, type PalierCuvette, CALQUES_CUVETTE, calquePalier, FUMEE_FORGE, reflets, sceneDistrict, CUVETTE, visuel, portraitYse, illustrationEnnemi } from './art';
+import { textureMetal, LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteDistrict, decor, decorStrate, decorRoche, illustrationBatiment, illustrationModule, interieurBatiment, portrait, prochainVisuel, prochainPalier, palierCuvette, type PalierCuvette, CALQUES_CUVETTE, calquePalier, FUMEE_FORGE, reflets, sceneDistrict, CUVETTE, visuel, portraitYse, illustrationEnnemi } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence, pastillesCopies, texteCopies } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { avecMots } from './lexique';
@@ -2263,14 +2263,14 @@ function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof m
       + `<div class="tr-infos"><strong>${nom}</strong><small>${echap(zone.nom)}${vaincue ? tr` · ${ICO.ok}vaincue` : ` · <em>${tr`front : son gardien t’attend`}</em>`}</small>`
       + (remuee?.strate === n ? `<small class="tr-remuee">${ICO.strate}${tr`Remuée aujourd’hui`}${particularite(remuee.modele) ? ` : ${echap(particularite(remuee.modele)!.nom.charAt(0).toLowerCase() + particularite(remuee.modele)!.nom.slice(1))}` : ''}</small>` : '')
       + contenuStrate(j, n)
-      + `<div class="tr-actions">${vaincue ? `<button type="button" class="btn sec" data-action="fouiller-choix" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.cristal}${tr`Fouiller`}</button>` : ''}`
-      + `<button type="button" class="btn ${front && !j.frontVaincu ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.descendre}${tr`Explorer`}</button></div></div></li>`;
+      + `<div class="tr-actions">${vaincue ? `<button type="button" class="btn sec tr-btn fouiller" data-action="fouiller-choix" data-strate="${n}"${off ? ' disabled' : ''}>${icone('composants')}<span>${tr`Fouiller`}</span></button>` : ''}`
+      + `<button type="button" class="btn ${front && !j.frontVaincu ? 'prim' : 'sec'} tr-btn explorer" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}>${icone('traces')}<span>${tr`Explorer`}</span></button></div></div></li>`;
   }
   // la roche, tout en bas
   const requis = creuseursRequis(cible);
   const loge = logementCreuseurs(j);
   const logementBloque = !!manque?.noyau;
-  h += `<li class="tr-strate roche${j.frontVaincu && !manque ? ' prete' : ''}"><span class="tr-vignette"><b>−${cible}</b></span><div class="tr-infos"><strong>${tr`Roche à creuser`}</strong>`
+  h += `<li class="tr-strate roche${j.frontVaincu && !manque ? ' prete' : ''}"><span class="tr-vignette"><img src="${decorRoche}" alt="" loading="lazy" decoding="async"><b>−${cible}</b></span><div class="tr-infos"><strong>${tr`Roche à creuser`}</strong>`
     + (requis ? `<span class="tr-creuseurs"><b>${Math.min(j.creuseurs, requis)} / ${requis}</b> ${tr`creuseurs`}</span><div class="tr-jauge"><i style="width:${Math.min(100, (100 * j.creuseurs) / requis)}%"></i></div>` : '')
     + `<small${!j.frontVaincu ? ' class="tr-ferme"' : ''}>${!j.frontVaincu ? tr`${ICO.verrou}S’ouvre après le gardien de la Strate −${j.strate}.` : manque ? tr('Il manque encore de quoi la percer : voir « Prochaine étape ».') : tr('Tout est prêt.')}</small>`
     + (logementBloque ? `<small class="tr-loge">${tr`La Tour loge ${loge} creuseurs au niveau ${j.batiments.noyau} : il faut de la place pour ${requis}.`}</small>` : '')

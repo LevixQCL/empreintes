@@ -76,9 +76,33 @@
 .tr-haltes{color:#AFC2D8}
 .tr-haltes .ico{color:#CDEFFF}
 
-/* ---------- les boutons ---------- */
+/* ---------- les boutons : des lames de cristal, l'icône peinte qui brille ---------- */
 .tr-actions{position:relative;z-index:3;display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.tr-strates .tr-actions .btn{min-height:44px;padding:0 16px;border-radius:12px;font-size:14px}
+#app .tr-strates .tr-btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:9px;min-height:48px;padding:0 18px 0 8px;border:0;border-radius:14px;
+  clip-path:none;font-family:var(--display);font-size:15.5px;font-weight:400;letter-spacing:.03em;color:#F4F7FB;cursor:pointer;
+  background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,0) 48%),linear-gradient(165deg,rgba(28,40,70,.82),rgba(8,12,26,.9));
+  -webkit-backdrop-filter:blur(10px) saturate(1.3);backdrop-filter:blur(10px) saturate(1.3);
+  box-shadow:inset 0 0 0 1px rgba(170,220,255,.38),inset 0 1px 0 rgba(255,255,255,.35),inset 0 -12px 18px -12px rgba(120,200,255,.45),0 8px 20px rgba(0,0,0,.45);
+  transition:transform .15s ease,box-shadow .2s ease,filter .2s ease}
+#app .tr-strates .tr-btn::before,#app .tr-strates .tr-btn::after{content:none}
+/* l'icône peinte dans un écrin rond qui s'allume */
+#app .tr-strates .tr-btn .ico{flex-shrink:0;width:36px;height:36px;padding:1px;border-radius:50%;object-fit:contain;
+  background:radial-gradient(circle,rgba(150,215,255,.32),rgba(150,215,255,0) 70%);filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+#app .tr-strates .tr-btn.fouiller{box-shadow:inset 0 0 0 1px rgba(127,227,214,.42),inset 0 1px 0 rgba(255,255,255,.35),inset 0 -12px 18px -12px rgba(127,227,214,.5),0 8px 20px rgba(0,0,0,.45)}
+#app .tr-strates .tr-btn.fouiller .ico{background:radial-gradient(circle,rgba(127,227,214,.34),rgba(127,227,214,0) 70%)}
+/* un reflet qui balaie la lame au survol */
+#app .tr-strates .tr-btn span{position:relative;z-index:1}
+@media (hover:hover){
+  #app .tr-strates .tr-btn:not(:disabled):hover{transform:translateY(-1px);filter:brightness(1.12)}
+  #app .tr-strates .tr-btn:not(:disabled):hover .ico{filter:drop-shadow(0 0 8px rgba(160,220,255,.8))}
+}
+#app .tr-strates .tr-btn:not(:disabled):active{transform:translateY(1px) scale(.98)}
+#app .tr-strates .tr-btn:disabled{filter:grayscale(.7) brightness(.7);cursor:default}
+/* Explorer au front : la lame d'or */
+#app .tr-strates .tr-btn.prim{color:#2A1A04;font-weight:400;
+  background:linear-gradient(180deg,rgba(255,255,255,.45),rgba(255,255,255,0) 50%),linear-gradient(180deg,#F8E3A6,#D9A94E 70%,#B9862F);
+  box-shadow:inset 0 0 0 1px rgba(255,240,200,.85),inset 0 -10px 16px -10px rgba(120,70,10,.6),0 0 22px rgba(242,200,110,.4),0 8px 20px rgba(0,0,0,.45)}
+#app .tr-strates .tr-btn.prim .ico{background:radial-gradient(circle,rgba(255,250,230,.75),rgba(255,250,230,0) 70%);filter:drop-shadow(0 1px 2px rgba(80,40,0,.5))}
 
 /* ---------- le front : l'étage qui attend, cerclé d'or ---------- */
 .tr-strate.front{min-height:150px;padding-top:20px;
@@ -102,8 +126,12 @@
   background:radial-gradient(ellipse at 20% 0%,rgba(242,200,110,.07),transparent 60%),
     repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 2px,transparent 2px 9px),linear-gradient(180deg,#17110B,#0C0906);
   box-shadow:0 0 0 1px rgba(242,200,110,.2),inset 0 1px 0 rgba(255,230,180,.08),inset 0 -20px 40px rgba(0,0,0,.5),0 14px 30px rgba(0,0,0,.45)}
-.tr-strate.roche .tr-vignette{background:none}
-.tr-strate.roche .tr-vignette::after{display:none}
+.tr-strate.roche{min-height:104px}
+.tr-strate.roche .tr-vignette{background:#0C0906}
+.tr-strate.roche .tr-vignette img{object-position:50% 60%;filter:saturate(.55) brightness(.8);transition:filter .5s ease}
+.tr-strate.roche .tr-vignette::after{background:linear-gradient(90deg,rgba(12,8,5,.96) 0%,rgba(12,8,5,.8) 40%,rgba(12,8,5,.35) 80%,rgba(12,8,5,.2) 100%),
+  linear-gradient(180deg,rgba(12,8,5,.3),transparent 40%,rgba(12,8,5,.6))}
+.tr-strate.roche.prete .tr-vignette img{filter:none}
 .tr-strate.roche .tr-vignette b{color:rgba(242,213,140,.75);text-shadow:none;background:linear-gradient(180deg,#2A2015,#120D08);
   box-shadow:0 0 0 1px rgba(242,200,110,.35),inset 0 1px 0 rgba(255,230,180,.15),0 4px 10px rgba(0,0,0,.5)}
 .tr-strate.roche .tr-infos strong{color:#E8DCC4}

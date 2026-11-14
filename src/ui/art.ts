@@ -232,6 +232,8 @@ export const filigrane = (palier: 1 | 2 | 3) => `${base}empreinte/${['trace', 's
 const STRATES_PEINTES = 15;
 const numStrate = (strate: number) => Math.min(STRATES_PEINTES, Math.max(1, Math.round(strate) || 1));
 export const decorStrate = (strate: number): string => `${base}strates/strate-${numStrate(strate)}.webp`;
+/** La roche encore à creuser, sous le dernier étage (Midjourney, 14 novembre 2026) */
+export const decorRoche = `${base}strates/roche.webp`;
 /**
  * Fond de l'écran de combat : la même illustration de Strate, floutée et assombrie d'avance (strates/strate-N-fond.webp, 600 × 750).
  * Floutée dans le fichier plutôt qu'en CSS : un filtre plein écran coûte cher sur téléphone, une petite image floue s'agrandit sans défaut.
