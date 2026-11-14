@@ -54,6 +54,10 @@
    "en": "You need a Nacre Pearl."
   },
   {
+   "fr": "Pour passer en nacre, son Porteur doit être niveau {0} ({1} est niveau {2}).",
+   "en": ""
+  },
+  {
    "fr": "Place vide",
    "en": "Empty slot"
   },

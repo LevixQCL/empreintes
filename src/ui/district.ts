@@ -18,7 +18,7 @@ import {
   COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, gardienPourTour, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, plafondEntrainement, raffinageParHeure, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
-import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, album, carteNiveau, composantsNiveau, copiesPromotion, doublonsRequis, copiesRequises, freinPromotion, metalSuivant, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
+import { COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, album, carteNiveau, composantsNiveau, copiesPromotion, doublonsRequis, copiesRequises, freinPromotion, metalSuivant, origineVersNacre, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
 import { DIFFICULTES_FOUILLE, type DifficulteFouille, pretAuFront, finCreuse, gainCreuseurs, copiesAFondre, fondFerme, PRODUITS, PACK_OSSYRA, TOUT_OSSYRA, toutProposable, prixEuros } from '../core/jeu';
@@ -1387,7 +1387,11 @@ export function feuilleCarte(e: EcranDistrict): string {
     h += `<p class="fc-etat or">${tr`Trouvée en ${NOMS_RARETE[c.attente].toLowerCase()} : elle y passera, à son niveau et sans rien payer, quand ${qui ? echap(porteurDef(qui).nom) : tr('son Porteur')} aura le niveau ${NIVEAU_METAL[c.attente]}.`}</p>`;
   }
   if (m.legs) h += `<p class="fc-etat or">${tr`Une vierge de l’Héritage du district : unique, elle ne monte pas avec des doublons. Elle s’éveille avec le Porteur qui la porte : ${EVEIL_LEGS.map((x) => tr`niveau ${x.niveau} avec un Porteur de niveau ${x.porteur}`).join(', ')}.`}</p>`;
-  else if (m.origine) h += `<p class="fc-etat or">${tr`Une carte d’origine : exclusive, elle ne monte pas avec des doublons. Elle grandit avec le Porteur qui la porte : ${EVEIL_ORIGINE.map((x) => tr`niveau ${x.niveau} avec un Porteur de niveau ${x.porteur}`).join(', ')}. Face à un autre directeur (duel, défi d’un quai), elle joue sans son effet « ${NOMS_EFFET[m.origine]} ».`}</p>`;
+  else if (m.origine) {
+    h += `<p class="fc-etat or">${tr`Une carte d’origine : exclusive, elle ne monte pas avec des doublons. Elle grandit avec le Porteur qui la porte : ${EVEIL_ORIGINE.map((x) => tr`niveau ${x.niveau} avec un Porteur de niveau ${x.porteur}`).join(', ')}. Face à un autre directeur (duel, défi d’un quai), elle joue sans son effet « ${NOMS_EFFET[m.origine]} ».`}</p>`;
+    // une carte d'origine en or : la nacre avec une Perle, sans copies (14 novembre 2026)
+    if (origineVersNacre(cle)) h += blocPromotion(j, cle);
+  }
   else if (requis === null && !metalSuivant(m.rarete)) h += `<p class="fc-etat or">${tr`Niveau maximum : la carte est maîtrisée, un liseré de lumière parcourt son cadre.`}</p>`;
   else if (requis === null) h += blocPromotion(j, cle);
   else {
@@ -1788,7 +1792,8 @@ function blocPromotion(j: Jeu, cle: string): string {
   const m = moduleDef(cle), c = j.collection[cle]!;
   const vers = metalSuivant(m.rarete)!;
   const apres = moduleDef(carteId(moduleDe(cle), vers));
-  const besoin = copiesPromotion(vers), cout = COLLECTION.promotion.cristaux[vers];
+  const origine = !!m.origine;
+  const besoin = origine ? 0 : copiesPromotion(vers), cout = COLLECTION.promotion.cristaux[vers];
   const frein = freinPromotion(j, cle);
   // la nacre demande aussi une Perle (13 novembre 2026) : elle s'affiche dans le prix
   const prixPerle = vers === 'nacre' ? ` · ${perle()}${tr`1 Perle (tu en as ${j.perles ?? 0})`}` : '';
@@ -1798,9 +1803,9 @@ function blocPromotion(j: Jeu, cle: string): string {
     : c.doublons < besoin ? `${tr`Encore`} <b>${tr`${Math.ceil(besoin - c.doublons - 1e-6)} copie${besoin - c.doublons > 1 ? 's' : ''}`}</b> ${tr`pour passer en ${nom}. Une copie d’un métal en dessous compte pour un tiers.`}${frein && !/copies/.test(frein) ? ` ${echap(frein)}` : ''}`
     : manqueC ? `${tr`Copies réunies. Il manque`} <b>${tr`${manqueC} cristal${manqueC > 1 ? 'x' : ''}`}</b>.` : tr`Prête : elle peut passer en ${nom}.`;
   const pret = !frein && !manqueC;
-  const f1 = carteNiveau(m, c.niveau).v, f2 = carteNiveau(apres, 1).v;
-  return `<div class="progression">${pastillesCopies(c.doublons, besoin, COULEUR_RARETE[vers], 'grandes')}<span class="chiffre">${tr`${Math.floor(c.doublons + 1e-6)} copie${c.doublons >= 2 ? 's' : ''} sur ${besoin}`}</span></div>`
-    + `<p class="fc-etat${pret ? ' or' : ''}">${etat} <span>${tr`En ${nom} : force ${f1} →`} <b>${f2}</b>${apres.f.length > m.f.length ? tr`, une Fréquence de plus` : ''}${tr`, puis de nouveau 3 niveaux`}.</span></p>`
+  const f1 = carteNiveau(m, c.niveau).v, f2 = carteNiveau(apres, origine ? c.niveau : 1).v;
+  return (origine ? '' : `<div class="progression">${pastillesCopies(c.doublons, besoin, COULEUR_RARETE[vers], 'grandes')}<span class="chiffre">${tr`${Math.floor(c.doublons + 1e-6)} copie${c.doublons >= 2 ? 's' : ''} sur ${besoin}`}</span></div>`)
+    + `<p class="fc-etat${pret ? ' or' : ''}">${etat} <span>${tr`En ${nom} : force ${f1} →`} <b>${f2}</b>${apres.f.length > m.f.length ? tr`, une Fréquence de plus` : ''}${origine ? tr`, ses deux effets renforcés, au même niveau` : tr`, puis de nouveau 3 niveaux`}.</span></p>`
     + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="promouvoir" data-module="${cle}"${pret ? '' : ' disabled'}>${ICO.monter}${tr`Passer en ${nom} · ${prix('energie', cout, j.energie >= cout)}`}${prixPerle}</button>`
     + (c.doublons >= besoin + 1 ? `<button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}${tr`Recycler 1 · +${COLLECTION.recyclage[m.rarete]} minerai`}</button>` : '')
     + `</div>`;

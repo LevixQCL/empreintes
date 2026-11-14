@@ -227,7 +227,7 @@ export function htmlChoixRecit(recit: string, actuelle: string | null): string {
         + `<span class="cr-effets">${effetsDe(m).map((e) => `<span><b>${NOMS_EFFET[e.type]}</b> ${texteEffet(e)}</span>`).join('')}</span>`
         + `</span></button>`;
     }).join('')}</div>`
-    + `<p class="cr-note">${tr`Cartes exclusives, en or. Elles grandissent avec leur Porteur.`}</p>`
+    + `<p class="cr-note">${tr`Cartes exclusives, en or. Elles grandissent avec leur Porteur, puis passent en nacre avec une Perle.`}</p>`
     + `<button type="button" class="btn ${actuelle ? 'prim' : 'sec'} cr-fin" data-action="recit-quitter">${actuelle ? tr('Garder mon choix') : tr('Choisir plus tard')}</button>`
     + `</section></div>`;
 }

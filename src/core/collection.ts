@@ -286,6 +286,8 @@ export const metalSuivant = (r: Rarete): Rarete | null => RARETES[rang(r) + 1] ?
 export function freinPromotion(e: EtatCollection, id: string): string | null {
   const c = e.collection[id];
   if (!c) return tr('Carte inconnue.');
+  // une carte d'origine passe en nacre avec une Perle, sans copies, quand son Porteur a le niveau de la nacre (14 novembre 2026)
+  if (moduleDef(id).origine) return freinOrigine(e, id);
   if (!monteAvecCopies(id)) return tr('Cette carte grandit avec son Porteur.');
   const vers = metalSuivant(moduleDef(id).rarete);
   if (!vers) return tr('La nacre est le plus haut métal.');
@@ -298,6 +300,24 @@ export function freinPromotion(e: EtatCollection, id: string): string | null {
   if (vers === 'nacre' && (e.perles ?? 0) < 1) return tr('Il faut une Perle de nacre.');
   return null;
 }
+
+/**
+ * La carte d'origine en nacre (Bryan, 14 novembre 2026 : « il faudrait quand même pouvoir la passer en nacre avec une perle ») :
+ * elle n'a pas de copies, donc il ne faut qu'une Perle et les cristaux de la nacre, et un Porteur de niveau 13 comme toute nacre.
+ * Elle garde son niveau et ses deux effets. Face à un autre joueur, elle perd toujours son effet en plus (sansBonusOrigine).
+ */
+function freinOrigine(e: EtatCollection, id: string): string | null {
+  const vers = metalSuivant(moduleDef(id).rarete);
+  if (vers !== 'nacre') return tr('La nacre est le plus haut métal.');
+  const qui = porteurDeLaCarte(e, id);
+  if (!qui) return tr('Confie-la à un Porteur : elle évolue avec lui.');
+  if (NIVEAU_METAL.nacre > qui.niveau) return tr`Pour passer en nacre, son Porteur doit être niveau ${NIVEAU_METAL.nacre} (${porteurDef(qui.id).nom} est niveau ${qui.niveau}).`;
+  if ((e.perles ?? 0) < 1) return tr('Il faut une Perle de nacre.');
+  return null;
+}
+
+/** Une carte d'origine encore en or : elle peut passer en nacre (avec une Perle, sans copies) */
+export const origineVersNacre = (id: string): boolean => !!moduleDef(id).origine && moduleDef(id).rarete === 'or';
 
 /** Les copies qu'il faut pour passer à ce métal : 5 pour la nacre (avec une Perle), 3 sinon */
 export const copiesPromotion = (vers: Rarete): number => (vers === 'nacre' ? COLLECTION.perle.copiesNacre : COLLECTION.promotion.copies);
@@ -315,8 +335,11 @@ export function promouvoirCarte(e: EtatCollection, id: string): string {
   const vers = metalSuivant(moduleDef(id).rarete)!;
   const nouvelle = carteId(moduleDe(id), vers);
   const c = e.collection[id]!;
-  c.doublons = arrondi((c.doublons - copiesPromotion(vers)) * valeurCopie(moduleDef(id).rarete, vers));
-  c.niveau = COLLECTION.niveauDepart[vers];
+  // une carte d'origine n'a pas de copies et garde son niveau : il vient de son Porteur, pas du métal
+  if (!moduleDef(id).origine) {
+    c.doublons = arrondi((c.doublons - copiesPromotion(vers)) * valeurCopie(moduleDef(id).rarete, vers));
+    c.niveau = COLLECTION.niveauDepart[vers];
+  }
   renommerCarte(e, id, nouvelle);
   return nouvelle;
 }
@@ -397,7 +420,7 @@ export const chargeNiveau = (niveau: number): number => CHARGE.base + CHARGE.par
 // 12 novembre 2026 : sans la Charge, ce niveau est la seule limite avec les places : seuils étalés (avant : argent 4, or 7, nacre 10)
 export const NIVEAU_METAL: Record<Rarete, number> = { fer: 1, cuivre: 1, argent: 5, or: 9, nacre: 13 };
 /** une carte d'origine se porte dès le niveau 1 : elle est là pour aider au début (11 novembre 2026) */
-export const niveauRequis = (cle: string): number => (moduleDef(cle).origine ? 1 : NIVEAU_METAL[moduleDef(cle).rarete]);
+export const niveauRequis = (cle: string): number => (moduleDef(cle).origine && moduleDef(cle).rarete !== 'nacre' ? 1 : NIVEAU_METAL[moduleDef(cle).rarete]);
 
 /**
  * Le métal dans lequel un Porteur joue une carte (12 novembre 2026, promotion) : une carte qu'il portait déjà et qui passe à un métal

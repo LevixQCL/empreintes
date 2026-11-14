@@ -6,7 +6,8 @@
 // Le récit lui-même (ses plans) est dans src/ui/recits.ts ; le paiement est dans ../produits.ts et src/net/achats.ts ;
 // tant que la vente n'est pas ouverte (src/net/vente.ts), tout reste ouvert en aperçu.
 
-import { carteId, moduleDef } from '../donnees';
+import { carteId, moduleDe, moduleDef } from '../donnees';
+import type { Rarete } from '../types';
 import { t } from '../i18n';
 import { log, non, type Jeu, type Resultat } from './etat';
 
@@ -56,10 +57,11 @@ export function garderCarteRecit(j: Jeu, recit: string, carte: string): Resultat
   const avant = carteDuRecit(j, recit);
   if (avant === carte) return { ok: true };
   const m = moduleDef(carte);
-  const cle = carteId(carte, m.rarete);
-  if (avant) {
-    // l'ancienne carte devient la nouvelle : même niveau, mêmes places dans les decks
-    const ancienne = carteId(avant, moduleDef(avant).rarete);
+  // l'exemplaire gardé peut être passé en nacre (14 novembre 2026) : la nouvelle carte prend son métal, la Perle n'est pas perdue
+  const ancienne = avant ? (Object.keys(j.collection).find((k) => moduleDe(k) === avant) ?? carteId(avant, moduleDef(avant).rarete)) : null;
+  const cle = carteId(carte, ancienne && ancienne.includes('@') ? (ancienne.split('@')[1] as Rarete) : m.rarete);
+  if (avant && ancienne) {
+    // l'ancienne carte devient la nouvelle : même niveau, même métal, mêmes places dans les decks
     const c = j.collection[ancienne];
     delete j.collection[ancienne];
     j.collection[cle] = c ?? { niveau: 1, doublons: 0 };

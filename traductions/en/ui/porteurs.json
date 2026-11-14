@@ -778,8 +778,12 @@
    "en": "+ 1 free Nacre Pearl: enough to turn a gold card into nacre"
   },
   {
-   "fr": "Carte exclusive, en or : elle grandit avec {0} au fil de ses niveaux.",
-   "en": "Exclusive gold card: it grows with {0} as they level up."
+   "fr": "Carte exclusive, en or : elle grandit avec {0} au fil de ses niveaux, puis passe en nacre avec une Perle.",
+   "en": "",
+   "ancien": {
+    "fr": "Carte exclusive, en or : elle grandit avec {0} au fil de ses niveaux.",
+    "en": "Exclusive gold card: it grows with {0} as they level up."
+   }
   },
   {
    "fr": "Face à un autre joueur (duel, défi d’un quai), son effet « {0} » est éteint.",

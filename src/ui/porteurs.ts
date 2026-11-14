@@ -700,7 +700,7 @@ function vitrineRecit(j: Jeu, bq: import('./coquille').Boutique | null, recit: s
     const m = moduleDef(c.carte);
     const effets = m.effet ? effetsDe(m).map((x) => `<span><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</span>`).join('') : `<span>${tr`Pas d’effet : sa force seule.`}</span>`;
     return `<li><span class="fp-carte-face">${faceCarte(m, 1)}</span><span class="fp-carte-texte"><strong>${echap(m.nom)}</strong>${effets}`
-      + `<small>${tr`Carte exclusive, en or : elle grandit avec ${nom} au fil de ses niveaux.`}${m.origine ? ' ' + tr`Face à un autre joueur (duel, défi d’un quai), son effet « ${echap(NOMS_EFFET[m.origine])} » est éteint.` : ''}</small></span></li>`;
+      + `<small>${tr`Carte exclusive, en or : elle grandit avec ${nom} au fil de ses niveaux, puis passe en nacre avec une Perle.`}${m.origine ? ' ' + tr`Face à un autre joueur (duel, défi d’un quai), son effet « ${echap(NOMS_EFFET[m.origine])} » est éteint.` : ''}</small></span></li>`;
   }).join('')}</ul>`;
   h += blocPaiement(bq!, [{ id: droitRecit(recit), texte: tr`Ce récit · ${prix}` }]
     .concat(lotProposable(bq!.achats) ? [{ id: LOT_RECITS, texte: tr`Les trois récits · ${prixEuros(PRODUITS[LOT_RECITS]!.prix)} + 1 Perle de nacre` }] : []));
