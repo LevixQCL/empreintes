@@ -172,3 +172,7 @@
     transform:rotate(45deg);filter:drop-shadow(0 1px 3px #000)}
   .tr-deplier[aria-expanded="true"]::after{top:32px;transform:rotate(-135deg)}
 }
+
+/* les icônes peintes de Fouiller (pioche) et Explorer (lanterne) sur les autres gros boutons : Prochaine étape, départ */
+#app .btn .ico.peinte.action{width:30px;height:30px;margin:-4px 2px -4px -6px;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.55))}
+#app .btn.large .ico.peinte.action{width:34px;height:34px}

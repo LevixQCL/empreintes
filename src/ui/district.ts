@@ -2123,7 +2123,7 @@ export function htmlCoupe(e: EcranDistrict): string {
   let etape = '';
   if (!j.frontVaincu) {
     etape = `<strong>${tr`Vaincs le gardien de la Strate −${j.strate}`}</strong><small>${tr`C’est lui qui garde le passage : une fois vaincu, tes creuseurs pourront attaquer la roche.`}</small>`
-      + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.descendre}${tr`Descendre à −${j.strate}`}</button></div>`;
+      + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}><img class="ico peinte action" src="${baseIcones}explorer.webp" alt="" aria-hidden="true" decoding="async">${tr`Descendre à −${j.strate}`}</button></div>`;
   } else if (fondFerme(j)) {
     // le Fond fermé au jeu gratuit (13 novembre 2026) : la descente s'arrête au Puits d'avant, l'histoire continue en haut
     etape = `<strong>${tr('Sous le Puits d’avant, la roche ne cède plus')}</strong>`
@@ -2144,7 +2144,7 @@ export function htmlCoupe(e: EcranDistrict): string {
         + `<li>${ICO.porteurs}<span>${auPort ? tr`Autre mission en mer` : tr`Mission`}</span><b>${Math.round(CREUSEURS.missionCourte * 100)} à ${Math.round(CREUSEURS.missionLongue * 100)} %</b></li>`
         // les Épreuves n'ouvrent qu'après la Strate −EPREUVES_STRATE : on ne les cite qu'à partir de là (test critique du 4 novembre 2026)
         + (j.chambre && epreuvesOuvertes(j) ? `<li>${ICO.boost}<span>${tr`Épreuve`} <em>${tr`(1re victoire de la semaine)`}</em></span><b>${tr`assuré`}</b></li>` : '') + `</ul>` : '')
-      + `<div class="tr-boutons">${auPort ? `<button type="button" class="btn prim" data-action="batiment" data-id="port">${ICO.ouvrier}${tr`Aller au Port`}</button>` : ''}${manque.creuseurs ? `<button type="button" class="btn ${auPort ? 'sec' : 'prim'}" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.cristal}${tr`Fouiller la Strate −${j.strate}`}</button>` : ''}`
+      + `<div class="tr-boutons">${auPort ? `<button type="button" class="btn prim" data-action="batiment" data-id="port">${ICO.ouvrier}${tr`Aller au Port`}</button>` : ''}${manque.creuseurs ? `<button type="button" class="btn ${auPort ? 'sec' : 'prim'}" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}><img class="ico peinte action" src="${baseIcones}fouiller.webp" alt="" aria-hidden="true" decoding="async">${tr`Fouiller la Strate −${j.strate}`}</button>` : ''}`
       + `${manque.noyau ? `<button type="button" class="btn ${manque.creuseurs ? 'sec' : 'prim'}" data-action="batiment" data-id="noyau" data-amelio>${ICO.tour}${tr`Améliorer la Tour`}</button>` : ''}</div>`;
   } else if (j.frontVaincu && (finCreuse(j) ?? 0) > e.now) {
     // la creuse (12 novembre 2026) : un temps fixe et affiché, pendant lequel on joue à autre chose
@@ -2154,11 +2154,11 @@ export function htmlCoupe(e: EcranDistrict): string {
       + `<small>${tr`Ouverture dans`} <b>${decompte(fin, e.now)}</b>. ${j.creuseurs ? tr`${j.creuseurs} creuseur${j.creuseurs > 1 ? 's' : ''} au travail : la creuse va ${gain} % plus vite.` : ''}</small>`
       + `<div class="tr-creuse" aria-hidden="true">${jaugeTemps(debut, fin, e.now)}</div>`
       + `<small class="tr-creuse-aide">${tr`En attendant, renforce l’escouade : fouilles, missions en mer, niveaux des cartes. Des creuseurs en plus raccourcissent la creuse.`}</small>`
-      + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.cristal}${tr`Fouiller la Strate −${j.strate}`}</button>`
+      + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}><img class="ico peinte action" src="${baseIcones}fouiller.webp" alt="" aria-hidden="true" decoding="async">${tr`Fouiller la Strate −${j.strate}`}</button>`
       + `${portOuvert(j) ? `<button type="button" class="btn sec" data-action="batiment" data-id="port">${ICO.ouvrier}${tr`Aller au Port`}</button>` : ''}</div>`;
   } else {
     etape = `<strong>${tr`La roche cède : la Strate −${cible} va s’ouvrir`}</strong><small>${tr`Tout est prêt. Descends pour découvrir le nouvel étage.`}</small>`
-      + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.descendre}${tr`Descendre`}</button></div>`;
+      + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}><img class="ico peinte action" src="${baseIcones}explorer.webp" alt="" aria-hidden="true" decoding="async">${tr`Descendre`}</button></div>`;
   }
   if (j.expedition) h += `<button type="button" class="appel tr-reprendre" data-action="reprendre">${ICO.descendre}<span><strong>${tr`Expédition en cours`}</strong><small>${tr`Strate −${j.expedition.strate} : ${j.expedition.carte && j.expedition.phase === 'carte' ? tr('reprendre là où tu t’es arrêté') : tr('reprendre le combat')}`}</small></span></button>`;
   // une seule carte en tête (refonte du 25 octobre 2026) : le chapitre en cours (pourquoi on descend), puis ce qu'il faut faire
@@ -2818,7 +2818,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   const coutDepart = e.escouade.length && !gv ? (ratelierPayable(j, indiceEscouade(j, e.escouade), sortie).length ? coutRatelier(j, sortie, indiceEscouade(j, e.escouade)) : 0) : 0;
   h += `<footer class="pied-fixe es-pied"><div class="es-pied-info"><span class="es-avatars">${[0, 1, 2].map((i) => e.escouade[i] ? avatar(e.escouade[i]!, 30) : '<i class="es-pastille-vide"></i>').join('')}</span>`
     + `<span><b>${e.escouade.length} / 3</b><small class="${maigre || blesses.length ? 'alerte' : e.escouade.length === 3 ? 'ok' : ''}">${e.escouade.length < 3 ? tr`Encore ${3 - e.escouade.length} Porteur${3 - e.escouade.length > 1 ? 's' : ''}` : maigre ? tr`${deck} cartes · ${deckMin} au moins` : blesses.length ? tr`${blesses.length} blessé${blesses.length > 1 ? 's' : ''} · au repos` : tr`${deck} cartes, prêt`}</small></span></div>`
-    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${gv ? `${ICO.atk}${tr('Frapper')}` : fl ? `${ICO.monter}${tr('Monter')}` : pi ? `${ICO.grappin}${tr('Piller')}` : ep ? `${ICO.boost}${e.felee ? tr('Tenter la Fêlée') : tr('Tenter l’Épreuve')}` : fouille ? `${ICO.cristal}${tr('Fouiller')}` : `${ICO.descendre}${tr('Partir')}`}${coutDepart ? `<span class="es-btn-cout">${ICO.energie}−${ent(coutDepart)}</span>` : ''}</button></footer>`;
+    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${gv ? `${ICO.atk}${tr('Frapper')}` : fl ? `${ICO.monter}${tr('Monter')}` : pi ? `${ICO.grappin}${tr('Piller')}` : ep ? `${ICO.boost}${e.felee ? tr('Tenter la Fêlée') : tr('Tenter l’Épreuve')}` : fouille ? `<img class="ico peinte action" src="${baseIcones}fouiller.webp" alt="" aria-hidden="true" decoding="async">${tr('Fouiller')}` : `<img class="ico peinte action" src="${baseIcones}explorer.webp" alt="" aria-hidden="true" decoding="async">${tr('Partir')}`}${coutDepart ? `<span class="es-btn-cout">${ICO.energie}−${ent(coutDepart)}</span>` : ''}</button></footer>`;
   h += e.guide ? feuilleGuide(e.guide, trouveesDe(j.collection)) : e.deck ? feuilleDeck(e) : e.carte ? feuilleCarte(e) : feuillePorteur(e);
   h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';
   return h + `</div>`;
