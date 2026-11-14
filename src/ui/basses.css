@@ -52,7 +52,7 @@
 .mur-tuile.vide{cursor:default;background:rgba(205,239,255,.03);box-shadow:inset 0 0 0 1px rgba(205,239,255,.1)}
 .mur-tuile.vide b{color:#93A3B8;background:rgba(205,239,255,.08)}
 .mur-tuile.vide span{color:#7F8EA2}
-.mur-fiche{display:grid;gap:8px;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(30,26,16,.85),rgba(14,12,8,.92));box-shadow:inset 0 0 0 1px rgba(242,213,140,.4)}
+.mur-fiche{scroll-margin-top:12px;display:grid;gap:8px;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(30,26,16,.85),rgba(14,12,8,.92));box-shadow:inset 0 0 0 1px rgba(242,213,140,.4)}
 .mur-fiche header{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px}
 .mur-fiche header>span{display:grid;gap:1px}
 .mur-fiche header strong{font-family:var(--display);font-size:17px;font-weight:400;color:#fff4dc}

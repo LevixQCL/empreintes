@@ -82,7 +82,10 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'exode-aide': D.exodeAide = !D.exodeAide; break;
     case 'exode-lancer': { const r = J.lancerExode(app.jeu, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
     // le Mur des empreintes : ouvrir une famille, confier son souvenir à une carte
-    case 'famille': D.famille = D.famille === id ? null : id; break;
+    // une famille touchée : la fiche défile jusqu'à son histoire (14 novembre 2026, Bryan : « on a l'impression qu'il ne se passe rien »)
+    case 'famille': D.famille = D.famille === id ? null : id;
+      if (D.famille) requestAnimationFrame(() => document.querySelector('.mur-fiche')?.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
+      break;
     case 'souvenir-confier': if (D.famille && J.confierSouvenir(app.jeu, id, D.famille)) { D.message = t('Le souvenir est gravé dans le journal de la carte.'); sauver(); } break;
     case 'soigner-vite': { const r = J.soignerVite(app.jeu, id); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
     case 'acheter': resultat(J.acheter(app.jeu, Number(b.dataset.index ?? -1), Date.now())); break;

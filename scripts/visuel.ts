@@ -44,6 +44,8 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'butin', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.objectif:visible').first(); if (await d.count()) { await d.click(); await p.waitForTimeout(250); } await p.click('.mission.jour .archive'); } },
   // ceux qui te suivent (30 octobre 2026) : les Habitations de la carte ouvrent la fiche des habitants (la barre du haut montre la Flèche depuis le 12 novembre 2026)
   { nom: 'habitants', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('[data-action="ressource"][data-id="confiance"]', { force: true }); } },
+  // une famille touchée : la fiche descend jusqu'à son histoire (14 novembre 2026)
+  { nom: 'habitants-famille', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('[data-action="ressource"][data-id="confiance"]', { force: true }); await p.click('.mur-tuile[data-action="famille"]'); await p.waitForTimeout(500); } },
   { nom: 'habitants-paliers', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('[data-action="ressource"][data-id="confiance"]', { force: true }); await p.$eval('.ressource-fiche .hb-nuit', (e) => e.scrollIntoView({ block: 'end' })); } },
   { nom: 'panneau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.objectif:visible').first(); if (await d.count()) await d.click(); } },
   { nom: 'bulle-appel', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.appel-bulle:visible').first(); if (await d.count()) await d.click(); } },
