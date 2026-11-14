@@ -56,7 +56,12 @@
 /* le bas : un voile dans la matière du métal, assombrie pour lire le texte */
 .nf-voile{position:absolute;z-index:3;left:var(--bord);right:var(--bord);bottom:var(--bord);height:calc(25% - var(--bord));
   display:flex;flex-direction:column;padding:6.6cqw 4cqw 0 3.4cqw;
-  background:linear-gradient(180deg,rgba(8,10,18,.5),rgba(8,10,18,.68)),var(--tex) center/cover}
+  background:linear-gradient(180deg,rgba(8,10,18,.2),rgba(8,10,18,.5));-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+/* le métal du voile, légèrement transparent (14 novembre 2026) : l'illustration se devine dessous jusqu'au cadre ;
+   plus présent vers le bas pour le texte. La Nacre garde son voile irisé, sans métal : la distinction reste nette */
+.nf-voile::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:var(--tex) center/cover;opacity:.42;
+  -webkit-mask:linear-gradient(180deg,rgba(0,0,0,.35),#000 85%);mask:linear-gradient(180deg,rgba(0,0,0,.35),#000 85%)}
+.nf-nacre .nf-voile::before{display:none}
 .nf-nacre .nf-voile{padding-left:4.5cqw;background:linear-gradient(180deg,rgba(14,10,24,.35),rgba(14,10,24,.8) 35%,rgba(14,10,24,.88)),
   linear-gradient(100deg,rgba(255,190,235,.25),rgba(190,230,255,.25),rgba(200,255,215,.22),rgba(255,240,185,.25));-webkit-backdrop-filter:blur(2.5px);backdrop-filter:blur(2.5px)}
 .nf-barre{position:absolute;left:0;right:0;top:-.8cqw;height:1.6cqw;opacity:.85;
@@ -123,6 +128,7 @@
   .nf{--bord:2.4cqw}
   /* l'image prend toute la carte : plus de voile ni de barre, deux capsules de verre en bas, face à face */
   .nf-voile{height:0;padding:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .nf-voile::before{display:none}
   .nf-barre,.nf-regle,.nf-roue,.nf-lg,.nf-seg.fele em{display:none}
   /* le nom, pour se souvenir de la carte : au-dessus des capsules, sur un dégradé sombre, deux lignes au plus */
   .nf-art::after{content:"";position:absolute;inset:auto 0 0 0;height:62%;pointer-events:none;
@@ -159,7 +165,8 @@
 .geste.main .nf-ligne,.geste.main .nf-art::after{display:none}
 /* en main sur grand écran (carte moyenne) : comme en petit, l'image entière et deux capsules en bas, sans bande vide */
 @container (width > 90px){
-  .geste.main .nf-voile{height:0;padding:0;background:none}
+  .geste.main .nf-voile{height:0;padding:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .geste.main .nf-voile::before{display:none}
   .geste.main :is(.nf-barre,.nf-regle){display:none}
   .geste.main .nf-val{top:auto;bottom:3cqw;right:3cqw}
   .geste.main .nf-eff{display:flex;align-items:center;justify-content:center;gap:2cqw;position:absolute;left:3cqw;bottom:3cqw;min-width:22cqw;height:22cqw;padding:0 3cqw;
