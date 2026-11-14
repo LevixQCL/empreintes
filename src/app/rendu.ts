@@ -5,7 +5,7 @@ import { typoHtml } from '../ui/typo';
 import { autoActif } from '../ui/options';
 import { mesurerFluidite, suspendreHorsEcran } from '../ui/graphismes';
 import { brancherDifferes, ecransDifferes, htmlChargement } from './differes';
-import { htmlModeDuel } from './duel';
+import { htmlModeDuel, reprendrePillage } from './duel';
 import { repliqueGardien, sceneDef } from '../core/campagne';
 import { tousEnnemis } from '../core/combat';
 import { ennemiDef } from '../core/donnees';
@@ -131,6 +131,10 @@ function dessiner() {
   const mdp = (racine.querySelector('#mdp') as HTMLInputElement | null)?.value ?? '';
   const pseudoTape = (racine.querySelector('#gt-nom') as HTMLInputElement | null)?.value;
   let h = '';
+  // un duel de pillage en cours (page rechargée, appli rouverte) : on le reprend là où il en était (14 novembre 2026)
+  if (app.mode !== 'titre' && app.mode !== 'intro' && app.mode !== 'duel' && reprendrePillage()) return;
+  // pendant un duel, le geste « tirer vers le bas » du téléphone ne recharge pas la page
+  document.documentElement.style.overscrollBehaviorY = app.mode === 'duel' ? 'contain' : '';
   if (app.mode === 'titre') h = htmlTitre(app.jeu.introVue, !reduit, compteTitre());
   else if (app.mode === 'intro') h = app.recit && app.recitChoix ? htmlChoixRecit(app.recit, J.carteDuRecit(app.jeu, app.recit)) : htmlIntro(app.plan, app.lignesVues, !reduit, app.texteCache, app.introLongue, filmActif());
   else if (app.mode === 'duel') h = htmlModeDuel();

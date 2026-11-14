@@ -27,7 +27,7 @@ import { CONFIANCE, XP, facteurXp, bonusPv, confier, jourDe, escouadeDefense, es
 import { escouadePrete, payerRatelier, remonter as remonterDescente, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 import { t as tr } from '../i18n';
-import type { Consigne, EscouadeDuel } from '../duel';
+import { CHOIX_VIDE, appliquerChoix, choixRobot, creerDuel, resoudreTour, type ChoixTour, type Consigne, type DuelEtat, type EscouadeDuel } from '../duel';
 
 const HEURE = 3_600_000;
 
@@ -258,8 +258,9 @@ export interface EtatPillage {
   revanches?: { id: string; nom: string; jusqua: number }[];
   /** la consigne de la garnison */
   consigne?: Consigne;
-  /** un pillage contre un directeur en cours (le duel se joue dans l'application) : s'il n'est jamais fini, il compte perdu */
-  enCours?: PillageEnCours & { escouade: string[]; debut: number };
+  /** un pillage contre un directeur en cours (le duel se joue dans l'application). Le duel est gardé tour par tour (le départ et
+   *  les choix de l'attaquant ; le robot rejoue les siens à l'identique) : une page rechargée le reprend là où il en était */
+  enCours?: PillageEnCours & { escouade: string[]; debut: number; duel?: { depart: DepartDuel; choix: ChoixTour[] } };
 }
 
 /** Une ligne du journal du port, vue du joueur : `gagne` dit s'il l'a emporté, `composants` ce que son minerai a gagné (+) ou perdu (−) */
@@ -638,14 +639,38 @@ export function lancerPillageDuel(j: Jeu, escouade: string[], cible: Cible, now:
   };
   log(j, revanche ? tr`L’escouade part prendre sa revanche sur ${cible.nom}.` : tr`L’escouade part piller ${cible.nom}.`);
   const g = cible.garnison;
-  return {
-    ok: true,
-    depart: {
-      attaque: escouadeAttaque(j, escouade),
-      defense: { nom: cible.nom, porteurs: g.porteurs.map((p) => ({ id: p.id, pv: p.pv, cartes: p.cartes.map((c) => ({ ...c })) })) },
-      graine: rng >>> 0, consigne: g.consigne ?? 'riposte', secondes,
-    },
+  const depart: DepartDuel = {
+    attaque: escouadeAttaque(j, escouade),
+    defense: { nom: cible.nom, porteurs: g.porteurs.map((p) => ({ id: p.id, pv: p.pv, cartes: p.cartes.map((c) => ({ ...c })) })) },
+    graine: rng >>> 0, consigne: g.consigne ?? 'riposte', secondes,
   };
+  etatPillage(j).enCours!.duel = { depart, choix: [] };
+  return { ok: true, depart };
+}
+
+/** Note le choix de l'attaquant pour un tour du duel (gardé dans la partie, pour reprendre après un rechargement) */
+export function noterChoixDuel(j: Jeu, tour: number, choix: ChoixTour) {
+  const d = etatPillage(j).enCours?.duel;
+  if (!d || tour < 1 || tour > d.choix.length + 1) return;
+  d.choix[tour - 1] = structuredClone(choix);
+}
+
+/**
+ * Le duel en cours, rejoué depuis le départ : le robot du défenseur choisit au début de chaque tour, sur le même état,
+ * donc exactement comme la première fois. Recharger la page ne change rien à la partie : on reprend au tour où l'on était.
+ */
+export function rejouerDuel(j: Jeu): DuelEtat | null {
+  const d = etatPillage(j).enCours?.duel;
+  if (!d) return null;
+  const s = creerDuel(d.depart.attaque, d.depart.defense, d.depart.graine);
+  for (const choix of d.choix) {
+    if (s.issue !== 'en-cours') break;
+    const robot = choixRobot(s, 1, d.depart.consigne);
+    if (!appliquerChoix(s, 0, choix).ok) appliquerChoix(s, 0, CHOIX_VIDE);
+    if (!appliquerChoix(s, 1, robot).ok) appliquerChoix(s, 1, CHOIX_VIDE);
+    resoudreTour(s);
+  }
+  return s;
 }
 
 /** Ce que le duel a donné : l'issue, les PV restants de l'escouade (à l'échelle du duel), et de quoi faire le récit du défenseur */
@@ -695,10 +720,10 @@ export function finirPillageDuel(j: Jeu, fin: FinDuel, now: number): RetourPilla
   return { nom: pi.nom, victoire, gain, perte, renom, carte, nouvelle };
 }
 
-/** Un duel de pillage jamais terminé (application fermée en plein combat) : il compte perdu */
+/** Un pillage resté en plan sans duel à reprendre (ancienne sauvegarde) : il compte perdu ; un duel gardé, lui, se reprend */
 export function pillageEnSuspens(j: Jeu, now: number): RetourPillage | null {
   const pi = etatPillage(j).enCours;
-  if (!pi) return null;
+  if (!pi || pi.duel) return null;
   return finirPillageDuel(j, { victoire: false, porteurs: [], recit: { tours: 0, abattus: 0 } }, now);
 }
 

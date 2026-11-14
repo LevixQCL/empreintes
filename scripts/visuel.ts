@@ -10,6 +10,7 @@ import { existsSync, mkdirSync, rmSync, symlinkSync, writeFileSync } from 'node:
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import { build, preview } from 'vite';
+import * as J from '../src/core/jeu';
 
 const racine = resolve(import.meta.dirname, '..');
 const sortie = resolve(racine, '.visuel');
@@ -28,7 +29,7 @@ const ENTRER = async (p: Page) => {
     await p.waitForTimeout(300);
   }
 };
-const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer' | 'comptoir' | 'cercle' | 'creuse' | 'autour' | 'confier' | 'choix'; faire: (p: Page) => Promise<void> }[] = [
+const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer' | 'comptoir' | 'cercle' | 'creuse' | 'autour' | 'confier' | 'choix' | 'duelRepris'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
   { nom: 'recompense-choix', sauvegarde: 'choix', faire: async (p) => { await p.click('.titre-go'); await p.waitForTimeout(600); } },
@@ -91,6 +92,7 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'pillages', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="port-volet"][data-id="pillages"]'); } },
   { nom: 'pillages-fiche', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="port-volet"][data-id="pillages"]'); await p.$eval('.pl-fiche', (e) => e.scrollIntoView({ block: 'end' })); } },
   { nom: 'pillage-depart', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="port-volet"][data-id="pillages"]'); await p.click('[data-action="pillage-preparer"]'); } },
+  { nom: 'pillage-duel-repris', sauvegarde: 'duelRepris', faire: async (p) => { await ENTRER(p); await p.waitForTimeout(400); } },
   { nom: 'pillages-carte', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="port-volet"][data-id="pillages"]'); await p.$eval('.pl-carte', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'pillages-journal', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="port-volet"][data-id="pillages"]'); await p.$eval('.pl-journal', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'pillage-modifier', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="port-volet"][data-id="pillages"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('.es-modifier'); } },
@@ -308,6 +310,21 @@ async function main() {
     lg.data.legs = 'cle';
     lg.data.portVu = true;
     (saves as Record<string, unknown>).legs = lg;
+    // un pillage en duel repris après un rechargement de la page (14 novembre 2026) : deux tours déjà joués
+    const pd = JSON.parse(JSON.stringify(saves.district));
+    {
+      const jeu = pd.data as J.Jeu;
+      const esc = J.escouadePourDepart(jeu);
+      const g = { ...J.garnisonDe(jeu), pavillon: 'pirate' as const, consigne: 'rempart' as const, coffre: 12 };
+      jeu.pillage = undefined;
+      const r = J.lancerPillageDuel(jeu, esc, { ...J.cibleDe('rival', 'Kessandre', g), milles: 100 }, T, 7);
+      if (r.ok && r.depart) {
+        const s = (await import('../src/core/duel')).creerDuel(r.depart.attaque, r.depart.defense, r.depart.graine);
+        const D2 = await import('../src/core/duel');
+        for (let k = 0; k < 2; k++) { const robot = D2.choixRobot(s, 1, 'rempart'); const moi = D2.choixRobot(s, 0); J.noterChoixDuel(jeu, s.tour, moi); D2.appliquerChoix(s, 0, moi); D2.appliquerChoix(s, 1, robot); D2.resoudreTour(s); }
+      }
+    }
+    (saves as Record<string, unknown>).duelRepris = pd;
     // le Port déjà présenté dans la sauvegarde du district (la sauvegarde « fleche » garde sa présentation)
     d.portVu = true;
 

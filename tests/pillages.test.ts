@@ -4,10 +4,10 @@ import {
   ESCOUADES_STRATE,
   PILLAGE, butinPillage, chanceVictoire, choisirDefense, cibleDe, escouadeDefense, escouadesDe, placerDansEscouade, ciblesBots, etatPillage, forceEscouade, garnisonDe, majJetons, multButin,
   nouveauJeu, piller, protege, remonter, subirPillages, type Cible,
-  changerPavillon, pavillonDe, lancerPillageDuel, finirPillageDuel, pillageEnSuspens, choisirConsigne, exposeDe, perteDe, porteeDe, placeDe, distance, traversee, revanchesOuvertes,
+  changerPavillon, pavillonDe, lancerPillageDuel, finirPillageDuel, pillageEnSuspens, choisirConsigne, noterChoixDuel, rejouerDuel, exposeDe, perteDe, porteeDe, placeDe, distance, traversee, revanchesOuvertes,
 } from '../src/core/jeu';
 import { jouerTourMoyen } from '../src/core/robot';
-import { choixRobot, creerDuel } from '../src/core/duel';
+import { appliquerChoix, choixRobot, creerDuel, resoudreTour } from '../src/core/duel';
 import { escouadeDuelDe } from '../src/core/duel-escouade';
 
 const ESC = ['ilka', 'doran', 'vela'];
@@ -250,11 +250,12 @@ describe('Le pillage d’un directeur, en duel contre sa vraie escouade (14 nove
     for (const id of ESC) expect(j.porteurs[id]!.usure).toBeGreaterThan(0);
   });
 
-  it('un duel jamais fini compte perdu ; un district sans directeur ne se pille pas en duel', () => {
+  it('un pillage resté en plan sans duel à reprendre compte perdu ; un district sans directeur ne se pille pas en duel', () => {
     const j = pret();
     j.composants = 1000;
     expect(lancerPillageDuel(j, ESC, ciblesBots(j, 5, 0, 5)[0]!, 0).ok).toBe(false);
     expect(lancerPillageDuel(j, ESC, pirate(pret()), 0).ok).toBe(true);
+    delete etatPillage(j).enCours!.duel; // une sauvegarde d'avant la reprise des duels
     const r = pillageEnSuspens(j, 10)!;
     expect(r.victoire).toBe(false);
     expect(j.composants).toBe(1000 - perteDe(1000, PILLAGE.strateMin));
@@ -270,6 +271,27 @@ describe('Le pillage d’un directeur, en duel contre sa vraie escouade (14 nove
     j.composants = 500;
     subirPillages(j, [{ id: 'a', par: 'u1', nom: 'Ilse', victoire: false, vol: 0, perte: 4, le: 1, recit: { tours: 11, abattus: 2, carte: 'carapace@fer' } }]);
     expect(etatPillage(j).historique![0]!.recit).toEqual({ tours: 11, abattus: 2, carte: 'carapace@fer' });
+  });
+
+  it('une page rechargée en plein duel le reprend exactement où il en était', () => {
+    const j = pret();
+    j.composants = 1000;
+    const r = lancerPillageDuel(j, ESC, pirate(pret()), 0, 99);
+    expect(r.ok).toBe(true);
+    const d = r.depart!;
+    // le duel joué en direct : le robot du défenseur choisit au début du tour, l'attaquant verrouille, puis la résolution
+    const s = creerDuel(d.attaque, d.defense, d.graine);
+    for (let tour = 1; tour <= 4 && s.issue === 'en-cours'; tour++) {
+      const robot = choixRobot(s, 1, d.consigne);
+      const moi = choixRobot(s, 0);
+      noterChoixDuel(j, s.tour, moi);
+      appliquerChoix(s, 0, moi); appliquerChoix(s, 1, robot); resoudreTour(s);
+    }
+    // la sauvegarde relue (JSON), puis rejouée
+    const relu = JSON.parse(JSON.stringify(j));
+    expect(rejouerDuel(relu)).toEqual(s);
+    // un pillage gardé en duel ne compte pas perdu à la réouverture : il se reprend
+    expect(pillageEnSuspens(relu, 10)).toBeNull();
   });
 
   it('la consigne change ce que le robot de la garnison joue', () => {

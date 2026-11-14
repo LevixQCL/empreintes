@@ -188,6 +188,26 @@ export function duelRobot() {
  * Piller un directeur (14 novembre 2026) : la barque traverse quelques secondes, puis le duel s'ouvre contre sa vraie escouade,
  * jouée par le robot selon sa consigne. La fin du duel règle le pillage (rendreDuel).
  */
+/** Le robot du défenseur, et chaque choix de l'attaquant gardé dans la partie dès qu'il est verrouillé */
+function transportPillage(consigne: Consigne): Transport {
+  const t = transportRobot(1, undefined, consigne);
+  const envoyer = t.envoyer.bind(t);
+  t.envoyer = (tour, choix) => { J.noterChoixDuel(app.jeu, tour, choix); sauver(); envoyer(tour, choix); };
+  return t;
+}
+
+/** Un duel de pillage gardé dans la partie, sans session ouverte (page rechargée) : on le rejoue et on le reprend. Vrai si repris */
+export function reprendrePillage(): boolean {
+  const pi = J.etatPillage(app.jeu).enCours;
+  if (!pi?.duel || DL.session || DL.traversee) return false;
+  const s = J.rejouerDuel(app.jeu);
+  if (!s) return false;
+  Object.assign(DL, { ami: undefined, nomAmi: undefined, defi: undefined, code: undefined, mode: 'libre', message: '', retourPillage: null });
+  DL.pillage = { nom: pi.nom, consigne: pi.duel.depart.consigne };
+  lancer(s, 0, transportPillage(pi.duel.depart.consigne));
+  return true;
+}
+
 export function lancerPillage(depart: J.DepartDuel, revanche = false) {
   Object.assign(DL, { ami: undefined, nomAmi: undefined, defi: undefined, code: undefined, mode: 'libre', message: '', retourPillage: null });
   DL.pillage = { nom: depart.defense.nom, consigne: depart.consigne };
@@ -197,7 +217,7 @@ export function lancerPillage(depart: J.DepartDuel, revanche = false) {
   setTimeout(() => {
     if (!DL.pillage || DL.session) return;
     DL.traversee = null;
-    lancer(creerDuel(depart.attaque, depart.defense, depart.graine), 0, transportRobot(1, undefined, depart.consigne));
+    lancer(creerDuel(depart.attaque, depart.defense, depart.graine), 0, transportPillage(depart.consigne));
   }, depart.secondes * 1000);
 }
 
