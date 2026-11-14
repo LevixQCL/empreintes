@@ -1,5 +1,6 @@
 // Actions du combat et de l'exploration des Strates.
 
+import { moduleDef } from '../../core/donnees';
 import { envoyerPillages } from '../pillages';
 import { envoyerAssauts, synchroGarde } from '../fleche';
 import * as Combat from '../../core/combat';
@@ -193,8 +194,9 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
         const p = r.pillage;
         D.vue = 'pillages';
         envoyerPillages();
-        D.message = p.victoire ? t`Pillage réussi à ${p.nom} : +${p.gain} minerai, rangé dans ton coffre.`
-          : t`Repoussés à ${p.nom}.${p.perte ? t` L’escouade a laissé ${p.perte} minerai de son coffre.` : ''}`;
+        const carte = p.carte ? moduleDef(p.carte).nom : '';
+        D.message = p.victoire ? t`Pillage réussi à ${p.nom} : +${p.gain} minerai${p.renom ? t`, +${p.renom} Renom` : ''}${carte ? t`, et l’empreinte de « ${carte} »${p.nouvelle ? t(' (nouvelle carte !)') : ''}` : ''}.`
+          : t`Repoussés à ${p.nom}.${p.perte ? t` L’escouade a laissé ${p.perte} minerai.` : ''}${p.renom ? t` ${p.renom} Renom.` : ''}`;
       } else {
         D.vue = app.jeu.choix.length ? 'archipel' : 'coupe';
         const manque = J.manquePourCreuser(app.jeu);

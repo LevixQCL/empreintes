@@ -34,10 +34,6 @@
    "en": "{0} accepted: {1} joins your collection{2}."
   },
   {
-   "fr": " (nouvelle carte !)",
-   "en": " (new card!)"
-  },
-  {
    "fr": "{0} a refusé : ta carte et tes cristaux te reviennent.",
    "en": "{0} declined: your card and crystals come back to you."
   },

@@ -114,6 +114,11 @@ export interface EcranDistrict {
   mareePlace?: number | null;
   /** les garnisons des vrais directeurs à portée, lues en ligne (vide sans compte) */
   pillagesEnLigne?: import('../core/jeu').Cible[];
+  /** son identifiant (sa place sur la mer des piliers) et le classement du Renom (14 novembre 2026) */
+  monId?: string;
+  renomTop?: { id: string; nom: string; renom: number }[];
+  /** demande de confirmation avant d'attaquer un directeur en étant neutre */
+  pavillonAvis?: string | null;
   /** la feuille des Vestiges d'une Strate est ouverte (Tour, 31 octobre 2026) */
   vestiges?: number | null;
   /** la fiche d'une ressource du haut est ouverte (22 octobre 2026) */

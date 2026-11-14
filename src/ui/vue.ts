@@ -8,7 +8,7 @@ import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives
 import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
 import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
-import { DISTRICT, PILLAGE } from '../core/jeu';
+import { DISTRICT } from '../core/jeu';
 import { portraitProvisoire, ageArchipel, artGardien, fondFleche, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait, visageGarnison, cadragePortrait, sceneDistrict } from './art';
 import { SIGNE_LOURD, corpsFace, couleurFrequence, styleFace, type Face } from './carte';
 import { sonActif } from './son';
@@ -361,7 +361,7 @@ function feuilleFuite(e: Ecran): string {
   h += `<button type="button" class="route" style="--t:#F0C96A" data-action="fuir-district"><span class="route-ico">${ICO.strate}</span>`
     + `<span class="route-txt"><small>${x.fleche ? tr('ABANDONNER L’ASSAUT') : x.pillage ? tr('ABANDONNER LE PILLAGE') : x.epreuve ? tr('ABANDONNER L’ÉPREUVE') : tr('REMONTER AU DISTRICT')}</small>`
     + `<strong>${x.epreuve || x.pillage || x.fleche ? tr('Rentrer au district') : x.butin ? (sure ? tr`Rentrer avec ${garde} minerai` : tr`Rentrer avec ${garde} minerai sur ${x.butin}`) : tr('Rentrer au district')}</strong>`
-    + `<em>${tr`${x.fleche?.defi ? tr('Le défi compte comme perdu : ta montée, elle, ne bouge pas.') : x.fleche ? tr('L’assaut compte comme perdu : l’escouade redescend comme après une défaite.') : x.pillage ? tr`Le pillage compte comme perdu : tu laisses ${Math.round(PILLAGE.perteDefaite * 100)} % de ton coffre à ${echap(x.pillage.nom)}.` : x.epreuve ? tr('Tu pourras la retenter cette semaine.') : sure ? tr('Foulée : le Coursier a ouvert la route du retour, tu gardes tout le butin.') : tr`Tu gardes ${Math.round(DISTRICT.butinFuite * 100)} % du minerai et toutes les cartes trouvées.`} L’escouade rentre épuisée : +${DISTRICT.usureFuite} d’Usure chacun, en plus de l’expédition.`}</em></span>${CHEVRON_FUITE}</button>`
+    + `<em>${tr`${x.fleche?.defi ? tr('Le défi compte comme perdu : ta montée, elle, ne bouge pas.') : x.fleche ? tr('L’assaut compte comme perdu : l’escouade redescend comme après une défaite.') : x.pillage ? (x.pillage.perte ? tr`Le pillage compte comme perdu : tu laisses ${x.pillage.perte} minerai à ${echap(x.pillage.nom)}.` : tr('Le pillage compte comme perdu.')) : x.epreuve ? tr('Tu pourras la retenter cette semaine.') : sure ? tr('Foulée : le Coursier a ouvert la route du retour, tu gardes tout le butin.') : tr`Tu gardes ${Math.round(DISTRICT.butinFuite * 100)} % du minerai et toutes les cartes trouvées.`} L’escouade rentre épuisée : +${DISTRICT.usureFuite} d’Usure chacun, en plus de l’expédition.`}</em></span>${CHEVRON_FUITE}</button>`
     + `</div><button type="button" class="btn sec large" data-action="fuir">${tr`Continuer le combat`}</button></div></section>`;
   return h;
 }
@@ -690,7 +690,22 @@ function vieGardien(e: Ecran): string {
 }
 
 export function htmlCombat(e: Ecran): string {
-  return htmlLieu(e.x) + htmlEcranCombat(e);
+  return htmlLieu(e.x) + htmlEcranCombat(e) + traverseePillage(e.x);
+}
+
+/**
+ * La traversée d'un pillage (14 novembre 2026, Bryan : « une petite durée pour arriver, même s'ils sont plus loin, on parle de
+ * secondes ») : la barque glisse vers le district visé ; le combat s'ouvre à l'arrivée (l'application relance l'affichage).
+ */
+function traverseePillage(x: Expedition): string {
+  const p = x.pillage;
+  const reste = p?.arrivee ? p.arrivee - Date.now() : 0;
+  if (!p || reste <= 0 || x.combat.tour > 1) return '';
+  const total = Math.max(1, Math.ceil(reste / 1000));
+  return `<div class="pl-traversee" role="status" style="--d:${reste}ms"><div class="pl-tr-boite">`
+    + `<span class="surtitre">${tr`Traversée de la mer des piliers`}</span><strong>${echap(p.nom)}</strong>`
+    + `<div class="pl-tr-mer" aria-hidden="true"><i class="pl-tr-barque"></i></div>`
+    + `<small>${p.revanche ? tr`Ta barque file prendre sa revanche · ${total} s` : tr`Le passeur rame vers la garnison · ${total} s`}</small></div></div>`;
 }
 
 /** les illustrations déjà demandées au navigateur (3 novembre 2026 : la main s'affichait noire une seconde au premier combat) */

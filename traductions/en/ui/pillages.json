@@ -10,18 +10,6 @@
    "en": "Raids, missions at sea or tide contracts"
   },
   {
-   "fr": "Pillages",
-   "en": "Raids"
-  },
-  {
-   "fr": "{0} / {1} jetons",
-   "en": "{0} / {1} tokens"
-  },
-  {
-   "fr": "dès la Strate −{0}",
-   "en": "from Stratum −{0}"
-  },
-  {
    "fr": "Missions",
    "en": "Missions"
   },
@@ -44,6 +32,22 @@
   {
    "fr": "{0} à remplir",
    "en": "{0} to fill"
+  },
+  {
+   "fr": "dès la Strate −{0}",
+   "en": "from Stratum −{0}"
+  },
+  {
+   "fr": "Pillages",
+   "en": "Raids"
+  },
+  {
+   "fr": "revanche possible",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} jetons",
+   "en": "{0} / {1} tokens"
   },
   {
    "fr": "Les districts voisins attendent · vaincs le gardien de la Strate −{0}",
@@ -74,28 +78,84 @@
    "en": "All here: nothing goes to waste."
   },
   {
-   "fr": "Ton coffre",
-   "en": "Your chest"
-  },
-  {
-   "fr": "minerai gagné en pillant : le seul exposé",
-   "en": "ore earned by raiding: the only thing at risk"
-  },
-  {
    "fr": "La carte des districts voisins",
    "en": "Map of the neighboring districts"
-  },
-  {
-   "fr": "déjà pillé aujourd’hui",
-   "en": "already raided today"
   },
   {
    "fr": "Pillé",
    "en": "Raided"
   },
   {
-   "fr": "Ton district est défendu par ta garnison, même jeu fermé. Une attaque gagnée contre toi prend au plus {0} % de ton coffre, puis {1} h de bouclier ; {2} attaques par jour au plus. Le reste de ton minerai, tes cristaux, tes cartes et tes Éclats ne risquent rien.",
-   "en": "Your district is defended by your garrison, even with the game closed. A successful attack on you takes at most {0}% of your chest, then {1} h of shield; {2} attacks per day at most. The rest of your ore, your crystals, your cards and your Shards are never at risk."
+   "fr": "Trop faible",
+   "en": ""
+  },
+  {
+   "fr": "Trop fort",
+   "en": ""
+  },
+  {
+   "fr": "Sous pavillon pirate, ta garnison défend ton district même jeu fermé. Une attaque gagnée contre toi prend {0} % de ton minerai ({1} aujourd’hui, plafonné), puis {2} h de bouclier ; {3} attaques par jour au plus. Tes cristaux, tes cartes et tes Éclats ne risquent jamais rien.",
+   "en": "",
+   "ancien": {
+    "fr": "Ton district est défendu par ta garnison, même jeu fermé. Une attaque gagnée contre toi prend au plus {0} % de ton coffre, puis {1} h de bouclier ; {2} attaques par jour au plus. Le reste de ton minerai, tes cristaux, tes cartes et tes Éclats ne risquent rien.",
+    "en": "Your district is defended by your garrison, even with the game closed. A successful attack on you takes at most {0}% of your chest, then {1} h of shield; {2} attacks per day at most. The rest of your ore, your crystals, your cards and your Shards are never at risk."
+   }
+  },
+  {
+   "fr": "Sous pavillon neutre, aucun directeur ne peut t’attaquer : rien ne risque rien. Les districts sans directeur restent ouverts à ton escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Pavillon neutre",
+   "en": ""
+  },
+  {
+   "fr": "Personne ne t’attaque. Hisse le pavillon pirate pour piller les autres directeurs et gagner du Renom.",
+   "en": ""
+  },
+  {
+   "fr": "Hisser le pavillon pirate",
+   "en": ""
+  },
+  {
+   "fr": "Pirate · {0}",
+   "en": ""
+  },
+  {
+   "fr": "Renom",
+   "en": ""
+  },
+  {
+   "fr": "{0} avant le rang suivant · ",
+   "en": ""
+  },
+  {
+   "fr": "exposé : {0} minerai",
+   "en": ""
+  },
+  {
+   "fr": "Neutre possible dans {0} h",
+   "en": ""
+  },
+  {
+   "fr": "Redevenir neutre",
+   "en": ""
+  },
+  {
+   "fr": "Revanches",
+   "en": ""
+  },
+  {
+   "fr": "Revanche · sans jeton, quelle que soit sa force",
+   "en": ""
+  },
+  {
+   "fr": "t’a pillé · encore {0} h",
+   "en": ""
+  },
+  {
+   "fr": "Les pirates les plus redoutés",
+   "en": ""
   },
   {
    "fr": "Ta garnison",
@@ -166,8 +226,20 @@
    "en": "Attack suffered"
   },
   {
+   "fr": " · empreinte « {0} »",
+   "en": ""
+  },
+  {
+   "fr": "Revanche · ",
+   "en": ""
+  },
+  {
    "fr": "District sans directeur · ",
    "en": "District without a director · "
+  },
+  {
+   "fr": "Directeur · ",
+   "en": ""
   },
   {
    "fr": "En défense · ",
@@ -176,6 +248,18 @@
   {
    "fr": "Aucun pillage pour l’instant. Tes attaques et celles que ta garnison subit s’inscriront ici.",
    "en": "No raids yet. Your attacks and the ones your garrison suffers will be logged here."
+  },
+  {
+   "fr": "Pavillon neutre : ce directeur ne se pille pas.",
+   "en": ""
+  },
+  {
+   "fr": "Trop faible pour toi : on ne pille pas plus petit que soi.",
+   "en": ""
+  },
+  {
+   "fr": "Hors de portée : sa garnison est bien plus forte que ton escouade.",
+   "en": ""
   },
   {
    "fr": "Déjà pillé aujourd’hui : il reviendra demain.",
@@ -190,6 +274,18 @@
    "en": "District without a director · a steward runs it"
   },
   {
+   "fr": "Pirate · {0} · {1} Renom",
+   "en": ""
+  },
+  {
+   "fr": "Directeur · pavillon neutre",
+   "en": ""
+  },
+  {
+   "fr": "{0} · Strate −{1} · traversée {2} s",
+   "en": ""
+  },
+  {
    "fr": "La garnison",
    "en": "The garrison"
   },
@@ -198,20 +294,52 @@
    "en": "Garrison"
   },
   {
-   "fr": "dont {0} pris à son coffre",
-   "en": "{0} of it from their chest"
+   "fr": "minerai, dont {0} pris à ses réserves",
+   "en": "",
+   "ancien": {
+    "fr": "dont {0} pris à son coffre",
+    "en": "{0} of it from their chest"
+   }
   },
   {
-   "fr": "{0} % de ton coffre",
-   "en": "{0}% of your chest"
+   "fr": "une chance sur trois d’emporter l’empreinte d’une carte",
+   "en": ""
+  },
+  {
+   "fr": "+ l’empreinte d’une de ses cartes et du Renom",
+   "en": ""
+  },
+  {
+   "fr": "rien à laisser",
+   "en": ""
+  },
+  {
+   "fr": "{0} % de ton minerai, et du Renom",
+   "en": "",
+   "ancien": {
+    "fr": "{0} % de ton coffre",
+    "en": "{0}% of your chest"
+   }
+  },
+  {
+   "fr": "Attaquer un directeur hisse ton pavillon pirate : d’autres pirates pourront te piller, et tu ne pourras redevenir neutre que 72 h après ta dernière attaque.",
+   "en": ""
   },
   {
    "fr": "Tu choisis l’escouade qui attaque à l’étape suivante.",
    "en": "You pick the attacking squad at the next step."
   },
   {
+   "fr": "Hisser le pavillon et préparer",
+   "en": ""
+  },
+  {
    "fr": "Préparer le pillage",
    "en": "Prepare the raid"
+  },
+  {
+   "fr": "Rester neutre",
+   "en": ""
   },
   {
    "fr": "Le Port du district",
@@ -270,36 +398,36 @@
    "en": "Raids"
   },
   {
-   "fr": "Ton escouade attaque la garnison d’un district voisin de ta force.",
-   "en": "Your squad attacks the garrison of a neighboring district of your strength."
+   "fr": "Ton escouade traverse la mer des piliers et attaque la garnison d’un district de ta force.",
+   "en": "",
+   "ancien": {
+    "fr": "Ton escouade attaque la garnison d’un district voisin de ta force.",
+    "en": "Your squad attacks the garrison of a neighboring district of your strength."
+   }
   },
   {
    "fr": "jetons, un toutes les {0}",
    "en": "tokens, one every {0}"
   },
   {
-   "fr": "du coffre adverse",
-   "en": "of the enemy chest"
+   "fr": "minerai, empreintes de cartes, Renom",
+   "en": ""
   },
   {
-   "fr": "de ton coffre si tu perds",
-   "en": "of your chest if you lose"
+   "fr": "de ton minerai si un pirate te repousse",
+   "en": ""
   },
   {
-   "fr": "Ta défense",
-   "en": "Your defense"
+   "fr": "Ton pavillon",
+   "en": ""
   },
   {
-   "fr": "Seul ton coffre est exposé, et ta garnison se défend seule.",
-   "en": "Only your chest is exposed, and your garrison defends on its own."
+   "fr": "Neutre, personne ne t’attaque. Pirate, tu pilles les autres pirates et ils te pillent.",
+   "en": ""
   },
   {
-   "fr": "Coffre",
-   "en": "Chest"
-  },
-  {
-   "fr": "gains de pillage seulement",
-   "en": "raid winnings only"
+   "fr": "de ton minerai exposé, plafonné",
+   "en": ""
   },
   {
    "fr": "de bouclier après une défaite",
@@ -314,8 +442,12 @@
    "en": "When the sea rose, each quarter clung to its pillars; yours dug in behind its Dike. Between them there’s nothing left but water, the ruins of the old world, and the ferrymen who know the currents."
   },
   {
-   "fr": "Les Accords de 2101 interdisent d’aborder les Hauts. Mais entre districts d’en bas, personne n’a jamais rien signé : on pille, on se défend, et chacun garde un œil sur son coffre.",
-   "en": "The Accords of 2101 forbid boarding the Heights. But between districts down below, nobody ever signed anything: you raid, you defend, and everyone keeps an eye on their chest."
+   "fr": "Les Accords de 2101 interdisent d’aborder les Hauts. Mais entre districts d’en bas, personne n’a jamais rien signé : certains hissent le pavillon pirate, d’autres restent neutres et laissent passer les barques.",
+   "en": "",
+   "ancien": {
+    "fr": "Les Accords de 2101 interdisent d’aborder les Hauts. Mais entre districts d’en bas, personne n’a jamais rien signé : on pille, on se défend, et chacun garde un œil sur son coffre.",
+    "en": "The Accords of 2101 forbid boarding the Heights. But between districts down below, nobody ever signed anything: you raid, you defend, and everyone keeps an eye on their chest."
+   }
   },
   {
    "fr": "Un Porteur libre prend la barque",
@@ -342,28 +474,32 @@
    "en": "Each raid costs one. Nothing is lost while you’re away: they wait for you."
   },
   {
+   "fr": "Chaque district a sa place fixe : tes voisins restent tes voisins. Plus ils sont loin, plus la traversée dure (quelques secondes).",
+   "en": ""
+  },
+  {
    "fr": "Un combat contre la garnison",
    "en": "A fight against the garrison"
   },
   {
-   "fr": "Des districts de ta force : de vrais directeurs, et des districts sans directeur pour que la carte ne soit jamais vide. Un district par jour au plus.",
-   "en": "Districts of your strength: real directors, and districts without one so the map is never empty. One district per day at most."
+   "fr": "Les districts sans directeur sont ouverts à tous. Les vrais directeurs, seulement s’ils sont pirates et de ta force. Un district par jour au plus.",
+   "en": "",
+   "ancien": {
+    "fr": "Des districts de ta force : de vrais directeurs, et des districts sans directeur pour que la carte ne soit jamais vide. Un district par jour au plus.",
+    "en": "Districts of your strength: real directors, and districts without one so the map is never empty. One district per day at most."
+   }
   },
   {
    "fr": "Le butin",
    "en": "The loot"
   },
   {
-   "fr": "Du minerai, plus {0} du coffre adverse. Plus la garnison est forte, plus le butin est gros. Perdre te coûte {1} de ton coffre.",
-   "en": "Ore, plus {0} of the enemy chest. The stronger the garrison, the bigger the loot. Losing costs you {1} of your chest."
+   "fr": "Du minerai (plus la garnison est forte, plus il y en a), parfois l’empreinte d’une carte de la garnison, et contre un directeur : l’empreinte à coup sûr, du Renom, et {0} de son minerai.",
+   "en": ""
   },
   {
-   "fr": "Seul ton coffre est exposé",
-   "en": "Only your chest is exposed"
-  },
-  {
-   "fr": "Le coffre, c’est le minerai gagné en pillant, tant que le Générateur ne l’a pas taillé. Celui des descentes, des missions, et tous tes cristaux sont à l’abri, comme tes cartes et tes Éclats.",
-   "en": "The chest is the ore earned by raiding, until the Generator cuts it. Ore from descents and missions, and all your crystals, are safe, as are your cards and Shards."
+   "fr": "Neutre : aucun directeur ne t’attaque, rien ne risque rien. Pirate : tu exposes {0} de ton minerai (plafonné) ; perdre une attaque te coûte {1}. Attaquer un directeur hisse le pavillon pirate, et on ne redevient neutre que 72 h après sa dernière attaque. Tes cristaux, tes cartes et tes Éclats ne risquent jamais rien.",
+   "en": ""
   },
   {
    "fr": "Ta garnison se défend seule",
@@ -374,12 +510,20 @@
    "en": "Choose which of your three squads guards the port. It fights even with the game closed."
   },
   {
-   "fr": "Bouclier et limite",
-   "en": "Shield and limit"
+   "fr": "Revanche, bouclier et limite",
+   "en": "",
+   "ancien": {
+    "fr": "Bouclier et limite",
+    "en": "Shield and limit"
+   }
   },
   {
-   "fr": "Après une attaque perdue, {0} h de bouclier ; {1} attaques par jour au plus. Le journal du port garde tout.",
-   "en": "After a lost attack, {0} h of shield; {1} attacks per day at most. The port log keeps track of everything."
+   "fr": "Qui te pille, tu peux lui rendre la pareille dans les 24 h, sans jeton. Après une attaque perdue, {0} h de bouclier ; {1} attaques par jour au plus.",
+   "en": "",
+   "ancien": {
+    "fr": "Après une attaque perdue, {0} h de bouclier ; {1} attaques par jour au plus. Le journal du port garde tout.",
+    "en": "After a lost attack, {0} h of shield; {1} attacks per day at most. The port log keeps track of everything."
+   }
   },
   {
    "fr": "Larguer les amarres",

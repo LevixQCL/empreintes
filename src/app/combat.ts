@@ -61,10 +61,10 @@ export function finPour(): Fin | null {
   }
   if (x.pillage) {
     const p = x.pillage;
-    if (s.issue === 'victoire') return { titre: t`${p.nom} est pillé`, texte: t`La garnison se replie. L’escouade rapporte ${p.base + p.vol} minerai${p.vol ? t`, dont ${p.vol} pris à son coffre` : ''}.`, bouton: t('Rentrer avec le butin'), action: 'remonter' };
+    if (s.issue === 'victoire') return { titre: t`${p.nom} est pillé`, texte: t`La garnison se replie. L’escouade rapporte ${p.base + p.vol} minerai${p.vol ? t`, dont ${p.vol} pris à ses réserves` : ''}${p.bot ? '' : t(', du Renom, et l’empreinte d’une de ses cartes')}.`, bouton: t('Rentrer avec le butin'), action: 'remonter' };
     if (s.issue === 'defaite') {
-      const perte = Math.floor(J.etatPillage(app.jeu).coffre * J.PILLAGE.perteDefaite);
-      return { issue: 'defaite', titre: t('Repoussés par la garnison'), texte: t`${p.nom} tient bon.${perte ? t` L’escouade laisse ${perte} minerai de son coffre en repartant.` : ''} Une garnison plus faible, ou une escouade mieux montée, passera.`, bouton: t('Rentrer au district'), action: 'remonter' };
+      const perte = Math.min(p.perte ?? 0, app.jeu.composants);
+      return { issue: 'defaite', titre: t('Repoussés par la garnison'), texte: t`${p.nom} tient bon.${perte ? t` L’escouade laisse ${perte} minerai sur ses quais en repartant.` : ''} Une garnison plus faible, ou une escouade mieux montée, passera.`, bouton: t('Rentrer au district'), action: 'remonter' };
     }
     return null;
   }

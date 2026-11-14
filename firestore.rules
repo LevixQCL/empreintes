@@ -88,7 +88,8 @@ service cloud.firestore {
     // Les pillages (26 octobre 2026) : chaque directeur publie sa garnison (son escouade, ses cartes, son coffre) ;
     // tout directeur connecté les lit pour trouver des archipels à sa portée. Un pillage joué contre lui est noté
     // dans garnisons/{uid}/subis par l'attaquant ; seul le défenseur les efface. Les bornes limitent la triche :
-    // une victoire prend au plus un dixième du coffre publié, et le défenseur n'applique que 3 attaques par jour,
+    // seul un pirate se pille (14 novembre 2026), une victoire prend au plus le minerai exposé publié (`coffre`), et le défenseur
+    // n'applique que 3 attaques par jour,
     // avec 8 h de bouclier après une attaque perdue (src/core/partie/pillages.ts, subirPillages).
     match /garnisons/{uid} {
       allow read: if request.auth != null;
@@ -377,13 +378,16 @@ service cloud.firestore {
     }
 
     function garnisonValide(d) {
-      return d.keys().hasOnly(['nom', 'porteurs', 'strate', 'coffre', 'force', 'maj'])
+      return d.keys().hasOnly(['nom', 'porteurs', 'strate', 'coffre', 'force', 'maj', 'pavillon', 'renom'])
         && d.nom is string && d.nom.size() >= 1 && d.nom.size() <= 24
         && d.porteurs is list && d.porteurs.size() >= 1 && d.porteurs.size() <= 3
         && porteurBorne(d.porteurs[0]) && (d.porteurs.size() < 2 || porteurBorne(d.porteurs[1])) && (d.porteurs.size() < 3 || porteurBorne(d.porteurs[2]))
         && d.strate is int && d.strate >= 1 && d.strate <= 200
         && d.coffre is int && d.coffre >= 0 && d.coffre <= 1000000
         && d.force is number && d.force > 0 && d.force < 1000
+        // 14 novembre 2026 : le pavillon (neutre ou pirate) et le Renom des pirates
+        && d.get('pavillon', 'neutre') in ['neutre', 'pirate']
+        && d.get('renom', 0) is int && d.get('renom', 0) >= 0 && d.get('renom', 0) <= 1000000
         && maintenant(d.maj);
     }
 
@@ -425,7 +429,9 @@ service cloud.firestore {
         && d.nom is string && d.nom.size() >= 1 && d.nom.size() <= 24
         && d.victoire is bool
         && d.vol is int && d.vol >= 0
-        && d.vol <= get(/databases/$(database)/documents/garnisons/$(defenseur)).data.coffre / 10 + 1
+        // 14 novembre 2026 : seul un pirate se pille, et une victoire prend au plus le minerai qu'il expose (`coffre`)
+        && get(/databases/$(database)/documents/garnisons/$(defenseur)).data.get('pavillon', 'neutre') == 'pirate'
+        && d.vol <= get(/databases/$(database)/documents/garnisons/$(defenseur)).data.coffre + 1
         && d.perte is int && d.perte >= 0 && d.perte <= 100000
         // une victoire ne laisse rien, une défaite ne prend rien
         && (d.victoire || d.vol == 0) && (!d.victoire || d.perte == 0)

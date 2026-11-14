@@ -788,7 +788,7 @@ export interface Retour {
   /** l'expérience gagnée par chaque Porteur de l'escouade, et les niveaux pris */
   xp?: { id: string; xp: number; niveau?: number }[];
   /** le retour d'un pillage (pillages.ts) */
-  pillage?: { nom: string; victoire: boolean; gain: number; perte: number };
+  pillage?: import('./pillages').RetourPillage;
   /** le retour d'un combat de la Flèche (fleche.ts) */
   fleche?: import('./fleche').RetourFleche;
   /** l'étape de la quête de la Strate trouvée pendant la descente (strates.ts) */

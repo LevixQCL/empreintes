@@ -44,7 +44,7 @@ async function publierGarnison() {
 
 // ---------- Les archipels des autres directeurs ----------
 
-/** Relus au plus toutes les 10 minutes en ouvrant la carte (une douzaine de lectures) */
+/** Relus au plus toutes les 10 minutes en ouvrant la carte (une quarantaine de lectures, et le classement du Renom) */
 const RELIRE_APRES = 10 * 60_000;
 let luesLe = 0;
 
@@ -62,11 +62,24 @@ export async function lireCiblesEnLigne(force = false) {
   const uid = app.uid;
   if (!app.compte || !uid || (!force && Date.now() - luesLe < RELIRE_APRES)) return;
   luesLe = Date.now();
-  const f = J.forceEscouade(app.jeu, J.escouadePourDepart(app.jeu));
+  D.monId = uid;
   try {
-    D.pillagesEnLigne = await (await reseau()).lireCibles(uid, f * J.PILLAGE.ecartMin, f * J.PILLAGE.ecartMax, jouable);
+    const n = await reseau();
+    D.pillagesEnLigne = await n.lireCibles(uid, jouable);
+    D.renomTop = await n.lireRenom().catch(() => D.renomTop ?? []);
     if (app.mode === 'district' && D.vue === 'pillages') afficher();
-  } catch { /* règles pas encore publiées, ou hors ligne : archipels sans directeur seulement */ }
+  } catch { /* règles pas encore publiées, ou hors ligne : districts sans directeur seulement */ }
+}
+
+/** La garnison de qui nous a pillés, pour la revanche (null : introuvable ou hors ligne) */
+export async function cibleRevanche(id: string): Promise<J.Cible | null> {
+  if (!app.compte || !app.uid) return null;
+  try {
+    const c = await (await reseau()).lireGarnison(id, jouable);
+    return c ? { ...c, milles: J.distance(app.uid, id), revanche: true } : null;
+  } catch {
+    return null;
+  }
 }
 
 /** Avant d'attaquer un vrai directeur : est-il sous bouclier ? (null si on ne peut pas le savoir) */

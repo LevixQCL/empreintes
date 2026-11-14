@@ -1,92 +1,158 @@
-// Couche 5 bis — les pillages (26 octobre 2026, décidé avec Bryan) : l'escouade attaque l'archipel d'un autre directeur,
-// défendu par sa garnison (ses Porteurs et leurs cartes) que le jeu joue à sa place. Une victoire rapporte des composants,
-// plus une part du coffre du défenseur ; une défaite en laisse une part du sien.
-// Le « coffre » : les composants gagnés en pillant ou en défendant. Ce sont les seuls qu'un pillage peut prendre :
-// ceux des descentes, des missions et du district sont toujours à l'abri (aucune punition si on ne joue pas).
-// On dépense le coffre en premier : il ne dépasse jamais les composants qu'on a.
+// Couche 5 bis — les pillages (26 octobre 2026, décidé avec Bryan) : l'escouade attaque la cuvette d'un autre directeur,
+// défendue par sa garnison (ses Porteurs et leurs cartes) que le jeu joue à sa place.
+//
+// Refonte du 14 novembre 2026 (Bryan : « ça ne rapporte rien », « le combat favorise trop le défenseur », « le social tient
+// vraiment les joueurs » ; débat avec un game designer senior) :
+// - le pavillon : chacun choisit d'être neutre (jamais attaqué par un directeur) ou pirate. Un neutre qui attaque un vrai
+//   directeur hisse le pavillon pirate, et ne peut le rabattre que 72 h après sa dernière attaque (pas d'attaque éclair) ;
+//   les districts sans directeur restent ouverts à tous, sans changer de pavillon ;
+// - un vrai enjeu, sans dégoûter : un pirate battu en défense perd 3 % de son minerai, plafonné ; l'attaquant battu en laisse 2 % ;
+//   jamais de cristaux, de cartes ni d'Éclats ; 8 h de bouclier, 3 attaques subies par jour au plus ;
+// - le butin : trois fois plus de minerai, et l'empreinte volée (une copie d'une carte de la garnison vaincue, dans le métal
+//   de sa propre tranche : le défenseur ne perd rien) ; le Renom des pirates et leur classement ; la revanche gratuite ;
+// - la carte fixe : chaque district a sa place sur la mer des piliers ; la traversée prend quelques secondes selon la distance ;
+// - un combat juste : les gardes ont les PV d'un groupe ordinaire, l'Usure d'un pillage est réduite de moitié, la courbe
+//   des chances est remesurée au robot (`scripts/pillages.ts`).
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { ennemiDef, porteurDef } from '../donnees';
+import { ennemiDef, moduleDe, carteId, moduleDef, porteurDef, tirablesEn, MODULES_TIRABLES } from '../donnees';
 import { creerCombat } from '../combat';
-import { doublonsRequis, metalJouable, puissanceCarte } from '../collection';
+import { ajouterCarte, doublonsRequis, metalJouable, metalTranche, puissanceCarte } from '../collection';
 import { forceStrate, nouvelleExpedition } from '../expedition';
 
-/** Un combat de référence pour les pillages : 6 composants × (1 + 0,25 × (Strate − 1)). Gardé tel quel quand les combats des Strates
- *  sont passés à 8 (30 octobre 2026), pour ne pas changer l'équilibre des pillages */
-const butinCombat = (strate: number, _index: 0) => Math.round(6 * (1 + 0.25 * (strate - 1)));
+/** Un combat de référence pour les pillages : 6 composants × (1 + 0,25 × (Strate − 1)) */
+const butinCombat = (strate: number) => Math.round(6 * (1 + 0.25 * (Math.max(1, strate) - 1)));
 import { graine, tireur } from '../rng';
-import type { Lignee } from '../types';
 import { CONFIANCE, XP, facteurXp, bonusPv, confier, jourDe, escouadeDefense, escouadesDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureAuRetour, type Jeu, type Resultat } from './etat';
 import { escouadePrete, payerRatelier, remonter as remonterDescente, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 import { t as tr } from '../i18n';
 
+const HEURE = 3_600_000;
+
 export const PILLAGE = {
   /** jetons de pillage : 5 au plus, un revient toutes les 4 h 48 (5 par jour) ; rien ne se perd pendant l'absence */
   jetonsMax: 5,
-  rechargeMs: (24 * 3_600_000) / 5,
+  rechargeMs: (24 * HEURE) / 5,
   /** un jeton de plus contre des cristaux (idée de Luc, 31 octobre 2026 ; prix fixe depuis le 9 novembre 2026), 2 fois par jour au plus */
   jetonCristaux: 30,
   achatsJour: 2,
-  /** les pillages s'ouvrent après le gardien de −4 (12 novembre 2026 ; −3 depuis le 2 novembre 2026, Bryan : « par étapes douces » ; avant, dès −1) ;
-   *  le Port et ses missions en mer, eux, ouvrent toujours après −1 (`strateDuPort`) */
+  /** les pillages s'ouvrent après le gardien de −4 (12 novembre 2026) ; le Port et ses missions en mer, eux, après −1 */
   strateMin: 4,
   strateDuPort: 1,
-  /** butin de base d'une victoire : autant que ce nombre de combats de la Strate du défenseur (butinCombat) */
-  combats: 2,
-  /** part du coffre du défenseur prise par une victoire, plafonnée à `plafondVol` combats de sa Strate */
-  partVolee: 0.1,
-  plafondVol: 5,
-  /** part de son propre coffre que l'attaquant laisse au défenseur quand il perd */
-  perteDefaite: 0.05,
+  /** butin de base d'une victoire : autant que ce nombre de combats de la Strate de la cible (×4 le 14 novembre 2026 : de 2 à 8) */
+  combats: 8,
+  /** le butin suit l'écart de force : ×0,5 contre plus faible, ×1 à égalité, ×1,6 contre la cible de prestige (le gain moyen est le meilleur à force égale) */
+  multPente: 8,
+  multMin: 0.5,
+  multMax: 1.6,
+  /** l'enjeu d'un pirate (14 novembre 2026, Bryan : « il faut y laisser quelque chose, mais pas trop pour ne pas dégoûter ») :
+   *  battu en défense, il perd `partVolee` de son minerai ; l'attaquant battu laisse `perteDefaite` du sien ;
+   *  l'un et l'autre plafonnés à `plafondVol` combats de sa Strate */
+  partVolee: 0.03,
+  perteDefaite: 0.02,
+  plafondVol: 4,
   /** le défenseur : bouclier de 8 h après une attaque perdue, 3 attaques subies par jour au plus */
-  bouclierMs: 8 * 3_600_000,
+  bouclierMs: 8 * HEURE,
   subiesMax: 3,
+  /** le pavillon : un pirate ne redevient neutre que 72 h après sa dernière attaque contre un directeur */
+  neutreApresMs: 72 * HEURE,
+  /** la revanche : 24 h pour rendre la pareille à qui t'a pillé, sans jeton */
+  revancheMs: 24 * HEURE,
+  /** l'empreinte volée : toujours contre un directeur, une fois sur trois contre un district sans directeur */
+  copieBot: 0.35,
+  /** le Renom des pirates (contre de vrais directeurs seulement) ; jamais sous zéro */
+  renom: { attaque: 12, attaqueRatee: -5, defense: 4, defenseRatee: -6 },
+  /** l'Usure d'un pillage : une escarmouche, pas une descente (la moitié des PV perdus) */
+  usure: 0.5,
   /**
-   * La force des gardes : K × √(puissance des cartes × PV de la garnison). Réglé au robot (26 octobre 2026) :
-   * le joueur moyen qui attaque sa propre garnison gagne une fois sur deux, du deck de départ aux cartes en or niveau 10
-   * (K mesuré entre 0,0235 et 0,0263 selon le deck ; refait après la Fêlure du 26 octobre).
+   * La force des gardes : K × √(puissance des cartes × PV de la garnison). Remesuré le 14 novembre 2026 (gardes aux PV
+   * d'un groupe ordinaire) : à force égale, le joueur moyen gagne environ une fois sur deux.
    */
   K: 0.0245,
-  /**
-   * Chances du joueur moyen selon l'écart de force (force des gardes / force de l'escouade) : très tranchées,
-   * 98 % à 0,85, 82 % à 0,92, 50 % à 1, 18 % à 1,08, presque rien à 1,2 (mesuré au robot, courbe logistique)
-   */
-  pente: 0.055,
-  /** le butin suit l'écart : ×0,4 contre bien plus faible, ×1 à égalité, ×2 contre plus fort ; le meilleur gain moyen est à égalité */
-  multPente: 8,
-  multMin: 0.4,
-  multMax: 2,
-  /** les cibles proposées : de 0,85 à 1,15 fois la force de l'escouade */
+  /** la force des gardes en combat, par rapport à leur force annoncée : remesurée le 14 novembre 2026 avec les PV de groupe
+   *  (`scripts/pillages.ts`) pour qu'à force égale le joueur moyen gagne environ une fois sur deux. K reste tel quel :
+   *  il sert aussi à la force conseillée des Strates */
+  gardes: 1.2,
+  /** chances du joueur moyen selon l'écart de force (gardes / escouade), courbe logistique mesurée au robot */
+  pente: 0.085,
+  centre: 1,
+  /** les cibles à portée : de 0,85 à 1,05 fois la force de l'escouade, plus une cible de prestige jusqu'à 1,15 (une chance sur cinq environ) */
   ecartMin: 0.85,
-  ecartMax: 1.15,
-  /** archipels proposés sur la carte */
-  cibles: 6,
+  ecartMax: 1.05,
+  prestige: 1.15,
+  /** les districts sans directeur sur la carte (places fixes autour du sien) */
+  bots: 5,
+  /** les vrais directeurs montrés sur la carte (les plus proches) */
+  voisins: 4,
+  /** la traversée : quelques secondes selon la distance sur la carte */
+  traversee: { min: 3, max: 10, parMille: 0.03 },
 } as const;
 
+// ---------- La carte fixe de la mer des piliers ----------
+
+/** Un nombre tiré d'une chaîne, toujours le même (FNV-1a) */
+function hache(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+
+/** La place d'un district sur la mer des piliers (en milles, de 0 à 1 000), fixe pour toujours */
+export function placeDe(id: string): { x: number; y: number } {
+  const h = hache('mer:' + id), g = hache('pilier:' + id);
+  return { x: (h % 100_000) / 100, y: (g % 100_000) / 100 };
+}
+
+/** La distance entre deux districts, en milles (la mer se referme sur elle-même : pas de bord) */
+export function distance(a: string, b: string): number {
+  const p = placeDe(a), q = placeDe(b);
+  const dx = Math.min(Math.abs(p.x - q.x), 1000 - Math.abs(p.x - q.x)), dy = Math.min(Math.abs(p.y - q.y), 1000 - Math.abs(p.y - q.y));
+  return Math.round(Math.hypot(dx, dy));
+}
+
+/** La traversée vers une cible, en secondes */
+export const traversee = (milles: number) =>
+  Math.round(Math.max(PILLAGE.traversee.min, Math.min(PILLAGE.traversee.max, PILLAGE.traversee.min + milles * PILLAGE.traversee.parMille)));
+
 // ---------- La garnison : ce qu'un directeur publie pour être pillé ----------
+
+export type Pavillon = 'neutre' | 'pirate';
 
 export interface Garnison {
   /** les trois Porteurs de l'escouade, leurs PV (niveau compris, sans l'Usure) et leurs cartes */
   porteurs: { id: string; pv: number; cartes: { id: string; niveau: number }[] }[];
   /** la Strate la plus profonde vaincue : elle fixe le butin */
   strate: number;
-  /** le coffre au moment de la publication (composants qu'un pillage peut prendre) */
+  /** le minerai exposé : ce qu'une attaque gagnée lui prendrait (0 pour un neutre) */
   coffre: number;
+  pavillon?: Pavillon;
+  renom?: number;
 }
+
+/** Le minerai qu'un pirate expose : 3 % de son minerai, plafonné à 4 combats de sa Strate */
+export const exposeDe = (composants: number, strate: number) =>
+  Math.max(0, Math.min(Math.floor(composants * PILLAGE.partVolee), PILLAGE.plafondVol * butinCombat(strate)));
+/** Ce qu'un attaquant battu laisse : 2 % de son minerai, même plafond */
+export const perteDe = (composants: number, strate: number) =>
+  Math.max(0, Math.min(Math.floor(composants * PILLAGE.perteDefaite), PILLAGE.plafondVol * butinCombat(strate)));
 
 /** La garnison d'un district : l'escouade choisie pour défendre le port (complétée par les premiers Porteurs présents) */
 export function garnisonDe(j: Jeu): Garnison {
   const presents = porteursPresents(j);
   const ids = [...new Set([...escouadesDe(j)[escouadeDefense(j)]!, ...presents])].slice(0, 3);
+  const strate = Math.max(1, strateVaincue(j));
+  const e = etatPillage(j);
   return {
     porteurs: ids.map((id) => ({
       id,
       pv: pvNiveau(j, id) + bonusPv(j, id),
       cartes: (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).map((k) => ({ id: metalJouable(k, niveauPorteur(j, id).niveau), niveau: j.collection[k]!.niveau })),
     })),
-    strate: Math.max(1, strateVaincue(j)),
-    coffre: Math.floor(etatPillage(j).coffre),
+    strate,
+    coffre: e.pavillon === 'pirate' ? exposeDe(j.composants, strate) : 0,
+    pavillon: e.pavillon ?? 'neutre',
+    renom: e.renom ?? 0,
   };
 }
 
@@ -109,31 +175,30 @@ export function forceEscouade(j: Jeu, escouade: string[]): number {
 }
 
 /** Les chances du joueur moyen selon l'écart de force (gardes / escouade) */
-export const chanceVictoire = (ecart: number) => 1 / (1 + Math.exp((ecart - 1) / PILLAGE.pente));
+export const chanceVictoire = (ecart: number) => 1 / (1 + Math.exp((ecart - PILLAGE.centre) / PILLAGE.pente));
 
 /** Le multiplicateur du butin selon l'écart de force */
 export const multButin = (ecart: number) => Math.min(PILLAGE.multMax, Math.max(PILLAGE.multMin, 1 + PILLAGE.multPente * (ecart - 1)));
 
-/** Ce qu'un pillage gagné rapporte : la base (créée par le jeu) et la part prise au coffre du défenseur */
+/** Ce qu'un pillage gagné rapporte : la base (créée par le jeu) et le minerai exposé du défenseur */
 export function butinPillage(cible: { strate: number; coffre: number }, ecart: number): { base: number; vol: number } {
-  const unCombat = butinCombat(Math.max(1, cible.strate), 0);
+  const unCombat = butinCombat(cible.strate);
   return {
     base: Math.round(PILLAGE.combats * unCombat * multButin(ecart)),
-    vol: Math.min(Math.floor(Math.max(0, cible.coffre) * PILLAGE.partVolee), PILLAGE.plafondVol * unCombat),
+    vol: Math.min(Math.max(0, Math.floor(cible.coffre)), PILLAGE.plafondVol * unCombat),
   };
 }
 
 /** Une appréciation lisible de l'écart, pour la carte */
 export function difficulte(ecart: number): { nom: string; niveau: 1 | 2 | 3 | 4 } {
   const c = chanceVictoire(ecart);
-  if (c >= 0.85) return { nom: tr('Facile'), niveau: 1 };
-  if (c >= 0.5) return { nom: tr('Équilibré'), niveau: 2 };
-  if (c >= 0.15) return { nom: tr('Risqué'), niveau: 3 };
+  if (c >= 0.8) return { nom: tr('Facile'), niveau: 1 };
+  if (c >= 0.45) return { nom: tr('Équilibré'), niveau: 2 };
+  if (c >= 0.2) return { nom: tr('Risqué'), niveau: 3 };
   return { nom: tr('Redoutable'), niveau: 4 };
 }
 
-/** Choisit l'escouade qui garde le port (27 octobre 2026). Possible à tout moment, même pendant une descente :
- * la garnison ne quitte pas le district, elle se défend seule. */
+/** Choisit l'escouade qui garde le port (27 octobre 2026). Possible à tout moment, même pendant une descente */
 export function choisirDefense(j: Jeu, n: number): Resultat {
   if (!Number.isInteger(n) || n < 0 || n >= escouadesDe(j).length) return non(tr('Escouade inconnue.'));
   if (!escouadesDe(j)[n]!.length) return non(tr('Cette escouade est vide : choisis-lui d’abord des Porteurs.'));
@@ -142,13 +207,13 @@ export function choisirDefense(j: Jeu, n: number): Resultat {
   return { ok: true };
 }
 
-// ---------- L'état du joueur : jetons et coffre ----------
+// ---------- L'état du joueur : pavillon, jetons, Renom ----------
 
-/** Un pillage joué, à envoyer au défenseur (le réseau s'en charge ; rien pour un archipel sans directeur) */
+/** Un pillage joué, à envoyer au défenseur (le réseau s'en charge ; rien pour un district sans directeur) */
 export interface PillageJoue { cible: string; victoire: boolean; vol: number; perte: number; le: number }
 
 export interface EtatPillage {
-  /** composants gagnés en pillant ou en défendant : les seuls qu'un pillage peut prendre */
+  /** plus utilisé depuis le 14 novembre 2026 (le minerai exposé se calcule) ; gardé pour les sauvegardes */
   coffre: number;
   jetons: number;
   /** quand le dernier jeton compté est revenu */
@@ -157,28 +222,46 @@ export interface EtatPillage {
   perdus: number;
   /** les pillages joués contre de vrais directeurs, en attente d'envoi */
   aEnvoyer: PillageJoue[];
-  /** les jetons achetés avec l'énergie, et le jour de ces achats */
+  /** les jetons achetés, et le jour de ces achats */
   achats?: { jour: number; n: number };
-  /** les archipels déjà attaqués aujourd'hui (un seul pillage par archipel et par jour), et ce jour */
+  /** les districts déjà attaqués aujourd'hui (un seul pillage par district et par jour), et ce jour */
   faits?: string[];
   jour?: number;
-  /** le journal du port (27 octobre 2026) : les derniers pillages faits et subis, du plus récent au plus ancien */
+  /** le journal du port : les derniers pillages faits et subis, du plus récent au plus ancien */
   historique?: EntreeHistorique[];
   /** les attaques subies déjà comptées (deux jours) : pour le bouclier, et pour ne rien compter deux fois */
   recus?: { id: string; victoire: boolean; le: number; refusee?: boolean }[];
+  /** le pavillon (14 novembre 2026) : neutre par défaut */
+  pavillon?: Pavillon;
+  /** la dernière attaque contre un vrai directeur (pour rabattre le pavillon) */
+  pirateLe?: number;
+  /** depuis quand le district est neutre (une attaque jouée avant ne compte plus) */
+  neutreLe?: number;
+  /** le Renom des pirates */
+  renom?: number;
+  /** les revanches ouvertes : qui t'a pillé, et jusqu'à quand */
+  revanches?: { id: string; nom: string; jusqua: number }[];
 }
 
-/** Une ligne du journal du port, vue du joueur : `gagne` dit s'il l'a emporté, `composants` ce que son coffre a gagné (+) ou perdu (−) */
+/** Une ligne du journal du port, vue du joueur : `gagne` dit s'il l'a emporté, `composants` ce que son minerai a gagné (+) ou perdu (−) */
 export interface EntreeHistorique {
   sens: 'attaque' | 'defense';
   nom: string;
   gagne: boolean;
   composants: number;
   le: number;
-  /** un archipel sans directeur (attaque seulement) */
+  /** un district sans directeur (attaque seulement) */
   bot?: boolean;
-  /** une attaque subie sans effet : bouclier levé ou trois attaques déjà reçues ce jour-là */
+  /** une attaque subie sans effet : bouclier levé, trois attaques déjà reçues, ou district neutre */
   refusee?: boolean;
+  /** le Renom gagné (+) ou perdu (−) */
+  renom?: number;
+  /** l'empreinte volée */
+  carte?: string;
+  /** l'attaquant (défense) : pour la revanche */
+  par?: string;
+  /** une revanche */
+  revanche?: boolean;
 }
 
 /** Les lignes gardées dans le journal du port */
@@ -192,14 +275,63 @@ export function noterHistorique(j: Jeu, e: EntreeHistorique) {
   h.length = Math.min(h.length, HISTORIQUE_MAX);
 }
 
-/** Les pillages sont ouverts : après le gardien de −4 (12 novembre 2026, Bryan : « trop de systèmes pour un nouveau » : une seule nouveauté par Strate) ; une partie qui a déjà pillé ou défendu les garde */
+/** Les pillages sont ouverts : après le gardien de −4 ; une partie qui a déjà pillé ou défendu les garde */
 export const pillagesPermis = (j: Jeu) => strateVaincue(j) >= PILLAGE.strateMin || !!(j.pillage && (j.pillage.gagnes || j.pillage.perdus || j.pillage.historique?.length));
 
 export function etatPillage(j: Jeu): EtatPillage {
   j.pillage ??= { coffre: 0, jetons: PILLAGE.jetonsMax, jetonsLe: j.dernierTick, gagnes: 0, perdus: 0, aEnvoyer: [] };
-  // on dépense le coffre en premier : il ne dépasse jamais les composants qu'on a
-  j.pillage.coffre = Math.max(0, Math.min(j.pillage.coffre, j.composants));
   return j.pillage;
+}
+
+export const pavillonDe = (j: Jeu): Pavillon => etatPillage(j).pavillon ?? 'neutre';
+
+/** Quand le pirate pourra redevenir neutre (null : tout de suite, ou il l'est déjà) */
+export function neutreDes(j: Jeu, now: number): number | null {
+  const e = etatPillage(j);
+  if (e.pavillon !== 'pirate' || !e.pirateLe) return null;
+  const quand = e.pirateLe + PILLAGE.neutreApresMs;
+  return quand > now ? quand : null;
+}
+
+/** Hisser ou rabattre le pavillon */
+export function changerPavillon(j: Jeu, p: Pavillon, now: number): Resultat {
+  const e = etatPillage(j);
+  if ((e.pavillon ?? 'neutre') === p) return { ok: true };
+  if (p === 'neutre') {
+    const quand = neutreDes(j, now);
+    if (quand) return non(tr`Ton dernier pillage est trop récent : le pavillon pirate reste hissé encore ${Math.ceil((quand - now) / HEURE)} h.`);
+    e.pavillon = 'neutre';
+    e.neutreLe = now;
+    log(j, tr('Ton district rabat le pavillon : il redevient neutre.'));
+    return { ok: true, message: tr('Pavillon neutre : aucun directeur ne peut plus t’attaquer.') };
+  }
+  e.pavillon = 'pirate';
+  log(j, tr('Ton district hisse le pavillon pirate.'));
+  return { ok: true, message: tr('Pavillon pirate : tu peux piller les autres pirates, et ils peuvent te piller.') };
+}
+
+/** Le Renom, et son rang */
+export const RANGS_RENOM = [
+  { min: 0, nom: tr('Mousse') }, { min: 60, nom: tr('Matelot') }, { min: 180, nom: tr('Corsaire') },
+  { min: 400, nom: tr('Capitaine') }, { min: 800, nom: tr('Écumeur des piliers') },
+] as const;
+export function rangRenom(renom: number): { nom: string; suivant: number | null } {
+  let k = 0;
+  while (k + 1 < RANGS_RENOM.length && renom >= RANGS_RENOM[k + 1]!.min) k++;
+  return { nom: RANGS_RENOM[k]!.nom, suivant: RANGS_RENOM[k + 1]?.min ?? null };
+}
+function ajouterRenom(j: Jeu, delta: number): number {
+  const e = etatPillage(j);
+  const avant = e.renom ?? 0;
+  e.renom = Math.max(0, avant + delta);
+  return e.renom - avant;
+}
+
+/** Les revanches encore ouvertes */
+export function revanchesOuvertes(j: Jeu, now: number) {
+  const e = etatPillage(j);
+  e.revanches = (e.revanches ?? []).filter((r) => r.jusqua > now);
+  return e.revanches;
 }
 
 /** Les jetons revenus depuis la dernière fois ; renvoie l'heure du prochain (null s'ils sont tous là) */
@@ -217,19 +349,36 @@ export function majJetons(j: Jeu, now: number): number | null {
 // ---------- Les cibles ----------
 
 export interface Cible {
-  /** l'uid du directeur, ou « bot-… » pour un archipel sans directeur */
+  /** l'uid du directeur, ou « bot-… » pour un district sans directeur */
   id: string;
   nom: string;
-  /** archipel sans directeur, tenu par un intendant (le jeu le fabrique : la carte n'est jamais vide) */
+  /** district sans directeur, tenu par un intendant (le jeu le fabrique : la carte n'est jamais vide) */
   bot?: boolean;
   /** les Porteurs de la garnison (lignées et portraits des gardes) */
   porteurs: string[];
+  /** les cartes de la garnison (pour l'empreinte volée) */
+  cartes?: string[];
   force: number;
   strate: number;
   coffre: number;
+  pavillon?: Pavillon;
+  renom?: number;
+  /** la distance en milles depuis son district */
+  milles?: number;
+  /** une revanche (l'écran la prépare) */
+  revanche?: boolean;
 }
 
-/** Les archipels attaqués aujourd'hui (la liste repart à zéro chaque jour) */
+/** Peut-on attaquer cette cible ? 'ok', ou la raison : neutre, trop faible, trop forte */
+export type Portee = 'ok' | 'neutre' | 'faible' | 'forte';
+export function porteeDe(c: Cible, force: number, revanche = false): Portee {
+  if (c.bot || revanche) return 'ok';
+  if (c.pavillon !== 'pirate') return 'neutre';
+  const e = c.force / Math.max(0.01, force);
+  return e < PILLAGE.ecartMin ? 'faible' : e > PILLAGE.prestige ? 'forte' : 'ok';
+}
+
+/** Les districts attaqués aujourd'hui (la liste repart à zéro chaque jour) */
 export function faitsDuJour(j: Jeu, now: number): string[] {
   const e = etatPillage(j);
   const jour = jourDe(now);
@@ -238,45 +387,57 @@ export function faitsDuJour(j: Jeu, now: number): string[] {
 }
 
 /**
- * Les archipels de la carte : les vrais directeurs à portée d'abord, complétés par des archipels sans directeur,
- * rangés du plus facile au plus dur pour l'escouade qui part. Ceux déjà attaqués aujourd'hui restent visibles (marqués).
+ * La carte de la mer des piliers : les vrais directeurs les plus proches (pirates et neutres : on voit qui vit autour de soi),
+ * et des districts sans directeur à des places fixes, toujours de quoi piller.
  */
-export function ciblesDuJour(j: Jeu, escouade: string[], now: number, enLigne: Cible[] = []): Cible[] {
+export function ciblesDuJour(j: Jeu, escouade: string[], now: number, enLigne: Cible[] = [], monId = 'moi'): Cible[] {
   const force = forceEscouade(j, escouade);
-  const aPortee = enLigne.filter((c) => c.force >= force * PILLAGE.ecartMin && c.force <= force * PILLAGE.ecartMax).slice(0, PILLAGE.cibles);
-  const bots = ciblesBots(j, force, jourDe(now), PILLAGE.cibles - aPortee.length);
-  return [...aPortee, ...bots].sort((a, b) => a.force - b.force);
+  const voisins = enLigne.filter((c) => c.id !== monId).map((c) => ({ ...c, milles: distance(monId, c.id) }))
+    .sort((a, b) => a.milles - b.milles).slice(0, PILLAGE.voisins);
+  return [...voisins, ...ciblesBots(j, force, jourDe(now), PILLAGE.bots, monId)];
 }
 
 /** Une cible à partir de la garnison publiée d'un directeur */
-export const cibleDe = (id: string, nom: string, g: Garnison): Cible =>
-  ({ id, nom, porteurs: g.porteurs.map((p) => p.id), force: forceGarnison(g), strate: g.strate, coffre: g.coffre });
+export const cibleDe = (id: string, nom: string, g: Garnison): Cible => ({
+  id, nom, porteurs: g.porteurs.map((p) => p.id), cartes: g.porteurs.flatMap((p) => p.cartes.map((c) => c.id)),
+  force: forceGarnison(g), strate: g.strate, coffre: g.coffre, pavillon: g.pavillon ?? 'neutre', renom: g.renom ?? 0,
+});
 
 const NOMS_BOTS = ['Haut-Treuil', tr('Cendrevigne'), tr('Ancrefroide'), tr('Verrelune'), tr('Salvebrume'), 'Pilier-Gris', tr('Brisecôte'), tr('Les Pontons d’Ambre'), 'Lierre-Haut', tr('Quai Sourd'), 'Vasque-Morte', tr('Givrecorde')];
 
 /**
- * Les archipels sans directeur du jour : de 0,85 à 1,15 fois la force de l'escouade, renouvelés chaque jour
- * (les mêmes toute la journée). Ils complètent la carte tant qu'il y a peu de vrais directeurs à portée.
+ * Les districts sans directeur : à des places fixes autour du sien, avec un nom fixe ; seule leur garnison change chaque jour,
+ * de 0,85 à 1,15 fois la force de l'escouade (la dernière, la plus forte, est la cible de prestige).
  */
-export function ciblesBots(j: Jeu, force: number, jour: number, n: number): Cible[] {
-  const t = tireur({ rng: (jour * 2654435761) >>> 0 });
-  const lignees: Record<Lignee, string[]> = { tech: [], bio: [], reso: [] };
-  for (const id of porteursPresents(j)) lignees[porteurDef(id).lignee].push(id);
+export function ciblesBots(j: Jeu, force: number, jour: number, n: number, monId = 'moi'): Cible[] {
+  const t = tireur({ rng: (jour * 2654435761 + hache(monId)) >>> 0 });
   const tous = ['ilka', 'doran', 'vela', ...porteursPresents(j)];
-  const noms = t.melanger(NOMS_BOTS);
+  const ordre = tireur({ rng: hache('noms:' + monId) }).melanger(NOMS_BOTS);
+  const strate = Math.max(1, strateVaincue(j));
   const r: Cible[] = [];
   for (let k = 0; k < n; k++) {
-    // des écarts répartis sur toute la plage, du plus facile au plus dur
-    const ecart = PILLAGE.ecartMin + ((k + t.nombre()) / n) * (PILLAGE.ecartMax - PILLAGE.ecartMin);
+    // des écarts répartis sur la plage à portée, du plus facile au plus dur ; le dernier est la cible de prestige
+    const ecart = k === n - 1 && n > 1 ? PILLAGE.ecartMax + t.nombre() * (PILLAGE.prestige - PILLAGE.ecartMax)
+      : PILLAGE.ecartMin + ((k + t.nombre()) / Math.max(1, n - 1)) * (PILLAGE.ecartMax - PILLAGE.ecartMin);
     const porteurs = t.melanger([...new Set(tous)]).slice(0, 3);
-    const strate = Math.max(1, strateVaincue(j));
+    // sa place : autour du district, à 60 à 260 milles
+    const angle = (hache(`bot${k}:${monId}`) % 360) * (Math.PI / 180), rayon = 60 + (hache(`r${k}:${monId}`) % 200);
     r.push({
-      id: `bot-${jour}-${k}`, nom: noms[k % noms.length]!, bot: true, porteurs,
-      force: Math.round(force * ecart * 1000) / 1000, strate,
-      coffre: Math.round(butinCombat(strate, 0) * (2 + 4 * t.nombre())),
-    });
+      id: `bot-${k}`, nom: ordre[k % ordre.length]!, bot: true, porteurs,
+      force: Math.round(force * ecart * 1000) / 1000, strate, coffre: 0, milles: rayon,
+      ...{ angle },
+    } as Cible);
   }
   return r;
+}
+
+/** L'angle d'un district sur la carte autour du sien (en radians) */
+export function angleDe(c: Cible, monId = 'moi'): number {
+  const a = (c as Cible & { angle?: number }).angle;
+  if (a !== undefined) return a;
+  const p = placeDe(monId), q = placeDe(c.id);
+  const dx = ((q.x - p.x + 1500) % 1000) - 500, dy = ((q.y - p.y + 1500) % 1000) - 500;
+  return Math.atan2(dy, dx);
 }
 
 // ---------- Le pillage ----------
@@ -289,9 +450,15 @@ export interface PillageEnCours {
   ecart: number;
   base: number;
   vol: number;
+  /** ce que l'attaquant laisse s'il perd (contre un directeur) */
+  perte?: number;
+  /** l'arrivée de la barque (ms) : le combat commence après la traversée */
+  arrivee?: number;
+  /** une carte de la garnison, pour l'empreinte volée */
+  cartes?: string[];
+  revanche?: boolean;
 }
 
-/** Ce que coûte un jeton de pillage en énergie : quelques heures de production du Générateur, arrondi à la dizaine */
 /** Un jeton de plus : un prix fixe en cristaux (9 novembre 2026) */
 export const coutJeton = (_j: Jeu) => PILLAGE.jetonCristaux;
 
@@ -301,7 +468,7 @@ export function achatsRestants(j: Jeu, now: number): number {
   return Math.max(0, PILLAGE.achatsJour - (a && a.jour === jourDe(now) ? a.n : 0));
 }
 
-/** Acheter un jeton de pillage avec l'énergie du Générateur */
+/** Acheter un jeton de pillage avec des cristaux */
 export function acheterJeton(j: Jeu, now: number): Resultat {
   majJetons(j, now);
   const e = etatPillage(j);
@@ -318,29 +485,35 @@ export function acheterJeton(j: Jeu, now: number): Resultat {
   return { ok: true, message: tr('Le Générateur charge une barque de plus : +1 jeton de pillage.') };
 }
 
-export function peutPiller(j: Jeu, now: number): Resultat {
+export function peutPiller(j: Jeu, now: number, revanche = false): Resultat {
   if (!pillagesPermis(j)) return non(tr`Les pillages s’ouvrent quand le gardien de la Strate −${PILLAGE.strateMin} est vaincu.`);
   if (j.expedition) return non(tr('Une expédition est déjà en cours.'));
   majJetons(j, now);
-  if (etatPillage(j).jetons < 1) return non(tr('Plus de jeton de pillage : le prochain revient bientôt.'));
+  if (!revanche && etatPillage(j).jetons < 1) return non(tr('Plus de jeton de pillage : le prochain revient bientôt.'));
   return { ok: true };
 }
 
-/** Part piller une cible : un seul combat contre les gardes de sa garnison */
-export function piller(j: Jeu, escouade: string[], cible: Cible, now: number, rng = graine()): Resultat {
-  const p = peutPiller(j, now);
+/** Part piller une cible : un seul combat contre les gardes de sa garnison, après la traversée */
+export function piller(j: Jeu, escouade: string[], cible: Cible, now: number, rng = graine(), opts: { revanche?: boolean } = {}): Resultat {
+  const etat = etatPillage(j);
+  const revanche = !!(opts.revanche ?? cible.revanche) && !cible.bot && revanchesOuvertes(j, now).some((r) => r.id === cible.id);
+  const p = peutPiller(j, now, revanche);
   if (!p.ok) return p;
   const faits = faitsDuJour(j, now);
-  if (faits.includes(cible.id)) return non(tr`${cible.nom} a déjà été attaqué aujourd’hui.`);
+  if (!revanche && faits.includes(cible.id)) return non(tr`${cible.nom} a déjà été attaqué aujourd’hui.`);
+  const force = forceEscouade(j, escouade);
+  const portee = porteeDe(cible, force, revanche);
+  if (portee === 'neutre') return non(tr`${cible.nom} vogue sous pavillon neutre : on ne l’attaque pas.`);
+  if (portee !== 'ok') return non(tr`${cible.nom} n’est pas à ta portée.`);
   const e = escouadePrete(j, escouade, undefined, undefined, 'courte');
   if (!e.ok) return e;
-  const ecart = cible.force / Math.max(0.01, forceEscouade(j, escouade));
+  const ecart = cible.force / Math.max(0.01, force);
   const butin = butinPillage(cible, ecart);
   const gardes = cible.porteurs.slice(0, 3).map((id) => `garde-${porteurDef(id).lignee}`);
-  const x = nouvelleExpedition({ porteurs: e.porteurs, deck: e.deck, strate: Math.max(1, cible.strate), rng, sequence: [gardes[0]!], force: cible.force });
-  // un groupe de gardes, un par Porteur de la garnison ; chacun garde le visage de son Porteur
+  const x = nouvelleExpedition({ porteurs: e.porteurs, deck: e.deck, strate: Math.max(1, cible.strate), rng, sequence: [gardes[0]!], force: cible.force * PILLAGE.gardes });
+  // un groupe de gardes, un par Porteur de la garnison, aux PV d'un groupe ordinaire (14 novembre 2026 : plus de PV pleins)
   x.combat = creerCombat({
-    porteurs: e.porteurs, ennemiId: gardes[0]!, escorte: gardes.slice(1), rng, deck: e.deck, force: cible.force, pvPleins: true,
+    porteurs: e.porteurs, ennemiId: gardes[0]!, escorte: gardes.slice(1), rng, deck: e.deck, force: cible.force * PILLAGE.gardes,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
   });
   x.combat.ennemi.porteur = cible.porteurs[0];
@@ -348,98 +521,146 @@ export function piller(j: Jeu, escouade: string[], cible: Cible, now: number, rn
   x.combat.journal = [tr`La garnison de ${cible.nom} sort à ta rencontre : ${gardes.map((id) => ennemiDef(id).nom).join(', ')}.`];
   payerRatelier(j, escouade, 'courte');
   quitterPostes(j, escouade);
-  faits.push(cible.id);
-  const etat = etatPillage(j);
-  if (etat.jetons >= PILLAGE.jetonsMax) etat.jetonsLe = now;
-  etat.jetons--;
-  j.expedition = { ...x, pillage: { cible: cible.id, nom: cible.nom, ...(cible.bot ? { bot: true } : {}), ecart: Math.round(ecart * 1000) / 1000, base: butin.base, vol: butin.vol } };
-  log(j, tr`L’escouade part piller ${cible.nom}.`);
+  if (!revanche) {
+    faits.push(cible.id);
+    if (etat.jetons >= PILLAGE.jetonsMax) etat.jetonsLe = now;
+    etat.jetons--;
+  } else etat.revanches = (etat.revanches ?? []).filter((r) => r.id !== cible.id);
+  // attaquer un vrai directeur hisse le pavillon pirate
+  if (!cible.bot) {
+    if (etat.pavillon !== 'pirate') { etat.pavillon = 'pirate'; log(j, tr('En attaquant un directeur, ton district hisse le pavillon pirate.')); }
+    etat.pirateLe = now;
+  }
+  const milles = cible.milles ?? 0;
+  j.expedition = {
+    ...x,
+    pillage: {
+      cible: cible.id, nom: cible.nom, ...(cible.bot ? { bot: true } : {}), ecart: Math.round(ecart * 1000) / 1000, base: butin.base, vol: butin.vol,
+      perte: cible.bot ? 0 : perteDe(j.composants, strateVaincue(j)), arrivee: now + traversee(milles) * 1000,
+      ...(cible.cartes?.length ? { cartes: cible.cartes.slice(0, 18) } : {}), ...(revanche ? { revanche: true } : {}),
+    },
+  };
+  log(j, revanche ? tr`L’escouade part prendre sa revanche sur ${cible.nom}.` : tr`L’escouade part piller ${cible.nom}.`);
   return { ok: true };
 }
 
-/** Ce que le retour d'un pillage a donné */
-export interface RetourPillage { nom: string; victoire: boolean; gain: number; perte: number }
+/** L'empreinte volée : une copie d'une carte de la garnison, dans le métal de la tranche du pillard (jamais une exclusive) */
+export function empreinteVolee(j: Jeu, pi: PillageEnCours, rng: number): string | null {
+  const t = tireur({ rng: rng >>> 0 });
+  const metal = metalTranche(Math.max(1, strateVaincue(j)));
+  const tirables = new Set(MODULES_TIRABLES.map((m) => m.id));
+  let base: string | null = null;
+  if (!pi.bot) {
+    const l = (pi.cartes ?? []).map(moduleDe).filter((m) => tirables.has(m));
+    if (l.length) base = l[t.entier(l.length)]!;
+  } else if (t.nombre() < PILLAGE.copieBot) {
+    const l = tirablesEn(metal);
+    if (l.length) base = l[t.entier(l.length)]!.id;
+  }
+  if (!base) return null;
+  // la carte n'existe peut-être pas dans ce métal : le métal le plus proche en dessous
+  const metaux = ['fer', 'cuivre', 'argent', 'or'] as const;
+  for (let k = metaux.indexOf(metal as typeof metaux[number]); k >= 0; k--) {
+    const id = carteId(base, metaux[k]!);
+    try { moduleDef(id); return id; } catch { /* pas dans ce métal */ }
+  }
+  return null;
+}
 
-/** Le retour d'un pillage : butin ou perte, Usure et expérience ; à appeler par remonter() */
+/** Ce que le retour d'un pillage a donné */
+export interface RetourPillage { nom: string; victoire: boolean; gain: number; perte: number; renom: number; carte: string | null; nouvelle: boolean }
+
+/** Le retour d'un pillage : butin ou perte, Renom, empreinte volée, Usure et expérience ; à appeler par remonter() */
 export function remonterPillage(j: Jeu, now: number): RetourPillage | null {
   const x = j.expedition;
   if (!x?.pillage) return null;
   const pi = x.pillage;
   const victoire = x.combat.issue === 'victoire';
   const etat = etatPillage(j);
-  let gain = 0, perte = 0;
+  let gain = 0, perte = 0, renom = 0, carte: string | null = null, nouvelle = false;
   if (victoire) {
     gain = pi.base + pi.vol;
     j.composants += gain;
-    etat.coffre += gain;
     etat.gagnes++;
+    carte = empreinteVolee(j, pi, x.combat.rng ?? now);
+    if (carte) nouvelle = ajouterCarte(j, carte);
+    if (!pi.bot) renom = ajouterRenom(j, Math.round(PILLAGE.renom.attaque * multButin(pi.ecart)));
   } else {
-    perte = Math.floor(etat.coffre * PILLAGE.perteDefaite);
+    perte = Math.min(pi.perte ?? 0, j.composants);
     j.composants -= perte;
-    etat.coffre -= perte;
     etat.perdus++;
+    if (!pi.bot) renom = ajouterRenom(j, PILLAGE.renom.attaqueRatee);
   }
   if (!pi.bot) etat.aEnvoyer.push({ cible: pi.cible, victoire, vol: victoire ? pi.vol : 0, perte, le: now });
-  noterHistorique(j, { sens: 'attaque', nom: pi.nom, gagne: victoire, composants: victoire ? gain : -perte, le: now, ...(pi.bot ? { bot: true } : {}) });
-  // l'Usure (les PV perdus) et l'expérience d'un combat, comme une fouille
+  noterHistorique(j, { sens: 'attaque', nom: pi.nom, gagne: victoire, composants: victoire ? gain : -perte, le: now,
+    ...(pi.bot ? { bot: true } : {}), ...(renom ? { renom } : {}), ...(carte ? { carte } : {}), ...(pi.revanche ? { revanche: true } : {}) });
+  // l'Usure : une escarmouche (la moitié des PV perdus), et l'expérience d'un combat
   const xp = victoire ? Math.round(XP.combat * facteurXp(x.strate) * 0.75) : 0;
   for (const p of x.combat.porteurs) {
     const d = j.porteurs[p.id]!;
+    const avantUsure = d.usure;
     usureAuRetour(j, p);
+    d.usure = avantUsure + (d.usure - avantUsure) * PILLAGE.usure;
     if (xp) { const avant = niveauPorteur(j, p.id).niveau; const n = gagnerXp(j, p.id, xp); if (n && n > avant) log(j, tr`${porteurDef(p.id).nom} passe au niveau ${n} !`); }
     if (victoire) { const f = (d.faits ??= {}); f.combats = (f.combats ?? 0) + 1; }
   }
   j.expedition = null;
   log(j, victoire
-    ? tr`Pillage réussi à ${pi.nom} : +${gain} minerai${pi.vol ? tr`, dont ${pi.vol} pris à son coffre` : ''}.`
-    : tr`Pillage repoussé à ${pi.nom}.${perte ? tr` L’escouade laisse ${perte} minerai de son coffre.` : ''}`);
-  return { nom: pi.nom, victoire, gain, perte };
+    ? tr`Pillage réussi à ${pi.nom} : +${gain} minerai${pi.vol ? tr`, dont ${pi.vol} pris à ses réserves` : ''}.`
+    : tr`Pillage repoussé à ${pi.nom}.${perte ? tr` L’escouade y laisse ${perte} minerai.` : ''}`);
+  return { nom: pi.nom, victoire, gain, perte, renom, carte, nouvelle };
 }
 
-/** Une attaque subie, reçue du réseau à l'ouverture du jeu (id : celui du document en ligne) */
-export interface PillageSubi { id?: string; nom: string; victoire: boolean; vol: number; perte: number; le: number }
+/** Une attaque subie, reçue du réseau à l'ouverture du jeu (id : celui du document en ligne ; par : l'attaquant) */
+export interface PillageSubi { id?: string; par?: string; nom: string; victoire: boolean; vol: number; perte: number; le: number }
 
 /**
- * Applique les attaques subies pendant l'absence : le coffre perd ce qui a été pris, gagne ce que les perdants ont laissé.
- * Le défenseur fait lui-même respecter les limites (un attaquant tricheur ne peut pas les contourner) : chaque attaque
- * n'est comptée qu'une fois, au plus 3 par jour, aucune pendant les 8 h de bouclier après une attaque perdue,
- * et ce qu'un perdant laisse est plafonné comme un vol.
+ * Applique les attaques subies pendant l'absence. Le défenseur fait lui-même respecter les limites (un attaquant tricheur ne
+ * peut pas les contourner) : chaque attaque n'est comptée qu'une fois, au plus 3 par jour, aucune pendant les 8 h de bouclier
+ * après une attaque perdue, aucune s'il est neutre ; ce qui est pris ou laissé est plafonné.
  */
 export function subirPillages(j: Jeu, subis: PillageSubi[]): string[] {
   const etat = etatPillage(j);
   const recus = (etat.recus ??= []);
-  const plafond = PILLAGE.plafondVol * butinCombat(Math.max(1, strateVaincue(j)), 0);
+  const strate = Math.max(1, strateVaincue(j));
+  const plafond = PILLAGE.plafondVol * butinCombat(strate);
   const l: string[] = [];
   for (const s of subis.slice().sort((a, b) => a.le - b.le)) {
     if (s.id && recus.some((r) => r.id === s.id)) continue;
-    const refusee = protege(recus, s.le);
+    const neutre = etat.pavillon !== 'pirate' || (etat.neutreLe ?? 0) > s.le;
+    const refusee = neutre || protege(recus, s.le);
     recus.push({ id: s.id ?? `${s.le}`, victoire: s.victoire && !refusee, le: s.le, ...(refusee ? { refusee: true } : {}) });
     if (refusee) { noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: true, composants: 0, le: s.le, refusee: true }); continue; }
     if (s.victoire) {
-      const pris = Math.min(Math.max(0, Math.floor(s.vol)), Math.floor(etat.coffre), plafond);
-      etat.coffre -= pris;
+      const pris = Math.min(Math.max(0, Math.floor(s.vol)), exposeDe(j.composants, strate), plafond);
       j.composants -= pris;
-      noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: false, composants: -pris, le: s.le });
-      l.push(tr`${s.nom} a pillé ton district${pris ? tr` et pris ${pris} minerai de ton coffre` : ''}.`);
+      const renom = ajouterRenom(j, PILLAGE.renom.defenseRatee);
+      noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: false, composants: -pris, le: s.le, ...(renom ? { renom } : {}), ...(s.par ? { par: s.par } : {}) });
+      if (s.par) {
+        const r = (etat.revanches ??= []).filter((x) => x.id !== s.par);
+        r.push({ id: s.par, nom: s.nom, jusqua: s.le + PILLAGE.revancheMs });
+        etat.revanches = r;
+      }
+      l.push(tr`${s.nom} a pillé ton district${pris ? tr` et pris ${pris} minerai` : ''}.${s.par ? tr(' La revanche t’attend au Port.') : ''}`);
     } else {
       const gagne = Math.min(Math.max(0, Math.floor(s.perte)), plafond);
-      etat.coffre += gagne;
       j.composants += gagne;
-      noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: true, composants: gagne, le: s.le });
+      const renom = ajouterRenom(j, PILLAGE.renom.defense);
+      noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: true, composants: gagne, le: s.le, ...(renom ? { renom } : {}) });
       const venus = confier(j, CONFIANCE.defense, 'defense');
-      l.push(tr`Ta garnison a repoussé ${s.nom}${gagne ? tr` : +${gagne} minerai laissé dans ton coffre` : ''}.${venus ? tr` Le quartier l’a vu : ${venus > 1 ? tr`${venus} familles te rejoignent` : tr('une famille te rejoint')}.` : tr(' Le quartier l’a vu.')}`);
+      l.push(tr`Ta garnison a repoussé ${s.nom}${gagne ? tr` : +${gagne} minerai laissé sur tes quais` : ''}.${venus ? tr` Le quartier l’a vu : ${venus > 1 ? tr`${venus} familles te rejoignent` : tr('une famille te rejoint')}.` : tr(' Le quartier l’a vu.')}`);
     }
   }
   // on ne garde que deux jours d'attaques : assez pour le bouclier et pour ne rien compter deux fois
   const dernier = recus.reduce((m, r) => Math.max(m, r.le), 0);
-  etat.recus = recus.filter((r) => dernier - r.le < 48 * 3_600_000);
+  etat.recus = recus.filter((r) => dernier - r.le < 48 * HEURE);
   for (const m of l) log(j, m);
   return l;
 }
 
 /** Le défenseur est-il protégé ? (bouclier après une attaque perdue, ou trop d'attaques aujourd'hui) */
 export function protege(subis: { victoire: boolean; le: number; refusee?: boolean }[], now: number): boolean {
-  const jour = subis.filter((s) => !s.refusee && now - s.le < 24 * 3_600_000 && now >= s.le);
+  const jour = subis.filter((s) => !s.refusee && now - s.le < 24 * HEURE && now >= s.le);
   if (jour.length >= PILLAGE.subiesMax) return true;
   return jour.some((s) => s.victoire && now - s.le < PILLAGE.bouclierMs);
 }
@@ -448,7 +669,7 @@ export function protege(subis: { victoire: boolean; le: number; refusee?: boolea
 export function remonter(j: Jeu): Retour {
   if (!j.expedition?.pillage) return remonterDescente(j);
   const p = remonterPillage(j, j.dernierTick)!;
-  return { butin: p.gain, nouvelleStrate: false, victoire: p.victoire, fragment: null, cartes: [], eclats: 0, pillage: p };
+  return { butin: p.gain, nouvelleStrate: false, victoire: p.victoire, fragment: null, cartes: p.carte ? [p.carte] : [], eclats: 0, pillage: p };
 }
 
 // ---------- Prêt à descendre ? (12 novembre 2026, révision complète) ----------

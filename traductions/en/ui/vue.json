@@ -426,8 +426,20 @@
    "en": "The assault counts as lost: the squad drops back as after a defeat."
   },
   {
-   "fr": "Le pillage compte comme perdu : tu laisses {0} % de ton coffre à {1}.",
-   "en": "The raid counts as lost: you leave {0}% of your chest to {1}."
+   "fr": "Le pillage compte comme perdu : tu laisses {0} minerai à {1}.",
+   "en": "",
+   "ancien": {
+    "fr": "Le pillage compte comme perdu : tu laisses {0} % de ton coffre à {1}.",
+    "en": "The raid counts as lost: you leave {0}% of your chest to {1}."
+   }
+  },
+  {
+   "fr": "Le pillage compte comme perdu.",
+   "en": "",
+   "ancien": {
+    "fr": "Le pillage compte comme perdu : tu laisses {0} % de ton coffre à {1}.",
+    "en": "The raid counts as lost: you leave {0}% of your chest to {1}."
+   }
   },
   {
    "fr": "Tu pourras la retenter cette semaine.",
@@ -804,6 +816,18 @@
   {
    "fr": "Seuil de la dernière phase",
    "en": "Final phase threshold"
+  },
+  {
+   "fr": "Traversée de la mer des piliers",
+   "en": ""
+  },
+  {
+   "fr": "Ta barque file prendre sa revanche · {0} s",
+   "en": ""
+  },
+  {
+   "fr": "Le passeur rame vers la garnison · {0} s",
+   "en": ""
   },
   {
    "fr": "Aucune carte ne peut entrer dans la chaîne :",

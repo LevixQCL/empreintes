@@ -116,6 +116,7 @@ function compteTitre(): TitreCompte | null {
 /** Redessine l'écran. Une erreur d'affichage ouvre la fenêtre du filet de sécurité au lieu de figer le jeu */
 brancherDifferes(() => afficher());
 
+let traverseeMinuteur: number | undefined;
 export function afficher() {
   try { dessiner(); } catch (e) { signaler(e, 'affichage', afficher); }
 }
@@ -167,6 +168,9 @@ function dessiner() {
       if (total > 1) page = { n: K.decouverteLot ?? 1, total };
     }
     const parole = paroleGardien(etat);
+    // la traversée d'un pillage : un seul nouvel affichage à l'arrivée de la barque
+    const arrivee = app.jeu.expedition.pillage?.arrivee ?? 0;
+    if (arrivee > Date.now()) { clearTimeout(traverseeMinuteur); traverseeMinuteur = window.setTimeout(afficher, arrivee - Date.now() + 30); }
     h = htmlCombat({ x: app.jeu.expedition, etat, parole, verrou: K.verrou, regles: K.regles, journal: K.journal, fuite: K.fuite, autoPermis: autoActif() && J.combatAutoPermis(app.jeu), auto: !!K.auto, viserAppris: (app.jeu.decouvertes ?? []).includes('viser'), eclats: K.eclats, ...(K.tuile ? { tuile: K.tuile } : {}), guide: K.guide, trouvees: trouveesDe(app.jeu.collection), fondus: K.fondus, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte, ...(page ? { decouvertePage: page } : {}) } : {}) });
   } else {
     app.mode = 'district';

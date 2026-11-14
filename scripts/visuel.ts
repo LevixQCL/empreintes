@@ -88,13 +88,14 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'menu', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="compte"]').catch(() => {}); } },
   { nom: 'classements', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="classements"]'); } },
   { nom: 'fleche', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="classements"]'); await p.click('[data-action="gt-tableau"][data-id="fleche"]'); } },
-  { nom: 'pillages', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); } },
-  { nom: 'pillages-fiche', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.$eval('.pl-fiche', (e) => e.scrollIntoView({ block: 'end' })); } },
-  { nom: 'pillage-depart', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); } },
-  { nom: 'pillages-journal', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.$eval('.pl-journal', (e) => e.scrollIntoView({ block: 'center' })); } },
-  { nom: 'pillage-modifier', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('.es-modifier'); } },
+  { nom: 'pillages', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="port-volet"][data-id="pillages"]'); } },
+  { nom: 'pillages-fiche', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="port-volet"][data-id="pillages"]'); await p.$eval('.pl-fiche', (e) => e.scrollIntoView({ block: 'end' })); } },
+  { nom: 'pillage-depart', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="port-volet"][data-id="pillages"]'); await p.click('[data-action="pillage-preparer"]'); } },
+  { nom: 'pillages-carte', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="port-volet"][data-id="pillages"]'); await p.$eval('.pl-carte', (e) => e.scrollIntoView({ block: 'center' })); } },
+  { nom: 'pillages-journal', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="port-volet"][data-id="pillages"]'); await p.$eval('.pl-journal', (e) => e.scrollIntoView({ block: 'center' })); } },
+  { nom: 'pillage-modifier', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="port-volet"][data-id="pillages"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('.es-modifier'); } },
   { nom: 'garnison-composer', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="garnison-modifier"]'); } },
-  { nom: 'pillage-combat', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('[data-action="partir"]'); await p.waitForTimeout(600); for (let i = 0; i < 3 && (await p.$('[data-action="decouverte-ok"]')); i++) { await p.click('[data-action="decouverte-ok"]'); await p.waitForTimeout(300); } } },
+  { nom: 'pillage-combat', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="port-volet"][data-id="pillages"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('[data-action="partir"]'); await p.waitForTimeout(600); for (let i = 0; i < 3 && (await p.$('[data-action="decouverte-ok"]')); i++) { await p.click('[data-action="decouverte-ok"]'); await p.waitForTimeout(300); } } },
   // les onglets Pillages et Flèche (28 octobre 2026)
   { nom: 'onglet-pillages', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-lieu="port"]'); } },
   { nom: 'port-presentation', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-lieu="port"]'); } },
@@ -220,9 +221,11 @@ async function main() {
     const d = saves.district.data;
     d.forge = { moduleId: Object.keys(d.collection)[0]!.split('@')[0], debut: T - 600_000, fin: T + 1_234_000 };
     // un journal du port rempli (les deux sens, gagné et perdu, un bouclier)
-    d.pillage = { coffre: 120, jetons: 3, jetonsLe: T - 3_600_000, gagnes: 2, perdus: 1, aEnvoyer: [], historique: [
+    // 14 novembre 2026 : sous pavillon pirate, du Renom, une revanche ouverte
+    d.pillage = { coffre: 120, jetons: 3, jetonsLe: T - 3_600_000, gagnes: 2, perdus: 1, aEnvoyer: [], pavillon: 'pirate', renom: 214, pirateLe: T - 90_000_000,
+      revanches: [{ id: 'kessandre', nom: 'Kessandre', jusqua: T + 50_000_000 }], historique: [
       { sens: 'defense', nom: 'Directeur anonyme', gagne: true, composants: 6, le: T - 1_800_000 },
-      { sens: 'attaque', nom: 'Cendrevigne', gagne: true, composants: 84, le: T - 7_200_000, bot: true },
+      { sens: 'attaque', nom: 'Cendrevigne', gagne: true, composants: 84, le: T - 7_200_000, bot: true, carte: 'ruee@cuivre' },
       { sens: 'defense', nom: 'Kessandre', gagne: false, composants: -12, le: T - 30_000_000 },
       { sens: 'defense', nom: 'Kessandre', gagne: true, composants: 0, le: T - 29_000_000, refusee: true },
       { sens: 'attaque', nom: 'Haut-Treuil', gagne: false, composants: -5, le: T - 90_000_000, bot: true },

@@ -4,6 +4,7 @@ import {
   ESCOUADES_STRATE,
   PILLAGE, butinPillage, chanceVictoire, choisirDefense, cibleDe, escouadeDefense, escouadesDe, placerDansEscouade, ciblesBots, etatPillage, forceEscouade, garnisonDe, majJetons, multButin,
   nouveauJeu, piller, protege, remonter, subirPillages, type Cible,
+  changerPavillon, pavillonDe, exposeDe, perteDe, porteeDe, placeDe, distance, traversee, revanchesOuvertes,
 } from '../src/core/jeu';
 import { jouerTourMoyen } from '../src/core/robot';
 
@@ -40,7 +41,7 @@ describe('Les pillages', () => {
 
   it('le journal du port garde les pillages faits et subis, les plus récents d’abord', () => {
     const j = pret();
-    const cible = cibleDe('miroir', 'Miroir', garnisonDe(j));
+    const cible = { ...cibleDe('miroir', 'Miroir', garnisonDe(j)), pavillon: 'pirate' as const };
     expect(piller(j, ESC, cible, 1000, 7).ok).toBe(true);
     j.dernierTick = 2000;
     const r = jouer(j);
@@ -56,7 +57,7 @@ describe('Les pillages', () => {
     const n = 60;
     for (let k = 0; k < n; k++) {
       const j = pret();
-      const cible = cibleDe('miroir', 'Miroir', garnisonDe(j));
+      const cible = { ...cibleDe('miroir', 'Miroir', garnisonDe(j)), pavillon: 'pirate' as const };
       expect(piller(j, ESC, cible, 0, 1 + k * 7919).ok).toBe(true);
       if (jouer(j).victoire) v++;
     }
@@ -64,26 +65,62 @@ describe('Les pillages', () => {
     expect(v / n).toBeLessThan(0.75);
   });
 
-  it('le butin suit l’écart de force, et le meilleur gain moyen est à force égale', () => {
+  it('le butin suit l’écart de force, et le meilleur gain moyen est à force égale ou un peu au-dessus', () => {
     expect(multButin(0.8)).toBe(PILLAGE.multMin);
     expect(multButin(1)).toBe(1);
     expect(multButin(1.3)).toBe(PILLAGE.multMax);
     const moyen = (e: number) => chanceVictoire(e) * multButin(e);
-    expect(moyen(1)).toBeGreaterThan(moyen(0.88));
-    expect(moyen(1)).toBeGreaterThan(moyen(1.1));
+    expect(moyen(1)).toBeGreaterThan(moyen(0.85));
+    expect(moyen(1)).toBeGreaterThan(moyen(1.15));
   });
 
-  it('une victoire prend au plus 10 % du coffre, plafonné', () => {
-    expect(butinPillage({ strate: 5, coffre: 100 }, 1).vol).toBe(10);
+  it('une victoire prend tout le minerai exposé, plafonné ; un pirate expose 3 % de son minerai, un neutre rien', () => {
+    expect(butinPillage({ strate: 5, coffre: 20 }, 1).vol).toBe(20);
     expect(butinPillage({ strate: 5, coffre: 100000 }, 1).vol).toBe(PILLAGE.plafondVol * 12);
+    expect(exposeDe(1000, 5)).toBe(30);
+    expect(exposeDe(100000, 5)).toBe(PILLAGE.plafondVol * 12);
+    const j = pret();
+    j.composants = 1000;
+    expect(garnisonDe(j).coffre).toBe(0);
+    changerPavillon(j, 'pirate', 0);
+    expect(garnisonDe(j).coffre).toBe(exposeDe(1000, PILLAGE.strateMin));
   });
 
-  it('le coffre ne dépasse jamais les composants : on le dépense en premier', () => {
+  it('un neutre qui attaque un directeur devient pirate, et ne rabat le pavillon que 72 h après', () => {
     const j = pret();
-    j.composants = 100;
-    etatPillage(j).coffre = 80;
-    j.composants = 30;
-    expect(etatPillage(j).coffre).toBe(30);
+    expect(pavillonDe(j)).toBe('neutre');
+    const bot = ciblesBots(j, forceEscouade(j, ESC), 0, 6)[0]!;
+    expect(piller(j, ESC, bot, 0, 1).ok).toBe(true);
+    jouer(j);
+    expect(pavillonDe(j)).toBe('neutre');
+    for (const id of ESC) j.porteurs[id]!.usure = 0;
+    const rival: Cible = { ...cibleDe('rival', 'Rival', garnisonDe(pret())), pavillon: 'pirate' };
+    const neutre: Cible = { ...rival, id: 'calme', pavillon: 'neutre' };
+    expect(piller(j, ESC, neutre, 0, 2).ok).toBe(false);
+    expect(piller(j, ESC, rival, 1000, 2).ok).toBe(true);
+    expect(pavillonDe(j)).toBe('pirate');
+    jouer(j);
+    expect(changerPavillon(j, 'neutre', 1000 + 71 * 3_600_000).ok).toBe(false);
+    expect(changerPavillon(j, 'neutre', 1000 + 72 * 3_600_000).ok).toBe(true);
+  });
+
+  it('les cibles hors de portée, la carte fixe et la traversée', () => {
+    const c: Cible = { id: 'a', nom: 'A', porteurs: ESC, force: 10, strate: 5, coffre: 0, pavillon: 'pirate' };
+    expect(porteeDe(c, 10)).toBe('ok');
+    expect(porteeDe({ ...c, force: 8 }, 10)).toBe('faible');
+    expect(porteeDe({ ...c, force: 12 }, 10)).toBe('forte');
+    expect(porteeDe({ ...c, force: 12 }, 10, true)).toBe('ok');
+    expect(porteeDe({ ...c, pavillon: 'neutre' }, 10)).toBe('neutre');
+    expect(placeDe('abc')).toEqual(placeDe('abc'));
+    expect(distance('abc', 'xyz')).toBe(distance('xyz', 'abc'));
+    expect(distance('abc', 'xyz')).toBeLessThanOrEqual(708);
+    expect(traversee(0)).toBe(PILLAGE.traversee.min);
+    expect(traversee(5000)).toBe(PILLAGE.traversee.max);
+    // les districts sans directeur gardent leur place et leur nom d'un jour à l'autre
+    const j = pret();
+    const a = ciblesBots(j, 5, 1, 6, 'moi'), b = ciblesBots(j, 5, 2, 6, 'moi');
+    expect(a.map((x) => x.nom)).toEqual(b.map((x) => x.nom));
+    expect(a.map((x) => x.milles)).toEqual(b.map((x) => x.milles));
   });
 
   it('un jeton par pillage, cinq au plus, un revient toutes les 4 h 48', () => {
@@ -103,50 +140,61 @@ describe('Les pillages', () => {
     expect(etatPillage(j).jetons).toBe(PILLAGE.jetonsMax);
   });
 
-  it('une victoire remplit le coffre ; une défaite en laisse 5 % ; un archipel par jour', () => {
+  it('une victoire rapporte le butin et le Renom ; une défaite laisse 2 % du minerai ; un district par jour', () => {
     const j = pret();
-    const facile: Cible = { id: 'x', nom: 'Proie', porteurs: ESC, force: 0.5, strate: 1, coffre: 50 };
+    const facile: Cible = { id: 'x', nom: 'Proie', porteurs: ESC, cartes: ['ruee@fer'], force: 0.5, strate: 1, coffre: 5, pavillon: 'pirate' };
     j.composants = 0;
-    piller(j, ESC, facile, 0, 3);
+    // la proie est hors de portée (trop faible) : seule une revanche le permettrait
+    expect(piller(j, ESC, facile, 0, 3).ok).toBe(false);
+    etatPillage(j).revanches = [{ id: 'x', nom: 'Proie', jusqua: 10 }];
+    expect(piller(j, ESC, facile, 0, 3, { revanche: true }).ok).toBe(true);
+    expect(etatPillage(j).jetons).toBe(PILLAGE.jetonsMax);
     const r = jouer(j);
     expect(r.victoire).toBe(true);
     expect(r.pillage!.gain).toBe(butinPillage(facile, 0.5 / forceEscouade(pret(), ESC)).base + 5);
+    expect(r.pillage!.carte).toBe('ruee@cuivre');
     expect(j.composants).toBe(r.pillage!.gain);
-    expect(etatPillage(j).coffre).toBe(r.pillage!.gain);
+    expect(etatPillage(j).renom).toBeGreaterThan(0);
     expect(j.pillage!.aEnvoyer).toEqual([{ cible: 'x', victoire: true, vol: 5, perte: 0, le: j.dernierTick }]);
 
+    for (const id of ESC) j.porteurs[id]!.usure = 0;
     j.composants = 1000;
-    etatPillage(j).coffre = 200;
-    const fort: Cible = { ...facile, id: 'y', force: 40 };
-    expect(piller(j, ESC, facile, 0, 4).ok).toBe(false);
+    const fort: Cible = { ...facile, id: 'y', force: forceEscouade(j, ESC) * 1.1 };
+    // gardes très forts en combat, pour être sûr de perdre
+    (PILLAGE as { gardes: number }).gardes = 30;
     expect(piller(j, ESC, fort, 0, 4).ok).toBe(true);
     const d = jouer(j);
+    (PILLAGE as { gardes: number }).gardes = 1.2;
     expect(d.victoire).toBe(false);
-    expect(d.pillage!.perte).toBe(10);
-    expect(j.composants).toBe(990);
-    expect(etatPillage(j).coffre).toBe(190);
+    expect(d.pillage!.perte).toBe(perteDe(1000, PILLAGE.strateMin));
+    expect(j.composants).toBe(1000 - d.pillage!.perte);
+    expect(piller(j, ESC, fort, 0, 5).ok).toBe(false);
   });
 
-  it('les attaques subies ne touchent que le coffre, plafonnées, chacune une seule fois', () => {
+  it('les attaques subies ne touchent qu’un pirate, plafonnées, chacune une seule fois, et ouvrent la revanche', () => {
     const j = pret(1);
     j.composants = 500;
-    etatPillage(j).coffre = 40;
     const subis = [
-      { id: 'a', nom: 'Ilse', victoire: false, vol: 0, perte: 7, le: 1 },
-      { id: 'b', nom: 'Bryan', victoire: true, vol: 100, perte: 0, le: 2 },
+      { id: 'a', par: 'u1', nom: 'Ilse', victoire: false, vol: 0, perte: 7, le: 1 },
+      { id: 'b', par: 'u2', nom: 'Bryan', victoire: true, vol: 100, perte: 0, le: 2 },
     ];
-    expect(subirPillages(j, subis)).toHaveLength(2);
-    // le vol est plafonné à 5 combats de sa Strate (−1 : 30 composants)
-    expect(etatPillage(j).coffre).toBe(17);
-    expect(j.composants).toBe(477);
-    expect(subirPillages(j, subis)).toHaveLength(0);
-    expect(j.composants).toBe(477);
+    // neutre : rien ne passe
+    subirPillages(j, subis);
+    expect(j.composants).toBe(500);
+    const k = pret(1);
+    k.composants = 500;
+    changerPavillon(k, 'pirate', 0);
+    expect(subirPillages(k, subis)).toHaveLength(2);
+    // +7 laissés, puis 3 % de 507 (15), sous le plafond de 4 combats de −1 (24)
+    expect(k.composants).toBe(507 - 15);
+    expect(revanchesOuvertes(k, 3)).toEqual([{ id: 'u2', nom: 'Bryan', jusqua: 2 + PILLAGE.revancheMs }]);
+    expect(subirPillages(k, subis)).toHaveLength(0);
   });
 
   it('le défenseur applique lui-même son bouclier et la limite du jour', () => {
     const j = pret();
     j.composants = 500;
-    etatPillage(j).coffre = 200;
+    changerPavillon(j, 'pirate', 0);
     const h = 3_600_000;
     const l = subirPillages(j, [
       { id: 'a', nom: 'A', victoire: true, vol: 5, perte: 0, le: 0 },

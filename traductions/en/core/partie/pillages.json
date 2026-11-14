@@ -18,6 +18,46 @@
    "en": "Squad {0} now guards the port."
   },
   {
+   "fr": "Ton dernier pillage est trop récent : le pavillon pirate reste hissé encore {0} h.",
+   "en": ""
+  },
+  {
+   "fr": "Ton district rabat le pavillon : il redevient neutre.",
+   "en": ""
+  },
+  {
+   "fr": "Pavillon neutre : aucun directeur ne peut plus t’attaquer.",
+   "en": ""
+  },
+  {
+   "fr": "Ton district hisse le pavillon pirate.",
+   "en": ""
+  },
+  {
+   "fr": "Pavillon pirate : tu peux piller les autres pirates, et ils peuvent te piller.",
+   "en": ""
+  },
+  {
+   "fr": "Mousse",
+   "en": ""
+  },
+  {
+   "fr": "Matelot",
+   "en": ""
+  },
+  {
+   "fr": "Corsaire",
+   "en": ""
+  },
+  {
+   "fr": "Capitaine",
+   "en": ""
+  },
+  {
+   "fr": "Écumeur des piliers",
+   "en": ""
+  },
+  {
    "fr": "Cendrevigne",
    "en": "Ashvine"
   },
@@ -82,8 +122,24 @@
    "en": "{0} has already been attacked today."
   },
   {
+   "fr": "{0} vogue sous pavillon neutre : on ne l’attaque pas.",
+   "en": ""
+  },
+  {
+   "fr": "{0} n’est pas à ta portée.",
+   "en": ""
+  },
+  {
    "fr": "La garnison de {0} sort à ta rencontre : {1}.",
    "en": "{0}’s garrison comes out to meet you: {1}."
+  },
+  {
+   "fr": "En attaquant un directeur, ton district hisse le pavillon pirate.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade part prendre sa revanche sur {0}.",
+   "en": ""
   },
   {
    "fr": "L’escouade part piller {0}.",
@@ -98,24 +154,40 @@
    "en": "Raid on {0} repelled.{1}"
   },
   {
-   "fr": " L’escouade laisse {0} minerai de son coffre.",
-   "en": " The squad leaves {0} ore from its chest."
+   "fr": " L’escouade y laisse {0} minerai.",
+   "en": "",
+   "ancien": {
+    "fr": " L’escouade laisse {0} minerai de son coffre.",
+    "en": " The squad leaves {0} ore from its chest."
+   }
   },
   {
-   "fr": "{0} a pillé ton district{1}.",
-   "en": "{0} raided your district{1}."
+   "fr": "{0} a pillé ton district{1}.{2}",
+   "en": "",
+   "ancien": {
+    "fr": "{0} a pillé ton district{1}.",
+    "en": "{0} raided your district{1}."
+   }
   },
   {
-   "fr": " et pris {0} minerai de ton coffre",
-   "en": " and took {0} ore from your chest"
+   "fr": " et pris {0} minerai",
+   "en": "",
+   "ancien": {
+    "fr": " et pris {0} minerai de ton coffre",
+    "en": " and took {0} ore from your chest"
+   }
+  },
+  {
+   "fr": " La revanche t’attend au Port.",
+   "en": ""
   },
   {
    "fr": "Ta garnison a repoussé {0}{1}.{2}",
    "en": "Your garrison drove off {0}{1}.{2}"
   },
   {
-   "fr": " : +{0} minerai laissé dans ton coffre",
-   "en": ": +{0} ore left in your chest"
+   "fr": " : +{0} minerai laissé sur tes quais",
+   "en": ""
   },
   {
    "fr": " Le quartier l’a vu : {0}.",

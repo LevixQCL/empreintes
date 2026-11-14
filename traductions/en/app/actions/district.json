@@ -62,6 +62,10 @@
    "en": ", +{0} Shards"
   },
   {
+   "fr": "Impossible de retrouver ce district pour l’instant : réessaie dans un moment.",
+   "en": ""
+  },
+  {
    "fr": "{0} est sous bouclier pour l’instant : choisis un autre district.",
    "en": "{0} is shielded for now: pick another district."
   },

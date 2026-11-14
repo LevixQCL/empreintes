@@ -66,16 +66,44 @@
    "en": "Driven back at quay {0}: the squad keeps its quay."
   },
   {
-   "fr": "Pillage réussi à {0} : +{1} minerai, rangé dans ton coffre.",
-   "en": "Raid on {0} successful: +{1} ore, stored in your chest."
+   "fr": "Pillage réussi à {0} : +{1} minerai{2}{3}.",
+   "en": "",
+   "ancien": {
+    "fr": "Pillage réussi à {0} : +{1} minerai, rangé dans ton coffre.",
+    "en": "Raid on {0} successful: +{1} ore, stored in your chest."
+   }
   },
   {
-   "fr": "Repoussés à {0}.{1}",
-   "en": "Driven back at {0}.{1}"
+   "fr": ", +{0} Renom",
+   "en": ""
   },
   {
-   "fr": " L’escouade a laissé {0} minerai de son coffre.",
-   "en": " The squad left {0} ore from its chest."
+   "fr": ", et l’empreinte de « {0} »{1}",
+   "en": ""
+  },
+  {
+   "fr": " (nouvelle carte !)",
+   "en": " (new card!)"
+  },
+  {
+   "fr": "Repoussés à {0}.{1}{2}",
+   "en": "",
+   "ancien": {
+    "fr": "Repoussés à {0}.{1}",
+    "en": "Driven back at {0}.{1}"
+   }
+  },
+  {
+   "fr": " L’escouade a laissé {0} minerai.",
+   "en": "",
+   "ancien": {
+    "fr": " L’escouade a laissé {0} minerai de son coffre.",
+    "en": " The squad left {0} ore from its chest."
+   }
+  },
+  {
+   "fr": " {0} Renom.",
+   "en": ""
   },
   {
    "fr": "L’escouade a fui : elle rentre épuisée (+{0} d’Usure chacun). ",

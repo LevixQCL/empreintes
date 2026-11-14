@@ -9,9 +9,9 @@ import type { CercleEcran } from './cercle';
 import { COULEUR } from './vue';
 
 /** Les archipels de la carte et ce qu'il faut pour les afficher */
-export function cartePillages(j: Jeu, now: number, enLigne: Cible[] = []) {
+export function cartePillages(j: Jeu, now: number, enLigne: Cible[] = [], monId = 'moi') {
   const escouade = escouadePourDepart(j);
-  const cibles = ciblesDuJour(j, escouade, now, enLigne);
+  const cibles = ciblesDuJour(j, escouade, now, enLigne, monId);
   return { escouade, cibles, force: forceEscouade(j, escouade), faits: faitsDuJour(j, now) };
 }
 

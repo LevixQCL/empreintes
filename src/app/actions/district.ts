@@ -1,7 +1,7 @@
 // Actions du district : bâtiments, Porteurs, cartes, escouade, départs, Chroniques.
 
 import { cartePillages, portOuvert } from '../../ui/acces';
-import { lireCiblesEnLigne, sousBouclier } from '../pillages';
+import { cibleRevanche, lireCiblesEnLigne, planifierGarnison, sousBouclier } from '../pillages';
 import { relireVitrines, suivreCercle } from '../cercle';
 import { afficher } from '../rendu';
 import { cibleDefi, lireGardiensEnLigne, recevoirAssauts, synchroGarde } from '../fleche';
@@ -219,7 +219,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     // le Port (28 octobre 2026) : sa présentation, ses deux volets
     case 'port-aide': D.portAide = true; window.scrollTo(0, 0); break;
     case 'port-entrer': app.jeu.portVu = true; D.portAide = false; sauver(); window.scrollTo(0, 0); break;
-    case 'port-volet': D.voletPort = id === 'missions' || id === 'marees' ? id : 'pillages'; D.mareePlace = null; break;
+    case 'port-volet': D.voletPort = id === 'pillages' || id === 'marees' ? id : 'missions'; D.mareePlace = null; break;
     // les contrats de marée (31 octobre 2026) : la marée affichée, le Porteur de chaque épreuve, puis le départ de la gabare
     case 'maree-rang': D.mareeRang = id as J.RangMaree; D.mareePlace = null; break;
     case 'maree-place': { const k = Number(b.dataset.index ?? 0); D.mareePlace = D.mareePlace === k ? null : k; D.choixTous = false; break; }
@@ -294,9 +294,25 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     }
     case 'pillage-voir': D.pillageCible = id; break;
     case 'pillage-jeton': { const r = J.acheterJeton(app.jeu, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
+    case 'pavillon': {
+      const r = J.changerPavillon(app.jeu, id === 'pirate' ? 'pirate' : 'neutre', Date.now());
+      resultat(r); if (r.ok) { D.message = r.message ?? ''; planifierGarnison(); }
+      break;
+    }
+    case 'pavillon-avis': D.pavillonAvis = null; break;
+    case 'pillage-revanche': {
+      const c = await cibleRevanche(id);
+      if (!c) { D.message = t('Impossible de retrouver ce district pour l’instant : réessaie dans un moment.'); break; }
+      D.deck = null; D.villeDepart = false; D.fouille = null; D.epreuve = null; D.fleche = false; D.pillage = c; D.strateChoisie = c.strate;
+      D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
+      break;
+    }
     case 'pillage-preparer': {
-      const c = cartePillages(app.jeu, Date.now(), D.pillagesEnLigne ?? []).cibles.find((x) => x.id === id);
+      const c = cartePillages(app.jeu, Date.now(), D.pillagesEnLigne ?? [], D.monId).cibles.find((x) => x.id === id);
       if (!c) break;
+      // un neutre qui vise un directeur : on prévient d'abord que son pavillon passera pirate
+      if (!c.bot && J.pavillonDe(app.jeu) === 'neutre' && D.pavillonAvis !== c.id) { D.pavillonAvis = c.id; break; }
+      D.pavillonAvis = null;
       // un vrai directeur : son bouclier se vérifie en ligne juste avant
       const bouclier = await sousBouclier(c);
       if (bouclier !== false) { D.message = bouclier ? t`${c.nom} est sous bouclier pour l’instant : choisis un autre district.` : t`Impossible de joindre ${c.nom} pour l’instant : réessaie dans un moment.`; break; }

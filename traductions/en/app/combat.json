@@ -106,12 +106,24 @@
    "en": "{0} is raided"
   },
   {
-   "fr": "La garnison se replie. L’escouade rapporte {0} minerai{1}.",
-   "en": "The garrison falls back. The squad brings back {0} ore{1}."
+   "fr": "La garnison se replie. L’escouade rapporte {0} minerai{1}{2}.",
+   "en": "",
+   "ancien": {
+    "fr": "La garnison se replie. L’escouade rapporte {0} minerai{1}.",
+    "en": "The garrison falls back. The squad brings back {0} ore{1}."
+   }
   },
   {
-   "fr": ", dont {0} pris à son coffre",
-   "en": ", {0} of it from their chest"
+   "fr": ", dont {0} pris à ses réserves",
+   "en": "",
+   "ancien": {
+    "fr": ", dont {0} pris à son coffre",
+    "en": ", {0} of it from their chest"
+   }
+  },
+  {
+   "fr": ", du Renom, et l’empreinte d’une de ses cartes",
+   "en": ""
   },
   {
    "fr": "Rentrer avec le butin",
@@ -126,8 +138,12 @@
    "en": "{0} holds firm.{1} A weaker garrison, or a better-equipped squad, will get through."
   },
   {
-   "fr": " L’escouade laisse {0} minerai de son coffre en repartant.",
-   "en": " The squad leaves {0} ore from its chest behind as it retreats."
+   "fr": " L’escouade laisse {0} minerai sur ses quais en repartant.",
+   "en": "",
+   "ancien": {
+    "fr": " L’escouade laisse {0} minerai de son coffre en repartant.",
+    "en": " The squad leaves {0} ore from its chest behind as it retreats."
+   }
   },
   {
    "fr": "Le groupe",
