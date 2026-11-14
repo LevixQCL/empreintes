@@ -1,5 +1,6 @@
 // Le Mur des empreintes (7 novembre 2026), dans la fiche « Ceux qui te suivent » (habitations, roue du haut).
-// Les 48 familles du district : celles qui sont là montrent leur nom, les autres une silhouette (« 31 / 48 »).
+// Les 48 familles du district : une main éclairée pour celles qui sont là, dans l'ombre pour les autres (« 31 / 48 ») ;
+// depuis le 14 novembre 2026, le mur tient en 8 colonnes, sans étiquettes : le nom se lit en touchant la main.
 // Toucher une famille ouvre son souvenir ; une famille peut le confier à une carte qui a atteint le palier Sillon
 // (une ligne dans le journal de la carte, aucun effet en combat). Les règles : core/familles.ts, core/partie/vecu.ts.
 // Ce fichier n'importe pas coquille.ts (coquille.ts l'importe) : pas de dépendance en boucle.
@@ -46,10 +47,10 @@ const MONTREES = 6;
 export function blocMur(j: Jeu, ouverte: string | null | undefined): string {
   const la = new Set(j.foyers ?? []);
   const r = rumeurVersFamille(j);
-  let h = `<section class="fb-bloc mur-empreintes" style="--planche:url(${planchEmpreintes})"><h3 class="titre-bloc">${ICO.mur}${tr`Le Mur des empreintes`}<b class="mur-compte">${la.size} / ${FAMILLES_DISTRICT.length}</b></h3>`
-    + `<p class="fb-vide">${tr`Chaque famille qui te suit pose sa main sur le mur des habitations. Touche une famille pour lire son souvenir.`}</p>`
+  let h = `<section class="fb-bloc mur-empreintes" style="--planche:url(${planchEmpreintes})"><h3 class="titre-bloc">${tr`Le Mur des empreintes`}</h3>`
+    + `<p class="fb-vide">${tr`Chaque famille qui te suit pose sa main sur le mur. Touche une main pour lire son souvenir.`}</p>`
     + (r ? `<div class="mur-rumeur" aria-label="${tr`Bouche-à-oreille : ${r.points} sur ${r.seuil}`}"><span>${tr`On parle de toi au quartier`}</span><i style="--p:${Math.round((100 * r.points) / r.seuil)}%"></i><small>${tr`${r.points} / ${r.seuil} : une famille de plus`}</small></div>` : '')
-    + `<ul class="mur-grille">`;
+    + `<ul class="mur-grille compacte">`;
   FAMILLES_DISTRICT.forEach((f, k) => {
     const ici = la.has(f.id);
     // sa main sur le mur : peinte et éclairée si la famille est là, dans l'ombre sinon
@@ -57,7 +58,7 @@ export function blocMur(j: Jeu, ouverte: string | null | undefined): string {
     const porte = ici && !!carteDuSouvenir(j, f.id);
     h += ici
       ? `<li><button type="button" class="mur-tuile ${f.arrivee}${ouverte === f.id ? ' ouverte' : ''}${porte ? ' gravee' : ''}" data-action="famille" data-id="${f.id}" aria-expanded="${ouverte === f.id}" aria-label="${echap(majuscule(f.nom))}${porte ? tr(', souvenir confié') : ''}">${main}<span>${echap(court(f))}</span></button></li>`
-      : `<li><span class="mur-tuile vide" aria-label="${tr`Une famille qui ne te suit pas encore`}">${main}<span>${f.arrivee === 'basses' ? tr('En mer') : tr('Quartier')}</span></span></li>`;
+      : `<li><span class="mur-tuile vide" aria-label="${tr`Une famille qui ne te suit pas encore`}">${main}</span></li>`;
   });
   h += `</ul>`;
   const f = ouverte ? familleDef(ouverte) : null;

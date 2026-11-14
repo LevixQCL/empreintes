@@ -106,32 +106,140 @@
    "en": "The whole district follows you. The day you claim the island, no one will be left below."
   },
   {
-   "fr": "La Nuit des lignes",
-   "en": "The Night of Lines"
+   "fr": "Nuit des lignes",
+   "en": "",
+   "ancien": {
+    "fr": "La Nuit des lignes",
+    "en": "The Night of Lines"
+   }
   },
   {
-   "fr": "Chaque lundi, le district repeint sa ligne bleue un peu plus haut et fait le bilan. Ceux qui ont vu ce que tu as fait en parlent : {0} % de bouche-à-oreille en plus. Une semaine sans rien ne fait rien perdre.",
-   "en": "Every Monday, the district repaints its blue line a little higher and takes stock. Those who saw what you did talk about it: {0}% more word of mouth. A week with nothing loses nothing."
+   "fr": "lundi",
+   "en": ""
   },
   {
-   "fr": "Cette semaine :",
-   "en": "This week:"
+   "fr": "+{0} cette semaine",
+   "en": "",
+   "ancien": {
+    "fr": "Cette semaine :",
+    "en": "This week:"
+   }
   },
   {
-   "fr": "famille{0} arrivée{1} pour l’instant.",
-   "en": "famil{0|ies|y}{1|} so far."
+   "fr": "Ce qui a fait venir les familles la dernière fois",
+   "en": ""
   },
   {
-   "fr": "La dernière Nuit{0}",
-   "en": "The last Night{0}"
+   "fr": "Chaque lundi, le district repeint sa ligne bleue un peu plus haut. Ceux qui ont vu ce que tu as fait en parlent : {0} % de bouche-à-oreille en plus. Une semaine sans rien ne fait rien perdre.",
+   "en": "",
+   "ancien": {
+    "fr": "Chaque lundi, le district repeint sa ligne bleue un peu plus haut et fait le bilan. Ceux qui ont vu ce que tu as fait en parlent : {0} % de bouche-à-oreille en plus. Une semaine sans rien ne fait rien perdre.",
+    "en": "Every Monday, the district repaints its blue line a little higher and takes stock. Those who saw what you did talk about it: {0}% more word of mouth. A week with nothing loses nothing."
+   }
   },
   {
-   "fr": " · {0} famille{1}",
-   "en": " · {0} famil{1|ies|y}"
+   "fr": "{0} Et un creuseur volontaire.",
+   "en": "",
+   "ancien": {
+    "fr": "{0} Avec un creuseur volontaire et un souvenir pour les Archives.",
+    "en": "{0} Comes with a volunteer digger and a keepsake for the Archives."
+   }
   },
   {
-   "fr": "Ceux qui ont vu, cette nuit-là",
-   "en": "Those who saw, that night"
+   "fr": "Un creuseur volontaire, et une famille confie un souvenir aux Archives.",
+   "en": "",
+   "ancien": {
+    "fr": "Toutes les 6 familles, un palier : un creuseur volontaire, et une famille confie un souvenir aux Archives.",
+    "en": "Every 6 families, a tier: a volunteer digger, and a family entrusts a keepsake to the Archives."
+   }
+  },
+  {
+   "fr": "Prochain palier · {0} familles",
+   "en": "",
+   "ancien": {
+    "fr": "/ {0} familles",
+    "en": "/ {0} families"
+   }
+  },
+  {
+   "fr": "encore {0}",
+   "en": ""
+  },
+  {
+   "fr": "Secourir une famille",
+   "en": "Rescue a family"
+  },
+  {
+   "fr": "Mission de 3 h au Port",
+   "en": ""
+  },
+  {
+   "fr": "Recueillir des naufragés",
+   "en": "Take in castaways"
+  },
+  {
+   "fr": "Mission « Naufragés »",
+   "en": ""
+  },
+  {
+   "fr": "Vaincre les gardiens",
+   "en": "Defeat the guardians"
+  },
+  {
+   "fr": "De −1 à −10",
+   "en": "",
+   "ancien": {
+    "fr": "Chaque gardien vaincu de −1 à −10 : l’espoir de l’Écluse grandit.",
+    "en": "Every guardian defeated from −1 to −10: hope grows at the Sluice."
+   }
+  },
+  {
+   "fr": "Les choix justes en bas",
+   "en": "The right choices down below"
+  },
+  {
+   "fr": "Aider ceux qu’on croise",
+   "en": "",
+   "ancien": {
+    "fr": "Aider ceux qu’on croise se sait au quartier.",
+    "en": "Word gets around the quarter when you help the people you meet."
+   }
+  },
+  {
+   "fr": "Repousser un pillage",
+   "en": "Repel a raid"
+  },
+  {
+   "fr": "La garnison du Port tient",
+   "en": "",
+   "ancien": {
+    "fr": "Quand la garnison du Port tient.",
+    "en": "When the Port’s garrison holds."
+   }
+  },
+  {
+   "fr": "Des quais sur la Flèche",
+   "en": "",
+   "ancien": {
+    "fr": "Gagner des quais sur la Flèche",
+    "en": "Win quays on the Spire"
+   }
+  },
+  {
+   "fr": "De la place sur les îles",
+   "en": "",
+   "ancien": {
+    "fr": "De la place sur les îles.",
+    "en": "Room on the islands."
+   }
+  },
+  {
+   "fr": "Comment en gagner",
+   "en": ""
+  },
+  {
+   "fr": "L’eau monte, et tout le district le sait. Chaque famille que tu protèges décide de te suivre, et ne te quitte plus. Le jour où tu réclameras l’île, elles monteront avec toi.",
+   "en": "The water is rising, and the whole district knows it. Every family you protect decides to follow you, and never leaves. The day you claim the island, they’ll go up with you."
   },
   {
    "fr": "LA MONNAIE DU DISTRICT",
@@ -334,78 +442,6 @@
    "en": "Those who follow you"
   },
   {
-   "fr": "L’eau monte, et tout le district le sait. Chaque famille que tu protèges décide de te suivre, et ne te quitte plus. Le jour où tu réclameras l’île, elles monteront avec toi.",
-   "en": "The water is rising, and the whole district knows it. Every family you protect decides to follow you, and never leaves. The day you claim the island, they’ll go up with you."
-  },
-  {
-   "fr": "/ {0} familles",
-   "en": "/ {0} families"
-  },
-  {
-   "fr": " · encore {0} pour le palier {1}",
-   "en": " · {0} more for tier {1}"
-  },
-  {
-   "fr": "Secourir une famille",
-   "en": "Rescue a family"
-  },
-  {
-   "fr": "Au Port, dans les missions : un Porteur libre part 3 h et ramène une famille restée dans les quartiers noyés.",
-   "en": "At the Port, under Missions: a free Bearer leaves for 3 h and brings back a family left in the drowned quarters."
-  },
-  {
-   "fr": "Recueillir des naufragés",
-   "en": "Take in castaways"
-  },
-  {
-   "fr": "Une mission « Naufragés » depuis le Port : le quartier voit la barque rentrer.",
-   "en": "A “Castaways” mission from the Port: the quarter sees the boat come home."
-  },
-  {
-   "fr": "Vaincre les gardiens",
-   "en": "Defeat the guardians"
-  },
-  {
-   "fr": "Chaque gardien vaincu de −1 à −10 : l’espoir de l’Écluse grandit.",
-   "en": "Every guardian defeated from −1 to −10: hope grows at the Sluice."
-  },
-  {
-   "fr": "Les choix justes en bas",
-   "en": "The right choices down below"
-  },
-  {
-   "fr": "Aider ceux qu’on croise se sait au quartier.",
-   "en": "Word gets around the quarter when you help the people you meet."
-  },
-  {
-   "fr": "Repousser un pillage",
-   "en": "Repel a raid"
-  },
-  {
-   "fr": "Quand la garnison du Port tient.",
-   "en": "When the Port’s garrison holds."
-  },
-  {
-   "fr": "Gagner des quais sur la Flèche",
-   "en": "Win quays on the Spire"
-  },
-  {
-   "fr": "De la place sur les îles.",
-   "en": "Room on the islands."
-  },
-  {
-   "fr": "{0} familles{1}",
-   "en": "{0} families{1}"
-  },
-  {
-   "fr": "{0} Avec un creuseur volontaire et un souvenir pour les Archives.",
-   "en": "{0} Comes with a volunteer digger and a keepsake for the Archives."
-  },
-  {
-   "fr": "Un creuseur volontaire et un souvenir pour les Archives.",
-   "en": "A volunteer digger and a keepsake for the Archives."
-  },
-  {
    "fr": "CHAQUE SEMAINE",
    "en": "EVERY WEEK"
   },
@@ -558,16 +594,8 @@
    "en": "What the chest holds"
   },
   {
-   "fr": "Les paliers",
-   "en": "Tiers"
-  },
-  {
    "fr": "À quoi ça sert",
    "en": "What it’s for"
-  },
-  {
-   "fr": "Toutes les 6 familles, un palier : un creuseur volontaire, et une famille confie un souvenir aux Archives.",
-   "en": "Every 6 families, a tier: a volunteer digger, and a family entrusts a keepsake to the Archives."
   },
   {
    "fr": "Voir le classement des profondeurs",
