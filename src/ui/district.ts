@@ -1865,7 +1865,8 @@ export function htmlRencontre(n = 0): string {
   h += `<footer class="rencontre-bas">`
     + (fini
       ? `<button type="button" class="btn prim large appel-porte" data-action="briefing">${ICO.porte}${tr`Ouvrir la porte`}</button>`
-      : `<button type="button" class="btn prim large appel-porte" data-action="rencontre-suite">${n ? tr`Écouter la suite` : tr`Les écouter`}<small class="compte-repliques">${n} / ${REPLIQUES.length}</small></button>`
+      // 14 novembre 2026 : plus de bouton « Écouter la suite », on touche l'image (à gauche pour revenir), comme dans l'intro
+      : `<span class="indice-bulle">${n ? tr`Touche l’écran pour la suite` : tr`Touche l’écran pour les écouter`} <small class="compte-repliques">${n} / ${REPLIQUES.length}</small></span>`
         + `<button type="button" class="lien-passer" data-action="briefing">${tr`Passer`}</button>`)
     + `</footer></section>`;
   return h;

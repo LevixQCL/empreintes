@@ -307,3 +307,7 @@
 #app .titre-langue:hover{color:var(--x-glace)}
 #app .titre-langue:focus-visible{outline:2px solid var(--x-glace);outline-offset:1px}
 #app .titre-langue.actif{color:#1A1406;background:linear-gradient(180deg,#F6DE9C,#D9AE55);box-shadow:0 0 12px rgba(242,213,140,.35);cursor:default}
+/* 14 novembre 2026 : on avance en touchant l'écran (à gauche pour revenir) ; le pied ne garde qu'un indice, puis le bouton final */
+.scene-briefing.bf{cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+.bf-bas{justify-content:center;min-height:50px}
+.bf-bas .indice-bulle{color:var(--x-txt);text-align:center}

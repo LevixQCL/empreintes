@@ -19,7 +19,7 @@ import { finPour } from '../combat';
 import { rafraichirVille } from '../ville';
 import { app, compteEtat, D, G, K, racine } from '../etat';
 import { sauver } from '../synchro';
-import { ouvrir, resultat, type Clic, type Suite } from './commun';
+import { ouvrir, resultat, toucheAGauche, type Clic, type Suite } from './commun';
 import { t } from '../../core/i18n';
 
 /** Le pseudo, une fois, à une recrue connectée qui n'en a pas (la fenêtre s'ouvre par-dessus l'écran du moment) */
@@ -343,9 +343,14 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     }
     case 'reprendre': app.mode = 'combat'; K.fin = finPour(); break;
     case 'rencontre': D.vue = 'rencontre'; D.bulles = 0; break;
-    case 'rencontre-suite': D.bulles = Math.min(D.bulles + 1, NB_REPLIQUES); break;
+    // la rencontre, le briefing et les scènes se lisent au toucher : à gauche on revient, ailleurs on avance (14 novembre 2026)
+    case 'rencontre-suite':
+      if (c.b.classList.contains('scene-rencontre') && toucheAGauche(c)) { D.bulles = Math.max(D.bulles - 1, 0); break; }
+      D.bulles = Math.min(D.bulles + 1, NB_REPLIQUES); break;
     case 'briefing': D.vue = 'briefing'; D.etape = 0; window.scrollTo(0, 0); break;
-    case 'briefing-suite': D.etape = Math.min(D.etape + 1, nbEtapes('chambre') - 1); break;
+    case 'briefing-suite':
+      if (c.b.classList.contains('scene-briefing') && toucheAGauche(c)) { D.etape = Math.max(D.etape - 1, 0); break; }
+      D.etape = Math.min(D.etape + 1, nbEtapes('chambre') - 1); break;
     case 'briefing-retour': D.etape = Math.max(D.etape - 1, 0); break;
     // « Ton district » : à l'arrivée après la chambre, et depuis le menu
     case 'accueil': ouvrir('accueil'); D.etape = 0; window.scrollTo(0, 0); break;
@@ -376,7 +381,9 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       break;
     case 'biblio-onglet': D.onglet = id === 'archives' || id === 'campagne' || id === 'bestiaire' ? id : 'chroniques'; D.chapitre = null; break;
     // les scènes de la campagne : la suivante réplique, la fin (vue pour de bon), et revoir depuis la Bibliothèque
-    case 'scene-suite': D.scene = (D.scene ?? 0) + 1; break;
+    case 'scene-suite':
+      if (toucheAGauche(c)) { D.scene = Math.max((D.scene ?? 0) - 1, 0); break; }
+      D.scene = (D.scene ?? 0) + 1; break;
     case 'scene-fin': {
       if (D.revoir) D.revoir = null;
       else { const s = J.sceneCampagne(app.jeu); if (s && J.voirScene(app.jeu, s.id)) sauver(); }

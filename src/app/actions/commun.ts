@@ -28,5 +28,12 @@ export interface Clic {
   avantGains: ReturnType<typeof relever> | null;
 }
 
+/** Les écrans qu'on lit « à la Instagram » (Bryan, 14 novembre 2026) : un toucher dans le tiers gauche revient en arrière */
+export const toucheAGauche = (c: Clic): boolean => {
+  if (c.ev.clientX <= 0) return false;
+  const r = c.b.getBoundingClientRect();
+  return c.ev.clientX < r.left + r.width / 3;
+};
+
 /** afficher : redessiner et montrer les gains ; fin : tout est déjà fait ; inconnu : ce n'est pas une action de ce thème */
 export type Suite = 'afficher' | 'fin' | 'inconnu';

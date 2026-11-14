@@ -10,7 +10,7 @@ import { boutique, majCompteAchat, payer, recitOuvert } from '../boutique';
 import { afficher } from '../rendu';
 import { sauver } from '../synchro';
 import { noterAge } from '../../save/age';
-import type { Clic, Suite } from './commun';
+import { toucheAGauche, type Clic, type Suite } from './commun';
 import { pleinEcran } from '../plein-ecran';
 
 export async function agirIntro(a: string, c: Clic): Promise<Suite> {
@@ -37,8 +37,7 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
     // toucher l'image : le premier tiers à gauche revient en arrière, le reste avance ; au tout dernier écran, on passe à la suite
     case 'intro-suivant': {
       if (app.texteCache) { app.texteCache = false; break; }
-      const r = c.b.getBoundingClientRect();
-      if (c.b.classList.contains('intro') && c.ev.clientX > 0 && c.ev.clientX < r.left + r.width / 3) { reculerIntro(); break; }
+      if (c.b.classList.contains('intro') && toucheAGauche(c)) { reculerIntro(); break; }
       if (!avancerIntro()) return agirIntro('intro-passer', c);
       break;
     }
@@ -53,7 +52,8 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
         if (fin && RECITS_ORIGINES[app.recit]) { app.recitChoix = true; window.scrollTo(0, 0); break; }
         app.recit = null; app.mode = 'district'; window.scrollTo(0, 0); break;
       }
-      pleinEcran(false);
+      // la première fois, on reste en plein écran pour la rencontre, le briefing et le premier combat ; « Revoir l'intro » en sort
+      if (app.introLongue) pleinEcran(false);
       app.jeu.introVue = true;
       app.mode = app.jeu.expedition ? 'combat' : 'district';
       D.vue = app.jeu.chambre ? 'archipel' : 'rencontre';

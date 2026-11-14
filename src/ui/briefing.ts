@@ -71,7 +71,7 @@ export function htmlBriefing(etape: number, suite: Suite = 'chambre'): string {
   const e = S.etapes[i]!;
   const d = porteurDef(e.qui);
   const dernier = i === S.etapes.length - 1;
-  return `<section class="scene-briefing bf bf-${suite}" style="--image:url(./intro/00-titre.webp)" aria-label="${S.nom}">`
+  return `<section class="scene-briefing bf bf-${suite}" style="--image:url(./intro/00-titre.webp)" aria-label="${S.nom}" data-action="${S.action}-suite">`
     + `<div class="rencontre-fond" aria-hidden="true"><div class="rencontre-image"><img src="./intro/00-titre.webp" alt="" decoding="async"><span class="t-flamme"></span><span class="t-halo"></span></div></div>`
     + `<header class="bf-haut"><span class="bf-etape">${S.nom} <b>${i + 1}</b> / ${S.etapes.length}</span>`
     + `<button type="button" class="bf-passer" data-action="${S.passer}">${tr`Passer`}</button>`
@@ -81,7 +81,7 @@ export function htmlBriefing(etape: number, suite: Suite = 'chambre'): string {
     + `<p class="bf-texte">${echap(e.texte)}</p></div>`
     + `<div class="bf-demo">${e.demo()}</div></div>`
     + `<footer class="bf-bas">`
-    + (i > 0 ? `<button type="button" class="btn sec" data-action="${S.action}-retour">${ICO.retour}${tr`Retour`}</button>` : '<span></span>')
-    + (dernier ? S.fin : `<button type="button" class="btn prim" data-action="${S.action}-suite">${tr`Suite`}</button>`)
+    // 14 novembre 2026 : plus de Retour / Suite, on touche l'écran (à gauche pour revenir) ; seul le dernier garde son bouton
+    + (dernier ? S.fin : `<span class="indice-bulle">${i === 0 ? tr`Touche à droite pour avancer, à gauche pour revenir` : ''}</span>`)
     + `</footer></section>`;
 }

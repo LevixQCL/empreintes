@@ -341,3 +341,5 @@
 .ecran-combat.lecon-t3 .intention{outline:2px solid var(--gold);outline-offset:3px}
 @keyframes vise{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @media (prefers-reduced-motion: reduce){ .demo-rail .geste,.demo-chaine .badge-reso,.repere,.ecran-combat.guide .vise{animation:none} }
+.rencontre-bas .indice-bulle{color:#F6F1E6;text-shadow:0 1px 4px rgba(0,0,0,.9);font-size:13px}
+.rencontre-bas .compte-repliques{opacity:.75;margin-left:6px}

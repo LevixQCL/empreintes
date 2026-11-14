@@ -74,12 +74,8 @@
    "en": "Open the door"
   },
   {
-   "fr": "Retour",
-   "en": "Back"
-  },
-  {
-   "fr": "Suite",
-   "en": "Next"
+   "fr": "Touche à droite pour avancer, à gauche pour revenir",
+   "en": "Tap right to go on, left to go back"
   }
  ]
 }
