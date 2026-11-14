@@ -47,11 +47,7 @@
   },
   {
    "fr": "L’escouade lui a infligé {0} dégâts. Ta frappe part au classement de la semaine et à la jauge de la ville.",
-   "en": "The squad dealt it {0} damage. Your strike goes to this week’s leaderboard and to the city gauge.",
-   "ancien": {
-    "fr": "L’escouade lui a infligé {0} dégâts : {1} part{2} pour la ville. Ta frappe part au district, qui la compte avec toutes les autres.",
-    "en": "The squad dealt it {0} damage: {1} share{2} for the city. Your strike goes back to the district, which counts it with all the others."
-   }
+   "en": "The squad dealt it {0} damage. Your strike goes to this week’s leaderboard and to the city gauge."
   },
   {
    "fr": "Remonter au district",
