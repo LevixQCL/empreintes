@@ -5,7 +5,7 @@
 
 import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, difficulte, escouadeActive, escouadeDefense, escouadesDe, etatPillage, forceEscouade, majJetons, MISSIONS, barquesMax, MAREES, bulleBasses, contratsDuMoment, mareesDe, pavillonDe, consigneDe, neutreDes, type Consigne, type RecitDefense, rangRenom, revanchesOuvertes, porteeDe, angleDe, traversee, exposeDe, perteDe, strateVaincue, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
 import { moduleDef, porteurDef } from '../core/donnees';
-import { ageArchipel, bandeauPort, vignetteArchipel, vignetteDistrict, visuel } from './art';
+import { ageArchipel, artFleche, bandeauPort, barque, vignetteArchipel, vignetteDistrict, visuel } from './art';
 import { avatar, avatarGarde, gardesGarnison, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
 import { ICO, icone } from './icones';
@@ -74,7 +74,7 @@ export function htmlPillages(e: EcranDistrict): string {
     // l'ordre du 14 novembre 2026 (Bryan) : les missions d'abord, les pillages en dernier (ce qu'on utilise le moins)
     + seg('missions', t('Missions'), bulleBasses(j, e.now).aFaire ? t('une famille attend') : t`${enMer} / ${barquesMax(j)} en mer`, bulleBasses(j, e.now).aFaire)
     + seg('marees', t('Marées'), gabare ? t('gabare en mer') : marees.some((c) => c.ouvert) ? t`${aRemplir} à remplir` : t`dès la Strate −${MAREES.montante.strate}`, !gabare && aRemplir > 0)
-    + seg('pillages', t('Pillages'), !pillOk ? t`dès la Strate −${PILLAGE.strateMin}` : revanchesOuvertes(j, e.now).length ? t('revanche possible') : t`${etatPillage(j).jetons} / ${PILLAGE.jetonsMax} jetons`, pillOk && (etatPillage(j).jetons >= PILLAGE.jetonsMax || revanchesOuvertes(j, e.now).length > 0)) + `</div>`;
+    + seg('pillages', t('Pillages'), !pillOk ? t`dès la Strate −${PILLAGE.strateMin}` : revanchesOuvertes(j, e.now).length ? t('revanche possible') : t`coque ${etatPillage(j).jetons} / ${PILLAGE.jetonsMax}`, pillOk && (etatPillage(j).jetons >= PILLAGE.jetonsMax || revanchesOuvertes(j, e.now).length > 0)) + `</div>`;
   if (volet === 'missions') return coquille(e, h + htmlMissions(e), 'pl');
   if (volet === 'marees') return coquille(e, h + htmlMarees(e), 'pl');
   // pas encore de pillages : la raison, tirée du district, plutôt qu'une carte grisée
@@ -88,11 +88,15 @@ export function htmlPillages(e: EcranDistrict): string {
   const choisie = cibles.find((c) => c.id === e.pillageCible) ?? cibles.find((c) => c.bot && !faits.includes(c.id)) ?? cibles[0];
   const places = placesCarte(cibles, monId);
 
-  // les jetons et le coffre : ce qu'on peut faire, ce qu'on risque
-  h += `<section class="pl-etat" aria-label="${t`Jetons et coffre`}">`
-    + `<div class="pl-jetons"><span class="surtitre">${ICO.grappin}${t`Jetons`}</span>`
-    + `<span class="pl-gemmes" role="img" aria-label="${t`${etat.jetons} jetons sur ${PILLAGE.jetonsMax}`}">${Array.from({ length: PILLAGE.jetonsMax }, (_, k) => `<i class="${k < etat.jetons ? 'plein' : ''}"></i>`).join('')}</span>`
-    + `<small>${prochain ? decompte(prochain, e.now, t('Un de plus dans ')) : t('Tous là : rien ne se perd.')}</small>${boutonAchat(j, e.now, etat.jetons)}</div>`
+  // la barque de pillage (14 novembre 2026, Bryan : « ça n'a pas de sens de dépendre de jetons pour attaquer ») :
+  // chaque pillage use la coque d'un cran, les charpentiers du Port la réparent, même pendant l'absence
+  const usure = PILLAGE.jetonsMax - etat.jetons;
+  h += `<section class="pl-etat" aria-label="${t`La barque et le pavillon`}">`
+    + `<div class="pl-coque${etat.jetons < 1 ? ' hs' : ''}" style="--usure:${usure / PILLAGE.jetonsMax}"><img class="pl-coque-art" src="${barque}" alt="" decoding="async">`
+    + `<span class="surtitre">${t`Barque de pillage`}</span>`
+    + `<b class="pl-coque-n">${etat.jetons}<small>${t` / ${PILLAGE.jetonsMax} pillages`}</small></b>`
+    + `<span class="pl-planches" role="img" aria-label="${t`Coque : ${etat.jetons} pillages possibles sur ${PILLAGE.jetonsMax}`}">${Array.from({ length: PILLAGE.jetonsMax }, (_, k) => `<i class="${k < etat.jetons ? 'saine' : 'usee'}"></i>`).join('')}</span>`
+    + `<small>${prochain ? decompte(prochain, e.now, t('Les charpentiers réparent : +1 dans ')) : t('Coque intacte : rien ne se perd.')}</small>${boutonAchat(j, e.now, etat.jetons)}</div>`
     + pavillon(j, e.now) + `</section>`;
   h += revanches(j, e.now);
 
@@ -130,24 +134,24 @@ function pavillon(j: Jeu, now: number): string {
   const p = pavillonDe(j);
   const e = etatPillage(j);
   if (p === 'neutre') {
-    return `<div class="pl-pavillon neutre"><span class="surtitre"><i class="pl-drapeau" aria-hidden="true"></i>${t`Pavillon neutre`}</span>`
-      + `<small>${t`Personne ne t’attaque. Hisse le pavillon pirate pour piller les autres directeurs et gagner du Renom.`}</small>`
+    return `<div class="pl-pavillon neutre"><img class="pl-fanion" src="${artFleche('fanion')}" alt="" decoding="async"><span class="surtitre">${t`Pavillon neutre`}</span>`
+      + `<small>${t`Personne ne t’attaque. Hisse-le pirate pour piller les autres directeurs et gagner du Renom.`}</small>`
       + `<button type="button" class="btn sec pl-hisser" data-action="pavillon" data-id="pirate">${t`Hisser le pavillon pirate`}</button></div>`;
   }
   const renom = e.renom ?? 0, rang = rangRenom(renom);
   const quand = neutreDes(j, now);
-  return `<div class="pl-pavillon pirate"><span class="surtitre"><i class="pl-drapeau" aria-hidden="true"></i>${t`Pirate · ${rang.nom}`}</span>`
+  return `<div class="pl-pavillon pirate"><img class="pl-fanion" src="${artFleche('fanion')}" alt="" decoding="async"><span class="surtitre">${t`Pirate · ${rang.nom}`}</span>`
     + `<b>${ent(renom)}<small> ${t`Renom`}</small></b>`
     + `<small>${rang.suivant !== null ? t`${ent(rang.suivant - renom)} avant le rang suivant · ` : ''}${t`exposé : ${ent(exposeDe(j.composants, strateVaincue(j)))} minerai`}</small>`
     + (quand ? `<small class="pl-attente">${t`Neutre possible dans ${Math.ceil((quand - now) / 3_600_000)} h`}</small>`
       : `<button type="button" class="btn sec pl-hisser" data-action="pavillon" data-id="neutre">${t`Redevenir neutre`}</button>`) + `</div>`;
 }
 
-/** Les revanches ouvertes : qui t'a pillé ces dernières 24 h, sans jeton */
+/** Les revanches ouvertes : qui t'a pillé ces dernières 24 h, sans user la coque */
 function revanches(j: Jeu, now: number): string {
   const l = revanchesOuvertes(j, now);
   if (!l.length) return '';
-  return `<section class="pl-revanches" aria-label="${t`Revanches`}"><span class="surtitre">${ICO.atk}${t`Revanche · sans jeton, quelle que soit sa force`}</span><ul>`
+  return `<section class="pl-revanches" aria-label="${t`Revanches`}"><span class="surtitre">${ICO.atk}${t`Revanche · sans user la coque, quelle que soit sa force`}</span><ul>`
     + l.map((r) => `<li><span><strong>${echap(r.nom)}</strong><small>${t`t’a pillé · encore ${Math.max(1, Math.ceil((r.jusqua - now) / 3_600_000))} h`}</small></span>`
       + `<button type="button" class="btn prim" data-action="pillage-revanche" data-id="${echap(r.id)}"${j.expedition ? ' disabled' : ''}>${ICO.grappin}${t`Revanche`}</button></li>`).join('')
     + `</ul></section>`;
@@ -234,7 +238,7 @@ function ficheCible(j: Jeu, c: Cible, force: number, fait: boolean, jetons: numb
   const raison = portee === 'neutre' ? t('Pavillon neutre : ce directeur ne se pille pas.')
     : portee === 'faible' ? t('Trop faible pour toi : on ne pille pas plus petit que soi.')
     : portee === 'forte' ? t('Hors de portée : sa garnison est bien plus forte que ton escouade.')
-    : fait ? t('Déjà pillé aujourd’hui : il reviendra demain.') : jetons < 1 ? t('Plus de jeton : le prochain revient bientôt.') : j.expedition ? t('Une expédition est déjà en cours.') : '';
+    : fait ? t('Déjà pillé aujourd’hui : il reviendra demain.') : jetons < 1 ? t('Coque trop usée : les charpentiers la réparent.') : j.expedition ? t('Une expédition est déjà en cours.') : '';
   const qui = c.bot ? t('District sans directeur · un intendant le tient') : c.pavillon === 'pirate' ? t`Pirate · ${rangRenom(c.renom ?? 0).nom} · ${ent(c.renom ?? 0)} Renom` : t('Directeur · pavillon neutre');
   return `<section class="pl-fiche d${d.niveau}" aria-label="${echap(c.nom)}">`
     + `<header><div><span class="surtitre">${t`${qui} · Strate −${c.strate} · traversée ${traversee(c.milles ?? 0)}\u00a0s`}</span><h2>${echap(c.nom)}</h2></div>`
@@ -275,7 +279,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', pillOk = true): stri
     // allégé le 4 novembre 2026 : tant que les pillages sont fermés, une ligne au lieu de deux blocs de règles
     + (!pillOk ? `<p class="fl-condition">${ICO.grappin}<span><strong>${t`Pillages et défense du port · après la Strate −${PILLAGE.strateMin}`}</strong><small>${t`Les districts voisins ne te prennent pas encore au sérieux. Le détail est dans « Les règles en détail ».`}</small></span></p>` : '')
     + (!pillOk ? '' : bloc(ICO.grappin, t('Les pillages'), t('Ton escouade traverse la mer des piliers et attaque la garnison d’un district de ta force.'), [
-      cle(ICO.grappin, String(PILLAGE.jetonsMax), t`jetons, un toutes les ${recharge}`),
+      cle(ICO.grappin, String(PILLAGE.jetonsMax), t`pillages par coque, réparée d’un cran toutes les ${recharge}`),
       cle(ICO.composants, t('Butin'), t('minerai, empreintes de cartes, Renom')),
       cle(ICO.descendre, perte, t('de ton minerai si un pirate te repousse')),
     ])
@@ -290,25 +294,25 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', pillOk = true): stri
     + replie(t('Les règles en détail'), `<ul class="fl-pr-etapes">`
       + etape(ICO.porteurs, t('Un Porteur libre prend la barque'), t`Vers un pilier abandonné ou une ruine noyée : ${MISSIONS.courte.heures} h ou ${MISSIONS.longue.heures} h, sans rien payer : seulement le temps du Porteur. Le nombre de barques en mer en même temps grandit avec la Tour du Noyau : 1, puis 2 au niveau 3, 3 au niveau 6 et 4 au niveau 9.`)
       + etape(ICO.coffre, t('Il revient chargé'), t('Du minerai, des doublons de cartes de sa lignée, parfois une carte nouvelle, et des rescapés qui deviennent creuseurs. L’eau froide laisse un peu d’Usure.'))
-      + etape(ICO.grappin, t`${PILLAGE.jetonsMax} jetons, un toutes les ${recharge}`, t('Chaque pillage en coûte un. Rien ne se perd pendant ton absence : ils t’attendent.'))
+      + etape(ICO.grappin, t`Une barque qui s’use · ${PILLAGE.jetonsMax} pillages`, t`Chaque pillage use la coque d’un cran. Les charpentiers du Port la réparent d’un cran toutes les ${recharge}, même pendant ton absence.`)
       + etape(ICO.carte, t('La mer des piliers'), t('Chaque district a sa place fixe : tes voisins restent tes voisins. Plus ils sont loin, plus la traversée dure (quelques secondes).'))
       + etape(ICO.atk, t('Un combat contre la garnison'), t('Les districts sans directeur sont ouverts à tous. Les vrais directeurs, seulement s’ils sont pirates et de ta force. Un district par jour au plus.'))
       + etape(ICO.composants, t('Le butin'), t`Du minerai (plus la garnison est forte, plus il y en a), parfois l’empreinte d’une carte de la garnison, et contre un directeur : l’empreinte à coup sûr, du Renom, et ${expose} de son minerai.`)
       + etape(ICO.bouclier, t('Ton pavillon'), t`Neutre : aucun directeur ne t’attaque, rien ne risque rien. Pirate : tu exposes ${expose} de ton minerai (plafonné) ; perdre une attaque te coûte ${perte.slice(1)}. Attaquer un directeur hisse le pavillon pirate, et on ne redevient neutre que 72 h après sa dernière attaque. Tes cristaux, tes cartes et tes Éclats ne risquent jamais rien.`)
       + etape(ICO.porteurs, t('Ta garnison se défend seule'), t('Choisis laquelle de tes trois escouades garde le port. Elle se bat même jeu fermé.'))
-      + etape(ICO.grappin, t('Revanche, bouclier et limite'), t`Qui te pille, tu peux lui rendre la pareille dans les 24 h, sans jeton. Après une attaque perdue, ${PILLAGE.bouclierMs / 3_600_000} h de bouclier ; ${PILLAGE.subiesMax} attaques par jour au plus.`)
+      + etape(ICO.grappin, t('Revanche, bouclier et limite'), t`Qui te pille, tu peux lui rendre la pareille dans les 24 h, sans user la coque. Après une attaque perdue, ${PILLAGE.bouclierMs / 3_600_000} h de bouclier ; ${PILLAGE.subiesMax} attaques par jour au plus.`)
       + `</ul>`, ICO.aide)
 
     + (etat === 'fermee' ? ''
       : `<button type="button" class="btn prim large" data-action="port-entrer">${ICO.carte}${etat === 'premiere' ? t('Larguer les amarres') : t('Retour au Port')}</button>`);
 }
 
-/** Un jeton de plus contre des cristaux (31 octobre 2026) : visible seulement quand il en manque */
+/** Un radoub contre des cristaux (le « jeton » acheté du 31 octobre 2026) : visible seulement quand la coque est usée */
 function boutonAchat(j: Jeu, now: number, jetons: number): string {
   if (jetons >= PILLAGE.jetonsMax || j.batiments.generateur < 1) return '';
   const reste = achatsRestants(j, now);
   const cout = coutJeton(j);
   const peut = reste > 0 && j.energie >= cout;
-  return `<button type="button" class="btn sec pl-achat" data-action="pillage-jeton"${peut ? '' : ' disabled'} aria-label="${t`Acheter un jeton pour ${cout} cristaux, encore ${reste} aujourd’hui`}">`
-    + `<span class="pl-achat-l">${t`+1 jeton · ${ent(cout)}`} ${icone('energie')}</span><small>${reste ? t`${reste} / ${PILLAGE.achatsJour} aujourd’hui` : t('demain')}</small></button>`;
+  return `<button type="button" class="btn sec pl-achat" data-action="pillage-jeton"${peut ? '' : ' disabled'} aria-label="${t`Radouber la coque d’un cran pour ${cout} cristaux, encore ${reste} aujourd’hui`}">`
+    + `<span class="pl-achat-l">${t`Radouber · ${ent(cout)}`} ${icone('energie')}</span><small>${reste ? t`${reste} / ${PILLAGE.achatsJour} aujourd’hui` : t('demain')}</small></button>`;
 }

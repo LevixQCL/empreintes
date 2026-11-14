@@ -497,23 +497,23 @@ export function acheterJeton(j: Jeu, now: number): Resultat {
   majJetons(j, now);
   const e = etatPillage(j);
   if (j.batiments.generateur < 1) return non(tr('Le Générateur est à l’arrêt.'));
-  if (e.jetons >= PILLAGE.jetonsMax) return non(tr('Tous tes jetons sont déjà là.'));
-  if (achatsRestants(j, now) < 1) return non(tr`Déjà ${PILLAGE.achatsJour} jetons achetés aujourd’hui : reviens demain.`);
+  if (e.jetons >= PILLAGE.jetonsMax) return non(tr('Ta barque est déjà comme neuve.'));
+  if (achatsRestants(j, now) < 1) return non(tr`Déjà ${PILLAGE.achatsJour} radoubs aujourd’hui : reviens demain.`);
   const cout = coutJeton(j);
-  if (j.energie < cout) return non(tr`Il faut ${cout} cristaux pour armer une barque de plus.`);
+  if (j.energie < cout) return non(tr`Il faut ${cout} cristaux pour radouber la barque.`);
   j.energie -= cout;
   const jour = jourDe(now);
   e.achats = { jour, n: (e.achats?.jour === jour ? e.achats.n : 0) + 1 };
   e.jetons++;
   if (e.jetons >= PILLAGE.jetonsMax) e.jetonsLe = now;
-  return { ok: true, message: tr('Le Générateur charge une barque de plus : +1 jeton de pillage.') };
+  return { ok: true, message: tr('Les charpentiers radoubent la coque : un pillage de plus.') };
 }
 
 export function peutPiller(j: Jeu, now: number, revanche = false): Resultat {
   if (!pillagesPermis(j)) return non(tr`Les pillages s’ouvrent quand le gardien de la Strate −${PILLAGE.strateMin} est vaincu.`);
   if (j.expedition) return non(tr('Une expédition est déjà en cours.'));
   majJetons(j, now);
-  if (!revanche && etatPillage(j).jetons < 1) return non(tr('Plus de jeton de pillage : le prochain revient bientôt.'));
+  if (!revanche && etatPillage(j).jetons < 1) return non(tr('La coque est trop usée : laisse les charpentiers la réparer.'));
   return { ok: true };
 }
 

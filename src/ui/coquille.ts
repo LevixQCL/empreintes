@@ -418,7 +418,7 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined, famille: stri
       ligne('marteau', tr('Refabriquer une carte à la Forge'), tr('De 27 cristaux (fer) à 1 330 (nacre).')),
       ligne('monter', tr('Entraîner un Porteur'), tr('À la Tour du Noyau : une séance = un niveau, payée au lancement.')),
       ligne('soin', tr('Les soins intensifs'), tr('À la Clinique : 1 cristal par point d’Usure effacé tout de suite.')),
-      ligne('grappin', tr('Un jeton de pillage de plus'), tr('Deux fois par jour au plus.'))];
+      ligne('grappin', tr('Radouber la barque de pillage'), tr('Un pillage de plus, deux fois par jour au plus.'))];
   } else if (r === 'eclats') {
     surtitre = tr('RESSOURCE RARE'); titre = tr('Les Éclats');
     resume = tr('Des fragments de cristal chargés d’empreintes. Rares, ils ne se trouvent qu’en profondeur ou en récompense.');

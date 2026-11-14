@@ -315,9 +315,9 @@ function balises(e: EcranDistrict): string {
       majJetons(j, e.now);
       const pill = pillagesOuverts(j);
       const n = pill ? etatPillage(j).jetons : 0;
-      h += `<button type="button" class="balise ouverte" ${pos(b.pied)} data-action="pillages" data-lieu="port" aria-label="${pill ? tr`Port : cuvettes voisines, ${n} jeton${n > 1 ? 's' : ''} de pillage sur ${PILLAGE.jetonsMax}` : tr('Port : missions en mer')}">`
+      h += `<button type="button" class="balise ouverte" ${pos(b.pied)} data-action="pillages" data-lieu="port" aria-label="${pill ? tr`Port : cuvettes voisines, barque prête pour ${n} pillages sur ${PILLAGE.jetonsMax}` : tr('Port : missions en mer')}">`
         + `<b class="bal-cristal glace">${pill ? ICO.grappin : ICO.porteurs}</b><span class="bal-nom">${tr`Port`}</span></button>`;
-      if (pill && n >= PILLAGE.jetonsMax) h += bulle('alerte', `${ICO.grappin}<em>${n}</em>`, tr`Jetons de pillage au complet : ${n}`, 'pillages');
+      if (pill && n >= PILLAGE.jetonsMax) h += bulle('alerte', `${ICO.grappin}<em>${n}</em>`, tr`Barque de pillage comme neuve : ${n} pillages`, 'pillages');
       continue;
     }
     const ferme = estFutur(id) || (id === 'comptoir' && !j.batiments.comptoir && !chantierDe(j, id)) || (id === 'cercle' && !cercleOuvert(j));

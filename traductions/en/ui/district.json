@@ -22,16 +22,20 @@
    "en": "The benches on the stand wait under the tarp. Directors of other districts don’t deal with a district that hasn’t held its shaft yet: they’ll dock once the guardian of Stratum −{0} has fallen."
   },
   {
-   "fr": "Port : cuvettes voisines, {0} jeton{1} de pillage sur {2}",
-   "en": "Port: neighboring Basins, {0} raid token{1} of {2}"
+   "fr": "Port : cuvettes voisines, barque prête pour {0} pillages sur {1}",
+   "en": "",
+   "ancien": {
+    "fr": "Port : cuvettes voisines, {0} jeton{1} de pillage sur {2}",
+    "en": "Port: neighboring Basins, {0} raid token{1} of {2}"
+   }
   },
   {
    "fr": "Port : missions en mer",
    "en": "Port: missions at sea"
   },
   {
-   "fr": "Jetons de pillage au complet : {0}",
-   "en": "Raid tokens full: {0}"
+   "fr": "Barque de pillage comme neuve : {0} pillages",
+   "en": ""
   },
   {
    "fr": "{0}, pas encore ouvert",

@@ -46,8 +46,12 @@
    "en": ""
   },
   {
-   "fr": "{0} / {1} jetons",
-   "en": "{0} / {1} tokens"
+   "fr": "coque {0} / {1}",
+   "en": "",
+   "ancien": {
+    "fr": "{0} / {1} jetons",
+    "en": "{0} / {1} tokens"
+   }
   },
   {
    "fr": "Les districts voisins attendent · vaincs le gardien de la Strate −{0}",
@@ -58,24 +62,36 @@
    "en": "The ferryman won’t ferry a grappling crew to the neighbors for a district nobody knows yet. Missions at sea, though, already sail."
   },
   {
-   "fr": "Jetons et coffre",
-   "en": "Tokens and chest"
+   "fr": "La barque et le pavillon",
+   "en": ""
   },
   {
-   "fr": "Jetons",
-   "en": "Tokens"
+   "fr": "Barque de pillage",
+   "en": ""
   },
   {
-   "fr": "{0} jetons sur {1}",
-   "en": "{0} of {1} tokens"
+   "fr": " / {0} pillages",
+   "en": ""
   },
   {
-   "fr": "Un de plus dans ",
-   "en": "One more in "
+   "fr": "Coque : {0} pillages possibles sur {1}",
+   "en": "",
+   "ancien": {
+    "fr": "{0} jetons sur {1}",
+    "en": "{0} of {1} tokens"
+   }
   },
   {
-   "fr": "Tous là : rien ne se perd.",
-   "en": "All here: nothing goes to waste."
+   "fr": "Les charpentiers réparent : +1 dans ",
+   "en": ""
+  },
+  {
+   "fr": "Coque intacte : rien ne se perd.",
+   "en": "",
+   "ancien": {
+    "fr": "Tous là : rien ne se perd.",
+    "en": "All here: nothing goes to waste."
+   }
   },
   {
    "fr": "La carte des districts voisins",
@@ -110,7 +126,7 @@
    "en": ""
   },
   {
-   "fr": "Personne ne t’attaque. Hisse le pavillon pirate pour piller les autres directeurs et gagner du Renom.",
+   "fr": "Personne ne t’attaque. Hisse-le pirate pour piller les autres directeurs et gagner du Renom.",
    "en": ""
   },
   {
@@ -146,7 +162,7 @@
    "en": ""
   },
   {
-   "fr": "Revanche · sans jeton, quelle que soit sa force",
+   "fr": "Revanche · sans user la coque, quelle que soit sa force",
    "en": ""
   },
   {
@@ -298,8 +314,8 @@
    "en": "Already raided today: it’ll be back tomorrow."
   },
   {
-   "fr": "Plus de jeton : le prochain revient bientôt.",
-   "en": "No tokens left: the next one is coming soon."
+   "fr": "Coque trop usée : les charpentiers la réparent.",
+   "en": ""
   },
   {
    "fr": "District sans directeur · un intendant le tient",
@@ -307,7 +323,11 @@
   },
   {
    "fr": "Pirate · {0} · {1} Renom",
-   "en": ""
+   "en": "",
+   "ancien": {
+    "fr": "{0} / {1} jetons",
+    "en": "{0} / {1} tokens"
+   }
   },
   {
    "fr": "Directeur · pavillon neutre",
@@ -446,8 +466,12 @@
    }
   },
   {
-   "fr": "jetons, un toutes les {0}",
-   "en": "tokens, one every {0}"
+   "fr": "pillages par coque, réparée d’un cran toutes les {0}",
+   "en": "",
+   "ancien": {
+    "fr": "jetons, un toutes les {0}",
+    "en": "tokens, one every {0}"
+   }
   },
   {
    "fr": "minerai, empreintes de cartes, Renom",
@@ -506,12 +530,12 @@
    "en": "Ore, duplicates of cards from their lineage, sometimes a new card, and survivors who become diggers. The cold water leaves a little Strain."
   },
   {
-   "fr": "{0} jetons, un toutes les {1}",
-   "en": "{0} tokens, one every {1}"
+   "fr": "Une barque qui s’use · {0} pillages",
+   "en": ""
   },
   {
-   "fr": "Chaque pillage en coûte un. Rien ne se perd pendant ton absence : ils t’attendent.",
-   "en": "Each raid costs one. Nothing is lost while you’re away: they wait for you."
+   "fr": "Chaque pillage use la coque d’un cran. Les charpentiers du Port la réparent d’un cran toutes les {0}, même pendant ton absence.",
+   "en": ""
   },
   {
    "fr": "Chaque district a sa place fixe : tes voisins restent tes voisins. Plus ils sont loin, plus la traversée dure (quelques secondes).",
@@ -558,12 +582,8 @@
    }
   },
   {
-   "fr": "Qui te pille, tu peux lui rendre la pareille dans les 24 h, sans jeton. Après une attaque perdue, {0} h de bouclier ; {1} attaques par jour au plus.",
-   "en": "",
-   "ancien": {
-    "fr": "Après une attaque perdue, {0} h de bouclier ; {1} attaques par jour au plus. Le journal du port garde tout.",
-    "en": "After a lost attack, {0} h of shield; {1} attacks per day at most. The port log keeps track of everything."
-   }
+   "fr": "Qui te pille, tu peux lui rendre la pareille dans les 24 h, sans user la coque. Après une attaque perdue, {0} h de bouclier ; {1} attaques par jour au plus.",
+   "en": ""
   },
   {
    "fr": "Larguer les amarres",
@@ -574,12 +594,16 @@
    "en": "Back to the Port"
   },
   {
-   "fr": "Acheter un jeton pour {0} cristaux, encore {1} aujourd’hui",
-   "en": "Buy a token for {0} crystals, {1} more today"
+   "fr": "Radouber la coque d’un cran pour {0} cristaux, encore {1} aujourd’hui",
+   "en": "",
+   "ancien": {
+    "fr": "Acheter un jeton pour {0} cristaux, encore {1} aujourd’hui",
+    "en": "Buy a token for {0} crystals, {1} more today"
+   }
   },
   {
-   "fr": "+1 jeton · {0}",
-   "en": "+1 token · {0}"
+   "fr": "Radouber · {0}",
+   "en": ""
   },
   {
    "fr": "{0} / {1} aujourd’hui",

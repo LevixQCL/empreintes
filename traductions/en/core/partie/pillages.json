@@ -98,28 +98,36 @@
    "en": "The Generator is shut down."
   },
   {
-   "fr": "Tous tes jetons sont déjà là.",
-   "en": "All your tokens are already here."
+   "fr": "Ta barque est déjà comme neuve.",
+   "en": ""
   },
   {
-   "fr": "Déjà {0} jetons achetés aujourd’hui : reviens demain.",
-   "en": "Already {0} tokens bought today: come back tomorrow."
+   "fr": "Déjà {0} radoubs aujourd’hui : reviens demain.",
+   "en": "",
+   "ancien": {
+    "fr": "Déjà {0} jetons achetés aujourd’hui : reviens demain.",
+    "en": "Already {0} tokens bought today: come back tomorrow."
+   }
   },
   {
-   "fr": "Il faut {0} cristaux pour armer une barque de plus.",
-   "en": "You need {0} crystals to fit out one more boat."
+   "fr": "Il faut {0} cristaux pour radouber la barque.",
+   "en": "",
+   "ancien": {
+    "fr": "Il faut {0} cristaux pour armer une barque de plus.",
+    "en": "You need {0} crystals to fit out one more boat."
+   }
   },
   {
-   "fr": "Le Générateur charge une barque de plus : +1 jeton de pillage.",
-   "en": "The Generator loads one more boat: +1 raid token."
+   "fr": "Les charpentiers radoubent la coque : un pillage de plus.",
+   "en": ""
   },
   {
    "fr": "Les pillages s’ouvrent quand le gardien de la Strate −{0} est vaincu.",
    "en": "Raids open once the guardian of Stratum −{0} is defeated."
   },
   {
-   "fr": "Plus de jeton de pillage : le prochain revient bientôt.",
-   "en": "No raid tokens left: the next one is coming soon."
+   "fr": "La coque est trop usée : laisse les charpentiers la réparer.",
+   "en": ""
   },
   {
    "fr": "Un pillage est déjà en cours.",

@@ -362,12 +362,16 @@
    "en": "At the Clinic: 1 crystal per point of Strain wiped away at once."
   },
   {
-   "fr": "Un jeton de pillage de plus",
-   "en": "One more raid token"
+   "fr": "Radouber la barque de pillage",
+   "en": ""
   },
   {
-   "fr": "Deux fois par jour au plus.",
-   "en": "Twice a day at most."
+   "fr": "Un pillage de plus, deux fois par jour au plus.",
+   "en": "",
+   "ancien": {
+    "fr": "Deux fois par jour au plus.",
+    "en": "Twice a day at most."
+   }
   },
   {
    "fr": "RESSOURCE RARE",

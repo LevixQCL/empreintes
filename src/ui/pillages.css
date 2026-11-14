@@ -261,3 +261,45 @@
 .pl-consigne small{font-size:12px;line-height:1.35;color:var(--p-doux)}
 .pl-recit{display:block;margin-top:2px;font-style:normal;font-size:12px;line-height:1.35;color:#A9C9DD}
 .duel-traversee{min-height:100vh}
+
+/* ---------- La barque et le pavillon peints (14 novembre 2026, Bryan : « plus visuel », et plus de « jetons ») ----------
+   La barque du passeur se tient à droite de son panneau, de plus en plus sombre et penchée quand la coque s'use ;
+   le fanion peint flotte à droite du pavillon : pâle quand on est neutre, rouge sang quand on est pirate. */
+.pl-etat>.pl-coque,.pl-etat>.pl-pavillon{position:relative;overflow:hidden;isolation:isolate;min-height:128px;padding-right:96px}
+.pl-coque-art,.pl-fanion{position:absolute;z-index:-1;pointer-events:none;user-select:none}
+.pl-coque-art{right:-18px;bottom:-6px;width:150px;
+  filter:drop-shadow(0 6px 10px rgba(0,0,0,.6)) saturate(calc(1 - var(--usure) * .55)) brightness(calc(1.12 - var(--usure) * .3));
+  transform:rotate(calc(var(--usure) * 9deg));transform-origin:30% 90%;animation:pl-houle 5s ease-in-out infinite}
+.pl-coque.hs .pl-coque-art{opacity:.75}
+.pl-coque::after{content:"";position:absolute;inset:auto 0 0 0;height:30px;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(31,86,110,.45));
+  -webkit-mask:radial-gradient(14px 5px at 50% 0,transparent 98%,#000) 0 0/28px 100%;mask:radial-gradient(14px 5px at 50% 0,transparent 98%,#000) 0 0/28px 100%}
+@keyframes pl-houle{0%,100%{translate:0 0}50%{translate:0 -3px}}
+.pl-coque .surtitre{color:var(--p-doux)}
+.pl-coque-n{font-family:var(--mono);font-size:26px;font-weight:600;line-height:1;color:#F3E2C0;font-variant-numeric:tabular-nums}
+.pl-coque-n small{font-size:12px !important;font-weight:500;color:var(--p-doux)}
+.pl-coque.hs .pl-coque-n{color:#E9A08F}
+/* les cinq bordages de la coque : bois chaud et sain, ou fendu et noirci */
+.pl-planches{display:flex;gap:4px;padding:2px 0}
+.pl-planches i{flex:0 0 auto;width:18px;height:9px;border-radius:2px 5px 5px 2px;transform:skewX(-14deg)}
+.pl-planches i.saine{background:linear-gradient(180deg,#E6B577 0%,#B87838 55%,#7A4A22 100%);
+  box-shadow:inset 0 1px 0 rgba(255,236,200,.55),inset 0 -1px 0 rgba(0,0,0,.35),0 0 6px rgba(242,180,100,.25)}
+.pl-planches i.usee{background:linear-gradient(180deg,#3A3530,#211D1A);
+  box-shadow:inset 0 0 0 1px rgba(205,239,255,.12);
+  -webkit-mask:linear-gradient(115deg,#000 44%,transparent 44% 54%,#000 54%);mask:linear-gradient(115deg,#000 44%,transparent 44% 54%,#000 54%)}
+.pl-coque .pl-achat{margin-top:2px}
+
+.pl-fanion{right:-6px;top:6px;width:104px;transform-origin:8% 100%;animation:pl-vent 4.5s ease-in-out infinite;
+  filter:drop-shadow(0 6px 10px rgba(0,0,0,.55)) grayscale(1) brightness(1.55) contrast(.9) sepia(.15) hue-rotate(170deg)}
+.pl-pavillon.pirate .pl-fanion{filter:drop-shadow(0 6px 12px rgba(0,0,0,.6)) hue-rotate(-28deg) saturate(1.7) brightness(.72) contrast(1.15)}
+@keyframes pl-vent{0%,100%{rotate:0deg;scale:1 1}50%{rotate:-2.5deg;scale:.97 1.02}}
+@media (prefers-reduced-motion:reduce){.pl-coque-art,.pl-fanion{animation:none}}
+@media (max-width:700px){
+  /* sur téléphone, les deux panneaux l'un sous l'autre : la barque et le fanion gardent leur place à droite */
+  .pl-etat{grid-template-columns:minmax(0,1fr)}
+  .pl-etat>.pl-coque,.pl-etat>.pl-pavillon{min-height:0;padding-right:118px}
+  .pl-coque-art{width:132px;right:-14px;bottom:-4px}
+  .pl-fanion{width:88px;right:4px;top:4px}
+}
+@media (min-width:1100px){.pl-coque-art{width:170px}.pl-fanion{width:118px}.pl-etat>.pl-coque,.pl-etat>.pl-pavillon{padding-right:150px}
+  .pl-jetons:has(.pl-achat){grid-template-columns:none}}
