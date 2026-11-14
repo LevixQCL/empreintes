@@ -55,12 +55,14 @@ describe('Les échanges', () => {
     j.collection[A]!.doublons = 0;
     expect(verifierProposition(j, A, B, ami, T).ok).toBe(false);
   });
-  it('demandent le même métal, refusent la nacre, et l’or avant le niveau 5', () => {
+  it('demandent le même métal, refusent la nacre, et l’or avant le niveau 9', () => {
     const j = partie();
     expect(verifierProposition(j, A, carteId(b!.id, 'cuivre'), ami, T).message).toMatch(/même métal/);
     expect(raisonNonEchangeable(j, carteId(a!.id, 'nacre'))).toMatch(/nacre/);
-    expect(raisonNonEchangeable(j, carteId(a!.id, 'or'))).toMatch(/niveau 5/);
-    j.batiments.cercle = 5;
+    expect(raisonNonEchangeable(j, carteId(a!.id, 'or'))).toMatch(/niveau 9/);
+    j.batiments.cercle = 8;
+    expect(raisonNonEchangeable(j, carteId(a!.id, 'or'))).toMatch(/niveau 9/);
+    j.batiments.cercle = 9;
     expect(raisonNonEchangeable(j, carteId(a!.id, 'or'))).toBeNull();
   });
   it('attendent quelques jours d’amitié', () => {

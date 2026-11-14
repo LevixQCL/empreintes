@@ -524,13 +524,16 @@ export const CERCLE_OUVERTURE = 5;
  */
 export const CERCLE = {
   /** échanges conclus par jour */
-  echangesJour: [0, 2, 3, 3, 4, 4, 5, 6, 7, 7, 8],
+  echangesJour: [0, 2, 3, 3, 4, 5, 5, 6, 7, 7, 8],
   /** propositions envoyées qui attendent une réponse en même temps */
   ouvertes: [0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4],
   /** cartes exposées dans la vitrine */
   vitrine: [0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3],
-  /** le métal le plus rare qu'on peut échanger : l'argent dès le niveau 1, l'or au niveau 5 ; la nacre, jamais */
-  orAuNiveau: 5,
+  /**
+   * le métal le plus rare qu'on peut échanger : l'argent dès le niveau 1, l'or au niveau 9 ; la nacre, jamais.
+   * 14 novembre 2026, Bryan : l'or au niveau 5, « c'est trop tôt » ; l'or est le métal du Fond (sous −10), son échange vient en fin de jeu.
+   */
+  orAuNiveau: 9,
   /** ce que coûte un échange, à chacun des deux directeurs (en composants) */
   cout: { fer: 0, cuivre: 0, argent: 40, or: 150, nacre: 0 } as Record<Rarete, number>,
   /** une amitié doit avoir quelques jours avant le premier échange (contre les comptes créés pour se donner des cartes) */
