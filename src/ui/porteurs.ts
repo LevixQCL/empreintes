@@ -18,7 +18,7 @@ import { ICONES_ACTION, faceCarte } from './carte';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, ongletsFiche, entete, voletsEscouade, type EcranDistrict } from './coquille';
 import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugePv, plusLongueSuite } from './district';
 import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } from './guide';
-import { ICO, sigle } from './icones';
+import { ICO, perle, sigle } from './icones';
 import { COULEUR } from './vue';
 import { echap, virgule, texteReplie } from './outils';
 import { t as tr, locale, enumerer, minuscule } from '../core/i18n';
@@ -688,7 +688,11 @@ function vitrineRecit(j: Jeu, bq: import('./coquille').Boutique | null, recit: s
   const prix = prixEuros(PRODUITS[droitRecit(recit)]!.prix);
   if (!ouvert) {
     h += `<p class="fv-note">${tr`Paiement unique, sans abonnement · à toi pour toujours, sur tous tes appareils`}</p>`
-      + (bq && lotProposable(bq.achats) ? `<p class="fv-note or">${tr`Ou les trois récits : ${prixEuros(PRODUITS[LOT_RECITS]!.prix)}, avec une Perle de nacre offerte.`}</p>` : '');
+      // le lot des trois récits (14 novembre 2026, Bryan : la Perle « un des trucs les plus intéressants ») : une offre à part
+      // entière, la Perle en grand, ce qu'elle fait et l'économie en clair ; la toucher déplie l'offre comme le bouton du pied
+      + (bq && lotProposable(bq.achats) ? `<button type="button" class="fv-lot" data-action="recit-offre" data-id="${recit}">${perle('fv-perle')}`
+        + `<span><small>${tr`Ou les trois récits · Ilka, Doran et Véla`}</small><strong>${prixEuros(PRODUITS[LOT_RECITS]!.prix)} <s>${prixEuros(3 * PRODUITS[droitRecit(recit)]!.prix)}</s></strong>`
+        + `<em>${tr`+ 1 Perle de nacre offerte : de quoi faire passer une carte en or en nacre`}</em></span></button>` : '');
     return h + `</section>`;
   }
   // l'offre dépliée : les deux cartes d'origine en clair avant de payer (Bryan, 11 novembre 2026 : aucune surprise), puis le paiement

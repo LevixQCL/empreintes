@@ -99,3 +99,13 @@
 .fp-vitrine .fp-recit-actions:not(.fv-actions){flex-direction:column;align-items:stretch;margin-top:10px}
 .fp-vitrine .fp-recit-actions:not(.fv-actions) .btn{min-height:46px;font-size:15px}
 .fp-vitrine .fp-renonce{margin-top:0}
+/* le lot des trois récits et sa Perle de nacre (14 novembre 2026) : une offre à part, la perle sertie à gauche */
+.fv-lot{display:grid;grid-template-columns:58px 1fr;gap:12px;align-items:center;width:100%;margin-top:-4px;padding:10px 12px;border:0;border-radius:12px;text-align:left;cursor:pointer;font:inherit;
+  background:linear-gradient(100deg,rgba(242,213,140,.14),rgba(255,255,255,.03) 70%);box-shadow:inset 0 0 0 1px rgba(242,213,140,.42)}
+.fv-lot:hover{filter:brightness(1.08)}
+.fv-perle{width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(242,213,140,.45)) drop-shadow(0 3px 6px rgba(0,0,0,.5))}
+.fv-lot span{display:grid;gap:3px;min-width:0}
+.fv-lot small{font:600 12px/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--fp-doux)}
+.fv-lot strong{font:400 20px/1.1 var(--display);color:#F6F2EA}
+.fv-lot s{margin-left:6px;font:500 13px/1 var(--body);color:var(--fp-doux)}
+.fv-lot em{font-style:normal;font-size:13px;line-height:1.35;color:var(--fp-or)}
