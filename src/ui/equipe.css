@@ -104,7 +104,7 @@
 /* détouré : pas de cadre ni de fondu, le personnage sort de son décor */
 .eq-ident.detoure .eq-portrait{overflow:visible;background:none;-webkit-mask-image:none;mask-image:none}
 /* le personnage déborde sous le texte et s'efface doucement vers la droite et vers le bas : aucune coupe nette */
-.eq-ident.detoure .eq-portrait img{inset:4px auto auto -18%;width:150%;max-width:none;height:auto;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.55));
+.eq-ident.detoure .eq-portrait img{inset:4px auto auto var(--dx,-15%);width:150%;max-width:none;height:auto;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.55));
   -webkit-mask-image:linear-gradient(90deg,#000 55%,transparent 96%),linear-gradient(180deg,#000 60%,transparent 88%);-webkit-mask-composite:source-in;
   mask-image:linear-gradient(90deg,#000 55%,transparent 96%),linear-gradient(180deg,#000 60%,transparent 88%);mask-composite:intersect}
 .eq-ident.detoure .eq-tete{overflow:hidden}
