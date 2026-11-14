@@ -271,3 +271,16 @@
 .eq-esc.vide small{color:var(--x-glace)}
 .es-equipe.vide,.pl-garde-esc.vide{opacity:.7}
 .es-equipe.vide strong,.pl-garde-esc.vide strong{color:var(--x-doux,#93A3B8)}
+
+/* l'absent de l'escouade (14 novembre 2026) : portrait éteint, sceau sablier, bandeau ambre avec son retour */
+.eq-porteur.absent .eq-portrait img,.eq-porteur.absent .eq-portrait .avatar{filter:grayscale(.85) brightness(.6)}
+.eq-portrait{position:relative}
+.eq-absent-sceau{position:absolute;right:4px;bottom:4px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;
+  background:#2A1A08;box-shadow:0 0 0 1.5px #E8B86A,0 0 10px rgba(232,184,106,.55);color:#F2C477}
+.eq-absent-sceau .ico{width:14px;height:14px}
+.eq-absent{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:6px;
+  background:linear-gradient(90deg,rgba(232,170,80,.18),rgba(232,170,80,.05));box-shadow:inset 0 0 0 1px rgba(232,184,106,.5)}
+.eq-absent>.ico{width:18px;height:18px;flex-shrink:0;margin-top:1px;color:#F2C477}
+.eq-absent span{display:grid;gap:2px}
+.eq-absent strong{font-size:14px;line-height:1.3;color:#FBE3B6}
+.eq-absent small{font-size:12.5px;line-height:1.35;color:#E8C48A}

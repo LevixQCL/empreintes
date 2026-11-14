@@ -2,7 +2,7 @@
 // Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ;
 // chaque bâtiment y porte son cristal de niveau et, s'il y a quelque chose à faire, une bulle, le détail s'ouvre en feuille par le bas.
 
-import { chantiersExodeFinis, etatGardien, gardienDeLaSemaine, gardienOuvert, raisonHorsGardien, regleDeLaSemaine } from '../core/jeu';
+import { absence, absentsEscouade, raisonHorsEscouade, type Absence, chantiersExodeFinis, etatGardien, gardienDeLaSemaine, gardienOuvert, raisonHorsGardien, regleDeLaSemaine } from '../core/jeu';
 import { HALTES_FOND, PISTES, halteDef, nombreHaltes, queteDef, revelationDe } from '../core/strates';
 import { ETOILES, releveDef, vestigesDe } from '../core/explorer';
 import { htmlBestiaire } from './bestiaire';
@@ -2719,16 +2719,21 @@ export function htmlEscouade(e: EcranDistrict): string {
   // on ne compose plus ici (la grille de tous les Porteurs prenait l'écran)
   const toutes = escouadesDe(j);
   const active = escouadeActive(j);
+  // les absents (14 novembre 2026, Bryan : Ilka en mission disparaissait sans qu'on le voie, seul un « Modifier » minuscule restait) :
+  // leur visage reste marqué sur l'escouade, et un bandeau dit qui ne part pas, quand il revient et qui le remplace
+  const absents = gv ? [] : absentsEscouade(j, escouadeDe(j));
   if (gv) h += choixTrioGardien(j, e.escouade);
   else h += `<section class="es-equipes" aria-label="${tr`Escouade qui part`}"><div class="es-equipes-tete"><span class="surtitre">${toutes.length > 1 ? tr('Quelle escouade part ?') : tr('L’escouade qui part')}</span>`
-    + `<button type="button" class="es-modifier" data-action="escouade-modifier">${ICO.porteurs}${tr`Modifier`}</button></div>`
+    + `<button type="button" class="es-modifier" data-action="escouade-modifier">${ICO.porteurs}${tr`Composer les escouades`}</button></div>`
     + `<div class="es-equipes-choix" role="radiogroup" aria-label="${tr`Escouade qui part`}">`
     + toutes.map((l, k) => {
       const n = deckEscouade(j, l).length;
-      return `<button type="button" role="radio" class="es-equipe${k === active ? ' actif' : ''}${l.length ? '' : ' vide'}" data-action="depart-escouade" data-index="${k}" aria-checked="${k === active}"${l.length ? '' : ' disabled'}>`
-        + `<strong>${tr`Escouade ${k + 1}`}</strong>${l.length ? `<span class="es-equipe-visages">${[0, 1, 2].map((i) => (l[i] ? avatar(l[i]!, 30) : '<i class="es-pastille-vide"></i>')).join('')}</span>` : '<span class="esc-serti" aria-hidden="true"></span>'}`
-        + `<small>${l.length ? `${l.length < 3 ? `${l.length} / 3 · ` : ''}${tr`${n} cartes`}` : tr('À former')}</small></button>`;
+      const manque = absentsEscouade(j, l).length;
+      return `<button type="button" role="radio" class="es-equipe${k === active ? ' actif' : ''}${l.length ? '' : ' vide'}${manque ? ' incomplete' : ''}" data-action="depart-escouade" data-index="${k}" aria-checked="${k === active}"${l.length ? '' : ' disabled'}>`
+        + `<strong>${tr`Escouade ${k + 1}`}</strong>${l.length ? `<span class="es-equipe-visages">${[0, 1, 2].map((i) => (l[i] ? visageAbsent(j, l[i]!, 30) : '<i class="es-pastille-vide"></i>')).join('')}</span>` : '<span class="esc-serti" aria-hidden="true"></span>'}`
+        + `<small>${l.length ? manque ? `<b class="es-equipe-manque">${manque > 1 ? tr`${manque} absents` : tr('1 absent')}</b>` : `${l.length < 3 ? `${l.length} / 3 · ` : ''}${tr`${n} cartes`}` : tr('À former')}</small></button>`;
     }).join('') + `</div></section>`;
+  if (absents.length) h += blocAbsents(j, e, absents);
 
   // les trois Porteurs qui partent : toucher un portrait ouvre sa fiche
   h += `<section class="es-trio" aria-label="${tr`Porteurs qui partent`}">` + [0, 1, 2].map((i) => {
@@ -2742,8 +2747,10 @@ export function htmlEscouade(e: EcranDistrict): string {
     const m = premiersPas(j) ? null : progresMarque(j, id);
     const pv = gv ? pvNiveau(j, id) + bonusPv(j, id) : pvMaxCombat(j, id);
     const blesse = !gv && !!tropBlesse(j, id);
-    return `<div class="es-place${blesse ? ' blesse' : ''}" style="--c:${COULEUR[p.lignee]}">`
+    const remplace = absents.find((a) => a.place === i && a.id !== id);
+    return `<div class="es-place${blesse ? ' blesse' : ''}${remplace ? ' remplacant' : ''}" style="--c:${COULEUR[p.lignee]}">`
       + `<button type="button" class="es-portrait" data-action="porteur" data-id="${id}" aria-label="${tr`Fiche ${echap(deNom(p.nom))}`}">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 72)}`
+      + (remplace ? `<span class="es-remplace-ruban">${ICO.recycler}${tr`Remplace ${echap(porteurDef(remplace.id).nom)}`}</span>` : '')
       + `<span class="es-nom"><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · ${blesse ? `<b class="es-pv-bas">${tr`PV ${pv} → ${pvMinDepart(j, id)}`}</b>` : `PV ${pv}`}</small></span></button>`
       + `<button type="button" class="es-cartes${nCartes ? '' : ' aucune'}${nCartes >= DISTRICT.cartesMax ? ' pleine' : ''}" data-action="deck" data-id="${id}">${ICO.cartes}<span>${tr`${nCartes} / ${DISTRICT.cartesMax} cartes`}</span></button>`
       + (m ? `<button type="button" class="es-marque${m.acquise ? ' acquise' : ''}" data-action="porteur" data-id="${id}" title="${echap(m.texte)}">${m.acquise ? ICO.ok : ICO.verrou}<span><b>${echap(m.nom)}</b> ${m.acquise ? echap(m.courtEffectif) : `${Math.min(m.n, m.seuil)} / ${m.seuil} ${echap(m.quoi)}`}</span></button>` : '')
@@ -2818,3 +2825,42 @@ export function htmlEscouade(e: EcranDistrict): string {
 }
 
 export { POSTES };
+
+/** Un visage d'escouade ; absent (en mission, en fouille…), il est éteint et marqué d'un sablier (14 novembre 2026) */
+function visageAbsent(j: Jeu, id: string, taille: number): string {
+  const a = absence(j, id);
+  return a ? `<span class="es-av-absent" title="${echap(`${porteurDef(id).nom} · ${a.texte}`)}">${avatar(id, taille)}<i aria-hidden="true">${ICO.chrono}</i></span>` : avatar(id, taille);
+}
+
+const ICO_ABSENCE: Record<Absence['quoi'], string> = { mer: ICO.chrono, mission: ICO.chrono, secours: ICO.chrono, fouille: ICO.strate, forge: ICO.marteau, arrivee: ICO.verrou };
+
+/** Qui ne part pas, pourquoi, quand il revient, et qui prend sa place (choix du remplaçant d'un toucher) */
+function blocAbsents(j: Jeu, e: EcranDistrict, absents: { id: string; place: number; absence: Absence }[]): string {
+  const esc = escouadeActive(j) + 1;
+  let h = `<section class="es-absents" aria-label="${tr`Porteurs absents`}">`;
+  for (const a of absents) {
+    const p = porteurDef(a.id);
+    const x = e.escouade[a.place];
+    const rempl = x && x !== a.id && !escouadeDe(j).includes(x) ? x : null;
+    const ouvert = e.remplace === a.place;
+    h += `<div class="es-absent" style="--c:${COULEUR[p.lignee]}"><span class="es-absent-visage">${visageAbsent(j, a.id, 46)}</span>`
+      + `<span class="es-absent-txt"><strong>${tr`${echap(p.nom)} ne part pas`}</strong>`
+      + `<small>${ICO_ABSENCE[a.absence.quoi]}<span>${echap(a.absence.texte)}${a.absence.fin ? ` · ${decompte(a.absence.fin, e.now, tr('retour dans '))}` : ''}</span></small>`
+      + `<small class="es-absent-rempl">${rempl ? tr`${echap(porteurDef(rempl).nom)} prend sa place dans l’Escouade ${esc}` : tr('Personne de libre pour le remplacer')}`
+      + (rempl && !j.porteurs[rempl]!.modules.length ? ` · <b class="es-absent-vide">${tr`sans aucune carte`}</b>` : '') + `</small></span>`
+      + `<button type="button" class="btn sec es-absent-btn${ouvert ? ' actif' : ''}" data-action="depart-remplacer" data-index="${a.place}" aria-expanded="${ouvert}">${ouvert ? ICO.fermer : ICO.recycler}<span>${ouvert ? tr('Fermer') : rempl ? tr('Changer le remplaçant') : tr('Choisir un remplaçant')}</span></button></div>`;
+    if (ouvert) {
+      const libres = disponibles(j).filter((id) => !raisonHorsEscouade(j, id) && !e.escouade.includes(id))
+        .concat(porteursPresents(j).filter((id) => j.porteurs[id]!.poste && !raisonHorsEscouade(j, id) && !e.escouade.includes(id)));
+      h += `<div class="es-candidats" role="listbox" aria-label="${tr`Remplaçant de ${echap(p.nom)}`}">`
+        + (libres.length ? libres.map((id) => {
+          const q = porteurDef(id); const nc = j.porteurs[id]!.modules.length;
+          return `<button type="button" role="option" class="es-candidat" style="--c:${COULEUR[q.lignee]}" data-action="depart-prendre" data-id="${id}">${avatar(id, 36)}`
+            + `<span><strong>${echap(q.nom)}</strong><small>${tr`${NOM_LIGNEE[q.lignee]} · Niv. ${niveauPorteur(j, id).niveau}`}${j.porteurs[id]!.poste ? ` · ${tr`quitte son poste`}` : ''}</small></span>`
+            + `<b class="es-candidat-cartes${nc ? '' : ' aucune'}">${ICO.cartes}${nc} / ${DISTRICT.cartesMax}</b></button>`;
+        }).join('') : `<p class="es-candidats-vide">${tr`Aucun autre Porteur n’est libre : attends le retour de ${echap(p.nom)}, ou pars sans ${p.feminin ? tr('elle') : tr('lui')}.`}</p>`)
+        + `</div>`;
+    }
+  }
+  return h + `</section>`;
+}

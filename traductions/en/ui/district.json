@@ -3154,8 +3154,16 @@
    "en": "The departing squad"
   },
   {
-   "fr": "Modifier",
-   "en": "Edit"
+   "fr": "Composer les escouades",
+   "en": "Build squads"
+  },
+  {
+   "fr": "{0} absents",
+   "en": "{0} away"
+  },
+  {
+   "fr": "1 absent",
+   "en": "1 away"
   },
   {
    "fr": "À former",
@@ -3176,6 +3184,10 @@
   {
    "fr": "Fiche {0}",
    "en": "Profile {0}"
+  },
+  {
+   "fr": "Remplace {0}",
+   "en": "Replaces {0}"
   },
   {
    "fr": "PV {0} → {1}",
@@ -3324,6 +3336,58 @@
   {
    "fr": "Partir",
    "en": "Set off"
+  },
+  {
+   "fr": "Porteurs absents",
+   "en": "Absent Bearers"
+  },
+  {
+   "fr": "{0} ne part pas",
+   "en": "{0} isn’t going"
+  },
+  {
+   "fr": "{0} prend sa place dans l’Escouade {1}",
+   "en": "{0} takes their place in Squad {1}"
+  },
+  {
+   "fr": "Personne de libre pour le remplacer",
+   "en": "No one is free to stand in"
+  },
+  {
+   "fr": "sans aucune carte",
+   "en": "with no cards"
+  },
+  {
+   "fr": "Changer le remplaçant",
+   "en": "Change stand-in"
+  },
+  {
+   "fr": "Choisir un remplaçant",
+   "en": "Choose a stand-in"
+  },
+  {
+   "fr": "Remplaçant de {0}",
+   "en": "Stand-in for {0}"
+  },
+  {
+   "fr": "{0} · Niv. {1}",
+   "en": "{0} · Lvl {1}"
+  },
+  {
+   "fr": "quitte son poste",
+   "en": "leaves their post"
+  },
+  {
+   "fr": "Aucun autre Porteur n’est libre : attends le retour de {0}, ou pars sans {1}.",
+   "en": "No other Bearer is free: wait for {0} to return, or set out without {1}."
+  },
+  {
+   "fr": "elle",
+   "en": "she"
+  },
+  {
+   "fr": "lui",
+   "en": "him"
   }
  ]
 }

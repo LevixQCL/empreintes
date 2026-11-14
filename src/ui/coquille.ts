@@ -136,6 +136,8 @@ export interface EcranDistrict {
   villeOuverte?: boolean;
   ville?: import('../core/jeu').VilleGardien | null;
   villeDepart?: boolean;
+  /** l'écran de départ : la place d'un absent dont on choisit le remplaçant (14 novembre 2026) */
+  remplace?: number | null;
   exodeAide?: boolean;
   /** onglet Escouade : le volet « Porteurs » (tous les Porteurs) est affiché au lieu de l’escouade */
   reserve?: boolean;

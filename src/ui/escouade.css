@@ -216,3 +216,42 @@ button.es-place.vide{width:100%;border:0;font:inherit;cursor:pointer;color:inher
 .gv-trio-ok{position:absolute;top:5px;right:5px;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--es-or);color:#1A1406}
 .gv-trio-ok svg{width:12px;height:12px}
 @media (min-width:1100px){.gv-trio-grille{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}}
+
+/* ---------- Les absents (14 novembre 2026) : on voit qui ne part pas, pourquoi, quand il revient et qui le remplace ---------- */
+.es-modifier{min-height:36px;padding:0 14px;border-radius:999px;background:rgba(205,239,255,.06);box-shadow:inset 0 0 0 1px rgba(205,239,255,.28)}
+.es-modifier:hover{text-decoration:none;background:rgba(205,239,255,.12)}
+.es-av-absent{position:relative;display:inline-block;line-height:0}
+.es-av-absent .avatar{filter:grayscale(.85) brightness(.6)}
+.es-av-absent>i{position:absolute;right:-3px;bottom:-3px;display:grid;place-items:center;width:17px;height:17px;border-radius:50%;
+  background:#2A1A08;box-shadow:0 0 0 1.5px #E8B86A,0 0 8px rgba(232,184,106,.5);color:#F2C477}
+.es-av-absent>i .ico{width:11px;height:11px}
+.es-equipe-manque{font-family:var(--sans,inherit);font-weight:700;color:#F2C477}
+.es-equipe.incomplete:not(.actif){box-shadow:inset 0 0 0 1px rgba(232,184,106,.35)}
+.es-absents{display:grid;gap:8px;margin-top:-8px}
+.es-absent{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 12px 12px 14px;border-radius:6px;
+  background:linear-gradient(90deg,rgba(232,170,80,.16),rgba(232,170,80,.04) 70%);box-shadow:inset 0 0 0 1px rgba(232,184,106,.45),0 0 18px rgba(232,170,80,.12)}
+.es-absent-visage{line-height:0}
+.es-absent-visage .es-av-absent>i{width:20px;height:20px}
+.es-absent-visage .es-av-absent>i .ico{width:13px;height:13px}
+.es-absent-txt{display:grid;gap:3px;min-width:0}
+.es-absent-txt strong{font-family:var(--display);font-weight:400;font-size:17px;line-height:1.15;color:#FBE3B6}
+.es-absent-txt small{display:flex;align-items:center;gap:5px;font-size:13px;line-height:1.3;color:#E8C48A}
+.es-absent-txt small .ico{width:13px;height:13px;flex-shrink:0}
+.es-absent-txt .es-absent-rempl{color:var(--es-txt)}
+.es-absent-btn{display:flex;align-items:center;gap:6px;min-height:40px;white-space:nowrap}
+.es-absent-btn .ico{width:15px;height:15px}
+.es-candidats{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px;padding:4px 0 2px}
+.es-candidat{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;min-height:52px;padding:6px 10px;border:0;border-radius:6px;font:inherit;text-align:left;cursor:pointer;
+  color:var(--es-txt);background:rgba(205,239,255,.05);box-shadow:inset 0 0 0 1px rgba(205,239,255,.14)}
+.es-candidat:hover{background:color-mix(in srgb,var(--c) 14%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 60%,white)}
+.es-candidat strong{display:block;font-size:15px;color:#fff}
+.es-candidat small{font-size:12px;color:var(--es-doux)}
+.es-candidat-cartes{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:13px;color:var(--es-or)}
+.es-candidat-cartes.aucune{color:var(--es-rouge)}
+.es-candidat-cartes .ico{width:13px;height:13px}
+.es-candidats-vide{margin:0;font-size:13px;color:var(--es-doux)}
+.es-remplace-ruban{position:absolute;left:6px;top:6px;display:flex;align-items:center;gap:4px;max-width:calc(100% - 12px);padding:3px 8px;border-radius:999px;
+  font-size:12px;font-weight:700;line-height:1.2;color:#2A1A08;background:#F2C477;box-shadow:0 2px 8px rgba(0,0,0,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.es-remplace-ruban .ico{width:12px;height:12px;flex-shrink:0}
+@media (max-width:420px){.es-absent{grid-template-columns:auto minmax(0,1fr)}.es-absent-btn{grid-column:1/-1;justify-content:center}}
+.es-absent-vide{color:var(--es-rouge);font-weight:700}

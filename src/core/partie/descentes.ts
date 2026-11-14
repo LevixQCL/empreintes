@@ -205,6 +205,24 @@ export function raisonHorsEscouade(j: Jeu, id: string): string | null {
   return null;
 }
 
+/** Pourquoi un Porteur de l'escouade ne peut pas partir maintenant, dit pour le joueur (14 novembre 2026, Bryan :
+ * Ilka en mission disparaissait du départ sans qu'on le voie) : quoi, et quand il revient (fin : null si on ne sait pas) */
+export interface Absence { quoi: 'mer' | 'mission' | 'secours' | 'fouille' | 'forge' | 'arrivee'; texte: string; fin: number | null }
+export function absence(j: Jeu, id: string): Absence | null {
+  if (!porteursPresents(j).includes(id)) return { quoi: 'arrivee', texte: tr('Pas encore arrivé'), fin: null };
+  if (j.confiee?.porteurs.includes(id)) return { quoi: 'fouille', texte: tr`En fouille · Strate −${j.confiee.strate}`, fin: j.confiee.fin };
+  if (j.marees?.contrat?.porteurs.includes(id)) return { quoi: 'mer', texte: tr('En mer · contrat de marée'), fin: j.marees.contrat.fin };
+  if (j.basses?.expedition?.porteur === id) return { quoi: 'secours', texte: tr('En mer · secours d’une famille'), fin: j.basses.expedition.fin };
+  const m = j.missions?.find((x) => x.porteur === id);
+  if (m) return { quoi: 'mission', texte: tr('En mission en mer'), fin: m.fin };
+  if (j.porteurs[id]?.poste === 'forge' && j.forge) return { quoi: 'forge', texte: tr('À la Forge · fabrication en cours'), fin: j.forge.fin };
+  return null;
+}
+
+/** Les Porteurs de l'escouade choisie qui ne partiront pas, avec leur place */
+export const absentsEscouade = (j: Jeu, escouade: readonly string[]) =>
+  escouade.map((id, place) => ({ id, place, absence: absence(j, id) })).filter((x): x is { id: string; place: number; absence: Absence } => !!x.absence);
+
 /** Le poste qu'un Porteur laissera vacant s'il descend (null : il ne travaille pas) */
 export function posteQuitte(j: Jeu, id: string): Poste | null {
   return j.porteurs[id]?.poste ?? null;
@@ -288,9 +306,14 @@ export function choisirEscouade(j: Jeu, n: number): Resultat {
  * complétée par des Porteurs libres si l'un d'eux ne peut vraiment pas partir */
 export function escouadePourDepart(j: Jeu, interdits: readonly string[] = []): string[] {
   const peut = (id: string) => !interdits.includes(id) && !enExpedition(j, id) && !raisonHorsEscouade(j, id);
-  const garde = escouadeDe(j).filter(peut);
-  const libres = disponibles(j).filter((id) => peut(id) && !garde.includes(id));
-  return [...garde, ...libres].slice(0, 3);
+  const esc = escouadeDe(j);
+  // le remplaçant (14 novembre 2026) : celui qui porte le plus de cartes, puis le plus haut niveau, et il prend
+  // la place de l'absent (plus de décalage : on voit qui remplace qui)
+  const libres = disponibles(j).filter((id) => peut(id) && !esc.includes(id))
+    .sort((a, b) => j.porteurs[b]!.modules.length - j.porteurs[a]!.modules.length || niveauPorteur(j, b).niveau - niveauPorteur(j, a).niveau);
+  const r = esc.map((id) => (peut(id) ? id : libres.shift() ?? ''));
+  while (r.length < 3 && libres.length) r.push(libres.shift()!);
+  return r.filter(Boolean).slice(0, 3);
 }
 
 // ---------- Les missions ----------

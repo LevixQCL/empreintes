@@ -119,7 +119,17 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'depart-escouade': {
       const r = J.choisirEscouade(app.jeu, Number(b.dataset.index ?? 0));
       resultat(r);
-      if (r.ok) D.escouade = J.escouadePourDepart(app.jeu);
+      if (r.ok) { D.escouade = J.escouadePourDepart(app.jeu); D.remplace = null; }
+      break;
+    }
+    // l'absent du départ (14 novembre 2026) : ouvrir la liste des remplaçants, puis en prendre un à sa place
+    case 'depart-remplacer': { const n = Number(b.dataset.index ?? 0); D.remplace = D.remplace === n ? null : n; break; }
+    case 'depart-prendre': {
+      if (D.remplace === null || D.remplace === undefined) break;
+      const l = [...D.escouade];
+      const k = D.remplace;
+      if (k < l.length) l[k] = id; else l.push(id);
+      D.escouade = l.slice(0, 3); D.remplace = null;
       break;
     }
     case 'escouade-active': resultat(J.choisirEscouade(app.jeu, Number(b.dataset.index ?? 0))); break;
@@ -275,7 +285,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       const r = J.peutDefier(app.jeu, c);
       if (!r.ok || !c) { resultat(r); break; }
       D.deck = null; D.villeDepart = false; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = true; D.defi = c;
-      D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
+      D.escouade = J.escouadePourDepart(app.jeu); D.remplace = null; D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
     case 'fleche-gage': {
@@ -295,7 +305,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       const r = J.peutMonter(app.jeu);
       if (!r.ok) { resultat(r); break; }
       D.deck = null; D.villeDepart = false; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = true; D.defi = null;
-      D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
+      D.escouade = J.escouadePourDepart(app.jeu); D.remplace = null; D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
     case 'pillage-voir': D.pillageCible = id; break;
@@ -311,7 +321,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       const c = await cibleRevanche(id);
       if (!c) { D.message = t('Impossible de retrouver ce district pour l’instant : réessaie dans un moment.'); break; }
       D.deck = null; D.villeDepart = false; D.fouille = null; D.epreuve = null; D.fleche = false; D.pillage = c; D.strateChoisie = c.strate;
-      D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
+      D.escouade = J.escouadePourDepart(app.jeu); D.remplace = null; D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
     case 'pillage-preparer': {
@@ -324,20 +334,20 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       const bouclier = await sousBouclier(c);
       if (bouclier !== false) { D.message = bouclier ? t`${c.nom} est sous bouclier pour l’instant : choisis un autre district.` : t`Impossible de joindre ${c.nom} pour l’instant : réessaie dans un moment.`; break; }
       D.deck = null; D.villeDepart = false; D.fouille = null; D.epreuve = null; D.fleche = false; D.pillage = c; D.strateChoisie = c.strate;
-      D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
+      D.escouade = J.escouadePourDepart(app.jeu); D.remplace = null; D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
     case 'tr-etage': { const n = Number(b.dataset.strate ?? 0); D.etageOuvert = D.etageOuvert === n ? null : n; break; }
     case 'tour-volet': D.ongletTour = id === 'epreuves' || id === 'missions' ? id : 'strates'; break;
-    case 'descendre': D.deck = null; D.villeDepart = false; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = false; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
+    case 'descendre': D.deck = null; D.villeDepart = false; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = false; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.remplace = null; D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
     case 'vestiges-voir': D.vestiges = b.dataset.strate ? Number(b.dataset.strate) : null; break;
-    case 'fouiller-choix': D.deck = null; D.fouille = 'composants'; D.epreuve = null; D.pillage = null; D.fleche = false; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
+    case 'fouiller-choix': D.deck = null; D.fouille = 'composants'; D.epreuve = null; D.pillage = null; D.fleche = false; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.remplace = null; D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
     case 'cible': D.fouille = id as typeof D.fouille; break;
     case 'niveau-fouille': D.niveauFouille = id as typeof D.niveauFouille; break;
     case 'palier': D.felee = id === 'felee'; break;
     case 'epreuve': {
       D.deck = null; D.villeDepart = false; D.fouille = null; D.epreuve = id; D.felee = false; D.pillage = null; D.fleche = false; D.strateChoisie = J.strateEpreuve(app.jeu);
-      D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
+      D.escouade = J.escouadePourDepart(app.jeu); D.remplace = null; D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
     case 'mission': resultat(J.envoyerMission(app.jeu, id, (b.dataset.duree as J.DureeMission) ?? 'courte', Date.now(), b.dataset.cle)); break;

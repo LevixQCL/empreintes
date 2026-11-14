@@ -2,10 +2,6 @@
  "source": "src/ui/porteurs.ts",
  "entrees": [
   {
-   "fr": "En fouille · Strate −{0}",
-   "en": "On a dig · Stratum −{0}"
-  },
-  {
    "fr": "En mission",
    "en": "On a mission"
   },
@@ -206,16 +202,8 @@
    "en": "Pick a Bearer: they bring their cards to the deck"
   },
   {
-   "fr": "{0} : {1} ne pourra pas descendre.",
-   "en": "{0}: {1} won’t be able to go down."
-  },
-  {
-   "fr": "il",
-   "en": "he"
-  },
-  {
-   "fr": "elle",
-   "en": "she"
+   "fr": "Au prochain départ, un autre Porteur prendra sa place.",
+   "en": "On the next departure, another Bearer will take their place."
   },
   {
    "fr": "Au départ, {0}",
@@ -228,10 +216,6 @@
   {
    "fr": "Usure élevée : −{0} PV en combat. La Clinique la soigne au district.",
    "en": "High Strain: −{0} HP in combat. The Clinic heals it in the district."
-  },
-  {
-   "fr": "{0} · Niv. {1}",
-   "en": "{0} · Lvl {1}"
   },
   {
    "fr": "/ {0} PV",
@@ -480,6 +464,10 @@
   {
    "fr": "Pourquoi {0} est là",
    "en": "Why {0}’s here"
+  },
+  {
+   "fr": "il",
+   "en": "he"
   },
   {
    "fr": "Son histoire",

@@ -4,7 +4,7 @@
 
 import { BATIMENTS, CLE_LEGS, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef, deNom } from '../core/donnees';
 import { NIVEAU_METAL, composantsNiveau, doublonsRequis } from '../core/collection';
-import { LOT_RECITS, PRODUITS, aRecit, droitRecit, lotProposable, prixEuros, ACCORD_OUVERT, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, deckEscouade, enExpedition, gestesDe, enMission, escouadeActive, escouadeDe, escouadeDefense, pillagesPermis, escouadesDe, escouadeVerrouillee, niveauPorteur, NOMS_PALIER_MARQUE, PALIERS_MARQUE, porteursPresents, progresMarque, RECITS_ORIGINES, carteDuRecit, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
+import { absence, LOT_RECITS, PRODUITS, aRecit, droitRecit, lotProposable, prixEuros, ACCORD_OUVERT, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, deckEscouade, enExpedition, gestesDe, enMission, escouadeActive, escouadeDe, escouadeDefense, pillagesPermis, escouadesDe, escouadeVerrouillee, niveauPorteur, NOMS_PALIER_MARQUE, PALIERS_MARQUE, porteursPresents, progresMarque, RECITS_ORIGINES, carteDuRecit, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
 import { ORIGINES, PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { RECITS } from './recits';
 import { imageDuPlan } from './intro';
@@ -15,7 +15,7 @@ import { multNiveau } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
 import { illustrationBatiment, portrait } from './art';
 import { ICONES_ACTION, faceCarte } from './carte';
-import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, ongletsFiche, entete, voletsEscouade, type EcranDistrict } from './coquille';
+import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, decompte, ongletsFiche, entete, voletsEscouade, type EcranDistrict } from './coquille';
 import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugePv, plusLongueSuite } from './district';
 import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } from './guide';
 import { ICO, perle, sigle } from './icones';
@@ -241,24 +241,28 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
   const portees = new Set(Object.values(j.porteurs).flatMap((x) => x.modules));
   const attendent = Object.keys(j.collection).filter((k) => !portees.has(k) && moduleDef(k).lignee === p.lignee).length;
   const raison = raisonHorsEscouade(j, id);
+  const abs = absence(j, id);
+  // l'absent (14 novembre 2026, Bryan : « en tout petit, ce n'est vraiment pas clair ») : un bandeau ambre, son retour, et ce qui se passera au départ
   const alerte = raison && !j.expedition
-    ? `<p class="eq-alerte">${ICO.verrou}<span>${tr`${echap(raison.replace(/\.$/, ''))} : ${IL.has(id) ? tr('il') : tr('elle')} ne pourra pas descendre.`}</span></p>`
+    ? `<div class="eq-absent">${ICO.chrono}<span><strong>${abs ? echap(abs.texte) : echap(raison.replace(/\.$/, ''))}${abs?.fin ? ` · ${decompte(abs.fin, Date.now(), tr('retour dans '))}` : ''}</strong>`
+      + `<small>${tr`Au prochain départ, un autre Porteur prendra sa place.`}</small></span></div>`
     : textePosteQuitte(j, id) && !j.expedition ? `<p class="eq-alerte doux">${ICO.ouvrier}<span>${tr`Au départ, ${echap(textePosteQuitte(j, id)!)}`}</span></p>`
     : tropBlesse(j, id) && !j.expedition ? `<p class="eq-alerte">${ICO.soin}<span>${tr`${echap(tropBlesse(j, id)!.replace(/\.$/, ''))} : soins intensifs possibles à la Clinique.`}</span></p>`
     : d.usure >= usureMax(j, id) * 0.5 ? `<p class="eq-alerte">${ICO.soin}<span>${tr`Usure élevée : −${Math.floor(d.usure)} PV en combat. La Clinique la soigne au district.`}</span></p>`
     // vide, la ligne garde sa place : sur PC, les trois colonnes restent alignées
     : '<p class="eq-alerte"></p>';
   const bat = LIGNEES.find((l) => BATTU_PAR[l] === p.lignee)!;
-  return `<section class="eq-porteur" style="--c:${COULEUR[p.lignee]}" aria-label="${echap(p.nom)}">`
+  return `<section class="eq-porteur${raison && !j.expedition ? ' absent' : ''}" style="--c:${COULEUR[p.lignee]}" aria-label="${echap(p.nom)}">`
     // le Porteur et sa Marque dans un même cadre (13 novembre 2026) : le pouvoir se lit comme le sien
     + `<div class="eq-ident"><header class="eq-tete">`
-    + `<button type="button" class="eq-portrait" data-action="porteur" data-id="${id}" aria-label="${tr`Fiche ${echap(deNom(p.nom))}`}">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 64)}<span class="eq-rang" aria-hidden="true">${i + 1}</span></button>`
+    + `<button type="button" class="eq-portrait" data-action="porteur" data-id="${id}" aria-label="${tr`Fiche ${echap(deNom(p.nom))}`}">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 64)}<span class="eq-rang" aria-hidden="true">${i + 1}</span>${raison && !j.expedition ? `<span class="eq-absent-sceau" aria-hidden="true">${ICO.chrono}</span>` : ''}</button>`
     + `<div class="eq-id"><button type="button" class="eq-nom" data-action="porteur" data-id="${id}"><strong>${echap(p.nom)}</strong><small>${tr`${NOM_LIGNEE[p.lignee]} · Niv. ${n.niveau}`}</small></button>`
     + `<span class="eq-pv">${jaugePv(pv, pvM, d.usure, usureMax(j, id))}<small><b>${pv}</b> ${tr`/ ${pvM} PV`}</small></span>`
     + `<small class="eq-fort" style="--l:${COULEUR[bat]}">${tr`Fort contre les ${sigle(bat)}`}<b>${NOM_LIGNEES[bat]}</b></small></div>`
     + (verrou ? '' : `<button type="button" class="eq-changer" data-action="escouade-place" data-index="${i}" aria-label="${tr`Changer ${echap(p.nom)}`}">${ICO.recycler}<span>${tr`Changer`}</span></button>`)
     + `</header>`
-    + blocMarque(j, id) + `</div>` + alerte
+    // l'absent : son bandeau juste sous le portrait, avant la Marque (visible sans défiler)
+    + (abs && raison && !j.expedition ? alerte + blocMarque(j, id) + `</div>` : blocMarque(j, id) + `</div>` + alerte)
     // le compte des cartes et « Gérer » sur une seule ligne, juste au-dessus des cartes (12 novembre 2026 : plus de Charge)
     + `<div class="eq-cartes-tete eq-charge-ligne"><span class="eq-compte${nc >= DISTRICT.cartesMax ? ' plein' : ''}">${ICO.cartes}<b>${nc} / ${DISTRICT.cartesMax}</b> ${tr`cartes`}</span>`
     + `<button type="button" class="eq-gerer" data-action="deck" data-id="${id}"${parti ? ' disabled' : ''} aria-label="${parti ? tr('Ses cartes changeront à son retour') : tr`Gérer ses cartes (${nc} sur ${DISTRICT.cartesMax})`}">${ICO.greffe}<span>${parti ? tr('À son retour') : tr('Gérer')}</span></button></div>`
@@ -281,7 +285,7 @@ function ongletsEscouades(j: Jeu, vue: number): string {
     `<button type="button" role="tab" class="eq-esc${k === vue ? ' actif' : ''}${k === active ? ' descend' : ''}${l.length ? '' : ' vide'}" data-action="escouade-voir" data-index="${k}" aria-selected="${k === vue}">`
     + `<span class="eq-esc-nom">${tr`Escouade ${k + 1}`}</span>`
     // une escouade vide (30 octobre 2026) : un serti de cristal qui attend ses Porteurs, plutôt que trois fantômes
-    + (l.length ? `<span class="eq-esc-visages">${[0, 1, 2].map((i) => (l[i] ? avatar(l[i]!, 26) : '<i class="eq-esc-place"></i>')).join('')}</span>` : `<span class="esc-serti plus" aria-hidden="true"></span>`)
+    + (l.length ? `<span class="eq-esc-visages">${[0, 1, 2].map((i) => (l[i] ? (absence(j, l[i]!) && !j.expedition ? `<span class="es-av-absent">${avatar(l[i]!, 26)}<i aria-hidden="true">${ICO.chrono}</i></span>` : avatar(l[i]!, 26)) : '<i class="eq-esc-place"></i>')).join('')}</span>` : `<span class="esc-serti plus" aria-hidden="true"></span>`)
     + `<small>${k === active ? `${ICO.descendre}${tr('Descend')}` : l.length ? `${l.length} / 3` : tr('Former')}${k === garde ? `<span class="eq-garde" title="${tr`Garde le port`}">${ICO.bouclier}</span>` : ''}</small></button>`).join('') + `</div>`;
 }
 

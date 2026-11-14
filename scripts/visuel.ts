@@ -29,7 +29,7 @@ const ENTRER = async (p: Page) => {
     await p.waitForTimeout(300);
   }
 };
-const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer' | 'comptoir' | 'cercle' | 'creuse' | 'autour' | 'confier' | 'choix' | 'duelRepris'; faire: (p: Page) => Promise<void> }[] = [
+const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer' | 'comptoir' | 'cercle' | 'creuse' | 'autour' | 'confier' | 'choix' | 'duelRepris' | 'absente'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
   { nom: 'recompense-choix', sauvegarde: 'choix', faire: async (p) => { await p.click('.titre-go'); await p.waitForTimeout(600); } },
@@ -84,6 +84,10 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   // les cartes communes du district (31 octobre 2026, Luc) : on les touche comme les autres, et le départ dit ce qu'elles coûtent
   { nom: 'carte-commune', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('.seg[data-action="cartes"]'); await p.click('.cl-paquetage[data-id="repli"]'); await p.waitForTimeout(300); } },
   { nom: 'carte-commune-bas', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('.seg[data-action="cartes"]'); await p.click('.cl-paquetage[data-id="repli"]'); await p.waitForTimeout(300); await p.$eval('.cm-detail .feuille-corps', (e) => e.scrollTo(0, e.scrollHeight)); } },
+  // un Porteur de l'escouade en mission (14 novembre 2026) : bandeau de l'absent, remplaçant marqué, liste des remplaçants, onglet Escouade
+  { nom: 'depart-absente', sauvegarde: 'absente', faire: async (p) => { await ENTRER(p); await p.click('.med-coupe'); await p.click('[data-action="descendre"] >> nth=0'); await p.waitForTimeout(300); await p.$eval('.es-absents', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
+  { nom: 'depart-absente-choix', sauvegarde: 'absente', faire: async (p) => { await ENTRER(p); await p.click('.med-coupe'); await p.click('[data-action="descendre"] >> nth=0'); await p.waitForTimeout(300); await p.click('[data-action="depart-remplacer"]'); await p.waitForTimeout(200); await p.$eval('.es-candidats', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
+  { nom: 'escouade-absente', sauvegarde: 'absente', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.waitForTimeout(300); } },
   { nom: 'depart-strate', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.med-coupe'); await p.click('[data-action="descendre"] >> nth=0'); await p.waitForTimeout(300); await p.$eval('.es-ratelier', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
   // la difficulté d'une fouille (1er novembre 2026) : facile, normale, difficile, sous la cible
   { nom: 'depart-fouille', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.med-coupe'); await p.click('[data-action="fouiller-choix"] >> nth=0'); await p.waitForTimeout(300); await p.click('[data-action="cible"][data-id="bio"]'); await p.click('[data-action="niveau-fouille"][data-id="difficile"]'); await p.$eval('.es-niveaux', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
@@ -332,6 +336,16 @@ async function main() {
       }
     }
     (saves as Record<string, unknown>).duelRepris = pd;
+    // le premier Porteur de l'escouade parti en mer (14 novembre 2026)
+    const ab = JSON.parse(JSON.stringify(saves.district));
+    {
+      const jeu = ab.data as J.Jeu;
+      const id = J.escouadeDe(jeu)[0]!;
+      jeu.porteurs[id]!.poste = null;
+      jeu.missions = [...(jeu.missions ?? []).filter((m) => m.porteur !== id), { porteur: id, strate: 1, duree: 'courte', debut: T - 1_800_000, fin: T + 4_320_000 }];
+      ab.data.portVu = true;
+    }
+    (saves as Record<string, unknown>).absente = ab;
     // le Port déjà présenté dans la sauvegarde du district (la sauvegarde « fleche » garde sa présentation)
     d.portVu = true;
 

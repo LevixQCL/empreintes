@@ -54,6 +54,30 @@
    "en": "At work · Forge (crafting in progress)."
   },
   {
+   "fr": "Pas encore arrivé",
+   "en": "Not arrived yet"
+  },
+  {
+   "fr": "En fouille · Strate −{0}",
+   "en": "On a dig · Stratum −{0}"
+  },
+  {
+   "fr": "En mer · contrat de marée",
+   "en": "At sea · tide contract"
+  },
+  {
+   "fr": "En mer · secours d’une famille",
+   "en": "At sea · rescuing a family"
+  },
+  {
+   "fr": "En mission en mer",
+   "en": "On a sea mission"
+  },
+  {
+   "fr": "À la Forge · fabrication en cours",
+   "en": "At the Forge · crafting"
+  },
+  {
    "fr": "quitte l’entraînement à la Tour du Noyau",
    "en": "leaves training at the Core Tower"
   },
