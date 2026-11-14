@@ -5,7 +5,7 @@
 
 import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, difficulte, escouadeActive, escouadeDefense, escouadesDe, etatPillage, forceEscouade, majJetons, MISSIONS, barquesMax, MAREES, bulleBasses, contratsDuMoment, mareesDe, pavillonDe, consigneDe, neutreDes, type Consigne, type RecitDefense, rangRenom, revanchesOuvertes, porteeDe, angleDe, traversee, exposeDe, perteDe, strateVaincue, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
 import { moduleDef, porteurDef } from '../core/donnees';
-import { ageArchipel, artFleche, bandeauPort, barque, pavillonNeutre, vignetteArchipel, vignetteDistrict, visuel } from './art';
+import { ageArchipel, bandeauPort, barque, pavillonNeutre, pavillonPirate, vignetteArchipel, vignetteDistrict, visuel } from './art';
 import { avatar, avatarGarde, gardesGarnison, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
 import { ICO, icone } from './icones';
@@ -140,7 +140,7 @@ function pavillon(j: Jeu, now: number): string {
   }
   const renom = e.renom ?? 0, rang = rangRenom(renom);
   const quand = neutreDes(j, now);
-  return `<div class="pl-pavillon pirate"><img class="pl-fanion" src="${artFleche('fanion')}" alt="" decoding="async"><span class="surtitre">${t`Pirate · ${rang.nom}`}</span>`
+  return `<div class="pl-pavillon pirate"><img class="pl-fanion peint" src="${pavillonPirate}" alt="" decoding="async"><span class="surtitre">${t`Pirate · ${rang.nom}`}</span>`
     + `<b>${ent(renom)}<small> ${t`Renom`}</small></b>`
     + `<small>${rang.suivant !== null ? t`${ent(rang.suivant - renom)} avant le rang suivant · ` : ''}${t`exposé : ${ent(exposeDe(j.composants, strateVaincue(j)))} minerai`}</small>`
     + (quand ? `<small class="pl-attente">${t`Neutre possible dans ${Math.ceil((quand - now) / 3_600_000)} h`}</small>`
