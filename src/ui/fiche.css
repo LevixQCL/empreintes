@@ -87,4 +87,7 @@ button.fj-rec:hover{box-shadow:inset 0 0 0 1px rgba(159,216,255,.45);background:
 .fj-journal summary small{margin-left:auto;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.04em;color:var(--quiet);text-transform:none}
 .fj-journal summary::after{content:"";width:8px;height:8px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);transition:transform .2s ease;opacity:.7}
 .fj-journal[open] summary::after{transform:rotate(-135deg)}
+/* (14 novembre 2026, capture de Bryan) le trait des titres de section (flex:1, 1 px de haut, moderne.css) écrasait le chevron :
+   il devenait une longue ligne tournée à 45° à travers la fiche. Le chevron reprend sa taille, sans trait ni dégradé. */
+html #app .fj-journal summary::after{flex:none;width:8px;height:8px;background:none;margin:0 2px 3px 4px}
 .fj-journal .journal-liste{margin-top:10px}
