@@ -266,6 +266,35 @@ export function meilleureFrequence(chaine: Maillon[], fs: number[]): number {
   return fs[0]!;
 }
 
+/**
+ * Accorde toute la chaîne d'un coup (14 novembre 2026, retour de Bryan) : chaque carte à plusieurs Fréquences prend celle qui
+ * donne la meilleure chaîne en tenant compte des cartes posées APRÈS elle (avant, une Conque 3/2 posée en premier restait à 3
+ * devant un 3 puis un 4, au lieu de faire 2 → 3 → 4). Les cartes réglées à la main (`accorde`) ne bougent pas.
+ * Ordre de préférence : la plus longue Résonance, puis le plus gros Écho, puis la plus longue suite, puis les Fréquences principales.
+ */
+export function accorderChaine<T extends Maillon & { fs?: number[]; accorde?: boolean }>(chaine: T[]): void {
+  const libres = chaine.filter((g) => g.fs && g.fs.length > 1 && !g.accorde && !frequenceLibre(g.effet));
+  if (!libres.length) return;
+  let meilleur: number[] | null = null;
+  let score: number[] = [];
+  const essai = (k: number, choix: number[]) => {
+    if (k === libres.length) {
+      libres.forEach((g, i) => { g.f = choix[i]!; });
+      const a = analyserChaine(chaine);
+      const s = [a.suite >= 3 ? a.suite : 0, a.echoN ?? 0, a.suite, -libres.filter((g, i) => choix[i] !== g.fs![0]).length];
+      const d = s.findIndex((v, i) => v !== score[i]);
+      if (!meilleur || (d >= 0 && s[d]! > score[d]!)) {
+        meilleur = [...choix];
+        score = s;
+      }
+      return;
+    }
+    for (const f of libres[k]!.fs!) essai(k + 1, [...choix, f]);
+  };
+  essai(0, []);
+  libres.forEach((g, i) => { g.f = meilleur![i]!; });
+}
+
 /** La carte peut-elle prolonger la suite qui se termine sur `der` ? */
 export const prolonge = (g: Pick<Geste, 'f' | 'fs' | 'effet'>, der: number | undefined) =>
   der !== undefined && (g.effet?.type === 'accord' || (g.fs ?? [g.f]).includes(der + 1));

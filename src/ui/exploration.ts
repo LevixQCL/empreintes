@@ -472,7 +472,7 @@ function htmlPorte(x: Expedition, choisies: readonly number[]): string {
 /** Les Fréquences d'une carte, dans de petits cristaux colorés (∗ pour l'Accord) */
 function frequences(g: Expedition['deck'][number]): string {
   if (g.effet?.type === 'accord' || g.effet?.type === 'diapason') return `<b class="px-f libre">${g.effet.type === 'accord' ? '∗' : '='}</b>`;
-  return (g.fs?.length ? g.fs : [g.f]).map((f) => `<b class="px-f" style="--fc:${couleurFrequence(f)}">${f}</b>`).join('');
+  return (g.fs?.length ? [...g.fs].sort((a, b) => a - b) : [g.f]).map((f) => `<b class="px-f" style="--fc:${couleurFrequence(f)}">${f}</b>`).join('');
 }
 
 /** Un passage secret repéré dans la salle où se trouve l'escouade : le Porteur qui l'a vu le dit */

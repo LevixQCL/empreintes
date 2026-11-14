@@ -151,7 +151,7 @@ export function corpsFace(d: Face): string {
   const accord = frequenceLibre(d.effet);
   const segs = accord
     ? `<span class="nf-seg p" style="--fc:#5d5470">${signeLibre(d.effet)}</span>`
-    : d.fs.map((f, i) => `<span class="nf-seg${i ? '' : ' p'}" style="--fc:${couleurFrequence(f)}">${f}</span>`).join('');
+    : [...d.fs].sort((a, b) => a - b).map((f) => `<span class="nf-seg${f === d.fs[0] ? ' p' : ''}" style="--fc:${couleurFrequence(f)}">${f}</span>`).join('');
   // la Fêlure : un segment de plus dans la capsule, la même icône que la gemme fêlée de l'ennemi, et « Brise » quand la carte est assez grande
   const fele = d.felure
     ? `<span class="nf-seg fele" style="--fc:${accord ? '#5d5470' : couleurFrequence(d.fs[0]!)}">${d.felure}<em>${tr`Brise`}</em></span>` : '';

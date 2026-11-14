@@ -2,7 +2,7 @@
 // l'interface appelle ces fonctions puis anime les « pas » qu'elles renvoient.
 
 import { CONDITIONS, DECK_DEPART, FAVEUR_CONDITION, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, deNom } from './donnees';
-import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, nomEcho, pctEcho, placesChaine, placesEnPlus, peutPayerSurtension } from './regles';
+import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, accorderChaine, multEcho, nomEcho, pctEcho, placesChaine, placesEnPlus, peutPayerSurtension } from './regles';
 import { tireur } from './rng';
 import { NOMS_EFFET } from './effets';
 import type {
@@ -324,12 +324,14 @@ export function ajouter(s: CombatEtat, uid: string): Resultat {
   const voix = voixRefusee(s, g);
   if (voix) { log(s, voix, false); return { ok: false, message: voix }; }
   s.main = s.main.filter((x) => x !== g);
-  // une carte à plusieurs Fréquences prend celle qui prolonge la suite
+  // une carte à plusieurs Fréquences prend celle qui prolonge la suite (puis toute la chaîne se réaccorde, voir plus bas)
   if (g.fs && g.fs.length > 1) g.f = meilleureFrequence(s.chaine, g.fs);
   // une carte de soin (hors Vague) reçoit une cible proposée : le joueur peut la changer
   if (soigneUnSeul(g)) g.cible = cibleConseillee(s);
   else delete g.cible;
   s.chaine.push(g);
+  // les cartes déjà posées peuvent changer de Fréquence pour faire suite avec la nouvelle (14 novembre 2026)
+  accorderChaine(s.chaine);
   return { ok: true };
 }
 
@@ -490,7 +492,7 @@ export function retirer(s: CombatEtat, uid: string): Resultat {
   delete g.accorde;
   s.main.push(g);
   // les cartes à plusieurs Fréquences qui restent reprennent celle qui prolonge la nouvelle suite
-  s.chaine.forEach((x, i) => { if (x.fs && x.fs.length > 1 && !x.accorde) x.f = meilleureFrequence(s.chaine.slice(0, i), x.fs); });
+  accorderChaine(s.chaine);
   return { ok: true };
 }
 
@@ -504,7 +506,7 @@ export function deplacer(s: CombatEtat, uid: string, vers: number): Resultat {
   const [g] = s.chaine.splice(de, 1);
   s.chaine.splice(a, 0, g!);
   // les cartes à plusieurs Fréquences reprennent celle qui prolonge la suite à leur nouvelle place
-  s.chaine.forEach((x, i) => { if (x.fs && x.fs.length > 1 && !x.accorde) x.f = meilleureFrequence(s.chaine.slice(0, i), x.fs); });
+  accorderChaine(s.chaine);
   return { ok: true };
 }
 

@@ -224,7 +224,7 @@ function maillon(g: Geste, off: boolean, s: CombatEtat) {
   if (!choix) return geste(g, 'chaine', 'retirer', { off });
   const suivante = g.fs![(g.fs!.indexOf(g.f) + 1) % g.fs!.length]!;
   return `<div class="maillon" ${c}>${geste(g, 'chaine', 'retirer', { off })}`
-    + `<button type="button" class="accorder" data-action="accorder" data-uid="${g.uid}"${off ? ' disabled' : ''} aria-label="${tr`Passer ${echap(g.nom)} en Fréquence ${suivante}`}">${g.fs!.map((f) => `<i class="${f === g.f ? 'actif' : ''}" style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</button>${soin}</div>`;
+    + `<button type="button" class="accorder" data-action="accorder" data-uid="${g.uid}"${off ? ' disabled' : ''} aria-label="${tr`Passer ${echap(g.nom)} en Fréquence ${suivante}`}">${[...g.fs!].sort((a, b) => a - b).map((f) => `<i class="${f === g.f ? 'actif' : ''}" style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</button>${soin}</div>`;
 }
 
 /** La partie de secours : on l'échange avec la partie en cours (deux touches), l'échange se défait de la même façon */
