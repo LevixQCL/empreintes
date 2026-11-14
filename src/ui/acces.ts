@@ -6,6 +6,7 @@ import { ennemiDef } from '../core/donnees';
 import { PILLAGE, pillagesPermis, ciblesDuJour, escouadePourDepart, faitsDuJour, forceEscouade, strateVaincue, type Cible, type Jeu } from '../core/jeu';
 import { illustrationEnnemi } from './art';
 import type { CercleEcran } from './cercle';
+import type { ConfluenceEcran, RangsEcran } from './confluence';
 import { COULEUR } from './vue';
 
 /** Les archipels de la carte et ce qu'il faut pour les afficher */
@@ -26,7 +27,15 @@ export function visageGarde(id: string, taille = 40): string {
   return `<span class="avatar garde-fleche" style="--c:${COULEUR[ennemiDef(id).lignee]};--t:${taille}px" aria-hidden="true">${img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : ''}</span>`;
 }
 
+/** La Confluence et les Rangs du Cercle, vides (14 novembre 2026) */
+export const confluenceVide = (): ConfluenceEcran => ({
+  etat: 'aucune', membres: [], demandes: [], messages: [], nonLus: 0, liste: [], listeLue: 0, sous: 'quai', feuille: null, membre: null,
+  form: { nom: '', devise: '', embleme: 0, couleur: 0 }, erreurForm: '', brouillon: '', metalDemande: 'fer', confirmer: null,
+});
+export const rangsVide = (): RangsEcran => ({ portee: 'amis', tableau: 'profondeur', periode: 'semaine' });
+
 export const cercleVide = (): CercleEcran => ({
   reseau: 'hors-ligne', amis: [], demandes: [], recues: [], envoyees: [], defisRecus: [], defisEnvoyes: [], aRepondre: 0,
-  onglet: 'amis', ami: null, choix: null, filtreMetal: 'argent', filtreLignee: 'tout', echange: null, mode: 'libre', occupe: false, message: '', aide: false,
+  onglet: 'confluence', ami: null, choix: null, filtreMetal: 'argent', filtreLignee: 'tout', echange: null, mode: 'libre', occupe: false, message: '', aide: false,
+  cf: confluenceVide(), rangs: rangsVide(),
 });

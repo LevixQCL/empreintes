@@ -1,0 +1,235 @@
+/* ---------- Le Cercle des quais, refonte du 14 novembre 2026 : carte du directeur, onglets, Confluence, Rangs ----------
+   Même matière que le reste du Cercle (verre fumé, arêtes de glace, or pour la valeur, ambre de lanterne) ;
+   la Confluence ajoute l'eau : une Crue qui monte, d'un bleu de lagune. */
+
+/* ---------- la carte du directeur ---------- */
+.cr-directeur{position:relative;display:grid;gap:12px;padding:14px;overflow:hidden;isolation:isolate;border-radius:20px;
+  background:var(--decor) center 62%/cover no-repeat,#0B0E15;box-shadow:inset 0 0 0 1px rgba(242,184,102,.38),var(--ombre-pose)}
+.cr-directeur::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(100deg,rgba(8,10,16,.94) 0%,rgba(8,10,16,.78) 48%,rgba(8,10,16,.35) 100%),linear-gradient(0deg,rgba(8,10,16,.85),transparent 60%)}
+.cr-directeur::after{content:"";position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,rgba(255,226,170,.7),transparent)}
+.cr-dir-id{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center}
+.cr-dir-id .cr-avatar{box-shadow:0 0 0 2px #0B0E15,0 0 0 3.5px var(--cr-ambre),0 6px 18px rgba(0,0,0,.7)}
+.cr-dir-id>div{display:grid;gap:2px;min-width:0}
+.cr-dir-id small{font:600 12px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--cr-ambre)}
+.cr-dir-id strong{font:400 24px/1.1 var(--display);color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-shadow:0 2px 10px rgba(0,0,0,.8)}
+.cr-dir-conf{display:inline-flex;align-items:center;gap:6px;min-width:0;font-size:13.5px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cr-dir-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;margin:0;border-radius:14px;overflow:hidden;background:rgba(242,184,102,.18)}
+.cr-dir-stats>div{display:grid;gap:2px;padding:8px 6px;text-align:center;background:rgba(10,13,20,.82);backdrop-filter:blur(6px)}
+.cr-dir-stats dt{font:600 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--quiet)}
+.cr-dir-stats dd{margin:0;font:600 21px/1.1 var(--mono);color:#fff}
+.cr-dir-stats dd small{font-size:13px;color:var(--quiet)}
+
+/* ---------- les quatre onglets ---------- */
+.cr-onglets{position:sticky;top:calc(var(--hud-h, 0px) - 2px);z-index:5;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border-radius:18px;
+  background:rgba(12,15,22,.9);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12),0 8px 20px -10px rgba(0,0,0,.8)}
+.cr-onglet{position:relative;display:grid;justify-items:center;gap:3px;min-height:54px;padding:7px 2px 6px;border:none;border-radius:14px;cursor:pointer;
+  font:600 12.5px/1 var(--body);letter-spacing:.02em;color:var(--quiet);background:none;transition:color .2s,background .2s}
+.cr-onglet .ico{width:20px;height:20px}
+.cr-onglet.actif{color:#fff;background:linear-gradient(180deg,rgba(242,184,102,.2),rgba(242,184,102,.06));box-shadow:inset 0 0 0 1px rgba(242,184,102,.55),inset 0 1px 0 rgba(255,236,200,.35)}
+.cr-onglet.actif .ico{color:var(--cr-ambre);filter:drop-shadow(0 0 6px rgba(242,184,102,.6))}
+.cr-onglet .pastille-n{position:absolute;top:4px;right:calc(50% - 22px)}
+.cr-urgent{box-shadow:inset 0 0 0 1px rgba(242,184,102,.55) !important}
+
+/* une ligne d'ami : la vitrine à gauche, Défier à droite */
+.cr-ami-ligne{grid-template-columns:minmax(0,1fr) auto}
+.cr-ami-ouvrir{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;min-width:0;padding:0;border:none;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.cr-defier .ico{width:16px;height:16px}
+@media (max-width:370px){.cr-defier span{display:none}}
+
+/* ---------- le pavillon d'une Confluence : le drap blanc peint, teint, et son emblème ---------- */
+.cf-pavillon{--t:64px;position:relative;display:inline-block;flex:none;width:var(--t);height:var(--t);isolation:isolate}
+.cf-pavillon::before{content:"";position:absolute;inset:0;z-index:0;background:var(--c);
+  -webkit-mask:var(--drap) center/contain no-repeat;mask:var(--drap) center/contain no-repeat}
+.cf-drap{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+.cf-embleme{position:absolute;z-index:2;left:43%;top:31%;width:36%;height:36%;object-fit:contain;transform:translate(-50%,-50%) rotate(-4deg);
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.55)) saturate(.95)}
+
+/* ---------- l'accueil sans Confluence ---------- */
+.cf-accueil{display:grid;gap:12px;padding:16px;border-radius:18px;overflow:hidden;position:relative;isolation:isolate;
+  background:radial-gradient(120% 90% at 100% 0%,rgba(33,134,140,.32),transparent 60%),var(--verre-2);box-shadow:inset 0 0 0 1px rgba(127,212,255,.25)}
+.cf-accueil-texte{display:grid;gap:6px}
+.cf-accueil .surtitre{color:#8EDFE6}
+.cf-accueil h3{margin:0;font:400 23px/1.15 var(--display);color:#fff}
+.cf-accueil p{margin:0;font-size:14px;line-height:1.5;color:var(--ink-2)}
+.cf-atouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0;padding:0;list-style:none}
+.cf-atouts li{display:grid;justify-items:center;align-content:start;gap:4px;padding:10px 6px;text-align:center;border-radius:14px;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.08)}
+.cf-atouts .ico{width:22px;height:22px;color:#8EDFE6}
+.cf-atouts strong{display:block;font-size:13.5px;color:#fff}
+.cf-atouts small{display:block;font-size:12px;line-height:1.3;color:var(--quiet)}
+.cf-ligne .cr-qui small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic;font-family:'Literata',Georgia,serif}
+.cf-effectif{display:inline-flex;align-items:center;gap:4px;font:600 13px/1 var(--mono);color:var(--quiet)}
+.cf-effectif b{font-size:16px;color:#fff}
+.cf-effectif .ico{width:14px;height:14px}
+.cf-fonder{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.cf-fonder strong{display:block;color:#fff;font-size:15px}
+.cf-fonder small{display:block;margin-top:2px;font-size:13px;color:var(--ink-2)}
+.cf-fonder .btn .ico.peinte{width:18px;height:18px}
+
+/* ---------- la bannière ---------- */
+.cf-banniere{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px 12px 8px;border-radius:18px;overflow:hidden;isolation:isolate;
+  background:radial-gradient(90% 140% at 0% 50%,color-mix(in srgb,var(--c) 38%,transparent),transparent 70%),var(--verre-2);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 55%,rgba(205,239,255,.2)),var(--ombre-pose)}
+.cf-banniere-txt{display:grid;gap:4px;min-width:0}
+.cf-banniere .surtitre{display:flex;align-items:center;gap:6px;color:var(--cr-ambre)}
+.cf-banniere h3{margin:0;font:400 24px/1.1 var(--display);color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cf-devise{margin:0;font:italic 400 14px/1.4 'Literata',Georgia,serif;color:var(--ink-2)}
+.cf-puces{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.cf-puces span{display:inline-flex;align-items:center;gap:4px;min-height:24px;padding:0 9px;border-radius:999px;font:600 12.5px/1 var(--mono);color:var(--ink-2);background:rgba(255,255,255,.06)}
+.cf-puces span.or{color:#1C1406;background:var(--laiton)}
+.cf-puces .ico{width:13px;height:13px}
+.cf-puces b{color:#fff}
+.cf-puces .or b,.cf-puces .or sup{color:#1C1406}
+.cf-regler{align-self:start}
+.cf-role{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:999px;font:600 12px/1.2 var(--mono);font-style:normal;letter-spacing:.03em;vertical-align:1px}
+.cf-role.fondateur{color:#1C1406;background:var(--laiton)}
+.cf-role.ancien{color:#0B1424;background:linear-gradient(180deg,#CFEFFF,#7FD4FF)}
+
+/* ---------- la Crue de la semaine ---------- */
+.cf-crue{display:grid;gap:12px;padding:14px 14px 12px;border-radius:18px;background:linear-gradient(180deg,rgba(18,40,52,.85),rgba(12,17,26,.9));box-shadow:inset 0 0 0 1px rgba(127,212,255,.28),var(--ombre-pose)}
+.cf-crue header{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.cf-crue header>div{display:grid;gap:2px}
+.cf-crue .surtitre{color:#8EDFE6}
+.cf-crue header strong{font:600 15px/1 var(--mono);color:var(--quiet)}
+.cf-crue header strong b{font-size:24px;color:#fff}
+.cf-crue header small{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;color:var(--quiet);white-space:nowrap}
+.cf-crue header small .ico{width:13px;height:13px}
+.cf-jauge{position:relative;height:16px;margin:16px 18px 30px 4px;border-radius:999px;background:rgba(4,10,16,.85);box-shadow:inset 0 1px 3px rgba(0,0,0,.8),inset 0 0 0 1px rgba(127,212,255,.25)}
+.cf-eau{position:absolute;inset:2px auto 2px 2px;width:calc(var(--p) - 4px);min-width:0;border-radius:999px;overflow:hidden;
+  background:linear-gradient(180deg,#B8F1FF 0%,#4FC3E8 40%,#1F7FA8 100%);box-shadow:0 0 14px rgba(79,195,232,.6)}
+.cf-eau::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(110deg,rgba(255,255,255,.0) 0 12px,rgba(255,255,255,.28) 12px 16px,rgba(255,255,255,0) 16px 28px);
+  animation:cf-courant 2.4s linear infinite}
+@keyframes cf-courant{to{background-position:56px 0}}
+.cf-palier{position:absolute;left:var(--x);top:50%;display:grid;justify-items:center;gap:3px;transform:translate(-50%,-50%)}
+.cf-palier>i,.cf-palier>button{display:grid;place-items:center;width:34px;height:34px;padding:0;border:none;border-radius:50%;
+  background:#101722;box-shadow:inset 0 0 0 1.5px rgba(127,212,255,.35),0 3px 8px rgba(0,0,0,.6)}
+.cf-palier .ico{width:20px;height:20px;color:#8EDFE6}
+.cf-palier .ico.peinte{width:24px;height:24px}
+.cf-palier small{position:absolute;top:calc(100% + 3px);font:600 12px/1 var(--mono);color:var(--quiet);white-space:nowrap}
+.cf-palier.atteint>i{box-shadow:inset 0 0 0 1.5px #8EDFE6,0 0 12px rgba(79,195,232,.6)}
+.cf-palier.recu>i{background:#123;color:#8EDFE6;opacity:.75}
+.cf-palier.pret>button{cursor:pointer;background:radial-gradient(circle at 50% 35%,#FFF1C9,#E3B65A 55%,#9C7424);box-shadow:0 0 0 2px #0B0E15,0 0 18px rgba(242,184,102,.9);animation:cf-appel 1.6s ease-in-out infinite}
+.cf-palier.pret small{color:var(--cr-ambre)}
+@keyframes cf-appel{50%{transform:scale(1.1)}}
+.cf-apport{margin:0;font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+.cf-apport b{font:600 16px/1 var(--mono);color:#fff}
+.cf-apport small{color:var(--quiet)}
+.cf-pret{display:inline-block;margin-top:2px;font-weight:600;color:var(--cr-ambre)}
+
+/* ---------- le quai ---------- */
+.cf-sous{position:static}
+.cf-quai{display:grid;gap:8px;padding:8px;border-radius:18px;background:rgba(8,11,17,.82);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12)}
+.cf-fil{display:flex;flex-direction:column;gap:8px;max-height:min(52vh,460px);min-height:180px;margin:0;padding:6px 4px;overflow-y:auto;list-style:none;overscroll-behavior:contain;scrollbar-width:thin}
+.cf-jour{align-self:center;margin:4px 0}
+.cf-jour span{padding:3px 10px;border-radius:999px;font:600 12px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--quiet);background:rgba(255,255,255,.05)}
+.cf-evt{display:flex;align-items:center;justify-content:center;gap:6px;align-self:center;max-width:92%;padding:5px 12px;border-radius:999px;text-align:center;
+  font-size:12.5px;line-height:1.35;color:#B9E6EC;background:rgba(33,134,140,.16);box-shadow:inset 0 0 0 1px rgba(142,223,230,.2)}
+.cf-evt .ico{width:14px;height:14px;flex:none;color:#8EDFE6}
+.cf-evt b{color:#fff;font-weight:600}
+.cf-evt b.m-cuivre{color:#F2BE97}.cf-evt b.m-argent{color:#E1E9EF}.cf-evt b.m-fer{color:#C9CED6}
+.cf-evt time{font:500 12px var(--mono);color:var(--mute)}
+.cf-msg{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;align-items:end;max-width:88%}
+.cf-msg .cr-avatar.vide{width:34px;height:34px;font-size:15px}
+.cf-msg.moi{grid-template-columns:minmax(0,1fr);align-self:flex-end}
+.cf-bulle{position:relative;display:grid;gap:3px;padding:8px 12px 6px;border-radius:16px 16px 16px 4px;background:var(--verre-2);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12)}
+.cf-msg.moi .cf-bulle{border-radius:16px 16px 4px 16px;background:linear-gradient(180deg,rgba(242,184,102,.24),rgba(242,184,102,.12));box-shadow:inset 0 0 0 1px rgba(242,184,102,.4)}
+.cf-bulle strong{font-size:13px;color:var(--cr-ambre)}
+.cf-bulle p{margin:0;font-size:14.5px;line-height:1.4;color:#fff;overflow-wrap:anywhere}
+.cf-bulle p em{font-style:normal;color:#CFEFFF}
+.cf-bulle time{justify-self:end;font:500 12px var(--mono);color:var(--quiet)}
+.cf-effacer{position:absolute;top:-6px;right:-6px;display:none;place-items:center;width:24px;height:24px;padding:0;border:none;border-radius:50%;cursor:pointer;color:var(--ink);background:#2A303B}
+.cf-effacer .ico{width:12px;height:12px}
+.cf-bulle:hover .cf-effacer,.cf-bulle:focus-within .cf-effacer{display:grid}
+@media (hover:none){.cf-effacer{display:grid;opacity:.55}}
+.cf-vide{align-self:center;margin:auto;padding:30px 10px;font-size:13.5px;color:var(--quiet)}
+.cf-rapides{display:flex;gap:6px;overflow-x:auto;padding:2px;scrollbar-width:none}
+.cf-rapides::-webkit-scrollbar{display:none}
+.cf-rapides button{flex:none;min-height:34px;padding:0 12px;border:none;border-radius:999px;cursor:pointer;font:500 13px/1 var(--body);color:#CFEFFF;
+  background:rgba(127,212,255,.08);box-shadow:inset 0 0 0 1px rgba(127,212,255,.3)}
+.cf-rapides button:active{transform:scale(.97)}
+.cf-ecrire{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.cf-ecrire input{min-height:46px;padding:0 16px;border:none;border-radius:999px;font:500 15px var(--body);color:#fff;background:rgba(20,25,35,.95);box-shadow:inset 0 0 0 1px rgba(159,216,255,.3)}
+.cf-ecrire input:focus{outline:none;box-shadow:inset 0 0 0 2px var(--cr-ambre)}
+.cf-envoyer{width:46px;min-height:46px;padding:0;border-radius:50%}
+.cf-envoyer .ico{width:20px;height:20px}
+
+/* ---------- les dons ---------- */
+.cf-mini{display:block;width:62px;flex:none}
+.cf-demande{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 10px;border-radius:14px;background:rgba(255,255,255,.03);box-shadow:inset 0 0 0 1px rgba(205,239,255,.08)}
+.cf-demande.moi{grid-template-columns:62px minmax(0,1fr);background:rgba(242,184,102,.06);box-shadow:inset 0 0 0 1px rgba(242,184,102,.3)}
+.cf-demande.off{opacity:.62}
+.cf-demande>div{display:grid;gap:4px;min-width:0}
+.cf-demande strong{color:#fff;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cf-demande small{font-size:12.5px;color:var(--quiet)}
+.cf-qui{display:flex;align-items:center;gap:6px;min-width:0}
+.cf-demande .btn{min-height:40px;padding:0 12px;white-space:nowrap}
+.cf-demande .btn .ico.peinte{width:16px;height:16px}
+.m-fer{color:#C9CED6}.m-cuivre{color:#F2BE97}.m-argent{color:#E1E9EF}.m-or{color:#F4D27A}
+.cf-gouttes{display:flex;align-items:center;gap:4px}
+.cf-gouttes i{width:10px;height:13px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;transform:rotate(180deg);background:rgba(127,212,255,.12);box-shadow:inset 0 0 0 1px rgba(127,212,255,.45)}
+.cf-gouttes i.pleine{background:linear-gradient(0deg,#B8F1FF,#3FA9D6);box-shadow:0 0 6px rgba(79,195,232,.7)}
+.cf-gouttes b{margin-left:4px;font:600 12.5px/1 var(--mono);color:var(--ink-2)}
+.cf-attente{display:flex;align-items:center;gap:6px;margin:0;font-size:13.5px;color:var(--ink-2)}
+.cf-attente .ico{width:15px;height:15px}
+.cf-ma-demande{display:grid;gap:10px}
+
+/* ---------- les membres ---------- */
+.cf-membre{grid-template-columns:22px auto minmax(0,1fr) auto}
+.cf-membre.moi{background:rgba(242,184,102,.07);box-shadow:inset 0 0 0 1px rgba(242,184,102,.35)}
+.cf-num{font:600 14px/1 var(--mono);color:var(--quiet);text-align:center}
+.cf-barre{display:block;height:4px;margin-top:4px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden}
+.cf-barre i{display:block;width:var(--p);height:100%;border-radius:inherit;background:linear-gradient(90deg,#3FA9D6,#B8F1FF)}
+.cf-valeur{font:600 17px/1 var(--mono);color:#fff}
+.cf-sortie{display:grid;justify-items:center;padding:4px 0}
+.cf-sortie .cr-lien{color:var(--quiet)}
+
+/* ---------- les feuilles ---------- */
+.cf-apercu-pav{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;padding:10px;border-radius:16px;background:rgba(255,255,255,.04)}
+.cf-apercu-pav strong{display:block;font:400 21px/1.15 var(--display);color:#fff}
+.cf-apercu-pav small{display:block;font:italic 13.5px/1.4 'Literata',Georgia,serif;color:var(--ink-2)}
+.cf-champ{display:grid;gap:6px}
+.cf-champ span{font:600 12.5px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--quiet)}
+.cf-champ input{min-height:46px;padding:0 14px;border:none;border-radius:14px;font:500 15px var(--body);color:#fff;background:rgba(8,10,16,.7);box-shadow:inset 0 0 0 1px rgba(159,216,255,.3)}
+.cf-champ input:focus{outline:none;box-shadow:inset 0 0 0 2px var(--cr-ambre)}
+.cf-devises{display:flex;flex-wrap:wrap;gap:6px}
+.cf-devises button{min-height:32px;padding:0 11px;border:none;border-radius:999px;cursor:pointer;font:italic 13px/1 'Literata',Georgia,serif;color:var(--ink-2);background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px rgba(205,239,255,.14)}
+.cf-choix-emb{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.cf-choix-emb button{display:grid;place-items:center;height:54px;min-width:0;padding:6px;overflow:hidden;border:none;border-radius:14px;cursor:pointer;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12)}
+.cf-choix-emb img{width:100%;height:100%;max-height:42px;object-fit:contain}
+.cf-choix-emb button.actif{background:rgba(242,184,102,.12);box-shadow:inset 0 0 0 2px var(--cr-ambre),0 0 12px rgba(242,184,102,.35)}
+.cf-choix-coul{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px}
+.cf-choix-coul button{aspect-ratio:1;padding:0;border:none;border-radius:50%;cursor:pointer;background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--c) 55%,#fff),var(--c) 55%,color-mix(in srgb,var(--c) 60%,#000));box-shadow:0 2px 6px rgba(0,0,0,.6)}
+.cf-choix-coul button.actif{box-shadow:0 0 0 2px #0B0E15,0 0 0 4px var(--cr-ambre)}
+.cf-visages{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:10px}
+.cf-visages span{display:grid;justify-items:center;gap:4px;min-width:0}
+.cf-visages small{max-width:100%;font-size:12px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- les Rangs ---------- */
+.rg-periode{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+.rg-periode small{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;color:var(--quiet);white-space:nowrap}
+.rg-periode small .ico{width:13px;height:13px}
+.rg-tableaux{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.rg-tab{display:grid;justify-items:center;gap:4px;min-height:52px;padding:7px 2px;border:none;border-radius:14px;cursor:pointer;font:600 12.5px/1 var(--body);color:var(--quiet);background:rgba(255,255,255,.03);box-shadow:inset 0 0 0 1px rgba(205,239,255,.1)}
+.rg-tab .ico{width:18px;height:18px}
+.rg-tab.actif{color:#fff;background:rgba(127,212,255,.1);box-shadow:inset 0 0 0 1.5px var(--cristal)}
+.rg-tab.actif .ico{color:var(--cristal)}
+.rg-liste{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.rg-ligne{display:grid;grid-template-columns:30px auto minmax(0,1fr) auto;gap:10px;align-items:center;min-height:56px;padding:6px 12px 6px 8px;border-radius:14px;background:var(--verre);box-shadow:inset 0 0 0 1px rgba(205,239,255,.08)}
+.rg-ligne.moi{background:rgba(242,184,102,.08);box-shadow:inset 0 0 0 1px rgba(242,184,102,.5)}
+.rg-ligne .cr-qui em{font-style:normal;font-size:12px;color:var(--cr-ambre)}
+.rg-rang{display:grid;place-items:center;font:600 15px/1 var(--mono);color:var(--quiet)}
+.rg-medaille{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;font:700 14px/1 var(--mono);font-style:normal;color:#1C1406}
+.r1 .rg-medaille{background:var(--m-or,linear-gradient(180deg,#FBE7A8,#E2B44A 45%,#9C7424));box-shadow:0 0 12px rgba(242,184,102,.6)}
+.r2 .rg-medaille{background:var(--m-argent,linear-gradient(180deg,#F4F8FB,#B8C4CE 48%,#6F7C88))}
+.r3 .rg-medaille{background:var(--m-cuivre,linear-gradient(180deg,#F2BE97,#C47A48 48%,#7C4423))}
+.rg-valeur{font:600 16px/1 var(--mono);color:#fff;white-space:nowrap}
+.rg-vide{padding:18px 4px;text-align:center}
+.rg-note{margin:0;text-align:center}
+.rg-tout{margin-top:4px}
+
+@media (prefers-reduced-motion:reduce){.cf-eau::after,.cf-palier.pret>button{animation:none}}
+@media (min-width:1100px){
+  .cr-onglets{top:8px}
+  .cf-fil{max-height:min(58vh,560px)}
+}
+.cf-sous{width:100%;max-width:none}

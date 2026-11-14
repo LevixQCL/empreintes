@@ -4,6 +4,18 @@
   {
    "fr": "Tape le nom de directeur de ton ami.",
    "en": "Type your friend’s director name."
+  },
+  {
+   "fr": "Tape le nom de la Confluence.",
+   "en": "Type the Confluence's name."
+  },
+  {
+   "fr": "Ses messages ne s’affichent plus chez toi.",
+   "en": "Their messages no longer show for you."
+  },
+  {
+   "fr": "Ses messages s’affichent à nouveau.",
+   "en": "Their messages show again."
   }
  ]
 }

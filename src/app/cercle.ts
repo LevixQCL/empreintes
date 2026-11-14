@@ -87,6 +87,8 @@ export function arreterCercle() {
   vus.clear(); charges.clear();
   ecoute?.arreter();
   ecoute = null;
+  // la Confluence s'arrête avec (déconnexion, changement de compte)
+  void import('./confluence').then((m) => m.arreterConfluence());
 }
 
 async function majAmis(uid: string) {

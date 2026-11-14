@@ -6,7 +6,7 @@
 import * as J from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, multNiveau } from '../core/collection';
 import { NOMS_LIGNEE, moduleDef, porteurDef, tirablesEn } from '../core/donnees';
-import { clePseudo } from '../core/classements';
+import { classer, clePseudo } from '../core/classements';
 import type { Lignee, Rarete } from '../core/types';
 import { portrait } from './art';
 import { COULEUR_RARETE, faceCarte } from './carte';
@@ -14,6 +14,7 @@ import { coquille, entete, type EcranDistrict } from './coquille';
 import { CHANTIER, ICO, icone, baseIcones } from './icones';
 import { echap } from './outils';
 import { cercleVide } from './acces';
+import { aFaireConfluence, feuilleApercu, feuilleDemande, feuilleFonder, feuilleMembre, pavillon, voletConfluence, voletRangs } from './confluence';
 import { t } from '../core/i18n';
 
 // ---------- Ce que l'application garde du Cercle ----------
@@ -32,7 +33,7 @@ export interface AmiCercle { amitie: string; uid: string; nom: string; depuis: n
 export interface DemandeAmi { amitie: string; uid: string; nom: string; le: number; recue: boolean }
 export interface PropositionVue { id: string; de: string; a: string; nomDe: string; nomA: string; donne: string; demande: string; etat: string; le: number }
 export interface DefiVue { id: string; de: string; a: string; nomDe: string; code: string; mode: 'libre' | 'egal'; etat: string; le: number }
-export type OngletCercle = 'amis' | 'duels' | 'echanges';
+export type OngletCercle = 'confluence' | 'amis' | 'echanges' | 'rangs';
 
 export interface CercleEcran {
   /** le réseau : pas connecté, en train de lire, prêt, ou en erreur (règles pas encore publiées…) */
@@ -62,6 +63,9 @@ export interface CercleEcran {
   message: string;
   /** la présentation rouverte avec « ? » */
   aide: boolean;
+  /** la Confluence (14 novembre 2026, src/app/confluence.ts) et les Rangs */
+  cf: import('./confluence').ConfluenceEcran;
+  rangs: import('./confluence').RangsEcran;
 }
 
 
@@ -88,17 +92,16 @@ function petiteCarte(j: J.Jeu, id: string, o: { action?: string; data?: string; 
     : `<div class="${cls}" data-carte="${id}">${contenu}</div>`;
 }
 
-function avatarPorteur(id: string, taille = 48): string {
+export function avatarPorteur(id: string, taille = 48): string {
   const img = (() => { try { return portrait(id); } catch { return null; } })();
   let lignee: Lignee = 'tech';
   try { lignee = porteurDef(id).lignee; } catch { /* Porteur inconnu de ce jeu */ }
   return `<span class="cr-avatar" style="--t:${taille}px;--c:var(--${lignee})${img ? `;background-image:url(${img})` : ''}" aria-hidden="true"></span>`;
 }
 
-const pastille = (n: number) => (n ? ` <span class="pastille-n">${n}</span>` : '');
 
 /** L'ouverture d'une feuille du Cercle : le voile, la poignée, le titre et le bouton qui ferme (à droite, jamais sur le titre) */
-function ouvrirFeuille(id: string, surtitre: string, titre: string, classe = '', avant = ''): string {
+export function ouvrirFeuille(id: string, surtitre: string, titre: string, classe = '', avant = ''): string {
   return `<div class="voile-feuille" data-action="cercle-fermer" aria-hidden="true"></div><section class="feuille cr-feuille ${classe}" role="dialog" aria-modal="true" aria-labelledby="${id}">`
     + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete cr-feuille-tete">${avant}<div class="titres"><span class="surtitre">${surtitre}</span><h2 id="${id}">${titre}</h2></div>`
     + `<button type="button" class="btn-icone" data-action="cercle-fermer" aria-label="${t`Fermer`}">${ICO.fermer}</button></header><div class="feuille-corps">`;
@@ -153,7 +156,7 @@ export function htmlCercle(e: EcranDistrict): string {
 
   // ce qu'il faut avant tout : être connecté, avoir un nom de directeur
   if (c.reseau === 'hors-ligne') {
-    h += `<section class="bloc cr-garde">${ICO.compte}<div><strong>${t`Le Cercle passe par ton compte`}</strong><small>${t`Les amis, les duels et les échanges ont besoin du jeu connecté. Ta partie, elle, ne change pas.`}</small></div><button type="button" class="btn prim" data-action="gt-connexion">${t`Se connecter`}</button></section>`
+    h += `<section class="bloc cr-garde">${ICO.compte}<div><strong>${t`Le Cercle passe par ton compte`}</strong><small>${t`Les amis, la Confluence, les duels et les échanges ont besoin du jeu connecté. Ta partie, elle, ne change pas.`}</small></div><button type="button" class="btn prim" data-action="gt-connexion">${t`Se connecter`}</button></section>`
       + robot();
     return coquille(e, `<div class="cercle">${h}</div>`, 'cr');
   }
@@ -163,62 +166,117 @@ export function htmlCercle(e: EcranDistrict): string {
     return coquille(e, `<div class="cercle">${h}</div>`, 'cr');
   }
 
-  const recus = c.demandes.filter((d) => d.recue).length;
-  const defis = c.defisRecus.filter((d) => d.etat === 'envoye').length;
+  h += carteDirecteur(e, c);
+  const recus = c.demandes.filter((d) => d.recue).length + c.defisRecus.filter((d) => d.etat === 'envoye').length;
   const props = c.recues.filter((p) => p.etat === 'propose').length;
-  const seg = (id: OngletCercle, nom: string, n: number) =>
-    `<button type="button" role="tab" class="seg${c.onglet === id ? ' actif' : ''}" aria-selected="${c.onglet === id}" data-action="cercle-onglet" data-id="${id}">${nom}${pastille(n)}</button>`;
-  h += `<div class="segments-choix trois cr-volets" role="tablist" aria-label="${t`Amis, duels ou échanges`}">${seg('amis', t('Amis'), recus)}${seg('duels', t('Duels'), defis)}${seg('echanges', t('Échanges'), props)}</div>`;
+  const onglet = (id: OngletCercle, nom: string, ico: string, n: number) =>
+    `<button type="button" role="tab" class="cr-onglet${c.onglet === id ? ' actif' : ''}" aria-selected="${c.onglet === id}" data-action="cercle-onglet" data-id="${id}">${ico}<span>${nom}</span>${n ? `<i class="pastille-n">${n}</i>` : ''}</button>`;
+  h += `<nav class="cr-onglets" role="tablist" aria-label="${t`Le Cercle des quais`}">`
+    + onglet('confluence', t('Confluence'), ICO.cercle, aFaireConfluence(e, c))
+    + onglet('amis', t('Amis'), ICO.ami, recus)
+    + onglet('echanges', t('Échanges'), ICO.echange, props)
+    + onglet('rangs', t('Rangs'), ICO.monter, 0) + `</nav>`;
   if (c.reseau === 'chargement') h += `<p class="cr-etat">${ICO.chrono}${t`Les quais se remplissent…`}</p>`;
   if (c.reseau === 'erreur') h += `<p class="cr-etat erreur" role="alert">${ICO.fele}${echap(c.erreur ?? t('Le Cercle ne répond pas.'))} <button type="button" class="btn-sec" data-action="cercle-relire">${t`Réessayer`}</button></p>`;
   if (c.message) h += `<p class="cr-message" role="status">${echap(c.message)}</p>`;
 
-  h += c.onglet === 'duels' ? voletDuels(e, c) : c.onglet === 'echanges' ? voletEchanges(e, c) : voletAmis(e, c);
-  h += feuilleAmi(e, c) + feuilleChoix(e, c) + feuilleEchange(e, c);
-  return coquille(e, `<div class="cercle">${h}</div>`, 'cr');
+  h += c.onglet === 'confluence' ? voletConfluence(e, c) : c.onglet === 'echanges' ? voletEchanges(e, c) : c.onglet === 'rangs' ? voletRangs(e, c) : voletAmis(e, c);
+  h += feuilleAmi(e, c) + feuilleChoix(e, c) + feuilleEchange(e, c) + feuilleFonder(e, c) + feuilleApercu(e, c) + feuilleDemande(e, c) + feuilleMembre(e, c);
+  return coquille(e, `<div class="cercle cr-${c.onglet}">${h}</div>`, 'cr');
 }
 
-// ---------- Amis ----------
+/**
+ * La carte du directeur (14 novembre 2026) : qui on est au Cercle, d'un coup d'œil. Son Porteur fétiche, son nom,
+ * sa Confluence, et trois repères : son rang en profondeur, ses Joutes de la semaine, son apport à la Crue.
+ */
+function carteDirecteur(e: EcranDistrict, c: CercleEcran): string {
+  const j = e.j;
+  const s = J.etatCercle(j);
+  const conf = c.cf.conf;
+  const l = J.etatConfluence(j, e.now);
+  const sem = J.semaineDe(e.now);
+  const g = e.grand;
+  let rang = '—';
+  if (g?.entrees.length && e.uid) {
+    const cl = classer(g.entrees, 'profondeur', 'total', sem);
+    const x = cl.find((y) => y.e.uid === e.uid);
+    if (x) rang = `${x.rang}<small>/${cl.length}</small>`;
+  }
+  const joutes = s.semaine === sem ? s.battus.length : 0;
+  return `<section class="cr-directeur" style="--decor:url(${decor})">`
+    + `<div class="cr-dir-id">${avatarPorteur(s.fetiche ?? j.escouade[0] ?? 'ilka', 58)}<div><small>${t`Directeur · Strate −${Math.max(1, j.strate)}`}</small><strong>${echap(j.directeur?.nom ?? '')}</strong>`
+    + `<span class="cr-dir-conf">${conf ? `${pavillon(conf.embleme, conf.couleur, 22)}${echap(conf.nom)}` : l.nom ? echap(l.nom) : t('Sans Confluence')}</span></div></div>`
+    + `<dl class="cr-dir-stats"><div><dt>${t`Profondeur`}</dt><dd>${rang}</dd></div>`
+    + `<div><dt>${t`Joutes`}</dt><dd>${joutes}<small>/${J.CERCLE.duelsSemaine}</small></dd></div>`
+    + `<div><dt>${t`Ton apport`}</dt><dd>${J.apportSemaine(j, e.now).total}</dd></div></dl></section>`;
+}
+
+// ---------- Amis (et leurs duels) ----------
 
 function voletAmis(e: EcranDistrict, c: CercleEcran): string {
   const j = e.j;
-  let h = `<section class="bloc cr-ajout"><h3 class="titre-bloc">${ICO.ami}${t`Ajouter un directeur`}</h3>`
-    + `<div class="cr-champ"><input id="cr-pseudo" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="18" placeholder="${t`Son nom de directeur`}" aria-label="${t`Nom de directeur de ton ami`}">`
-    + `<button type="button" class="btn prim" data-action="cercle-ajouter"${c.occupe ? ' disabled' : ''}>${c.occupe ? t('Recherche…') : t('Inviter')}</button></div>`
-    + `<small class="aide">${t`Ton nom :`} <b>${echap(j.directeur?.nom ?? '')}</b>${t`. Donne-le à tes amis pour qu’ils t’ajoutent.`}</small></section>`;
-
+  const s = J.etatCercle(j);
+  // ce qui attend une réponse d'abord : les défis, puis les demandes d'amis
+  let h = '';
+  const defis = c.defisRecus.filter((d) => d.etat === 'envoye');
+  if (defis.length) {
+    h += `<section class="bloc cr-liste cr-urgent"><h3 class="titre-bloc">${ICO.atk}${t`On te défie`}</h3>`
+      + defis.map((d) => `<div class="cr-ligne cr-defi"><span class="cr-avatar vide" aria-hidden="true">${echap(d.nomDe.charAt(0))}</span><div class="cr-qui"><strong>${echap(d.nomDe)}</strong><small>${d.mode === 'egal' ? t('à armes égales') : t('avec vos vraies forces')}</small></div>`
+        + `<div class="cr-actions"><button type="button" class="btn prim" data-action="cercle-defi-accepter" data-id="${d.id}">${ICO.lancer}${t`Jouer`}</button><button type="button" class="btn-sec" data-action="cercle-defi-refuser" data-id="${d.id}" aria-label="${t`Refuser le défi de ${echap(d.nomDe)}`}">${ICO.fermer}</button></div></div>`).join('')
+      + `</section>`;
+  }
   const recues = c.demandes.filter((d) => d.recue);
   const envoyees = c.demandes.filter((d) => !d.recue);
   if (recues.length) {
-    h += `<section class="bloc cr-liste"><h3 class="titre-bloc">${ICO.porteurs}${t`Ils veulent être tes amis`}</h3>`
+    h += `<section class="bloc cr-liste cr-urgent"><h3 class="titre-bloc">${ICO.porteurs}${t`Ils veulent être tes amis`}</h3>`
       + recues.map((d) => `<div class="cr-ligne"><span class="cr-avatar vide" aria-hidden="true">${echap(d.nom.charAt(0))}</span><div class="cr-qui"><strong>${echap(d.nom)}</strong><small>${t`veut rejoindre ton Cercle`}</small></div>`
         + `<div class="cr-actions"><button type="button" class="btn prim" data-action="cercle-accepter-ami" data-id="${d.amitie}">${t`Accepter`}</button><button type="button" class="btn-sec" data-action="cercle-retirer-ami" data-id="${d.amitie}" aria-label="${t`Refuser ${echap(d.nom)}`}">${ICO.fermer}</button></div></div>`).join('')
       + `</section>`;
   }
 
-  h += `<section class="bloc cr-liste"><h3 class="titre-bloc">${ICO.cercle}${t`Tes amis`} <span class="cr-compte">${c.amis.length}</span></h3>`;
-  if (!c.amis.length) h += `<p class="cr-vide">${t`Personne pour l’instant. Invite un directeur par son nom, ou envoie ton lien de recrutement : tes recrues deviennent tes amis.`}</p>`;
+  // la semaine des duels
+  const reste = J.duelsRecompensesRestants(j, e.now);
+  const faits = J.CERCLE.duelsSemaine - reste;
+  h += `<section class="bloc cr-semaine"><div class="cr-crans" aria-label="${t`${faits} victoire(s) récompensée(s) sur ${J.CERCLE.duelsSemaine} cette semaine`}">`
+    + Array.from({ length: J.CERCLE.duelsSemaine }, (_, i) => `<i class="${i < faits ? 'plein' : ''}">${i < faits ? ICO.ok : ''}</i>`).join('') + `</div>`
+    + `<div><strong>${reste ? t`Encore ${pluriel(reste, 'victoire')} récompensée${reste > 1 ? 's' : ''} cette semaine` : t('Toutes les victoires de la semaine sont gagnées')}</strong>`
+    + `<small>${t`${J.CERCLE.recompenseDuel.composants} cristaux et ${pluriel(J.CERCLE.recompenseDuel.eclats, t('Éclat'))} par ami différent battu. Bilan : ${pluriel(s.victoires, 'victoire')}, ${pluriel(s.defaites, t('défaite'))}.`}</small></div></section>`;
+
+  // les amis, avec leur bouton Défier
+  const attente = c.defisEnvoyes.filter((d) => d.etat === 'envoye');
+  h += `<section class="bloc cr-liste"><h3 class="titre-bloc">${ICO.cercle}${t`Tes amis`} <span class="cr-compte">${c.amis.length}</span></h3>`
+    + (c.amis.length ? `<div class="segments-choix deux cr-mode" role="radiogroup" aria-label="${t`Mode du duel`}">`
+      + `<button type="button" role="radio" class="seg${c.mode === 'libre' ? ' actif' : ''}" aria-checked="${c.mode === 'libre'}" data-action="cercle-mode" data-id="libre">${t`Vraies forces`}</button>`
+      + `<button type="button" role="radio" class="seg${c.mode === 'egal' ? ' actif' : ''}" aria-checked="${c.mode === 'egal'}" data-action="cercle-mode" data-id="egal">${t`À armes égales`}</button></div>`
+      + `<small class="aide">${c.mode === 'egal' ? t('Chaque carte revient au niveau de départ de son métal : seule ta façon de jouer compte.') : t('Chacun vient avec son escouade active, ses cartes et ses niveaux.')} ${t`Il faut un Augmenté, un Géné et un Résonant.`}</small>` : '');
+  if (!c.amis.length) h += `<p class="cr-vide">${t`Personne pour l’instant. Invite un directeur par son nom ci-dessous, ajoute un membre de ta Confluence, ou envoie ton lien de recrutement.`}</p>`;
   for (const a of [...c.amis].sort((x, y) => x.nom.localeCompare(y.nom))) {
     const p = a.profil;
     const comble = p ? J.souhaitsComblables(j, p.doubles).length : 0;
-    const veut = p ? J.doublesEchangeables(j).filter((d) => p.souhaits.includes(d)).length : 0;
-    h += `<button type="button" class="cr-ligne cr-ami" data-action="cercle-ami" data-id="${a.uid}" aria-label="${t`La vitrine de ${echap(a.nom)}`}">`
+    const envoye = attente.find((d) => d.a === a.uid);
+    const battu = s.battus.includes(a.uid) && s.semaine === J.semaineDe(e.now);
+    h += `<div class="cr-ligne cr-ami-ligne"><button type="button" class="cr-ami-ouvrir" data-action="cercle-ami" data-id="${a.uid}" aria-label="${t`La vitrine de ${echap(a.nom)}`}">`
       + (p ? avatarPorteur(p.porteur) : `<span class="cr-avatar vide" aria-hidden="true">${echap(a.nom.charAt(0))}</span>`)
-      + `<span class="cr-qui"><strong>${echap(a.nom)}</strong><small>${p ? t`Strate −${p.strate} · Cercle ${p.cercle}` : t('vitrine pas encore ouverte')}</small></span>`
-      + `<span class="cr-indices">${comble ? `<span class="cr-indice souhait" title="${t`Il a ${comble} carte(s) que tu cherches`}">${ICO.etoile}${comble}</span>` : ''}`
-      + `${veut ? `<span class="cr-indice veut" title="${t`Il cherche ${veut} de tes doubles`}">${ICO.echange}${veut}</span>` : ''}${ICO.lancer}</span></button>`;
+      + `<span class="cr-qui"><strong>${echap(a.nom)}</strong><small>${p ? t`Strate −${p.strate} · ${pluriel(p.victoires, 'victoire')}` : t('vitrine pas encore ouverte')}${battu ? t(' · battu cette semaine') : ''}</small></span>`
+      + (comble ? `<span class="cr-indice souhait" title="${t`Il a ${comble} carte(s) que tu cherches`}">${ICO.etoile}${comble}</span>` : '') + `</button>`
+      + `<div class="cr-actions">${envoye ? `<button type="button" class="btn-sec" data-action="cercle-defi-annuler" data-id="${envoye.id}">${t`Annuler`}</button>` : `<button type="button" class="btn prim cr-defier" data-action="cercle-defier" data-id="${a.uid}"${c.occupe ? ' disabled' : ''}><img class="ico peinte action" src="${baseIcones}frapper.webp" alt="" aria-hidden="true" decoding="async"><span>${t`Défier`}</span></button>`}</div></div>`;
   }
   if (envoyees.length) h += `<p class="cr-attente">${ICO.chrono}${t`En attente : ${envoyees.map((d) => `${echap(d.nom)} <button type="button" class="cr-lien" data-action="cercle-retirer-ami" data-id="${d.amitie}">${t`annuler`}</button>`).join(', ')}`}</p>`;
   h += `</section>`;
 
+  h += `<section class="bloc cr-ajout"><h3 class="titre-bloc">${ICO.ami}${t`Ajouter un directeur`}</h3>`
+    + `<div class="cr-champ"><input id="cr-pseudo" data-garder data-entree="cercle-ajouter" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="18" placeholder="${t`Son nom de directeur`}" aria-label="${t`Nom de directeur de ton ami`}">`
+    + `<button type="button" class="btn prim" data-action="cercle-ajouter"${c.occupe ? ' disabled' : ''}>${c.occupe ? t('Recherche…') : t('Inviter')}</button></div>`
+    + `<small class="aide">${t`Ton nom :`} <b>${echap(j.directeur?.nom ?? '')}</b>${t`. Donne-le à tes amis pour qu’ils t’ajoutent.`}</small></section>`;
+
   // sa propre vitrine
-  const v = J.etatCercle(j).vitrine;
+  const v = s.vitrine;
   const max = J.vitrineMax(j);
   h += `<section class="bloc cr-vitrine"><h3 class="titre-bloc">${ICO.cartes}${t`Ta vitrine`} <span class="cr-compte">${v.length} / ${max}</span></h3>`
     + `<div class="cr-rangee">${v.map((id) => petiteCarte(j, id, { action: 'cercle-choisir', data: 'vitrine' })).join('')}`
     + Array.from({ length: Math.max(0, max - v.length) }, () => `<button type="button" class="cr-place" data-action="cercle-choisir" data-id="vitrine" aria-label="${t`Choisir une carte à montrer`}">${ICO.ajouter}</button>`).join('')
     + `</div><small class="aide">${t`Ce que tes amis voient de toi${max < 3 ? t` · ${3 - max} place${3 - max > 1 ? 's' : ''} de plus avec le Cercle` : ''}.`}</small></section>`;
-  return h;
+  return h + robot();
 }
 
 /** La vitrine d'un ami : ses cartes exposées, ce qu'il a en double (tes souhaits en premier), ce qu'il cherche */
@@ -245,42 +303,6 @@ function feuilleAmi(e: EcranDistrict, c: CercleEcran): string {
   }
   h += `<button type="button" class="cr-lien cr-retirer" data-action="cercle-retirer-ami" data-id="${a.amitie}">${t`Retirer ${echap(a.nom)} de tes amis`}</button>`;
   return h + `</div></section>`;
-}
-
-// ---------- Duels ----------
-
-function voletDuels(e: EcranDistrict, c: CercleEcran): string {
-  const j = e.j;
-  const s = J.etatCercle(j);
-  const reste = J.duelsRecompensesRestants(j, e.now);
-  const faits = J.CERCLE.duelsSemaine - reste;
-  let h = `<section class="bloc cr-semaine"><div class="cr-crans" aria-label="${t`${faits} victoire(s) récompensée(s) sur ${J.CERCLE.duelsSemaine} cette semaine`}">`
-    + Array.from({ length: J.CERCLE.duelsSemaine }, (_, i) => `<i class="${i < faits ? 'plein' : ''}">${i < faits ? ICO.ok : ''}</i>`).join('') + `</div>`
-    + `<div><strong>${reste ? t`Encore ${pluriel(reste, 'victoire')} récompensée${reste > 1 ? 's' : ''} cette semaine` : t('Toutes les victoires de la semaine sont gagnées')}</strong>`
-    + `<small>${t`${J.CERCLE.recompenseDuel.composants} cristaux et ${pluriel(J.CERCLE.recompenseDuel.eclats, t('Éclat'))} par ami différent battu. Bilan : ${pluriel(s.victoires, 'victoire')}, ${pluriel(s.defaites, t('défaite'))}.`}</small></div></section>`;
-
-  const recus = c.defisRecus.filter((d) => d.etat === 'envoye');
-  if (recus.length) {
-    h += `<section class="bloc cr-liste"><h3 class="titre-bloc">${ICO.atk}${t`On te défie`}</h3>`
-      + recus.map((d) => `<div class="cr-ligne cr-defi"><span class="cr-avatar vide" aria-hidden="true">${echap(d.nomDe.charAt(0))}</span><div class="cr-qui"><strong>${echap(d.nomDe)}</strong><small>${d.mode === 'egal' ? t('à armes égales') : t('avec vos vraies forces')}</small></div>`
-        + `<div class="cr-actions"><button type="button" class="btn prim" data-action="cercle-defi-accepter" data-id="${d.id}">${ICO.lancer}${t`Jouer`}</button><button type="button" class="btn-sec" data-action="cercle-defi-refuser" data-id="${d.id}" aria-label="${t`Refuser le défi de ${echap(d.nomDe)}`}">${ICO.fermer}</button></div></div>`).join('')
-      + `</section>`;
-  }
-
-  const envoyes = c.defisEnvoyes.filter((d) => d.etat === 'envoye');
-  h += `<section class="bloc cr-liste"><h3 class="titre-bloc">${ICO.porteurs}${t`Défier un ami`}</h3>`
-    + `<div class="segments-choix deux cr-mode" role="radiogroup" aria-label="${t`Mode du duel`}">`
-    + `<button type="button" role="radio" class="seg${c.mode === 'libre' ? ' actif' : ''}" aria-checked="${c.mode === 'libre'}" data-action="cercle-mode" data-id="libre">${t`Vraies forces`}</button>`
-    + `<button type="button" role="radio" class="seg${c.mode === 'egal' ? ' actif' : ''}" aria-checked="${c.mode === 'egal'}" data-action="cercle-mode" data-id="egal">${t`À armes égales`}</button></div>`
-    + `<small class="aide">${t`${c.mode === 'egal' ? t('Chaque carte revient au niveau de départ de son métal, chaque Porteur à ses PV de base : seule ta façon de jouer compte.') : t('Chacun vient avec son escouade active, ses cartes et ses niveaux.')} Il faut un Augmenté, un Géné et un Résonant dans l’escouade.`}</small>`;
-  if (!c.amis.length) h += `<p class="cr-vide">${t`Ajoute d’abord un ami dans le volet Amis.`}</p>`;
-  for (const a of c.amis) {
-    const attend = envoyes.find((d) => d.a === a.uid);
-    h += `<div class="cr-ligne">${a.profil ? avatarPorteur(a.profil.porteur) : `<span class="cr-avatar vide" aria-hidden="true">${echap(a.nom.charAt(0))}</span>`}<div class="cr-qui"><strong>${echap(a.nom)}</strong><small>${attend ? t('défi envoyé, il doit l’accepter') : s.battus.includes(a.uid) && s.semaine === J.semaineDe(e.now) ? t('déjà battu cette semaine') : t('prêt à jouer')}</small></div>`
-      + `<div class="cr-actions">${attend ? `<button type="button" class="btn-sec" data-action="cercle-defi-annuler" data-id="${attend.id}">${t`Annuler`}</button>` : `<button type="button" class="btn prim" data-action="cercle-defier" data-id="${a.uid}"${c.occupe ? ' disabled' : ''}><img class="ico peinte action" src="${baseIcones}frapper.webp" alt="" aria-hidden="true" decoding="async">${t`Défier`}</button>`}</div></div>`;
-  }
-  h += `</section>`;
-  return h + robot();
 }
 
 /** S'échauffer contre le robot : toujours possible, même sans connexion */

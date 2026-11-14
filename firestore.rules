@@ -227,6 +227,160 @@ service cloud.firestore {
       allow delete: if request.auth != null && (resource.data.de == request.auth.uid || resource.data.a == request.auth.uid);
     }
 
+    // Les Confluences (14 novembre 2026, src/net/confluence.ts) : les alliances de cuvettes, au plus 20 directeurs.
+    // L'identifiant est le nom réduit (un nom ne sert qu'une fois). Tout directeur connecté lit les Confluences (classement,
+    // celles qui recrutent) et leurs membres (aperçu avant d'entrer) ; le quai et les demandes ne se lisent que de l'intérieur.
+    match /confluences/{id} {
+      allow read: if request.auth != null;
+      // fonder : seul, avec sa fiche et son adhésion écrites en même temps
+      allow create: if request.auth != null && confluenceValide(request.resource.data, id)
+        && request.resource.data.fondateur == request.auth.uid && request.resource.data.membres == [request.auth.uid]
+        && request.resource.data.anciens.size() == 0 && request.resource.data.bannis.size() == 0
+        && request.resource.data.courant == 0 && request.resource.data.total == 0 && maintenant(request.resource.data.le)
+        && getAfter(/databases/$(database)/documents/adhesions/$(request.auth.uid)).data.confluence == id;
+      allow update: if request.auth != null && confluenceValide(request.resource.data, id)
+        && request.resource.data.id == resource.data.id && request.resource.data.le == resource.data.le
+        && (
+          // le fondateur règle, nomme les anciens, écarte (les écartés ne reviennent pas), passe le flambeau
+          (resource.data.fondateur == request.auth.uid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['devise', 'embleme', 'couleur', 'ouverte', 'anciens', 'membres', 'bannis', 'fondateur', 'maj'])
+            && request.resource.data.membres.toSet().difference(resource.data.membres.toSet()).size() == 0
+            && resource.data.bannis.toSet().difference(request.resource.data.bannis.toSet()).size() == 0
+            && request.resource.data.anciens.toSet().difference(request.resource.data.membres.toSet()).size() == 0
+            && (request.resource.data.fondateur == request.auth.uid || request.resource.data.fondateur in request.resource.data.membres))
+          // entrer : ouverte, pas pleine, pas écarté, avec sa fiche et son adhésion écrites en même temps
+          || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['membres', 'maj'])
+            && resource.data.ouverte == true && !(request.auth.uid in resource.data.membres) && !(request.auth.uid in resource.data.bannis)
+            && request.resource.data.membres.toSet() == resource.data.membres.toSet().union([request.auth.uid].toSet())
+            && request.resource.data.membres.size() == resource.data.membres.size() + 1
+            && getAfter(/databases/$(database)/documents/adhesions/$(request.auth.uid)).data.confluence == id)
+          // sortir (le fondateur passe le flambeau à un membre qui reste)
+          || (request.auth.uid in resource.data.membres
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['membres', 'anciens', 'fondateur', 'maj'])
+            && request.resource.data.membres.toSet() == resource.data.membres.toSet().difference([request.auth.uid].toSet())
+            && request.resource.data.anciens.toSet() == resource.data.anciens.toSet().difference([request.auth.uid].toSet())
+            && (resource.data.fondateur == request.auth.uid ? request.resource.data.fondateur in request.resource.data.membres : request.resource.data.fondateur == resource.data.fondateur))
+          // le Courant : un membre ajoute son apport (200 au plus par écriture) ; la semaine ne recule jamais
+          || (request.auth.uid in resource.data.membres
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['courant', 'semaineC', 'total', 'maj'])
+            && request.resource.data.semaineC == int(jourJeu() / 7)
+            && request.resource.data.semaineC >= resource.data.semaineC
+            && request.resource.data.total >= resource.data.total && request.resource.data.total <= resource.data.total + 200
+            && request.resource.data.courant == (request.resource.data.semaineC == resource.data.semaineC ? resource.data.courant : 0) + (request.resource.data.total - resource.data.total))
+        );
+      // dissoudre : le dernier membre, en partant
+      allow delete: if request.auth != null && resource.data.membres == [request.auth.uid];
+
+      // la fiche d'un directeur dans l'alliance : il l'écrit en entrant (avec la Confluence), puis la tient à jour
+      match /membres/{uid} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null && request.auth.uid == uid && membreValide(request.resource.data, uid)
+          && request.auth.uid in getAfter(/databases/$(database)/documents/confluences/$(id)).data.membres;
+        allow update: if request.auth != null && request.auth.uid == uid && membreValide(request.resource.data, uid)
+          && request.resource.data.le == resource.data.le
+          && request.auth.uid in get(/databases/$(database)/documents/confluences/$(id)).data.membres;
+        // en partant, ou écarté par le fondateur
+        allow delete: if request.auth != null && (request.auth.uid == uid
+          || get(/databases/$(database)/documents/confluences/$(id)).data.fondateur == request.auth.uid);
+      }
+
+      // le quai : seulement entre membres ; un message libre ou rapide met à jour l'heure du dernier message de sa fiche
+      // (pas plus d'un toutes les 4 secondes) ; les événements sont écrits avec le geste qu'ils racontent
+      match /messages/{msg} {
+        allow read: if request.auth != null && request.auth.uid in get(/databases/$(database)/documents/confluences/$(id)).data.membres;
+        allow create: if request.auth != null && messageValide(request.resource.data)
+          && request.resource.data.de == request.auth.uid && maintenant(request.resource.data.le)
+          && pseudoDe(request.resource.data.nom, request.auth.uid)
+          // membre après l'écriture, ou juste avant (l'annonce de son départ)
+          && (request.auth.uid in getAfter(/databases/$(database)/documents/confluences/$(id)).data.membres
+            || (request.resource.data.texte == 'depart' && request.auth.uid in get(/databases/$(database)/documents/confluences/$(id)).data.membres))
+          && (request.resource.data.sorte == 'evenement'
+            || (getAfter(/databases/$(database)/documents/confluences/$(id)/membres/$(request.auth.uid)).data.dernierMsg == request.resource.data.le
+              && get(/databases/$(database)/documents/confluences/$(id)/membres/$(request.auth.uid)).data.dernierMsg + 4000 <= request.resource.data.le));
+        // l'auteur, le fondateur ou un ancien effacent un message
+        allow delete: if request.auth != null && (resource.data.de == request.auth.uid
+          || get(/databases/$(database)/documents/confluences/$(id)).data.fondateur == request.auth.uid
+          || request.auth.uid in get(/databases/$(database)/documents/confluences/$(id)).data.anciens);
+      }
+
+      // les demandes de copies : une par directeur, remplacée au plus toutes les 8 heures ; les autres membres donnent une copie à la fois
+      match /demandes/{uid} {
+        allow read: if request.auth != null && request.auth.uid in get(/databases/$(database)/documents/confluences/$(id)).data.membres;
+        allow create: if request.auth != null && request.auth.uid == uid && demandeNeuve(request.resource.data, uid)
+          && request.auth.uid in get(/databases/$(database)/documents/confluences/$(id)).data.membres;
+        allow update: if request.auth != null && request.auth.uid in get(/databases/$(database)/documents/confluences/$(id)).data.membres
+          && (
+            (request.auth.uid == uid && demandeNeuve(request.resource.data, uid) && resource.data.le + 28800000 <= request.resource.data.le)
+            || (request.auth.uid != uid
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['recu', 'donneurs', 'maj'])
+              && request.resource.data.recu == resource.data.recu + 1 && request.resource.data.recu <= resource.data.voulu
+              && request.resource.data.donneurs == resource.data.donneurs.concat([request.auth.uid])
+              && maintenant(request.resource.data.maj))
+          );
+        allow delete: if request.auth != null && (request.auth.uid == uid
+          || get(/databases/$(database)/documents/confluences/$(id)).data.fondateur == request.auth.uid);
+      }
+    }
+
+    // L'adhésion : la Confluence d'un directeur, une seule à la fois (on ne la change qu'en ayant quitté la précédente)
+    match /adhesions/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid && adhesionValide(request.resource.data);
+      allow update: if request.auth != null && request.auth.uid == uid && adhesionValide(request.resource.data)
+        && (!exists(/databases/$(database)/documents/confluences/$(resource.data.confluence))
+          || !(uid in get(/databases/$(database)/documents/confluences/$(resource.data.confluence)).data.membres));
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+
+    function confluenceValide(d, id) {
+      return d.keys().hasOnly(['id', 'nom', 'devise', 'embleme', 'couleur', 'ouverte', 'fondateur', 'membres', 'anciens', 'bannis', 'courant', 'semaineC', 'total', 'le', 'maj'])
+        && d.id == id && id.matches('^[a-z0-9]{3,24}$')
+        && d.nom is string && d.nom.size() >= 3 && d.nom.size() <= 22
+        && d.devise is string && d.devise.size() <= 80
+        && d.embleme is int && d.embleme >= 0 && d.embleme < 6
+        && d.couleur is int && d.couleur >= 0 && d.couleur < 8
+        && d.ouverte is bool && d.fondateur is string
+        && d.membres is list && d.membres.size() >= 1 && d.membres.size() <= 20 && d.fondateur in d.membres
+        && d.anciens is list && d.anciens.size() <= 6
+        && d.bannis is list && d.bannis.size() <= 30
+        && d.courant is int && d.courant >= 0 && d.semaineC is int && d.total is int && d.total >= d.courant
+        && d.le is int && maintenant(d.maj);
+    }
+
+    function membreValide(d, uid) {
+      return d.keys().hasOnly(['uid', 'nom', 'porteur', 'strate', 'apport', 'dons', 'semaine', 'dernierMsg', 'le', 'maj'])
+        && d.uid == uid && pseudoDe(d.nom, uid)
+        && d.porteur is string && d.porteur.size() <= 24
+        && d.strate is int && d.strate >= 1 && d.strate <= 200
+        && d.apport is int && d.apport >= 0 && d.apport <= 5000
+        && d.dons is int && d.dons >= 0 && d.dons <= 500
+        && d.semaine is int && d.dernierMsg is int && d.dernierMsg <= request.time.toMillis() + 300000
+        && d.le is int && maintenant(d.maj);
+    }
+
+    function messageValide(d) {
+      return d.keys().hasOnly(['de', 'nom', 'sorte', 'texte', 'carte', 'n', 'pour', 'le'])
+        && d.sorte in ['texte', 'rapide', 'evenement']
+        && d.texte is string && d.texte.size() >= 1 && d.texte.size() <= 160
+        && (d.sorte != 'rapide' || d.texte.matches('^[0-9]$'))
+        && (d.sorte != 'evenement' || d.texte in ['fondee', 'arrivee', 'depart', 'demande', 'don'])
+        && d.get('carte', '') is string && d.get('carte', '').size() <= 60
+        && d.get('n', 0) is int && d.get('pour', '') is string && d.get('pour', '').size() <= 24;
+    }
+
+    function demandeNeuve(d, uid) {
+      return d.keys().hasOnly(['uid', 'nom', 'carte', 'voulu', 'recu', 'donneurs', 'le', 'maj'])
+        && d.uid == uid && pseudoDe(d.nom, uid)
+        && d.carte is string && d.carte.size() <= 60
+        && ((d.carte.matches('.*@fer$') && d.voulu == 6) || (d.carte.matches('.*@cuivre$') && d.voulu == 3) || (d.carte.matches('.*@argent$') && d.voulu == 1))
+        && d.recu == 0 && d.donneurs.size() == 0 && maintenant(d.le) && d.maj == d.le;
+    }
+
+    function adhesionValide(d) {
+      return d.keys().hasOnly(['confluence', 'le']) && d.confluence is string && d.confluence.size() <= 24 && maintenant(d.le)
+        && request.auth.uid in getAfter(/databases/$(database)/documents/confluences/$(d.confluence)).data.membres;
+    }
+
     // Le duel en temps réel (docs/duel.md) : le code du salon fait office de secret
     match /duels/{code} {
       allow get: if request.auth != null;

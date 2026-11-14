@@ -274,7 +274,7 @@ export interface Chantier {
 
 /** Un choix de carte en attente (boss, objectif du jour, Archive) */
 export interface Choix {
-  source: 'boss' | 'quotidien' | 'archive' | 'ravitaillement' | 'fouille' | 'epreuve' | 'parrainage' | 'releve' | 'etoiles' | 'rodeur' | 'maree' | 'fleche' | 'remuee' | 'exode' | 'gardien';
+  source: 'boss' | 'quotidien' | 'archive' | 'ravitaillement' | 'fouille' | 'epreuve' | 'parrainage' | 'releve' | 'etoiles' | 'rodeur' | 'maree' | 'fleche' | 'remuee' | 'exode' | 'gardien' | 'confluence';
   options: string[];
   /** le joueur peut prendre des Éclats à la place */
   eclats?: number;
@@ -484,6 +484,8 @@ export interface Jeu {
   recits?: Record<string, { carte?: string }>;
   /** le Cercle des quais (3 novembre 2026, cercle.ts) : souhaits, vitrine, échanges du jour et en attente, duels de la semaine */
   cercle?: import('./cercle').EtatCercle;
+  /** sa Confluence (14 novembre 2026, confluence.ts) : dons, apport de la semaine, paliers de la Crue reçus, demande de copies */
+  confluence?: import('./confluence').EtatConfluence;
   /** le nom de directeur choisi pour le Grand Tableau, et si on y apparaît (jamais l'e-mail du compte) */
   /** le pseudo a déjà été proposé à ce joueur sans compte protégé (une seule fois, 3 novembre 2026) */
   pseudoPropose?: boolean;

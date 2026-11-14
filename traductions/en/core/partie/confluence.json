@@ -1,0 +1,97 @@
+{
+ "source": "src/core/partie/confluence.ts",
+ "entrees": [
+  {
+   "fr": "Bonjour à tous !",
+   "en": "Hello everyone!"
+  },
+  {
+   "fr": "Merci pour le don !",
+   "en": "Thanks for the gift!"
+  },
+  {
+   "fr": "Bien joué !",
+   "en": "Well played!"
+  },
+  {
+   "fr": "Qui a un double à donner ?",
+   "en": "Anyone have a duplicate to give?"
+  },
+  {
+   "fr": "Je descends dans les Strates.",
+   "en": "Heading down into the Strata."
+  },
+  {
+   "fr": "On frappe le Gardien ?",
+   "en": "Shall we strike the Guardian?"
+  },
+  {
+   "fr": "Encore un effort pour la Crue !",
+   "en": "One more push for the Flood!"
+  },
+  {
+   "fr": "Bonne nuit, les quais.",
+   "en": "Good night, quays."
+  },
+  {
+   "fr": "Ensemble, plus haut que l’eau.",
+   "en": "Together, above the water."
+  },
+  {
+   "fr": "Une digue, mille mains.",
+   "en": "One dike, a thousand hands."
+  },
+  {
+   "fr": "Ce qu’on garde, on le partage.",
+   "en": "What we keep, we share."
+  },
+  {
+   "fr": "Le courant nous porte.",
+   "en": "The current carries us."
+  },
+  {
+   "fr": "Le nom fait de 3 à 22 caractères.",
+   "en": "The name is 3 to 22 characters long."
+  },
+  {
+   "fr": "Lettres, chiffres, espaces, apostrophes et tirets seulement.",
+   "en": "Letters, numbers, spaces, apostrophes and hyphens only."
+  },
+  {
+   "fr": "Le nom doit contenir au moins 3 lettres ou chiffres.",
+   "en": "The name must contain at least 3 letters or numbers."
+  },
+  {
+   "fr": "Il faut {0} cristaux pour fonder une Confluence.",
+   "en": "You need {0} crystals to found a Confluence."
+  },
+  {
+   "fr": "Ce palier n’est pas encore atteint.",
+   "en": "This tier isn't reached yet."
+  },
+  {
+   "fr": "Rejoins d’abord une Confluence.",
+   "en": "Join a Confluence first."
+  },
+  {
+   "fr": "L’or ne se demande pas : il s’échange entre amis.",
+   "en": "Gold can't be requested: it's traded between friends."
+  },
+  {
+   "fr": "L’argent se demande à partir du niveau {0} du Cercle.",
+   "en": "Silver can be requested from Circle level {0}."
+  },
+  {
+   "fr": "Demande une carte que tu possèdes déjà, ou une de tes souhaits.",
+   "en": "Request a card you already own, or one of your wishes."
+  },
+  {
+   "fr": "Ta prochaine demande sera possible dans {0} h.",
+   "en": "Your next request will be possible in {0} h."
+  },
+  {
+   "fr": "Il te faut un exemplaire en double de cette carte.",
+   "en": "You need a duplicate copy of this card."
+  }
+ ]
+}

@@ -47,6 +47,7 @@ import './lexique.css';
 import './explorer.css';
 import './duel.css';
 import './cercle.css';
+import './confluence.css';
 import './recit-choix.css';
 // en dernier : les gardiens reprennent la main sur les réglages du téléphone et du PC
 import './gardien.css';

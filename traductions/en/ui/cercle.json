@@ -86,8 +86,8 @@
    "en": "The Circle goes through your account"
   },
   {
-   "fr": "Les amis, les duels et les échanges ont besoin du jeu connecté. Ta partie, elle, ne change pas.",
-   "en": "Friends, duels and trades need the game to be online. Your game itself doesn’t change."
+   "fr": "Les amis, la Confluence, les duels et les échanges ont besoin du jeu connecté. Ta partie, elle, ne change pas.",
+   "en": "Friends, the Confluence, duels and trades need the game to be online. Your save itself doesn't change."
   },
   {
    "fr": "Se connecter",
@@ -106,8 +106,8 @@
    "en": "Choose my name"
   },
   {
-   "fr": "Amis, duels ou échanges",
-   "en": "Friends, duels or trades"
+   "fr": "Le Cercle des quais",
+   "en": "The Quayside Circle"
   },
   {
    "fr": "Amis",
@@ -116,6 +116,10 @@
   {
    "fr": "Échanges",
    "en": "Trades"
+  },
+  {
+   "fr": "Rangs",
+   "en": "Ranks"
   },
   {
    "fr": "Les quais se remplissent…",
@@ -128,6 +132,138 @@
   {
    "fr": "Réessayer",
    "en": "Try again"
+  },
+  {
+   "fr": "Directeur · Strate −{0}",
+   "en": "Director · Stratum −{0}"
+  },
+  {
+   "fr": "Sans Confluence",
+   "en": "No Confluence"
+  },
+  {
+   "fr": "Ton apport",
+   "en": "Your share"
+  },
+  {
+   "fr": "On te défie",
+   "en": "You’ve been challenged"
+  },
+  {
+   "fr": "avec vos vraies forces",
+   "en": "with your true strength"
+  },
+  {
+   "fr": "Jouer",
+   "en": "Play"
+  },
+  {
+   "fr": "Refuser le défi de {0}",
+   "en": "Decline {0}’s challenge"
+  },
+  {
+   "fr": "Ils veulent être tes amis",
+   "en": "They want to be your friends"
+  },
+  {
+   "fr": "veut rejoindre ton Cercle",
+   "en": "wants to join your Circle"
+  },
+  {
+   "fr": "Accepter",
+   "en": "Accept"
+  },
+  {
+   "fr": "Refuser {0}",
+   "en": "Decline {0}"
+  },
+  {
+   "fr": "{0} victoire(s) récompensée(s) sur {1} cette semaine",
+   "en": "{0} rewarded win(s) out of {1} this week"
+  },
+  {
+   "fr": "Encore {0} récompensée{1} cette semaine",
+   "en": "{0} more rewarded{1|} this week"
+  },
+  {
+   "fr": "Toutes les victoires de la semaine sont gagnées",
+   "en": "All this week’s wins are earned"
+  },
+  {
+   "fr": "{0} cristaux et {1} par ami différent battu. Bilan : {2}, {3}.",
+   "en": "{0} crystals and {1} per different friend beaten. Record: {2}, {3}."
+  },
+  {
+   "fr": "défaite",
+   "en": "defeat"
+  },
+  {
+   "fr": "Tes amis",
+   "en": "Your friends"
+  },
+  {
+   "fr": "Mode du duel",
+   "en": "Duel mode"
+  },
+  {
+   "fr": "Vraies forces",
+   "en": "True strength"
+  },
+  {
+   "fr": "À armes égales",
+   "en": "Equal terms"
+  },
+  {
+   "fr": "Chaque carte revient au niveau de départ de son métal : seule ta façon de jouer compte.",
+   "en": "Every card returns to its metal's starting level: only how you play matters."
+  },
+  {
+   "fr": "Chacun vient avec son escouade active, ses cartes et ses niveaux.",
+   "en": "Each player brings their active squad, cards and levels."
+  },
+  {
+   "fr": "Il faut un Augmenté, un Géné et un Résonant.",
+   "en": "You need an Augmented, a Gened and a Resonant."
+  },
+  {
+   "fr": "Personne pour l’instant. Invite un directeur par son nom ci-dessous, ajoute un membre de ta Confluence, ou envoie ton lien de recrutement.",
+   "en": "No one yet. Invite a director by name below, add a member of your Confluence, or send your recruitment link."
+  },
+  {
+   "fr": "La vitrine de {0}",
+   "en": "{0}’s display"
+  },
+  {
+   "fr": "Strate −{0} · {1}",
+   "en": "Stratum −{0} · {1}"
+  },
+  {
+   "fr": "vitrine pas encore ouverte",
+   "en": "display not open yet"
+  },
+  {
+   "fr": " · battu cette semaine",
+   "en": " · beaten this week"
+  },
+  {
+   "fr": "Il a {0} carte(s) que tu cherches",
+   "en": "They have {0} card(s) you’re looking for"
+  },
+  {
+   "fr": "Annuler",
+   "en": "Cancel"
+  },
+  {
+   "fr": "Défier",
+   "en": "Challenge"
+  },
+  {
+   "fr": "En attente : {0}",
+   "en": "Pending: {0}"
+  },
+  {
+   "fr": "annuler",
+   "en": "cancel"
   },
   {
    "fr": "Ajouter un directeur",
@@ -158,58 +294,6 @@
    "en": ". Give it to your friends so they can add you."
   },
   {
-   "fr": "Ils veulent être tes amis",
-   "en": "They want to be your friends"
-  },
-  {
-   "fr": "veut rejoindre ton Cercle",
-   "en": "wants to join your Circle"
-  },
-  {
-   "fr": "Accepter",
-   "en": "Accept"
-  },
-  {
-   "fr": "Refuser {0}",
-   "en": "Decline {0}"
-  },
-  {
-   "fr": "Tes amis",
-   "en": "Your friends"
-  },
-  {
-   "fr": "Personne pour l’instant. Invite un directeur par son nom, ou envoie ton lien de recrutement : tes recrues deviennent tes amis.",
-   "en": "Nobody yet. Invite a director by name, or send your recruitment link: your recruits become your friends."
-  },
-  {
-   "fr": "La vitrine de {0}",
-   "en": "{0}’s display"
-  },
-  {
-   "fr": "Strate −{0} · Cercle {1}",
-   "en": "Stratum −{0} · Circle {1}"
-  },
-  {
-   "fr": "vitrine pas encore ouverte",
-   "en": "display not open yet"
-  },
-  {
-   "fr": "Il a {0} carte(s) que tu cherches",
-   "en": "They have {0} card(s) you’re looking for"
-  },
-  {
-   "fr": "Il cherche {0} de tes doubles",
-   "en": "They’re looking for {0} of your spares"
-  },
-  {
-   "fr": "En attente : {0}",
-   "en": "Pending: {0}"
-  },
-  {
-   "fr": "annuler",
-   "en": "cancel"
-  },
-  {
    "fr": "Ta vitrine",
    "en": "Your display"
   },
@@ -232,10 +316,6 @@
   {
    "fr": "Sa vitrine n’est pas encore ouverte : elle apparaîtra quand il aura construit son Cercle.",
    "en": "Their display isn’t open yet: it’ll appear once they’ve built their Circle."
-  },
-  {
-   "fr": "Défier",
-   "en": "Challenge"
   },
   {
    "fr": "Échanger",
@@ -272,90 +352,6 @@
   {
    "fr": "Retirer {0} de tes amis",
    "en": "Remove {0} from your friends"
-  },
-  {
-   "fr": "{0} victoire(s) récompensée(s) sur {1} cette semaine",
-   "en": "{0} rewarded win(s) out of {1} this week"
-  },
-  {
-   "fr": "Encore {0} récompensée{1} cette semaine",
-   "en": "{0} more rewarded{1|} this week"
-  },
-  {
-   "fr": "Toutes les victoires de la semaine sont gagnées",
-   "en": "All this week’s wins are earned"
-  },
-  {
-   "fr": "{0} cristaux et {1} par ami différent battu. Bilan : {2}, {3}.",
-   "en": "{0} crystals and {1} per different friend beaten. Record: {2}, {3}."
-  },
-  {
-   "fr": "défaite",
-   "en": "defeat"
-  },
-  {
-   "fr": "On te défie",
-   "en": "You’ve been challenged"
-  },
-  {
-   "fr": "avec vos vraies forces",
-   "en": "with your true strength"
-  },
-  {
-   "fr": "Jouer",
-   "en": "Play"
-  },
-  {
-   "fr": "Refuser le défi de {0}",
-   "en": "Decline {0}’s challenge"
-  },
-  {
-   "fr": "Défier un ami",
-   "en": "Challenge a friend"
-  },
-  {
-   "fr": "Mode du duel",
-   "en": "Duel mode"
-  },
-  {
-   "fr": "Vraies forces",
-   "en": "True strength"
-  },
-  {
-   "fr": "À armes égales",
-   "en": "Equal terms"
-  },
-  {
-   "fr": "{0} Il faut un Augmenté, un Géné et un Résonant dans l’escouade.",
-   "en": "{0} You need an Augmented, a Spliced and a Resonant in the squad."
-  },
-  {
-   "fr": "Chaque carte revient au niveau de départ de son métal, chaque Porteur à ses PV de base : seule ta façon de jouer compte.",
-   "en": "Every card returns to its metal’s starting level, every Bearer to their base HP: only the way you play counts."
-  },
-  {
-   "fr": "Chacun vient avec son escouade active, ses cartes et ses niveaux.",
-   "en": "Each player brings their active squad, cards and levels."
-  },
-  {
-   "fr": "Ajoute d’abord un ami dans le volet Amis.",
-   "en": "Add a friend in the Friends panel first."
-  },
-  {
-   "fr": "défi envoyé, il doit l’accepter",
-   "en": "challenge sent, they have to accept it"
-  },
-  {
-   "fr": "déjà battu cette semaine",
-   "en": "already beaten this week"
-  },
-  {
-   "fr": "prêt à jouer",
-   "en": "ready to play"
-  },
-  {
-   "fr": "Annuler",
-   "en": "Cancel"
   },
   {
    "fr": "S’échauffer",
@@ -428,6 +424,10 @@
   {
    "fr": "Proposer un échange",
    "en": "Offer a trade"
+  },
+  {
+   "fr": "Ajoute d’abord un ami dans le volet Amis.",
+   "en": "Add a friend in the Friends panel first."
   },
   {
    "fr": "Tes amis n’ont pas encore ouvert leur vitrine.",

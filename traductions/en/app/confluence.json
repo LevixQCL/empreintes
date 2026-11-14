@@ -1,0 +1,125 @@
+{
+ "source": "src/app/confluence.ts",
+ "entrees": [
+  {
+   "fr": "Les Confluences ne sont pas encore ouvertes en ligne (les règles du serveur attendent leur mise à jour).",
+   "en": "Confluences aren't open online yet (the server rules are waiting for their update)."
+  },
+  {
+   "fr": "Le quai ne répond pas pour l’instant.",
+   "en": "The quay isn't answering right now."
+  },
+  {
+   "fr": "Tu ne fais plus partie de la Confluence {0}.",
+   "en": "You are no longer part of the Confluence {0}."
+  },
+  {
+   "fr": "{0} de {1} {2} ta collection.",
+   "en": "{0} of {1} {2} your collection."
+  },
+  {
+   "fr": "{0} copies",
+   "en": "{0} copies"
+  },
+  {
+   "fr": "Une copie",
+   "en": "One copy"
+  },
+  {
+   "fr": "rejoignent",
+   "en": "join"
+  },
+  {
+   "fr": "rejoint",
+   "en": "joins"
+  },
+  {
+   "fr": "Le serveur a refusé : les règles des Confluences ne sont peut-être pas encore publiées.",
+   "en": "The server refused: the Confluence rules may not be published yet."
+  },
+  {
+   "fr": "Le quai ne répond pas. Réessaie dans un instant.",
+   "en": "The quay isn't answering. Try again in a moment."
+  },
+  {
+   "fr": "Le nom « {0} » est déjà pris.",
+   "en": "The name “{0}” is already taken."
+  },
+  {
+   "fr": "La Confluence {0} est fondée. Invite tes amis à la rejoindre.",
+   "en": "The Confluence {0} is founded. Invite your friends to join."
+  },
+  {
+   "fr": "Quitte d’abord ta Confluence.",
+   "en": "Leave your Confluence first."
+  },
+  {
+   "fr": "Cette Confluence est pleine.",
+   "en": "This Confluence is full."
+  },
+  {
+   "fr": "Cette Confluence n’accueille personne pour l’instant.",
+   "en": "This Confluence isn't accepting anyone right now."
+  },
+  {
+   "fr": "Cette Confluence n’existe plus.",
+   "en": "This Confluence no longer exists."
+  },
+  {
+   "fr": "Bienvenue dans la Confluence {0}.",
+   "en": "Welcome to the Confluence {0}."
+  },
+  {
+   "fr": "Tape au moins 3 lettres du nom.",
+   "en": "Type at least 3 letters of the name."
+  },
+  {
+   "fr": "Aucune Confluence ne s’appelle « {0} ».",
+   "en": "No Confluence is called “{0}”."
+  },
+  {
+   "fr": "Tu as quitté la Confluence.",
+   "en": "You left the Confluence."
+  },
+  {
+   "fr": "Doucement : un message toutes les quelques secondes.",
+   "en": "Easy: one message every few seconds."
+  },
+  {
+   "fr": "Demande envoyée : {0}, {1} {2}.",
+   "en": "Request sent: {0}, {1} {2}."
+  },
+  {
+   "fr": "copies",
+   "en": "copies"
+  },
+  {
+   "fr": "copie",
+   "en": "copy"
+  },
+  {
+   "fr": "Cette demande est déjà remplie.",
+   "en": "This request is already filled."
+  },
+  {
+   "fr": "Merci pour {0} : +{1} cristaux.",
+   "en": "Thanks for {0}: +{1} crystals."
+  },
+  {
+   "fr": "Merci pour {0}. Tes dons récompensés du jour sont épuisés, mais la Crue compte encore ton geste.",
+   "en": "Thanks for {0}. Your rewarded donations for today are used up, but the Flood still counts your gift."
+  },
+  {
+   "fr": "La Crue te rapporte {0} cristaux.",
+   "en": "The Flood brings you {0} crystals."
+  },
+  {
+   "fr": "La Crue te rapporte {0} Éclats.",
+   "en": "The Flood brings you {0} Shards."
+  },
+  {
+   "fr": "La Crue a rapporté des empreintes : choisis ta carte au district.",
+   "en": "The Flood brought imprints: choose your card at the district."
+  }
+ ]
+}

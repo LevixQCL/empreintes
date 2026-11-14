@@ -10,6 +10,12 @@ export function clavier(ev: KeyboardEvent) {
   if (app.mode === 'titre' && !compteEtat.ouvert && titrePret() && (ev.key === 'Enter' || ev.key === ' ')) {
     ev.preventDefault(); app.mode = apresTitre(); if (app.mode === 'combat') K.fin = finPour(); afficher(); return;
   }
+  // Entrée dans un champ qui a son bouton (le quai, les recherches du Cercle) : comme toucher le bouton
+  if (ev.key === 'Enter' && ev.target instanceof HTMLInputElement && ev.target.dataset.entree) {
+    ev.preventDefault();
+    document.querySelector<HTMLButtonElement>(`[data-action="${ev.target.dataset.entree}"]`)?.click();
+    return;
+  }
   if (ev.key === 'Escape') {
     if (app.mode === 'district' && D.deck && D.echange) { D.echange = null; afficher(); return; }
     if (app.mode === 'district' && (D.selection || D.carte || D.deck || D.menu || D.fiche || D.porteur || D.place != null)) { D.selection = null; D.carte = null; D.deck = null; D.menu = false; D.fiche = false; D.porteur = null; D.place = null; afficher(); return; }

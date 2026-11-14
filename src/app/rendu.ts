@@ -130,6 +130,7 @@ function dessiner() {
   const email = (racine.querySelector('#email') as HTMLInputElement | null)?.value ?? '';
   const mdp = (racine.querySelector('#mdp') as HTMLInputElement | null)?.value ?? '';
   const pseudoTape = (racine.querySelector('#gt-nom') as HTMLInputElement | null)?.value;
+  const gardes = garderChamps();
   let h = '';
   // un duel de pillage en cours (page rechargée, appli rouverte) : on le reprend là où il en était (14 novembre 2026)
   if (app.mode !== 'titre' && app.mode !== 'intro' && app.mode !== 'duel' && reprendrePillage()) return;
@@ -227,6 +228,34 @@ function dessiner() {
   const ip = racine.querySelector('#gt-nom') as HTMLInputElement | null;
   if (ip && pseudoTape !== undefined) ip.value = pseudoTape;
   if (im) im.value = mdp;
+  rendreChamps(gardes);
+  defilerQuai();
+}
+
+/**
+ * Les champs marqués `data-garder` (le quai de la Confluence, les recherches du Cercle, 14 novembre 2026) gardent leur texte,
+ * le focus et le curseur quand l'écran se redessine : un message qui arrive ne doit pas effacer celui qu'on tape.
+ */
+function garderChamps() {
+  const l = [...racine.querySelectorAll<HTMLInputElement>('input[data-garder][id]')].map((i) => ({ id: i.id, v: i.value, f: document.activeElement === i, s: i.selectionStart, e: i.selectionEnd }));
+  return l;
+}
+function rendreChamps(l: ReturnType<typeof garderChamps>) {
+  for (const x of l) {
+    const i = racine.querySelector<HTMLInputElement>(`#${x.id}`);
+    if (!i) continue;
+    i.value = x.v;
+    if (x.f) { i.focus({ preventScroll: true }); try { i.setSelectionRange(x.s, x.e); } catch { /* champ sans curseur */ } }
+  }
+}
+
+/** Le fil du quai descend au dernier message quand un message arrive (sinon il garde la place où on lisait) */
+let quaiVu = '';
+function defilerQuai() {
+  const f = racine.querySelector<HTMLElement>('.cf-fil');
+  if (!f) { quaiVu = ''; return; }
+  const dernier = f.lastElementChild?.getAttribute('data-id') ?? String(f.childElementCount);
+  if (dernier !== quaiVu) { quaiVu = dernier; f.scrollTop = f.scrollHeight; }
 }
 
 /**

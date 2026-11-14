@@ -1,0 +1,541 @@
+{
+ "source": "src/ui/confluence.ts",
+ "entrees": [
+  {
+   "fr": "L’hexagone",
+   "en": "The hexagon"
+  },
+  {
+   "fr": "La feuille",
+   "en": "The leaf"
+  },
+  {
+   "fr": "La flamme",
+   "en": "The flame"
+  },
+  {
+   "fr": "Le cristal",
+   "en": "The crystal"
+  },
+  {
+   "fr": "L’empreinte d’or",
+   "en": "The golden print"
+  },
+  {
+   "fr": "L’empreinte de glace",
+   "en": "The ice print"
+  },
+  {
+   "fr": "Azur",
+   "en": "Azure"
+  },
+  {
+   "fr": "Émeraude",
+   "en": "Emerald"
+  },
+  {
+   "fr": "Améthyste",
+   "en": "Amethyst"
+  },
+  {
+   "fr": "Corail",
+   "en": "Coral"
+  },
+  {
+   "fr": "Ambre",
+   "en": "Amber"
+  },
+  {
+   "fr": "Ardoise",
+   "en": "Slate"
+  },
+  {
+   "fr": "Ivoire",
+   "en": "Ivory"
+  },
+  {
+   "fr": "Lagune",
+   "en": "Lagoon"
+  },
+  {
+   "fr": "{0} sur {1}",
+   "en": "{0} of {1}"
+  },
+  {
+   "fr": "Fondateur",
+   "en": "Founder"
+  },
+  {
+   "fr": "Ancien",
+   "en": "Elder"
+  },
+  {
+   "fr": "Les digues s’ouvrent…",
+   "en": "The dikes are opening…"
+  },
+  {
+   "fr": "Les Confluences · alliances de cuvettes",
+   "en": "Confluences · basin alliances"
+  },
+  {
+   "fr": "Une digue ne tient jamais seule",
+   "en": "No dike holds alone"
+  },
+  {
+   "fr": "Quand l’eau monte, les districts voisins unissent leurs digues. Une Confluence réunit jusqu’à {0} directeurs : on y parle, on s’y donne des copies, et chaque semaine on fait monter la Crue ensemble.",
+   "en": "When the water rises, neighbouring districts join their dikes. A Confluence gathers up to {0} directors: you talk, give each other copies, and every week you raise the Flood together."
+  },
+  {
+   "fr": "Le quai",
+   "en": "The quay"
+  },
+  {
+   "fr": "La discussion de l’alliance.",
+   "en": "The alliance's chat."
+  },
+  {
+   "fr": "Les dons",
+   "en": "Donations"
+  },
+  {
+   "fr": "Demande des copies, donne tes doubles.",
+   "en": "Request copies, give your duplicates."
+  },
+  {
+   "fr": "La Crue",
+   "en": "The Flood"
+  },
+  {
+   "fr": "Un objectif commun, des cristaux et une carte.",
+   "en": "A shared goal, crystals and a card."
+  },
+  {
+   "fr": "Trouver une Confluence",
+   "en": "Find a Confluence"
+  },
+  {
+   "fr": "Son nom exact",
+   "en": "Its exact name"
+  },
+  {
+   "fr": "Nom de la Confluence",
+   "en": "Confluence name"
+  },
+  {
+   "fr": "Chercher",
+   "en": "Search"
+  },
+  {
+   "fr": "Elles recrutent",
+   "en": "Recruiting"
+  },
+  {
+   "fr": "Aucune Confluence n’accueille pour l’instant. Fonde la première, et invite tes amis.",
+   "en": "No Confluence is recruiting right now. Found the first one and invite your friends."
+  },
+  {
+   "fr": "Fonder ta Confluence",
+   "en": "Found your Confluence"
+  },
+  {
+   "fr": "Choisis son nom, sa devise et son pavillon. Tu en deviens le fondateur.",
+   "en": "Choose its name, motto and banner. You become its founder."
+  },
+  {
+   "fr": "Fonder",
+   "en": "Found"
+  },
+  {
+   "fr": "Ouverte",
+   "en": "Open"
+  },
+  {
+   "fr": "Fermée",
+   "en": "Closed"
+  },
+  {
+   "fr": "Réglages de la Confluence",
+   "en": "Confluence settings"
+  },
+  {
+   "fr": "Carte",
+   "en": "Card"
+  },
+  {
+   "fr": "La Crue de la semaine",
+   "en": "This week's Flood"
+  },
+  {
+   "fr": "repart dans {0}",
+   "en": "resets in {0}"
+  },
+  {
+   "fr": "Recevoir le palier {0}",
+   "en": "Claim tier {0}"
+  },
+  {
+   "fr": "dons {0}",
+   "en": "donations {0}"
+  },
+  {
+   "fr": "Joutes {0}",
+   "en": "Jousts {0}"
+  },
+  {
+   "fr": "Gardien {0}",
+   "en": "Guardian {0}"
+  },
+  {
+   "fr": "Strates {0}",
+   "en": "Strata {0}"
+  },
+  {
+   "fr": "Ton apport :",
+   "en": "Your share:"
+  },
+  {
+   "fr": "Un palier t’attend : touche-le.",
+   "en": "A tier is waiting: tap it."
+  },
+  {
+   "fr": "Donne une copie, gagne une Joute, frappe le Gardien ou descends : tout compte.",
+   "en": "Give a copy, win a Joust, strike the Guardian or go deeper: it all counts."
+  },
+  {
+   "fr": "Le quai, les dons ou les membres",
+   "en": "The quay, donations or members"
+  },
+  {
+   "fr": "Dons",
+   "en": "Donations"
+  },
+  {
+   "fr": "Membres",
+   "en": "Members"
+  },
+  {
+   "fr": "Effacer ce message",
+   "en": "Delete this message"
+  },
+  {
+   "fr": "Le quai est calme. Lance la conversation !",
+   "en": "The quay is quiet. Start the conversation!"
+  },
+  {
+   "fr": "Messages rapides",
+   "en": "Quick messages"
+  },
+  {
+   "fr": "Écrire sur le quai…",
+   "en": "Write on the quay…"
+  },
+  {
+   "fr": "Ton message",
+   "en": "Your message"
+  },
+  {
+   "fr": "Envoyer",
+   "en": "Send"
+  },
+  {
+   "fr": "{0} a fondé la Confluence.",
+   "en": "{0} founded the Confluence."
+  },
+  {
+   "fr": "{0} rejoint la Confluence. Bienvenue !",
+   "en": "{0} joins the Confluence. Welcome!"
+  },
+  {
+   "fr": "{0} a quitté la Confluence.",
+   "en": "{0} left the Confluence."
+  },
+  {
+   "fr": "{0} demande {1} × {2}.",
+   "en": "{0} requests {1} × {2}."
+  },
+  {
+   "fr": "{0} a donné {1} à {2}.",
+   "en": "{0} gave {1} to {2}."
+  },
+  {
+   "fr": "Ta demande",
+   "en": "Your request"
+  },
+  {
+   "fr": "Remplie ! Les copies sont dans ta collection.",
+   "en": "Filled! The copies are in your collection."
+  },
+  {
+   "fr": "Tes alliés voient ta demande.",
+   "en": "Your allies can see your request."
+  },
+  {
+   "fr": "Prochaine demande dans {0}.",
+   "en": "Next request in {0}."
+  },
+  {
+   "fr": "Demander des copies",
+   "en": "Request copies"
+  },
+  {
+   "fr": "Une demande toutes les {0} h : {1} copies en fer, {2} en cuivre, {3} en argent (Cercle niveau {4}).",
+   "en": "One request every {0} h: {1} iron copies, {2} copper, {3} silver (Circle level {4})."
+  },
+  {
+   "fr": "Ils demandent",
+   "en": "Requests"
+  },
+  {
+   "fr": "dons récompensés restants : {0}/{1}",
+   "en": "rewarded donations left: {0}/{1}"
+  },
+  {
+   "fr": "Personne n’attend de copie pour l’instant.",
+   "en": "No one is waiting for a copy right now."
+  },
+  {
+   "fr": "Pas de double",
+   "en": "No duplicate"
+  },
+  {
+   "fr": "Donner",
+   "en": "Give"
+  },
+  {
+   "fr": "{0} {1} par demande",
+   "en": "{0} {1} per request"
+  },
+  {
+   "fr": "Tes souhaits passent en premier (étoile). Les copies reçues font monter ta carte.",
+   "en": "Your wishes come first (star). Copies received level up your card."
+  },
+  {
+   "fr": "souhait",
+   "en": "wish"
+  },
+  {
+   "fr": "Aucune carte de ce métal à demander.",
+   "en": "No card of this metal to request."
+  },
+  {
+   "fr": "Les directeurs",
+   "en": "Directors"
+  },
+  {
+   "fr": "apport de la semaine",
+   "en": "this week's share"
+  },
+  {
+   "fr": " · {0} dons",
+   "en": " · {0} donations"
+  },
+  {
+   "fr": " · 1 don",
+   "en": " · 1 donation"
+  },
+  {
+   "fr": "Tu passes le flambeau à un ancien (ou au plus actif). Quitter la Confluence ?",
+   "en": "You pass the torch to an elder (or the most active). Leave the Confluence?"
+  },
+  {
+   "fr": "Tu es seul : la Confluence sera dissoute. La quitter ?",
+   "en": "You're alone: the Confluence will be dissolved. Leave it?"
+  },
+  {
+   "fr": "Quitter la Confluence ? Tu pourras en rejoindre une autre.",
+   "en": "Leave the Confluence? You can join another one."
+  },
+  {
+   "fr": "Quitter",
+   "en": "Quit"
+  },
+  {
+   "fr": "Quitter la Confluence",
+   "en": "Leave the Confluence"
+  },
+  {
+   "fr": "Strate −{0} · apport {1}",
+   "en": "Stratum −{0} · share {1}"
+  },
+  {
+   "fr": "C’est toi. Ton apport grandit avec tes dons, tes Joutes, tes frappes sur le Gardien et tes Strates.",
+   "en": "That's you. Your share grows with your donations, Jousts, Guardian strikes and Strata."
+  },
+  {
+   "fr": "Ajouter en ami",
+   "en": "Add as friend"
+  },
+  {
+   "fr": "Réentendre sur le quai",
+   "en": "Unmute on the quay"
+  },
+  {
+   "fr": "Ne plus lire ses messages",
+   "en": "Mute their messages"
+  },
+  {
+   "fr": "Seulement chez toi : il n’en saura rien.",
+   "en": "Only for you: they won't know."
+  },
+  {
+   "fr": "Retirer le titre d’ancien",
+   "en": "Remove elder title"
+  },
+  {
+   "fr": "Nommer ancien",
+   "en": "Make elder"
+  },
+  {
+   "fr": "Un ancien peut effacer les messages du quai, et reçoit le flambeau si tu pars.",
+   "en": "An elder can delete quay messages and takes the torch if you leave."
+  },
+  {
+   "fr": "Écarter {0} ? Il ne pourra plus revenir.",
+   "en": "Remove {0}? They won't be able to come back."
+  },
+  {
+   "fr": "Écarter",
+   "en": "Remove"
+  },
+  {
+   "fr": "Écarter de la Confluence",
+   "en": "Remove from the Confluence"
+  },
+  {
+   "fr": "Ta Confluence",
+   "en": "Your Confluence"
+  },
+  {
+   "fr": "Fonder · {0} cristaux",
+   "en": "Found · {0} crystals"
+  },
+  {
+   "fr": "Réglages",
+   "en": "Settings"
+  },
+  {
+   "fr": "Nouvelle Confluence",
+   "en": "New Confluence"
+  },
+  {
+   "fr": "Ton nom ici",
+   "en": "Your name here"
+  },
+  {
+   "fr": "Ta devise",
+   "en": "Your motto"
+  },
+  {
+   "fr": "Nom",
+   "en": "Name"
+  },
+  {
+   "fr": "3 à 22 caractères",
+   "en": "3 to 22 characters"
+  },
+  {
+   "fr": "Devise",
+   "en": "Motto"
+  },
+  {
+   "fr": "Une phrase qui vous rassemble",
+   "en": "A phrase that unites you"
+  },
+  {
+   "fr": "Emblème",
+   "en": "Emblem"
+  },
+  {
+   "fr": "Couleur du pavillon",
+   "en": "Banner colour"
+  },
+  {
+   "fr": "Ouverte à tous",
+   "en": "Open to all"
+  },
+  {
+   "fr": "Tout directeur peut entrer. Touche pour fermer.",
+   "en": "Any director can join. Tap to close."
+  },
+  {
+   "fr": "Plus personne n’entre. Touche pour ouvrir.",
+   "en": "No one else can join. Tap to open."
+  },
+  {
+   "fr": "Fonder la Confluence",
+   "en": "Found the Confluence"
+  },
+  {
+   "fr": "{0}/{1} directeurs · Courant {2}",
+   "en": "{0}/{1} directors · Current {2}"
+  },
+  {
+   "fr": "Ses directeurs",
+   "en": "Its directors"
+  },
+  {
+   "fr": "Lecture…",
+   "en": "Reading…"
+  },
+  {
+   "fr": "Complète",
+   "en": "Full"
+  },
+  {
+   "fr": "Rejoindre",
+   "en": "Join"
+  },
+  {
+   "fr": "Qui comparer",
+   "en": "Who to compare"
+  },
+  {
+   "fr": "Ma Confluence",
+   "en": "My Confluence"
+  },
+  {
+   "fr": "Confluences",
+   "en": "Confluences"
+  },
+  {
+   "fr": "De toujours",
+   "en": "All time"
+  },
+  {
+   "fr": "Classement",
+   "en": "Ranking"
+  },
+  {
+   "fr": "Rejoins une Confluence pour comparer ses directeurs.",
+   "en": "Join a Confluence to compare its directors."
+  },
+  {
+   "fr": "Ajoute des amis (et choisis ton pseudo) pour vous comparer.",
+   "en": "Add friends (and pick your name) to compare yourselves."
+  },
+  {
+   "fr": "Personne ici n’est encore inscrit au Grand Tableau.",
+   "en": "No one here is on the Grand Board yet."
+  },
+  {
+   "fr": "Le Grand Tableau : tous les directeurs",
+   "en": "The Grand Board: all directors"
+  },
+  {
+   "fr": "Aucune Confluence n’a encore fait monter sa Crue cette semaine.",
+   "en": "No Confluence has raised its Flood yet this week."
+  },
+  {
+   "fr": "Aucune Confluence n’est encore fondée.",
+   "en": "No Confluence has been founded yet."
+  },
+  {
+   "fr": "{0} directeurs",
+   "en": "{0} directors"
+  },
+  {
+   "fr": "Le Courant : la somme de ce que chaque directeur apporte (dons, Joutes, Gardien de la ville, Strates).",
+   "en": "The Current: the sum of every director's share (donations, Jousts, City Guardian, Strata)."
+  }
+ ]
+}

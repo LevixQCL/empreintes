@@ -247,7 +247,7 @@ export function quitterDuel() {
   DL.session = null; DL.transport = null; DL.attente = false; DL.message = '';
   app.mode = 'district';
   D.vue = 'cercle';
-  C.onglet = 'duels';
+  C.onglet = 'amis';
   afficher();
 }
 
