@@ -8,7 +8,7 @@ import { moduleDef, porteurDef } from '../core/donnees';
 import { ageArchipel, bandeauPort, barque, pavillonNeutre, pavillonPirate, vignetteArchipel, vignetteDistrict, visuel } from './art';
 import { avatar, avatarGarde, gardesGarnison, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
-import { ICO, icone } from './icones';
+import { ICO, icone, baseIcones } from './icones';
 import { htmlMissions } from './district';
 import { htmlMarees } from './marees';
 import { echap } from './outils';
@@ -153,7 +153,7 @@ function revanches(j: Jeu, now: number): string {
   if (!l.length) return '';
   return `<section class="pl-revanches" aria-label="${t`Revanches`}"><span class="surtitre">${ICO.atk}${t`Revanche · sans user la coque, quelle que soit sa force`}</span><ul>`
     + l.map((r) => `<li><span><strong>${echap(r.nom)}</strong><small>${t`t’a pillé · encore ${Math.max(1, Math.ceil((r.jusqua - now) / 3_600_000))} h`}</small></span>`
-      + `<button type="button" class="btn prim" data-action="pillage-revanche" data-id="${echap(r.id)}"${j.expedition ? ' disabled' : ''}>${ICO.grappin}${t`Revanche`}</button></li>`).join('')
+      + `<button type="button" class="btn prim" data-action="pillage-revanche" data-id="${echap(r.id)}"${j.expedition ? ' disabled' : ''}><img class="ico peinte action" src="${baseIcones}piller.webp" alt="" aria-hidden="true" decoding="async">${t`Revanche`}</button></li>`).join('')
     + `</ul></section>`;
 }
 
@@ -253,7 +253,7 @@ function ficheCible(j: Jeu, c: Cible, force: number, fait: boolean, jetons: numb
     + (raison ? `<p class="pl-raison">${ICO.verrou}${raison}</p>`
       : avis ? `<p class="pl-raison pl-avis">${ICO.atk}${t`Attaquer un directeur hisse ton pavillon pirate : d’autres pirates pourront te piller, et tu ne pourras redevenir neutre que 72 h après ta dernière attaque.`}</p>`
       : `<p class="pl-raison pl-suite">${ICO.porteurs}${t`Tu choisis l’escouade qui attaque à l’étape suivante.`}</p>`)
-    + `<button type="button" class="btn prim large" data-action="pillage-preparer" data-id="${echap(c.id)}"${raison ? ' disabled' : ''}>${ICO.grappin}${avis ? t`Hisser le pavillon et préparer` : t`Préparer le pillage`}</button>`
+    + `<button type="button" class="btn prim large" data-action="pillage-preparer" data-id="${echap(c.id)}"${raison ? ' disabled' : ''}><img class="ico peinte action" src="${baseIcones}piller.webp" alt="" aria-hidden="true" decoding="async">${avis ? t`Hisser le pavillon et préparer` : t`Préparer le pillage`}</button>`
     + (avis ? `<button type="button" class="btn sec" data-action="pavillon-avis">${t`Rester neutre`}</button>` : '') + `</section>`;
 }
 

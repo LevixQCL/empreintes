@@ -11,7 +11,7 @@ import type { Lignee, Rarete } from '../core/types';
 import { portrait } from './art';
 import { COULEUR_RARETE, faceCarte } from './carte';
 import { coquille, entete, type EcranDistrict } from './coquille';
-import { CHANTIER, ICO, icone } from './icones';
+import { CHANTIER, ICO, icone, baseIcones } from './icones';
 import { echap } from './outils';
 import { cercleVide } from './acces';
 import { t } from '../core/i18n';
@@ -232,7 +232,7 @@ function feuilleAmi(e: EcranDistrict, c: CercleEcran): string {
   let h = ouvrirFeuille('cr-ami-titre', p ? t`Strate −${p.strate} · ${pluriel(p.victoires, 'victoire')} en duel` : t('Directeur'), echap(a.nom), 'cr-ami-feuille', p ? avatarPorteur(p.porteur, 56) : '');
   if (!p) h += `<p class="cr-vide">${t`Sa vitrine n’est pas encore ouverte : elle apparaîtra quand il aura construit son Cercle.`}</p>`;
   else {
-    h += `<div class="cr-boutons"><button type="button" class="btn prim" data-action="cercle-defier" data-id="${a.uid}">${ICO.atk}${t`Défier`}</button>`
+    h += `<div class="cr-boutons"><button type="button" class="btn prim" data-action="cercle-defier" data-id="${a.uid}"><img class="ico peinte action" src="${baseIcones}frapper.webp" alt="" aria-hidden="true" decoding="async">${t`Défier`}</button>`
       + `<button type="button" class="btn sec" data-action="cercle-echanger" data-id="${a.uid}"${sans ? ' disabled' : ''}>${ICO.echange}${t`Échanger`}</button></div>`
       + (sans ? `<small class="aide cr-sans">${echap(sans)}</small>` : '');
     if (p.vitrine.length) h += `<h3 class="titre-bloc">${ICO.cartes}${t`Sa vitrine`}</h3><div class="cr-rangee">${p.vitrine.map((x) => petiteCarte(j, x.id, { niveau: x.niveau })).join('')}</div>`;
@@ -277,7 +277,7 @@ function voletDuels(e: EcranDistrict, c: CercleEcran): string {
   for (const a of c.amis) {
     const attend = envoyes.find((d) => d.a === a.uid);
     h += `<div class="cr-ligne">${a.profil ? avatarPorteur(a.profil.porteur) : `<span class="cr-avatar vide" aria-hidden="true">${echap(a.nom.charAt(0))}</span>`}<div class="cr-qui"><strong>${echap(a.nom)}</strong><small>${attend ? t('défi envoyé, il doit l’accepter') : s.battus.includes(a.uid) && s.semaine === J.semaineDe(e.now) ? t('déjà battu cette semaine') : t('prêt à jouer')}</small></div>`
-      + `<div class="cr-actions">${attend ? `<button type="button" class="btn-sec" data-action="cercle-defi-annuler" data-id="${attend.id}">${t`Annuler`}</button>` : `<button type="button" class="btn prim" data-action="cercle-defier" data-id="${a.uid}"${c.occupe ? ' disabled' : ''}>${ICO.atk}${t`Défier`}</button>`}</div></div>`;
+      + `<div class="cr-actions">${attend ? `<button type="button" class="btn-sec" data-action="cercle-defi-annuler" data-id="${attend.id}">${t`Annuler`}</button>` : `<button type="button" class="btn prim" data-action="cercle-defier" data-id="${a.uid}"${c.occupe ? ' disabled' : ''}><img class="ico peinte action" src="${baseIcones}frapper.webp" alt="" aria-hidden="true" decoding="async">${t`Défier`}</button>`}</div></div>`;
   }
   h += `</section>`;
   return h + robot();

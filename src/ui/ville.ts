@@ -8,7 +8,7 @@ import { strateVaincue, GARDIEN_VILLE, degatsSemaine, etatGardien, gardienDeLaSe
 import { NOMS_RARETE } from '../core/collection';
 import { illustrationEnnemi } from './art';
 import { decompte, type EcranDistrict } from './coquille';
-import { ICO, icone, perle } from './icones';
+import { ICO, icone, perle, baseIcones } from './icones';
 import { echap } from './outils';
 import { t as tr, locale } from '../core/i18n';
 
@@ -139,7 +139,7 @@ export function feuilleVille(e: EcranDistrict): string {
   const losanges = Array.from({ length: GARDIEN_VILLE.reserve }, (_, i) => `<i class="${i < g.tentatives ? 'plein' : ''}"></i>`).join('');
   h += `<section class="gv-frapper">`
     + (g.tentatives > 0
-      ? `<button type="button" class="btn prim large gv-go" data-action="ville-preparer"${j.expedition ? ' disabled' : ''}>${ICO.atk}<span>${tr`Frapper le Gardien`}</span><span class="gv-losanges" aria-label="${echap(tr`${g.tentatives} tentative${g.tentatives > 1 ? 's' : ''} sur ${GARDIEN_VILLE.reserve}`)}">${losanges}</span></button>`
+      ? `<button type="button" class="btn prim large gv-go" data-action="ville-preparer"${j.expedition ? ' disabled' : ''}><img class="ico peinte action" src="${baseIcones}frapper.webp" alt="" aria-hidden="true" decoding="async"><span>${tr`Frapper le Gardien`}</span><span class="gv-losanges" aria-label="${echap(tr`${g.tentatives} tentative${g.tentatives > 1 ? 's' : ''} sur ${GARDIEN_VILLE.reserve}`)}">${losanges}</span></button>`
       : `<p class="gv-attente">${ICO.chrono}<span>${prochaine ? `${tr('Prochaine tentative')} ${decompte(prochaine, e.now, tr('dans '))}` : ''}</span></p>`)
     + `<p class="gv-moi">${mesDegats ? `${tr`Ta semaine`} <b>${nombre(mesDegats)}</b> ${tr`dégâts`} · ${tr`plus beau coup`} <b>${nombre(g.record ?? 0)}</b>` : tr`${GARDIEN_VILLE.tours} tours pour frapper. Tu ne peux pas perdre : seuls les dégâts comptent.`}</p>`
     + (envoi ? `<p class="gv-envoi">${ICO.chrono}<span>${envoi > 1 ? tr`${envoi} frappes en route vers la ville : elles comptent dès que tu es en ligne.` : tr('Une frappe en route vers la ville : elle compte dès que tu es en ligne.')}</span></p>` : '')

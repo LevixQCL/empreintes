@@ -6,7 +6,7 @@ import { GARDES_FLC, ennemiDef, porteurDef } from '../core/donnees';
 import { ASCENSION, chanceQuai, chanceVictoire, cibleDefiDe, etatFleche, FLECHE, flecheOuverte, forceEscouade, forceGarnison, forceQuai, gageEnCaisse, gageJour, gardiensQuai, voixDuQuartier, jourDe, pas, plancher, prochainPalier, quaiLibreDe, quaiMaxTenable, escouadePourDepart, type EtatFleche, type GardienQuai, type Jeu, strateVaincue } from '../core/jeu';
 import { avatar, coquille, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
-import { ICO, perle } from './icones';
+import { ICO, perle, baseIcones } from './icones';
 import { artFleche, fondFleche, miniature } from './art';
 
 /** Les chefs de quai : ils mènent le trio au combat qui passe un quai gravé */
@@ -115,7 +115,7 @@ function assaut(j: Jeu, quai: number, record: number): string {
     + `<dl class="fl-enjeu"><div class="gain"><dt>${t`Si tu gagnes`}</dt><dd>${ICO.monter}<b>${t`Quai ${haut}`}</b><small>${t`+${haut - quai} quai${haut - quai > 1 ? 's' : ''}`}</small></dd></div>`
     + `<div class="perte"><dt>${t`Si tu perds`}</dt><dd>${ICO.descendre}<b>${t`Quai ${bas}`}</b><small>${bas === quai ? t('tu restes sur ton quai gravé') : t`−${quai - bas} quai${quai - bas > 1 ? 's' : ''}`}</small></dd></div></dl>`
     + (raison ? `<p class="fl-raison">${ICO.verrou}${raison}</p>` : '')
-    + `<button type="button" class="btn prim large" data-action="fleche-preparer"${raison ? ' disabled' : ''}>${ICO.monter}${t`Monter à l’assaut`}</button></section>`;
+    + `<button type="button" class="btn prim large" data-action="fleche-preparer"${raison ? ' disabled' : ''}><img class="ico peinte action" src="${baseIcones}assaut.webp" alt="" aria-hidden="true" decoding="async">${t`Monter à l’assaut`}</button></section>`;
 }
 
 const gage = (q: number) => {
