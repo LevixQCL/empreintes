@@ -47,6 +47,8 @@ export interface EcranDistrict {
   porteursTous?: boolean;
   /** Port, missions en mer (28 octobre 2026) : la destination du jour choisie */
   destination?: string | null;
+  /** le Porteur choisi dans la rangée de visages, pour cette destination (14 novembre 2026) */
+  missionPorteur?: string | null;
   /** la feuille « Protège ta partie », proposée aux paliers tant que la partie n'est reliée à aucun compte */
   rappel?: boolean;
   vue: Vue;

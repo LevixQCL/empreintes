@@ -2437,18 +2437,33 @@ export function htmlMissions(e: EcranDistrict): string {
     // les Porteurs de l'escouade en dernier (4 novembre 2026) : partis en mer, ils ne peuvent plus descendre
     const dansEscouade = escouadeDe(j);
     const tries = libres.map((id) => ({ id, b: bonusMission(j, id, choisie.lieu.id) })).sort((a, b) => Number(dansEscouade.includes(a.id)) - Number(dansEscouade.includes(b.id)) || rang[a.b.affinite] - rang[b.b.affinite] || b.b.niveau - a.b.niveau);
-    h += `<ul class="missions-libres">`;
-    for (const { id, b } of tries) {
+    // 14 novembre 2026 (Bryan : afficher tous les Porteurs en fiches, « c'est spécial ») : une rangée de visages, les libres
+    // d'abord (meilleur choix en tête), ceux de l'escouade à part au bout ; un toucher ouvre un seul panneau avec les deux départs.
+    const choisi = tries.find((x) => x.id === e.missionPorteur) ?? tries.find((x) => !dansEscouade.includes(x.id)) ?? tries[0]!;
+    const visage = ({ id, b }: typeof tries[number]) => {
+      const pct = Math.round((b.mult - 1) * 100);
+      const sel = id === choisi.id;
+      return `<button type="button" role="radio" aria-checked="${sel}" class="mp-visage af-${b.affinite}${sel ? ' choisi' : ''}" data-action="mission-porteur" data-id="${id}" style="--c:${COULEUR[porteurDef(id).lignee]}" aria-label="${tr`${echap(porteurDef(id).nom)}, ${NOM_AFFINITE[b.affinite]}${pct ? ` ${pct > 0 ? '+' : '−'}${Math.abs(pct)} %` : ''}`}">`
+        + avatar(id, 52) + `<span class="mp-nom">${echap(porteurDef(id).nom.split(' ')[0]!)}</span>`
+        + (pct ? `<b class="mp-pct">${pct > 0 ? '+' : '−'}${Math.abs(pct)} %</b>` : '') + `</button>`;
+    };
+    const libresHors = tries.filter((x) => !dansEscouade.includes(x.id));
+    const libresEsc = tries.filter((x) => dansEscouade.includes(x.id));
+    h += `<div class="mp-rangee" role="radiogroup" aria-label="${tr`Qui part ?`}">${libresHors.map(visage).join('')}`
+      + (libresEsc.length ? `<span class="mp-sep">${tr`Escouade`}</span>${libresEsc.map(visage).join('')}` : '') + `</div>`;
+    {
+      const { id, b } = choisi;
       const p = porteurDef(id);
       const pct = Math.round((b.mult - 1) * 100);
-      h += `<li class="af-${b.affinite}" style="--c:${COULEUR[p.lignee]}">${avatar(id, 36)}<span><strong>${echap(p.nom)}</strong><small>${tr`${NOM_LIGNEE[p.lignee]} · niv. ${b.niveau}`}</small>`
+      const esc = dansEscouade.includes(id);
+      h += `<div class="mp-panneau af-${b.affinite}" style="--c:${COULEUR[p.lignee]}">${avatar(id, 44)}<span class="mp-qui"><strong>${echap(p.nom)}</strong><small>${tr`${NOM_LIGNEE[p.lignee]} · niv. ${b.niveau}`}</small>`
         + `<span class="ds-affinite">${NOM_AFFINITE[b.affinite]}${pct ? `<b>${pct > 0 ? '+' : '−'}${Math.abs(pct)} %</b>` : ''}</span></span>`
-        + (['courte', 'longue'] as const).map((d) => {
+        + (esc ? `<small class="mp-avis">${ICO.porteurs}${tr`Dans ton escouade : en mer, il ne pourra pas descendre.`}</small>` : '')
+        + `<span class="mp-departs">` + (['courte', 'longue'] as const).map((d) => {
           const g = gainMission(j, id, choisie, d, b.mult, e.now);
-          return `<button type="button" class="btn sec mission-duree" data-action="mission" data-id="${id}" data-cle="${choisie.cle}" data-duree="${d}" aria-label="${tr`Mission de ${MISSIONS[d].heures} heures vers ${echap(choisie.lieu.nom)} : ${g.texte}`}"><span>${MISSIONS[d].heures} h</span><span class="ds-gain">${g.html}</span></button>`;
-        }).join('') + `</li>`;
+          return `<button type="button" class="btn sec mission-duree" data-action="mission" data-id="${id}" data-cle="${choisie.cle}" data-duree="${d}" aria-label="${tr`Mission de ${MISSIONS[d].heures} heures vers ${echap(choisie.lieu.nom)} : ${g.texte}`}"><span>${tr`Partir ${MISSIONS[d].heures} h`}</span><span class="ds-gain">${g.html}</span></button>`;
+        }).join('') + `</span></div>`;
     }
-    h += `</ul>`;
   }
   // les derniers rapports, à relire (le plus récent en haut)
   const lus = (j.rapports ?? []).filter((r) => r.lu).reverse();

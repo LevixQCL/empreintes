@@ -352,6 +352,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     }
     case 'mission': resultat(J.envoyerMission(app.jeu, id, (b.dataset.duree as J.DureeMission) ?? 'courte', Date.now(), b.dataset.cle)); break;
     case 'mission-lieu': D.destination = id; break;
+    case 'mission-porteur': D.missionPorteur = id; break;
     // depuis l'écran de départ : on compose les escouades dans l'onglet Escouade, sur celle qui descend
     // l'escouade est trop blessée pour partir : droit à la Clinique, sur le district
     case 'depart-clinique': ouvrir('archipel'); D.expedition = null; D.selection = 'clinique'; break;

@@ -2786,12 +2786,28 @@
    "en": "All the Bearers are working or away: release one from a building to send them."
   },
   {
+   "fr": "{0}, {1}{2}",
+   "en": ""
+  },
+  {
+   "fr": "Qui part ?",
+   "en": ""
+  },
+  {
    "fr": "{0} · niv. {1}",
    "en": "{0} · lvl {1}"
   },
   {
+   "fr": "Dans ton escouade : en mer, il ne pourra pas descendre.",
+   "en": ""
+  },
+  {
    "fr": "Mission de {0} heures vers {1} : {2}",
    "en": "{0}-hour mission to {1}: {2}"
+  },
+  {
+   "fr": "Partir {0} h",
+   "en": ""
   },
   {
    "fr": "Derniers rapports",

@@ -184,17 +184,32 @@
   .ds-lieux.n5>.ds-lieu,.ds-lieux.n5>.ds-lieu:nth-child(4){grid-column:auto}
 }
 
-/* 14 novembre 2026 (Bryan, capture PC : « toujours pas très ergonomique ») : sur grand écran, les Porteurs ne s'étirent plus
-   sur toute la largeur avec les boutons collés au bord opposé. Chacun devient une fiche compacte, rangée en grille :
-   le Porteur en haut, ses deux départs côte à côte dessous, à portée d'œil et de clic. */
+/* 14 novembre 2026 : le choix de qui part. Une rangée de visages (défile sur téléphone), les libres d'abord, l'escouade
+   à part au bout ; dessous, un seul panneau pour le Porteur choisi, avec ses deux départs bien lisibles. */
+.mp-rangee{display:flex;align-items:flex-start;gap:8px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.mp-visage{position:relative;flex:none;display:grid;justify-items:center;gap:3px;width:68px;padding:6px 2px;border:none;border-radius:12px;background:none;color:var(--ink);cursor:pointer}
+.mp-visage .avatar{transition:transform .15s ease,filter .15s ease}
+.mp-visage:not(.choisi) .avatar{filter:saturate(.75) brightness(.85)}
+.mp-visage.choisi{background:rgba(242,213,140,.1);box-shadow:inset 0 0 0 1px rgba(242,213,140,.55)}
+.mp-visage.choisi .avatar{transform:scale(1.06)}
+.mp-nom{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+.mp-pct{position:absolute;top:2px;right:2px;padding:1px 5px;border-radius:999px;font:600 12px/1.3 var(--mono);background:rgba(6,12,22,.9);color:var(--quiet);box-shadow:inset 0 0 0 1px rgba(205,239,255,.2)}
+.mp-visage.af-bon .mp-pct{color:#F2D58C;box-shadow:inset 0 0 0 1px rgba(242,213,140,.6)}
+.mp-visage.af-mauvais .mp-pct{color:#C9A7D9}
+.mp-sep{flex:none;align-self:stretch;display:flex;align-items:center;padding:0 4px 0 10px;margin-left:2px;border-left:1px solid rgba(205,239,255,.18);font:600 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--quiet);writing-mode:vertical-rl;transform:rotate(180deg)}
+.mp-panneau{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px 12px;margin-top:4px;padding:12px;border-radius:14px;background:var(--verre);
+  box-shadow:inset 0 0 0 1px var(--filet),inset 0 26px 26px -20px color-mix(in srgb,var(--c) 32%,transparent)}
+.mp-panneau.af-bon{box-shadow:inset 0 0 0 1px rgba(242,213,140,.45),inset 0 26px 26px -20px color-mix(in srgb,var(--c) 32%,transparent)}
+.mp-qui{display:grid;gap:1px;min-width:0}
+.mp-qui strong{font-size:15px;color:var(--ink)}
+.mp-qui small{font-size:12px;color:var(--quiet)}
+.mp-avis{grid-column:1 / -1;display:flex;align-items:center;gap:6px;font-size:12px;color:#F2D58C}
+.mp-avis .ico{width:14px;height:14px}
+.mp-departs{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mp-departs .btn.mission-duree{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:46px;padding:6px 12px;border-radius:10px}
+.mp-departs .mission-duree>span:first-child{white-space:nowrap;font-weight:700;font-size:14px;color:#fff}
+.mp-departs .mission-duree .ds-gain{flex-direction:row;flex-wrap:wrap;justify-content:flex-end;gap:2px 8px}
 @media (min-width:700px){
-  .missions-libres{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
-  .missions-libres li{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1fr);grid-template-areas:"av txt txt" "d1 d1 d2";align-content:start;gap:10px;padding:12px;border-radius:12px}
-  .missions-libres li>.avatar{grid-area:av}
-  .missions-libres li>span:not(.avatar){grid-area:txt}
-  .missions-libres li>.mission-duree:nth-of-type(1){grid-area:d1}
-  .missions-libres li>.mission-duree:nth-of-type(2){grid-area:d2}
-  .missions-libres .btn.mission-duree{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:42px;padding:6px 12px;border-radius:10px}
-  .missions-libres .mission-duree>span:first-child{white-space:nowrap;font-family:var(--mono);font-weight:700;font-size:14px;color:#fff}
-  .missions-libres .mission-duree .ds-gain{flex-direction:row;flex-wrap:wrap;justify-content:flex-end;gap:2px 8px}
+  .mp-rangee{flex-wrap:wrap;overflow:visible}
+  .mp-panneau{max-width:560px}
 }
