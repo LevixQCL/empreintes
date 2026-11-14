@@ -5,7 +5,9 @@
 import { BATIMENTS, CLE_LEGS, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef, deNom } from '../core/donnees';
 import { NIVEAU_METAL, composantsNiveau, doublonsRequis } from '../core/collection';
 import { LOT_RECITS, PRODUITS, aRecit, droitRecit, lotProposable, prixEuros, ACCORD_OUVERT, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, deckEscouade, enExpedition, gestesDe, enMission, escouadeActive, escouadeDe, escouadeDefense, pillagesPermis, escouadesDe, escouadeVerrouillee, niveauPorteur, NOMS_PALIER_MARQUE, PALIERS_MARQUE, porteursPresents, progresMarque, RECITS_ORIGINES, carteDuRecit, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
-import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
+import { ORIGINES, PRESENTATIONS, origineDe } from '../core/lore-porteurs';
+import { RECITS } from './recits';
+import { imageDuPlan } from './intro';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
 import { NOMS_EFFET, effetsDe, nomsEffets, texteEffet } from '../core/effets';
@@ -434,7 +436,7 @@ function listeTous(e: EcranDistrict): string {
   const libres = presents.filter((id) => statut(j, id).classe === 'libre').length;
   let h = entete(`${tr`${presents.length} PORTEUR${presents.length > 1 ? 'S' : ''} ·`} <span class="pt-dispo">${tr`${libres} DISPONIBLE${libres > 1 ? 'S' : ''}`}</span>`, tr('Porteurs'));
   h += voletsEscouade(e);
-  h += `<p class="pt-intro">${tr`Une Augmentée, un Géné, une Résonante : depuis un siècle, les trois lignées se méfient les unes des autres. Sous la Tour, elles descendent ensemble, chacune avec ce que les deux autres n’ont pas. Touche un portrait pour savoir pourquoi chacun est là.`}</p>`;
+  h += `<p class="pt-intro">${tr`Une Augmentée, un Géné, une Résonante : depuis un siècle, les trois lignées se méfient les unes des autres. Sous la Tour, elles descendent ensemble, chacune avec ce que les deux autres n’ont pas. Touche un portrait pour faire sa connaissance.`}</p>`;
   for (const l of LIGNEES) {
     const ici = PORTEURS.filter((p) => p.lignee === l);
     const la = ici.filter((p) => presents.includes(p.id));
@@ -489,65 +491,46 @@ export function feuillePorteur(e: EcranDistrict): string {
 
   // deux onglets (12 novembre 2026, refonte des fiches) : « Porteur » (état, cartes, Marque, lignée, poste) d'abord, « Histoire » à part
   const debutHistoire = h.length;
-  if (pres) h += `<div class="fp-bio"><p>${echap(pres.texte)}</p>${pres.replique ? `<p class="fp-replique">« ${echap(pres.replique)} »</p>` : ''}</div>`;
-  if (pres?.pourquoi) h += `<section class="fp-bloc fp-pourquoi"><h3 class="fp-h3">${ICO.porte}${tr`Pourquoi ${IL.has(id) ? tr('il') : tr('elle')} est là`}</h3><p class="fp-texte">${echap(pres.pourquoi)}</p></section>`;
-  if (pres?.aParte) h += `<aside class="fp-aparte"><strong>${echap(pres.aParte.titre)}</strong><p>${echap(pres.aParte.texte)}</p></aside>`;
-  // ---------- son Récit des origines (Pack des origines, 11 novembre 2026) : une page scellée d'un sceau doré ----------
+  // ---------- son histoire (14 novembre 2026, Bryan : « tout ce qui se raconte sur elle se débloque avec le récit ») ----------
+  // L'onglet Histoire d'un Porteur qui a un Récit des origines se lit comme une quatrième de couverture : sa présentation
+  // et sa réplique, gratuites, puis la vitrine du récit, juste dessous. Tout le reste (pourquoi il est là, ses souvenirs,
+  // son fil) est dans le récit : rien ne se voit avant de l'avoir, tout s'ouvre d'un coup après. L'XP et la Confiance
+  // de son fil restent gagnées en jouant, par tous : seul le texte est réservé (aucun pay-to-win).
   const recit = Object.keys(RECITS_ORIGINES).find((r) => RECITS_ORIGINES[r]!.porteur === id);
+  // vente ouverte (src/app/boutique.ts) : le récit ne se lit qu'une fois acquis sur le compte ; vente fermée, tout reste ouvert
+  const bq = e.boutique?.ouverte ? e.boutique : null;
+  const possede = !recit || !bq || aRecit(bq.achats, recit);
+  const garde = recit ? carteDuRecit(j, recit) : null;
   // l'onglet Histoire porte le petit sceau doré du récit tant que son récit n'est pas lu jusqu'au bout (à lire, ou à débloquer)
-  const recitALire = !!recit && !carteDuRecit(j, recit);
-  if (recit) {
-    const garde = carteDuRecit(j, recit);
-    // vente ouverte (src/app/boutique.ts) : le récit ne se lit qu'une fois acquis sur le compte ; sinon il reste en aperçu
-    const bq = e.boutique?.ouverte ? e.boutique : null;
-    const acquis = !bq || aRecit(bq.achats, recit);
-    const prix = prixEuros(PRODUITS[droitRecit(recit)]!.prix);
-    // une seule ligne (Bryan, 13 novembre 2026 : trop de texte sous le Porteur) : le sceau, ce que c'est, et un bouton à droite
-    const sous = garde ? tr`Carte gardée : « ${moduleDef(garde).nom} »` : tr('3 chapitres illustrés · 1 carte d’origine');
-    h += `<section class="fp-bloc fp-recit${acquis ? '' : ' scelle'}${bq?.offre === recit ? ' ouvert' : ''}"><span class="fp-sceau" aria-hidden="true"></span>`
-      + `<div class="fp-recit-tete"><strong>${tr`Son récit d’origine`}</strong><small>${echap(sous)}</small></div>`;
-    if (acquis) {
-      h += `<div class="fp-recit-actions"><button type="button" class="btn ${garde ? 'sec' : 'prim'} petit" data-action="recit-lire" data-id="${recit}">${garde ? tr('Relire') : tr('Lire')}</button>`
-        + (garde ? `<button type="button" class="btn sec petit" data-action="recit-fin" data-id="${recit}">${tr`Changer de carte`}</button>` : '') + `</div>`;
-    } else if (bq!.offre !== recit) {
-      h += `<div class="fp-recit-actions"><button type="button" class="btn prim petit" data-action="recit-acheter" data-id="${recit}" aria-expanded="false">${ICO.verrou}${prix}</button></div>`;
-    } else {
-      // l'offre dépliée : ce qu'on reçoit, puis le paiement (ou ce qui manque pour payer)
-      h += `<div class="fp-recit-plus"><ul class="fp-offre"><li>${tr`Trois chapitres illustrés, à relire quand tu veux`}</li><li>${tr`Une carte d’origine pour ${echap(p.nom)}, tu gardes l’une des deux ci-dessous, à la fin du récit`}</li><li>${tr`Acquis pour toujours sur ton compte, sur tous tes appareils`}</li></ul>`;
-      // aucune surprise (Bryan, 11 novembre 2026) : les deux cartes d'origine en clair avant de payer, avec ce qu'elles font
-      h += `<ul class="fp-cartes-recit">${RECITS_ORIGINES[recit]!.choix.map((c) => {
-        const m = moduleDef(c.carte);
-        const effets = m.effet ? effetsDe(m).map((x) => `<span><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</span>`).join('') : `<span>${tr`Pas d’effet : sa force seule.`}</span>`;
-        return `<li><span class="fp-carte-face">${faceCarte(m, 1)}</span><span class="fp-carte-texte"><strong>${echap(m.nom)}</strong>${effets}`
-          + `<small>${tr`Carte exclusive, en or : elle grandit avec ${echap(p.nom)} au fil de ses niveaux.`}${m.origine ? ' ' + tr`Face à un autre joueur (duel, défi d’un quai), son effet « ${echap(NOMS_EFFET[m.origine])} » est éteint.` : ''}</small></span></li>`;
-      }).join('')}</ul>`;
-      h += blocPaiement(bq!, [{ id: droitRecit(recit), texte: tr`Ce récit · ${prix}` }]
-        .concat(lotProposable(bq!.achats) ? [{ id: LOT_RECITS, texte: tr`Les trois récits · ${prixEuros(PRODUITS[LOT_RECITS]!.prix)} + 1 Perle de nacre` }] : []));
-      h += `</div>`;
+  const recitALire = !!recit && !garde;
+  if (pres) h += `<div class="fp-bio"><p>${echap(pres.texte)}</p>${pres.replique ? `<p class="fp-replique">« ${echap(pres.replique)} »</p>` : ''}</div>`;
+  if (recit) h += vitrineRecit(j, bq, recit, p, possede, garde);
+  if (possede) {
+    if (pres?.pourquoi) h += `<section class="fp-bloc fp-pourquoi"><h3 class="fp-h3">${ICO.porte}${tr`Pourquoi ${IL.has(id) ? tr('il') : tr('elle')} est là`}</h3><p class="fp-texte">${echap(pres.pourquoi)}</p></section>`;
+    if (pres?.aParte) h += `<aside class="fp-aparte"><strong>${echap(pres.aParte.titre)}</strong><p>${echap(pres.aParte.texte)}</p></aside>`;
+
+    // ---------- ses souvenirs : d'où vient son don (sans récit : un palier de plus tous les quelques niveaux) ----------
+    const histoire = origineDe(id, recit ? Infinity : n.niveau);
+    if (histoire.length) {
+      const ouverts = histoire.filter((x) => x.ouvert).length;
+      h += `<section class="fp-bloc fp-histoire"><h3 class="fp-h3">${ICO.journal}${tr`Son histoire`}${ouverts < histoire.length ? ` <span class="fp-compte">${ouverts} / ${histoire.length}</span>` : ''}</h3><ol class="fp-paliers">`
+        + histoire.map((x) => (x.ouvert
+          ? `<li class="ouvert"><strong>${echap(x.titre)}</strong><p>${echap(x.texte)}</p></li>`
+          : `<li class="ferme"><strong>${ICO.verrou}${tr`Au niveau ${x.niveau}`}</strong><p>${tr`${echap(p.nom)} n’en parle pas encore.`}</p></li>`)).join('')
+        + `</ol></section>`;
     }
-    h += `</section>`;
-  }
 
-  // ---------- son histoire : d'où vient son don, un palier de plus tous les quelques niveaux ----------
-  const histoire = origineDe(id, n.niveau);
-  if (histoire.length) {
-    h += `<section class="fp-bloc fp-histoire"><h3 class="fp-h3">${ICO.journal}${tr`Son histoire`} <span class="fp-compte">${histoire.filter((x) => x.ouvert).length} / ${histoire.length}</span></h3><ol class="fp-paliers">`
-      + histoire.map((x) => (x.ouvert
-        ? `<li class="ouvert"><strong>${echap(x.titre)}</strong><p>${echap(x.texte)}</p></li>`
-        : `<li class="ferme"><strong>${ICO.verrou}${tr`Au niveau ${x.niveau}`}</strong><p>${tr`${echap(p.nom)} n’en parle pas encore.`}</p></li>`)).join('')
-      + `</ol></section>`;
-  }
-
-  // ---------- son fil : une petite histoire qui avance toute seule (23 octobre 2026) ----------
-  const fil = FILS[id];
-  if (fil) {
-    const faites = j.fils?.[id] ?? 0;
-    const etapes = etapesDe(id, faites);
-    const suivante = etapes.find((x) => !x.faite);
-    h += `<section class="fp-bloc fp-fil"><h3 class="fp-h3">${ICO.porte}${echap(fil.titre)} <span class="fp-compte${suivante ? '' : ' plein'}">${faites} / ${etapes.length}</span></h3><ol class="fp-paliers">`
-      + etapes.filter((x) => x.faite).map((x) => `<li class="ouvert"><strong>${echap(x.titre)}</strong><p>${echap(x.recit)}</p></li>`).join('')
-      + (suivante ? `<li class="ferme"><strong>${ICO.verrou}${tr`La suite`}</strong><p>${echap(suivante.quand)}.</p></li>` : '')
-      + `</ol></section>`;
+    // ---------- son fil : une petite histoire qui avance toute seule (23 octobre 2026) ----------
+    const fil = FILS[id];
+    if (fil) {
+      const faites = j.fils?.[id] ?? 0;
+      const etapes = etapesDe(id, faites);
+      const suivante = etapes.find((x) => !x.faite);
+      h += `<section class="fp-bloc fp-fil"><h3 class="fp-h3">${ICO.porte}${echap(fil.titre)} <span class="fp-compte${suivante ? '' : ' plein'}">${faites} / ${etapes.length}</span></h3><ol class="fp-paliers">`
+        + etapes.filter((x) => x.faite).map((x) => `<li class="ouvert"><strong>${echap(x.titre)}</strong><p>${echap(x.recit)}</p></li>`).join('')
+        + (suivante ? `<li class="ferme"><strong>${ICO.verrou}${tr`La suite`}</strong><p>${echap(suivante.quand)}.</p></li>` : '')
+        + `</ol></section>`;
+    }
   }
 
   const histoireH = h.slice(debutHistoire);
@@ -634,7 +617,90 @@ export function feuillePorteur(e: EcranDistrict): string {
     h = h.slice(0, debutFiche) + ongletsFiche([{ id: 'porteur', nom: tr('Porteur') }, { id: 'histoire', nom: recitALire ? `<span class="fp-onglet-recit"><i class="fp-mini-sceau" aria-hidden="true"></i>${tr('Histoire')}</span>` : tr('Histoire') }], onglet) + (onglet === 'histoire' ? histoireH : ficheH);
   }
   // ---------- pied : la prochaine action ----------
-  h += `</div><footer class="feuille-pied fp-pied"><button type="button" class="btn large fp-deck" data-action="deck" data-id="${id}"${parti ? ' disabled' : ''}>${ICO.cartes}${parti ? tr('Ses cartes changeront à son retour') : places ? tr`Lui confier des cartes · ${cartes.length} / ${DISTRICT.cartesMax}` : tr('Changer ses cartes')}</button></footer>`;
+  // sur l'onglet Histoire d'un Porteur à récit (14 novembre 2026) : le récit, toujours à portée de pouce, jamais au bout d'un défilement
+  const surHistoire = !!recit && e.ongletFiche === 'histoire';
+  const pied = !surHistoire
+    ? `<button type="button" class="btn large fp-deck" data-action="deck" data-id="${id}"${parti ? ' disabled' : ''}>${ICO.cartes}${parti ? tr('Ses cartes changeront à son retour') : places ? tr`Lui confier des cartes · ${cartes.length} / ${DISTRICT.cartesMax}` : tr('Changer ses cartes')}</button>`
+    : possede
+      ? `<button type="button" class="btn large fp-deck fp-pied-recit" data-action="recit-lire" data-id="${recit}">${ICO.film}${garde ? tr('Relire son récit') : tr('Lire son récit')}</button>`
+      : `<button type="button" class="btn large fp-deck fp-pied-recit scelle" data-action="recit-offre" data-id="${recit}"><i class="fp-mini-sceau" aria-hidden="true"></i>${tr`Ouvrir son histoire`} · ${prixEuros(PRODUITS[droitRecit(recit!)]!.prix)}</button>`;
+  // l'offre dépliée a ses propres boutons de paiement : le pied s'efface
+  const offreOuverte = surHistoire && !possede && e.boutique?.offre === recit;
+  h += `</div>` + (offreOuverte ? '' : `<footer class="feuille-pied fp-pied">${pied}</footer>`);
+  return h + `</section>`;
+}
+
+/** Les chapitres d'un récit : leur nom et la première illustration (le prologue, daté, n'en est pas un) */
+function chapitresDe(recit: string): { nom: string; image: string | null }[] {
+  const plans = RECITS[recit]?.plans ?? [];
+  const liste: { cle: string; nom: string; image: string | null }[] = [];
+  for (const pl of plans.slice(1)) {
+    const deja = liste.find((c) => c.cle === pl.epoque);
+    if (deja) { deja.image ??= imageDuPlan(pl); continue; }
+    liste.push({ cle: pl.epoque, nom: pl.epoque.split(' · ').slice(1).join(' · ') || pl.epoque, image: imageDuPlan(pl) });
+  }
+  // le prologue appartient au premier chapitre : son image ouvre la vitrine (le Porteur, jeune, avant tout le reste)
+  if (liste[0] && plans[0]) liste[0].image = imageDuPlan(plans[0]) ?? liste[0].image;
+  return liste;
+}
+
+/**
+ * La vitrine du Récit des origines d'un Porteur (14 novembre 2026, revue marketing et game design avec Bryan) :
+ * scellée, elle montre ce que l'on va lire (les trois chapitres en images, tout ce qui s'ouvre, la carte à gagner) et un seul
+ * bouton, dans le pied de la fiche, toujours visible (jamais deux fois le même) ; acquise, elle devient la porte du récit.
+ */
+function vitrineRecit(j: Jeu, bq: import('./coquille').Boutique | null, recit: string, p: PorteurDef, possede: boolean, garde: string | null): string {
+  const id = p.id;
+  const il = IL.has(id);
+  const nom = echap(p.nom);
+  const chapitres = chapitresDe(recit);
+  const scenes = RECITS[recit]?.plans.length ?? 0;
+  const ouvert = !possede && bq?.offre === recit;
+  let h = `<section class="fp-vitrine${possede ? ' acquise' : ' scellee'}${ouvert ? ' ouvert' : ''}" id="vitrine-recit">`
+    + `<div class="fv-tete"><span class="fp-sceau" aria-hidden="true"></span><div><span class="fv-sur">${tr`Récit d’origine`}</span>`
+    + `<h3 class="fv-titre">${possede ? echap(RECITS[recit]!.nom) : tr`Ce que ${nom} ne dit à personne`}</h3></div></div>`;
+  // les trois chapitres : l'illustration est l'appât, on la montre ; scellés, un cadenas doré
+  h += `<ol class="fv-chapitres">${chapitres.map((c, k) => `<li${c.image ? '' : ' class="sans"'}>${c.image ? `<img src="${c.image}" alt="" decoding="async" loading="lazy">` : ''}`
+    + `<span class="fv-chap"><small>${possede ? '' : ICO.verrou}${tr`Chapitre ${k + 1}`}</small><strong>${echap(c.nom)}</strong></span></li>`).join('')}</ol>`;
+
+  if (possede) {
+    const sous = garde ? tr`Carte gardée : « ${moduleDef(garde).nom} »` : tr`${chapitres.length} chapitres illustrés, ${scenes} scènes · une carte d’origine à choisir à la fin`;
+    // lire ou relire : le pied de la fiche ; ici, seulement changer la carte gardée
+    h += `<p class="fv-note">${echap(sous)}</p>`
+      + (garde ? `<div class="fp-recit-actions fv-actions"><button type="button" class="btn sec petit" data-action="recit-fin" data-id="${recit}">${tr`Changer de carte`}</button></div>` : '');
+    return h + `</section>`;
+  }
+
+  // tout ce qui s'ouvre avec le récit, en vrais chiffres (rien n'est à découvrir après avoir payé)
+  const pres = PRESENTATIONS[id];
+  const souvenirs = ORIGINES[id] ?? [];
+  const fil = FILS[id];
+  const vecues = j.fils?.[id] ?? 0;
+  const contenu: [string, string, string][] = [
+    [ICO.film, tr`${chapitres.length} chapitres illustrés`, tr`${scenes} scènes, à relire quand tu veux`],
+    ...(pres?.pourquoi ? [[ICO.porte, il ? tr('Pourquoi il est là') : tr('Pourquoi elle est là'), il ? tr('ce qui l’a amené devant la porte') : tr('ce qui l’a amenée devant la porte')] as [string, string, string]] : []),
+    ...(souvenirs.length ? [[ICO.journal, tr`Ses ${souvenirs.length} souvenirs`, enumerer(souvenirs.map((x) => `« ${echap(x.titre)} »`))] as [string, string, string]] : []),
+    ...(fil ? [[ICO.porte, tr`Son fil · ${echap(fil.titre)}`, vecues ? tr`${vecues} étape${vecues > 1 ? 's' : ''} sur ${fil.etapes.length} déjà vécue${vecues > 1 ? 's' : ''} : à lire tout de suite` : tr`${fil.etapes.length} étapes, qui s’écrivent en jouant`] as [string, string, string]] : []),
+    [ICO.cartes, tr('Une carte d’origine en or'), il ? tr('exclusive, au choix parmi deux, elle grandit avec lui') : tr('exclusive, au choix parmi deux, elle grandit avec elle')],
+  ];
+  h += `<ul class="fv-contenu">${contenu.map(([ico, titre, detail]) => `<li>${ico}<span><strong>${titre}</strong><small>${detail}</small></span></li>`).join('')}</ul>`;
+
+  const prix = prixEuros(PRODUITS[droitRecit(recit)]!.prix);
+  if (!ouvert) {
+    h += `<p class="fv-note">${tr`Paiement unique, sans abonnement · à toi pour toujours, sur tous tes appareils`}</p>`
+      + (bq && lotProposable(bq.achats) ? `<p class="fv-note or">${tr`Ou les trois récits : ${prixEuros(PRODUITS[LOT_RECITS]!.prix)}, avec une Perle de nacre offerte.`}</p>` : '');
+    return h + `</section>`;
+  }
+  // l'offre dépliée : les deux cartes d'origine en clair avant de payer (Bryan, 11 novembre 2026 : aucune surprise), puis le paiement
+  h += `<ul class="fp-cartes-recit">${RECITS_ORIGINES[recit]!.choix.map((c) => {
+    const m = moduleDef(c.carte);
+    const effets = m.effet ? effetsDe(m).map((x) => `<span><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</span>`).join('') : `<span>${tr`Pas d’effet : sa force seule.`}</span>`;
+    return `<li><span class="fp-carte-face">${faceCarte(m, 1)}</span><span class="fp-carte-texte"><strong>${echap(m.nom)}</strong>${effets}`
+      + `<small>${tr`Carte exclusive, en or : elle grandit avec ${nom} au fil de ses niveaux.`}${m.origine ? ' ' + tr`Face à un autre joueur (duel, défi d’un quai), son effet « ${echap(NOMS_EFFET[m.origine])} » est éteint.` : ''}</small></span></li>`;
+  }).join('')}</ul>`;
+  h += blocPaiement(bq!, [{ id: droitRecit(recit), texte: tr`Ce récit · ${prix}` }]
+    .concat(lotProposable(bq!.achats) ? [{ id: LOT_RECITS, texte: tr`Les trois récits · ${prixEuros(PRODUITS[LOT_RECITS]!.prix)} + 1 Perle de nacre` }] : []));
+  h += `<button type="button" class="btn sec petit fv-replier" data-action="recit-acheter" data-id="${recit}" aria-expanded="true">${tr`Plus tard`}</button>`;
   return h + `</section>`;
 }
 

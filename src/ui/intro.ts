@@ -193,6 +193,12 @@ function fondActif(i: number, k: number, film: Plan[] = PLANS): string | null {
   return (atteints[atteints.length - 1] ?? dispo[0])?.id ?? null;
 }
 
+/** La première illustration disponible d'un plan (vignettes des chapitres d'un récit sur la fiche du Porteur) */
+export const imageDuPlan = (p: Plan): string | null => {
+  const id = (p.fonds ?? []).find((x) => IMAGES_DISPONIBLES.has(x.id))?.id;
+  return id ? `./intro/${id}.webp` : null;
+};
+
 /** Illustrations à précharger pour le plan i (toutes celles du plan) */
 export const imagesPlan = (i: number, film: Plan[] = PLANS): string[] =>
   (film[i]?.fonds ?? []).filter((x) => IMAGES_DISPONIBLES.has(x.id)).map((x) => `./intro/${x.id}.webp`);

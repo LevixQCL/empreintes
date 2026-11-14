@@ -458,8 +458,8 @@
    "en": "{0} AVAILABLE{1|}"
   },
   {
-   "fr": "Une Augmentée, un Géné, une Résonante : depuis un siècle, les trois lignées se méfient les unes des autres. Sous la Tour, elles descendent ensemble, chacune avec ce que les deux autres n’ont pas. Touche un portrait pour savoir pourquoi chacun est là.",
-   "en": "An Augmented, a Spliced, a Resonant: for a century, the three lineages have distrusted one another. Under the Tower, they go down together, each with what the other two lack. Tap a portrait to find out why each of them is here."
+   "fr": "Une Augmentée, un Géné, une Résonante : depuis un siècle, les trois lignées se méfient les unes des autres. Sous la Tour, elles descendent ensemble, chacune avec ce que les deux autres n’ont pas. Touche un portrait pour faire sa connaissance.",
+   "en": "An Augmented, a Spliced, a Resonant: for a century, the three lineages have distrusted one another. Under the Tower, they go down together, each with what the other two lack. Tap a portrait to get to know them."
   },
   {
    "fr": "augmentées",
@@ -480,50 +480,6 @@
   {
    "fr": "Pourquoi {0} est là",
    "en": "Why {0}’s here"
-  },
-  {
-   "fr": "Carte gardée : « {0} »",
-   "en": "Card kept: “{0}”"
-  },
-  {
-   "fr": "3 chapitres illustrés · 1 carte d’origine",
-   "en": "3 illustrated chapters · 1 origin card"
-  },
-  {
-   "fr": "Son récit d’origine",
-   "en": "Origin story"
-  },
-  {
-   "fr": "Lire",
-   "en": "Read"
-  },
-  {
-   "fr": "Changer de carte",
-   "en": "Change card"
-  },
-  {
-   "fr": "Trois chapitres illustrés, à relire quand tu veux",
-   "en": "Three illustrated chapters, to reread whenever you like"
-  },
-  {
-   "fr": "Une carte d’origine pour {0}, tu gardes l’une des deux ci-dessous, à la fin du récit",
-   "en": "An origin card for {0}: you keep one of the two below, at the end of the story"
-  },
-  {
-   "fr": "Carte exclusive, en or : elle grandit avec {0} au fil de ses niveaux.",
-   "en": "Exclusive gold card: it grows with {0} as they level up."
-  },
-  {
-   "fr": "Face à un autre joueur (duel, défi d’un quai), son effet « {0} » est éteint.",
-   "en": "Against another player (duel, dock challenge), its “{0}” effect is switched off."
-  },
-  {
-   "fr": "Ce récit · {0}",
-   "en": "This story · {0}"
-  },
-  {
-   "fr": "Les trois récits · {0} + 1 Perle de nacre",
-   "en": "All three stories · {0} + 1 Nacre Pearl"
   },
   {
    "fr": "Son histoire",
@@ -720,6 +676,118 @@
   {
    "fr": "Changer ses cartes",
    "en": "Change their cards"
+  },
+  {
+   "fr": "Relire son récit",
+   "en": "Reread their story"
+  },
+  {
+   "fr": "Lire son récit",
+   "en": "Read their story"
+  },
+  {
+   "fr": "Ouvrir son histoire",
+   "en": "Unlock their story"
+  },
+  {
+   "fr": "Récit d’origine",
+   "en": "Origin story"
+  },
+  {
+   "fr": "Ce que {0} ne dit à personne",
+   "en": "What {0} tells no one"
+  },
+  {
+   "fr": "Chapitre {0}",
+   "en": "Chapter {0}"
+  },
+  {
+   "fr": "Carte gardée : « {0} »",
+   "en": "Card kept: “{0}”"
+  },
+  {
+   "fr": "{0} chapitres illustrés, {1} scènes · une carte d’origine à choisir à la fin",
+   "en": "{0} illustrated chapters, {1} scenes · an origin card to choose at the end"
+  },
+  {
+   "fr": "Changer de carte",
+   "en": "Change card"
+  },
+  {
+   "fr": "{0} chapitres illustrés",
+   "en": "{0} illustrated chapters"
+  },
+  {
+   "fr": "{0} scènes, à relire quand tu veux",
+   "en": "{0} scenes, to reread whenever you like"
+  },
+  {
+   "fr": "Pourquoi il est là",
+   "en": "Why he’s here"
+  },
+  {
+   "fr": "Pourquoi elle est là",
+   "en": "Why she’s here"
+  },
+  {
+   "fr": "ce qui l’a amené devant la porte",
+   "en": "what brought him to the door"
+  },
+  {
+   "fr": "ce qui l’a amenée devant la porte",
+   "en": "what brought her to the door"
+  },
+  {
+   "fr": "Ses {0} souvenirs",
+   "en": "{0} memories"
+  },
+  {
+   "fr": "Son fil · {0}",
+   "en": "Their thread · {0}"
+  },
+  {
+   "fr": "{0} étape{1} sur {2} déjà vécue{3} : à lire tout de suite",
+   "en": "{0} of {2} step{1|s} already lived{3|}: read it right away"
+  },
+  {
+   "fr": "{0} étapes, qui s’écrivent en jouant",
+   "en": "{0} steps, written as you play"
+  },
+  {
+   "fr": "Une carte d’origine en or",
+   "en": "A gold origin card"
+  },
+  {
+   "fr": "exclusive, au choix parmi deux, elle grandit avec lui",
+   "en": "exclusive, one of two to choose, it grows with him"
+  },
+  {
+   "fr": "exclusive, au choix parmi deux, elle grandit avec elle",
+   "en": "exclusive, one of two to choose, it grows with her"
+  },
+  {
+   "fr": "Paiement unique, sans abonnement · à toi pour toujours, sur tous tes appareils",
+   "en": "One-time payment, no subscription · yours forever, on all your devices"
+  },
+  {
+   "fr": "Ou les trois récits : {0}, avec une Perle de nacre offerte.",
+   "en": "Or all three stories: {0}, with a free Nacre Pearl."
+  },
+  {
+   "fr": "Carte exclusive, en or : elle grandit avec {0} au fil de ses niveaux.",
+   "en": "Exclusive gold card: it grows with {0} as they level up."
+  },
+  {
+   "fr": "Face à un autre joueur (duel, défi d’un quai), son effet « {0} » est éteint.",
+   "en": "Against another player (duel, dock challenge), its “{0}” effect is switched off."
+  },
+  {
+   "fr": "Ce récit · {0}",
+   "en": "This story · {0}"
+  },
+  {
+   "fr": "Les trois récits · {0} + 1 Perle de nacre",
+   "en": "All three stories · {0} + 1 Nacre Pearl"
   },
   {
    "fr": "Je veux recevoir mon achat tout de suite, et je renonce à mon droit de rétractation de 14 jours.",

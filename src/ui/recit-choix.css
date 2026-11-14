@@ -58,3 +58,44 @@
 /* la renonciation au droit de rétractation (13 novembre 2026) : une case à cocher, avant les boutons de paiement */
 .fp-renonce{display:flex;gap:10px;align-items:flex-start;margin-top:10px;font-size:12.5px;line-height:1.4;color:var(--fp-txt);cursor:pointer}
 .fp-renonce input{flex:none;width:18px;height:18px;margin:1px 0 0;accent-color:#D8B465;cursor:pointer}
+
+/* la vitrine du Récit des origines (14 novembre 2026, revue marketing et game design) : juste sous la présentation du Porteur.
+   Scellée : les trois chapitres en images, tout ce qui s'ouvre, un seul bouton. Acquise : la porte du récit. */
+.fp-vitrine{position:relative;display:grid;gap:14px;padding:16px 14px 14px;border-radius:16px;
+  background:radial-gradient(120% 70% at 50% 0%,rgba(216,180,101,.13),transparent 70%),rgba(9,12,26,.55);
+  box-shadow:inset 0 0 0 1px rgba(216,180,101,.5),0 0 0 1px rgba(0,0,0,.35),0 10px 30px rgba(0,0,0,.35);scroll-margin-top:64px}
+.fv-tete{display:flex;align-items:center;gap:12px}
+.fv-tete .fp-sceau{flex:none;width:34px;height:34px}
+.fv-sur{display:block;font:600 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--fp-or)}
+.fv-titre{margin:5px 0 0;font:400 21px/1.15 var(--display);color:#F6F2EA}
+.fv-chapitres{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.fv-chapitres li{position:relative;aspect-ratio:3/4.2;border-radius:10px;overflow:hidden;background:linear-gradient(160deg,rgba(216,180,101,.18),rgba(9,12,26,.9));
+  box-shadow:inset 0 0 0 1px rgba(216,180,101,.35)}
+.fv-chapitres img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.fp-vitrine.scellee .fv-chapitres img{filter:saturate(.8) brightness(.78)}
+.fv-chapitres li::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 38%,rgba(6,8,18,.92));pointer-events:none}
+.fv-chap{position:absolute;z-index:1;left:7px;right:7px;bottom:7px;display:grid;gap:2px}
+.fv-chap small{display:flex;align-items:center;gap:4px;font:600 12px/1 var(--mono);letter-spacing:.04em;color:var(--fp-or)}
+.fv-chap small svg{width:12px;height:12px;flex:none}
+.fv-chap strong{font:400 14px/1.12 var(--display);color:#F6F2EA;text-shadow:0 1px 6px #000}
+.fv-contenu{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.fv-contenu li{display:grid;grid-template-columns:20px 1fr;gap:10px;align-items:start}
+.fv-contenu li>svg{width:18px;height:18px;margin-top:1px;color:var(--fp-or)}
+.fv-contenu span{display:grid;gap:2px;min-width:0}
+.fv-contenu strong{font-size:14.5px;font-weight:600;line-height:1.3;color:#F6F2EA}
+.fv-contenu small{font-size:12.5px;line-height:1.4;color:var(--fp-doux)}
+.fv-note{margin:0;text-align:center;font-size:12px;line-height:1.45;color:var(--fp-doux)}
+.fv-note.or{margin-top:-10px;color:var(--fp-or)}
+.fp-vitrine.acquise .fv-note{margin:0;text-align:left}
+.fv-actions{justify-content:flex-start}
+.fp-vitrine .fp-cartes-recit{margin:0}
+.fv-replier{justify-self:center}
+/* le pied de la fiche sur l'onglet Histoire : le récit, en or tant qu'il est scellé */
+.fiche-porteur .fp-pied-recit{display:flex;align-items:center;justify-content:center;gap:10px}
+.fiche-porteur .fp-pied-recit.scelle{color:#1C1406;background:linear-gradient(180deg,#FFE7A8,#D8B465 60%,#B48C45);box-shadow:0 0 0 1px rgba(255,231,168,.5),0 6px 20px rgba(216,180,101,.28)}
+.fiche-porteur .fp-pied-recit .fp-mini-sceau{width:16px;height:16px;background:radial-gradient(circle at 38% 35%,#FFF6DA,#E9C97E 45%,#8A6A2E 85%)}
+@media (min-width:700px){.fv-chap strong{font-size:16px}}
+/* le paiement dans la vitrine : des boutons sur toute la largeur, faciles à toucher */
+.fp-vitrine .fp-recit-actions:not(.fv-actions){flex-direction:column;align-items:stretch;margin-top:10px}
+.fp-vitrine .fp-recit-actions:not(.fv-actions) .btn{min-height:46px;font-size:15px}
+.fp-vitrine .fp-renonce{margin-top:0}

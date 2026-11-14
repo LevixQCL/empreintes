@@ -68,6 +68,9 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
       if (app.recit) { const r = garderCarteRecit(app.jeu, app.recit, c.id); if (r.ok) sauver(); } break;
     case 'recit-quitter': app.recit = null; app.recitChoix = false; app.mode = 'district'; window.scrollTo(0, 0); break;
     case 'recit-acheter': if (!RECITS_ORIGINES[c.id] && c.id !== 'fond') break; majCompteAchat(); boutique.erreur = ''; boutique.offre = boutique.offre === c.id ? null : c.id; boutique.renonce = false; break;
+    // le bouton du pied de la fiche (14 novembre 2026) : déplie l'offre (sans la replier) et amène la vitrine sous les yeux
+    case 'recit-offre': if (!RECITS_ORIGINES[c.id]) break; majCompteAchat(); boutique.erreur = ''; if (boutique.offre !== c.id) { boutique.offre = c.id; boutique.renonce = false; }
+      requestAnimationFrame(() => document.getElementById('vitrine-recit')?.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })); break;
     case 'achat-renonce': boutique.renonce = !boutique.renonce; boutique.erreur = ''; break;
     case 'achat-payer': await payer(c.id); break;
     case 'recit-fin': if (!recitOuvert(c.id)) { majCompteAchat(); boutique.offre = c.id; break; }
