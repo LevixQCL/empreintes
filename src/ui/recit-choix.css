@@ -1,25 +1,47 @@
 /* La dernière scène d'un Récit des origines (11 novembre 2026) : ce que le personnage garde de cette histoire.
    Deux cartes d'origine côte à côte, l'or pour celle qu'on a gardée ; et la page scellée de la fiche du Porteur. */
 
-.ecran.choix-recit{padding:calc(16px + var(--sat)) 14px calc(20px + var(--sab));width:100%;
-  background:radial-gradient(110% 50% at 50% 0%,rgba(216,180,101,.14),transparent 70%),linear-gradient(180deg,#0E0C10 0%,#0B0D12 70%)}
-.cr-page{display:flex;flex-direction:column;gap:14px;width:100%;max-width:560px;margin:auto}
-.cr-page h1{margin:2px 0 0;font:400 28px/1.1 var(--display);color:var(--ink)}
-.cr-page .surtitre{color:var(--gold)}
-.cr-aide{margin:0;font:500 14px/1.45 var(--body);color:var(--quiet)}
-.cr-choix{display:flex;flex-direction:column;gap:10px}
-.cr-option{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:center;padding:10px;border:none;border-radius:16px;text-align:left;color:var(--ink);
-  background:var(--verre-2);box-shadow:inset 0 0 0 1px var(--filet);transition:transform .12s ease,box-shadow .15s ease}
-.cr-option:active{transform:scale(.985)}
-.cr-option.garde{box-shadow:inset 0 0 0 2px var(--gold),0 0 20px rgba(216,180,101,.25)}
-.cr-face{display:block;width:96px}
-.cr-face>*{width:100%}
-.cr-texte{display:flex;flex-direction:column;gap:5px;min-width:0}
-.cr-texte strong{font:400 18px/1.15 var(--display)}
-.cr-texte em{font:italic 400 14px/1.45 'Literata',Georgia,serif;color:var(--ink-2)}
-.cr-texte small{font:500 12px/1.35 var(--body);color:var(--quiet)}
-.cr-badge{align-self:flex-start;font:700 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#1C1406;background:var(--gold);padding:4px 8px;border-radius:999px}
-
+/* 14 novembre 2026 : l'aboutissement du récit. La dernière illustration en fond, les deux cartes en grand côte à côte,
+   ce que font leurs effets sous chacune ; celle qu'on garde s'élève dans un halo d'or, l'autre s'efface un peu. */
+.ecran.choix-recit{position:relative;isolation:isolate;overflow:hidden;min-height:100dvh;display:flex;
+  padding:calc(22px + var(--sat)) 14px calc(22px + var(--sab));width:100%;background:#08090E}
+.ecran.choix-recit::before{content:"";position:absolute;inset:0;z-index:-2;background:var(--fond,none) 50% 30%/cover;opacity:.45;filter:saturate(.9)}
+.ecran.choix-recit::after{content:"";position:absolute;inset:0;z-index:-1;
+  background:radial-gradient(70% 45% at 50% 52%,rgba(216,180,101,.2),transparent 70%),linear-gradient(180deg,rgba(8,9,14,.55),rgba(8,9,14,.82) 45%,rgba(8,9,14,.96))}
+.cr-page{display:flex;flex-direction:column;gap:18px;width:100%;max-width:880px;margin:auto}
+.cr-tete{text-align:center;display:grid;gap:8px;justify-items:center}
+.cr-page h1{margin:0;font:400 clamp(26px,6.4vw,40px)/1.1 var(--display);color:#F6F2EA;text-shadow:0 2px 14px rgba(0,0,0,.7)}
+.cr-page .surtitre{margin:0;color:var(--gold);letter-spacing:.14em}
+.cr-aide{margin:0;max-width:34em;font:500 14px/1.45 var(--body);color:#C9D2DE}
+.cr-choix{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+.cr-option{display:flex;flex-direction:column;align-items:center;gap:12px;padding:0;border:0;background:none;color:var(--ink);text-align:center;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;animation:cr-arrive .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--k) * 120ms + 80ms)}
+@keyframes cr-arrive{from{opacity:0;transform:translateY(26px) scale(.94)}}
+.cr-scene{position:relative;display:block;width:100%;max-width:260px;transition:transform .35s cubic-bezier(.2,.8,.2,1),filter .35s}
+.cr-halo{position:absolute;inset:-14% -18%;z-index:-1;border-radius:50%;background:radial-gradient(closest-side,rgba(242,213,140,.38),transparent);opacity:.45;transition:opacity .35s}
+.choix-recit .cr-face{display:block;width:100%;filter:drop-shadow(0 14px 22px rgba(0,0,0,.65))}
+.choix-recit .cr-face>*{width:100%}
+.cr-option:hover .cr-scene{transform:translateY(-4px)}
+.cr-option:active .cr-scene{transform:scale(.97)}
+.cr-option.garde .cr-scene{transform:translateY(-8px) scale(1.03)}
+.cr-option.garde .cr-halo{opacity:1;animation:cr-halo 2.6s ease-in-out infinite}
+@keyframes cr-halo{50%{opacity:.6;transform:scale(.94)}}
+.choix-recit.a-garde .cr-option:not(.garde) .cr-scene{filter:saturate(.55) brightness(.62)}
+.choix-recit.a-garde .cr-option:not(.garde) .cr-texte{opacity:.6}
+.cr-badge{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);z-index:2;font:700 12px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;
+  color:#1C1406;background:linear-gradient(180deg,#FFE7A8,#D8B465);padding:6px 12px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.5),0 0 16px rgba(242,213,140,.5);white-space:nowrap}
+.cr-texte{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;max-width:300px;transition:opacity .35s}
+.cr-texte strong{font:400 clamp(17px,4.4vw,22px)/1.15 var(--display);color:#F6F2EA}
+.cr-texte em{font:italic 400 13.5px/1.45 'Literata',Georgia,serif;color:#D6DCE6}
+.cr-effets{display:grid;gap:6px;margin-top:2px;text-align:left;width:100%}
+.cr-effets span{font:500 12.5px/1.4 var(--body);color:#AEB9C8;padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(242,213,140,.18)}
+.cr-effets b{display:block;font:700 12px/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+.cr-note{margin:0;text-align:center;font:500 12.5px/1.4 var(--body);color:#93A3B8}
+.cr-fin{align-self:center;min-width:min(100%,320px);min-height:48px;justify-content:center}
+@media (min-width:700px){.cr-choix{gap:40px;max-width:720px;margin:0 auto;width:100%}.cr-page{gap:18px}.cr-effets span{font-size:13.5px}
+  /* sur PC, tout tient dans la fenêtre, bouton compris : les cartes se règlent sur la hauteur */
+  .cr-scene{max-width:clamp(170px,calc((100dvh - 540px) * .8),260px)}.cr-texte{max-width:320px}.cr-effets{gap:5px}.cr-effets span{padding:6px 9px}}
+@media (prefers-reduced-motion:reduce){.cr-option,.cr-option.garde .cr-halo{animation:none}}
 /* la page scellée de la fiche du Porteur */
 .fp-recit{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(216,180,101,.05);box-shadow:inset 0 0 0 1px rgba(216,180,101,.45)}
 .fp-sceau{width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 38% 35%,#FFE7A8,#D8B465 45%,#8A6A2E 80%);box-shadow:0 0 0 3px rgba(216,180,101,.2),0 2px 8px rgba(0,0,0,.5)}

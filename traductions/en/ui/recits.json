@@ -686,12 +686,12 @@
    "en": "You can change your mind: the new card takes the old one’s place, at the same level and in the same decks."
   },
   {
-   "fr": "Carte exclusive, en or, à deux effets : {0}. Elle grandit avec son Porteur.",
-   "en": "Exclusive gold card with two effects: {0}. It grows with its Bearer."
-  },
-  {
    "fr": "Gardée",
    "en": "Kept"
+  },
+  {
+   "fr": "Cartes exclusives, en or. Elles grandissent avec leur Porteur.",
+   "en": ""
   },
   {
    "fr": "Garder mon choix",

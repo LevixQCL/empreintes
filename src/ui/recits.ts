@@ -9,11 +9,11 @@
 // Les illustrations (public/intro/ilka-XX.webp, doran-XX.webp, vela-XX.webp) sont à générer sur Midjourney (docs/prompts-recit-*.md) ;
 // tant qu'elles manquent, la scène dessinée en code du plan s'affiche.
 
-import { lignees, nature, oubli, puits, toi, tours, type Film, type Plan } from './intro';
+import { imageDuPlan, lignees, nature, oubli, puits, toi, tours, type Film, type Plan } from './intro';
 import { t as tr } from '../core/i18n';
 import { RECITS_ORIGINES } from '../core/partie/recits';
 import { moduleDef } from '../core/donnees';
-import { nomsEffets } from '../core/effets';
+import { effetsDe, NOMS_EFFET, texteEffet } from '../core/effets';
 import { faceCarte } from './carte';
 
 const f = (id: string, des = 1, camera?: Plan['camera']) => ({ id, des, camera });
@@ -210,18 +210,24 @@ export const RECITS_TEXTES: Record<string, { accroche: string; emporte: string }
 export function htmlChoixRecit(recit: string, actuelle: string | null): string {
   const r = RECITS_ORIGINES[recit]!;
   const nom = RECITS[recit]!.nom;
-  return `<div class="ecran choix-recit"><section class="cr-page">`
-    + `<p class="surtitre">${nom}</p><h1>${r.question}</h1>`
-    + `<p class="cr-aide">${actuelle ? tr('Tu peux changer d’avis : la nouvelle carte prend la place de l’ancienne, au même niveau et dans les mêmes decks.') : RECITS_TEXTES[recit]!.emporte}</p>`
-    + `<div class="cr-choix">${r.choix.map((c) => {
+  // l'aboutissement du récit (14 novembre 2026, « c'est supposé être un aboutissement ») : la dernière illustration en fond,
+  // les deux cartes en grand, côte à côte, chacune avec ce que font ses deux effets ; celle qu'on garde s'élève dans l'or
+  const plans = RECITS[recit]!.plans;
+  const fond = [...plans].reverse().map(imageDuPlan).find((x) => x);
+  return `<div class="ecran choix-recit${actuelle ? ' a-garde' : ''}"${fond ? ` style="--fond:url(${fond})"` : ''}><section class="cr-page">`
+    + `<header class="cr-tete"><p class="surtitre">${nom}</p><h1>${r.question}</h1>`
+    + `<p class="cr-aide">${actuelle ? tr('Tu peux changer d’avis : la nouvelle carte prend la place de l’ancienne, au même niveau et dans les mêmes decks.') : RECITS_TEXTES[recit]!.emporte}</p></header>`
+    + `<div class="cr-choix">${r.choix.map((c, k) => {
       const m = moduleDef(c.carte);
       const garde = actuelle === c.carte;
-      return `<button type="button" class="cr-option${garde ? ' garde' : ''}" data-action="recit-garder" data-id="${c.carte}" aria-pressed="${garde}">`
-        + `<span class="cr-face">${faceCarte(m, 1)}</span>`
+      return `<button type="button" class="cr-option${garde ? ' garde' : ''}" style="--k:${k}" data-action="recit-garder" data-id="${c.carte}" aria-pressed="${garde}">`
+        + `<span class="cr-scene"><span class="cr-halo" aria-hidden="true"></span><span class="cr-face">${faceCarte(m, 1)}</span>`
+        + (garde ? `<b class="cr-badge">${tr`Gardée`}</b>` : '') + `</span>`
         + `<span class="cr-texte"><strong>${m.nom}</strong><em>${c.phrase}</em>`
-        + `<small>${tr`Carte exclusive, en or, à deux effets : ${nomsEffets(m)}. Elle grandit avec son Porteur.`}</small>`
-        + (garde ? `<b class="cr-badge">${tr`Gardée`}</b>` : '') + `</span></button>`;
+        + `<span class="cr-effets">${effetsDe(m).map((e) => `<span><b>${NOMS_EFFET[e.type]}</b> ${texteEffet(e)}</span>`).join('')}</span>`
+        + `</span></button>`;
     }).join('')}</div>`
-    + `<button type="button" class="btn sec" data-action="recit-quitter">${actuelle ? tr('Garder mon choix') : tr('Choisir plus tard')}</button>`
+    + `<p class="cr-note">${tr`Cartes exclusives, en or. Elles grandissent avec leur Porteur.`}</p>`
+    + `<button type="button" class="btn ${actuelle ? 'prim' : 'sec'} cr-fin" data-action="recit-quitter">${actuelle ? tr('Garder mon choix') : tr('Choisir plus tard')}</button>`
     + `</section></div>`;
 }
