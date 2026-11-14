@@ -642,28 +642,40 @@
    "en": "Restock the stalls {0}"
   },
   {
-   "fr": "Les fouilleurs revendent aussi les Éclats qu’ils remontent : encore",
-   "en": "The diggers also sell the Shards they bring up: still"
+   "fr": "Éclat {0} : vendu",
+   "en": "Shard {0}: sold"
   },
   {
-   "fr": "{0} sur {1}",
-   "en": "{0} of {1}"
+   "fr": "Éclat {0} : {1} cristaux",
+   "en": "Shard {0}: {1} crystals"
+  },
+  {
+   "fr": "Éclats des fouilleurs",
+   "en": "Diggers' Shards"
+  },
+  {
+   "fr": "Remontés des Strates, revendus ici : encore {0} sur {1} aujourd’hui.",
+   "en": "Brought up from the Strata, sold here: {0} of {1} left today."
+  },
+  {
+   "fr": "Tout est parti : nouvel arrivage demain.",
+   "en": "All gone: new stock tomorrow."
+  },
+  {
+   "fr": "Éclats du jour et leur prix en cristaux",
+   "en": "Today's Shards and their price in crystals"
   },
   {
    "fr": "Acheter un Éclat pour {0} cristaux",
    "en": "Buy a Shard for {0} crystals"
   },
   {
-   "fr": "Acheter un Éclat {0}",
-   "en": "Buy a Shard {0}"
+   "fr": "Acheter",
+   "en": "Buy"
   },
   {
-   "fr": "Le prix monte avec les Éclats du jour : {0} cristaux.",
-   "en": "The price rises with each Shard bought today: {0} crystals."
-  },
-  {
-   "fr": "Plus d’Éclats à vendre aujourd’hui ({0} par jour) : nouvel arrivage demain.",
-   "en": "No Shards left for sale today ({0} a day): fresh stock tomorrow."
+   "fr": "dans ",
+   "en": "in "
   },
   {
    "fr": "Un doublon fait monter une carte que tu as déjà. L’or et la nacre ne se vendent pas : ils se trouvent dans les Strates.",

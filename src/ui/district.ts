@@ -796,17 +796,31 @@ function blocComptoir(e: EcranDistrict): string {
       : `<small class="aide">${tr`Une fois par jour, les fouilleurs ressortent d’autres cartes du même métal à la place de ${places > 1 ? tr`celles encore en vente (${places})` : tr('celle encore en vente')}.`}</small>`
         + `<button type="button" class="btn sec petit" data-action="comptoir-renouveler"${assezR ? '' : ' disabled'} aria-label="${tr`Renouveler les étals pour ${COMPTOIR.renouveler} cristaux`}">${ICO.chrono}${tr`Renouveler les étals ${couts(j, { composants: COMPTOIR.renouveler, eclats: 0 })}`}</button>`)
     + `</div>`;
-  // des Éclats contre des cristaux (audit du 7 novembre 2026), en petite quantité chaque jour
+  // des Éclats contre des cristaux (audit du 7 novembre 2026), en petite quantité chaque jour.
+  // 14 novembre 2026 (Bryan : « vraiment en petit et moche ») : un vrai étal à part, l'Éclat peint en grand,
+  // les Éclats du jour en rangée avec leur prix (vendus, prochain, à venir) et un gros bouton d'achat.
   const ec = eclatsAuComptoir(j);
   if (ec.max) {
+    const vendus = ec.max - ec.restants;
     const prixE = prixEclatComptoir(j);
     const assezE = j.energie >= prixE;
-    h += `<div class="cp-renouveler cp-eclats">`
+    const pas = Array.from({ length: ec.max }, (_, i) => {
+      const p = COMPTOIR.eclats.prix[Math.min(COMPTOIR.eclats.prix.length - 1, i)]!;
+      const etat = i < vendus ? 'vendu' : i === vendus ? 'prochain' : 'apres';
+      return `<li class="ce-pas ${etat}" aria-label="${etat === 'vendu' ? tr`Éclat ${i + 1} : vendu` : tr`Éclat ${i + 1} : ${p} cristaux`}"><img src="${baseIcones}eclats.webp" alt="" aria-hidden="true" decoding="async">`
+        + `<small aria-hidden="true">${etat === 'vendu' ? ICO.ok : ent(p)}</small></li>`;
+    }).join('');
+    h += `<div class="ce-etal${ec.restants ? '' : ' epuise'}">`
+      + `<div class="ce-visuel" aria-hidden="true"><span class="ce-halo"></span><img class="ce-cristal" src="${baseIcones}eclats.webp" alt="" decoding="async"></div>`
+      + `<div class="ce-corps"><h4 class="ce-titre">${tr`Éclats des fouilleurs`}</h4>`
+      + `<small class="ce-sous">${ec.restants
+        ? tr`Remontés des Strates, revendus ici : encore ${ec.restants} sur ${ec.max} aujourd’hui.`
+        : tr`Tout est parti : nouvel arrivage demain.`}</small>`
+      + `<ol class="ce-jour" aria-label="${tr`Éclats du jour et leur prix en cristaux`}">${pas}</ol></div>`
       + (ec.restants
-        ? `<small class="aide">${tr`Les fouilleurs revendent aussi les Éclats qu’ils remontent : encore`} <b>${tr`${ec.restants} sur ${ec.max}`}</b> ${tr`aujourd’hui.`}</small>`
-          + `<button type="button" class="btn sec petit" data-action="comptoir-eclat"${assezE ? '' : ' disabled'} aria-label="${tr`Acheter un Éclat pour ${prixE} cristaux`}">${ICO.eclats}${tr`Acheter un Éclat ${couts(j, { composants: prixE, eclats: 0 })}`}</button>`
-          + (ec.max > 1 ? `<small class="aide">${tr`Le prix monte avec les Éclats du jour : ${COMPTOIR.eclats.prix.join(', ')} cristaux.`}</small>` : '')
-        : `<small class="aide">${ICO.ok}${tr`Plus d’Éclats à vendre aujourd’hui (${ec.max} par jour) : nouvel arrivage demain.`}</small>`)
+        ? `<button type="button" class="btn ${assezE ? 'prim' : 'sec'} ce-acheter" data-action="comptoir-eclat"${assezE ? '' : ' disabled'} aria-label="${tr`Acheter un Éclat pour ${prixE} cristaux`}">`
+          + `<span>${tr`Acheter`}</span>${couts(j, { composants: prixE, eclats: 0 })}</button>`
+        : `<span class="ce-demain">${ICO.chrono}${decompte(debutJour(c.jour + 1), e.now, tr('dans '))}</span>`)
       + `</div>`;
   }
   return h + `<small class="fb-absents">${tr`Un doublon fait monter une carte que tu as déjà. L’or et la nacre ne se vendent pas : ils se trouvent dans les Strates.`}</small></section>`;
