@@ -145,15 +145,6 @@
 
 @media (prefers-reduced-motion:reduce){.fb-ilot,.fb-suivant::after{animation:none}}
 
-/* PC : la feuille glisse depuis la droite, toute la hauteur */
-@media (min-width:1100px) and (min-height:600px){
-  .feuille.fiche-bat{max-height:none}
-  .fb-heros{height:290px;margin:-20px -24px 0}
-  .fb-ilot{height:260px}
-  .fb-titre{left:24px;bottom:22px}
-  .fb-rangee{margin:0 -24px;padding-inline:24px;scroll-padding-left:24px;flex-wrap:wrap;-webkit-mask-image:none;mask-image:none;overflow:visible}
-}
-
 /* la croix reste lisible quand le contenu défile dessous */
 #app .feuille.fiche-bat .fb-fermer{background:rgba(9,12,26,.9);box-shadow:inset 0 0 0 1px rgba(205,239,255,.3),0 4px 14px rgba(0,0,0,.5)}
 
@@ -520,3 +511,55 @@ button.te-socle.vide:active{transform:scale(.97)}
 .cq-metal.jamais{opacity:.5}
 .cq-metal.jamais i{filter:grayscale(1) brightness(.5);box-shadow:0 0 0 1.5px rgba(205,239,255,.12)}
 .cq-metal.jamais span{color:var(--fb-doux)}
+
+/* PC (14 novembre 2026, Bryan : « sur PC on a juste le morceau comme sur GSM, c'est illisible ; autant profiter de la taille ») :
+   une grande fenêtre au centre de l'écran, comme la fiche d'une carte. La scène (intérieur peint ou îlot) occupe toute
+   la hauteur à gauche et ne bouge pas ; les onglets et le contenu défilent à droite, le bouton d'action en pied de colonne. */
+@media (min-width:1100px) and (min-height:600px){
+  #app .feuille.fiche-bat{--fb-g:min(46%,560px);--h-bat:min(860px,calc(100dvh - 48px));
+    left:calc(50% + var(--rail,0px) / 2);right:auto;top:50%;bottom:auto;transform:translate(-50%,-50%);
+    width:min(1240px,calc(100vw - var(--rail,0px) - 64px));height:var(--h-bat);max-height:none;border-radius:20px;overflow:hidden;
+    box-shadow:0 0 0 1px var(--glace-3,var(--line)),0 40px 120px rgba(0,0,0,.65)}
+  #app .feuille.fiche-bat.entre{animation:fb-fenetre .3s cubic-bezier(.2,.8,.2,1)}
+  @keyframes fb-fenetre{from{transform:translate(-50%,-47%) scale(.97);opacity:0}to{transform:translate(-50%,-50%);opacity:1}}
+  .voile-feuille:has(+ .fiche-bat){background:rgba(4,6,16,.72);backdrop-filter:blur(4px)}
+  /* la colonne de gauche : la scène, fixe (son bloc de référence est la fenêtre, pas la zone qui défile) */
+  #app .fiche-bat>.fb-corps{position:static;margin-left:var(--fb-g);padding:28px 36px 28px;gap:22px}
+  #app .fiche-bat>.fb-pied{margin-left:var(--fb-g);padding:16px 36px 22px}
+  #app .fiche-bat .fb-heros{position:absolute;z-index:1;left:0;top:0;bottom:0;width:var(--fb-g);height:auto;margin:0;
+    box-shadow:1px 0 0 rgba(205,239,255,.14)}
+  #app .fb-heros.tb-salle::after{background:linear-gradient(180deg,rgba(8,10,16,.5) 0%,rgba(8,10,16,0) 18%,rgba(8,10,16,0) 58%,rgba(8,10,16,.88) 100%)}
+  /* les intérieurs peints ont des bandes noires en haut et en bas (cachées sur téléphone par le cadrage serré) :
+     sur la haute colonne du PC, l'image déborde juste assez pour qu'elles sortent du cadre */
+  #app .fiche-bat .tb-interieur{inset:auto 0 auto 0;top:0;height:100%;object-position:50% 0}
+  #app .fiche-bat .tb-interieur[src*="salles/forge."]{top:-16.6%;height:135.6%}
+  #app .fiche-bat .tb-interieur[src*="salles/comptoir."]{top:-10.1%;height:120.1%}
+  #app .fiche-bat .tb-interieur[src*="salles/generateur."]{top:0.0%;height:105.3%}
+  #app .fiche-bat .tb-interieur[src*="salles/clinique."]{top:-9.7%;height:121.1%}
+  #app .fiche-bat .fb-scene{justify-items:center;align-items:center;padding:0 0 120px}
+  #app .fiche-bat .fb-ilot{height:auto;width:82%;max-width:82%;max-height:62%}
+  #app .fiche-bat .fb-halo{left:12%;right:12%;bottom:34%}
+  #app .fiche-bat .fb-titre{left:32px;right:32px;bottom:30px;gap:8px}
+  #app .fiche-bat .fb-titre h2,#app .tb-salle .fb-titre h2{font-size:44px}
+  #app .fiche-bat .tb-sous{font-size:16px}
+  #app .fiche-bat .tb-niveau{top:18px;right:18px}
+  #app .fiche-bat .fb-fermer{top:18px;left:18px}
+  /* l'onglet du niveau suivant : le bâtiment en grand entre ses deux chiffres */
+  #app .fb-heros.tb-vers{flex-direction:row;padding-bottom:90px;gap:14px}
+  #app .tb-vers .fb-ilot{height:auto;width:62%;max-width:62%;max-height:58%}
+  #app .tb-vers .fb-halo{left:18%;right:18%;bottom:30%}
+  #app .tb-n{font-size:64px;min-width:64px}
+  #app .tb-vers h2{bottom:34px;font-size:40px}
+  #app .fiche-futur .ff-vue{width:min(380px,80%);height:auto;max-width:none}
+  /* le contenu respire : onglets en haut de colonne, tuiles plus larges */
+  #app .fiche-bat .tb-onglets{margin-top:0}
+  #app .fiche-bat .tb-onglets button{min-height:48px;font-size:16px}
+  #app .fb-rangee{margin:0;padding-inline:0;scroll-padding-left:0;flex-wrap:wrap;-webkit-mask-image:none;mask-image:none;overflow:visible}
+  #app .fiche-bat .te-socle{height:150px}
+  #app .fiche-bat .te-socle>.tb-visage{height:104px}
+  #app .fiche-bat .tb-visage{height:96px}
+  #app .fiche-bat .tb-conseil{top:78px}
+  #app .fiche-bat .tb-gain{min-height:104px;padding:14px 16px}
+  /* plus de bandeau derrière la croix quand on défile : elle est sur la scène, qui ne bouge pas */
+  #app .feuille.fiche-bat.defile::before{display:none}
+}
