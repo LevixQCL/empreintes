@@ -68,6 +68,8 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   // la liste des Strates (9 novembre 2026) : front mis en avant, boutons près du nom sur PC
   { nom: 'tour-strates', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('.med-coupe'); await p.waitForTimeout(300); await p.$eval('.tr-strates ol', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'tour-haut', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('.med-coupe'); await p.waitForTimeout(300); await p.$eval('.tr-strates ol', (e) => { e.scrollIntoView({ block: 'start' }); const s = document.scrollingElement; s?.scrollBy(0, -150); (e.closest('.contenu') as HTMLElement | null)?.scrollBy?.(0, -150); }); } },
+  // le bas de la liste : le front et la roche à creuser (refonte du 14 novembre 2026)
+  { nom: 'tour-roche', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('.med-coupe'); await p.waitForTimeout(300); await p.$eval('.tr-strate.roche', (e) => e.scrollIntoView({ block: 'end' })); } },
   // un étage fin déplié d'un toucher (10 novembre 2026)
   { nom: 'tour-etage-ouvert', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('.med-coupe'); await p.waitForTimeout(300); await p.$eval('.tr-strates ol', (e) => { e.scrollIntoView({ block: 'start' }); document.scrollingElement?.scrollBy(0, -150); }); await p.click('.tr-deplier[data-strate="2"]').catch(() => {}); await p.waitForTimeout(300); } },
   { nom: 'porteurs', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); } },

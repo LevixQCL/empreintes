@@ -23,6 +23,7 @@ import './district.css';
 import './balises.css';
 import './exploration.css';
 import './strates-contenu.css';
+import './strates-liste.css';
 import './toucher.css';
 import './matieres.css';
 import './gains.css';

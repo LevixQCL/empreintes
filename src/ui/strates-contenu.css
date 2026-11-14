@@ -117,23 +117,6 @@
   .hx-scene{min-height:150px}
 }
 
-/* ---------- la Tour : la quête et les Haltes de chaque Strate ---------- */
-.tr-contenu{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;font-size:12.5px;color:var(--ink-dim,#93A3B8)}
-.tr-contenu .ico{width:13px;height:13px;flex-shrink:0}
-.tr-quete,.tr-haltes{display:inline-flex;align-items:center;gap:5px;min-width:0}
-.tr-quete .ico{color:#F2D58C}
-.tr-quete b{font-weight:600;color:#F2D58C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tr-quete.finie b{color:#9EE6B4}
-.tr-points{display:inline-flex;gap:3px}
-.tr-points i{width:6px;height:6px;border-radius:50%;box-shadow:inset 0 0 0 1.2px rgba(242,213,140,.6)}
-.tr-points i.ok{background:#F2D58C}
-.tr-quete.finie .tr-points i{background:#9EE6B4;box-shadow:none}
-.tr-haltes .ico{color:#CDEFFF}
-@media (min-width:1100px) and (min-height:600px){
-  .tr-strates .tr-infos>.tr-contenu{grid-column:1}
-  .tr-strates .tr-infos>.tr-contenu~.tr-actions{grid-row:1 / span 3}
-}
-
 /* ---------- le bestiaire (Bibliothèque) ---------- */
 .bs-zone{display:grid;gap:10px;margin-top:18px}
 .bs-liste{display:grid;gap:10px}
@@ -171,13 +154,3 @@
 @media (prefers-reduced-motion:reduce){.ex-quete-trouvee{animation:none}}
 .ex-partic small{font-size:12px;opacity:.75;font-weight:400}
 
-/* Liste des Strates (9 novembre 2026) : boutons près du nom sur PC, front mis en avant, compteurs nommés */
-.tr-strates ol{max-width:760px}
-.tr-strates .tr-actions .btn{min-height:44px}
-.tr-quete b{font-weight:500;color:var(--x-txt)}
-.tr-strates .tr-strate.front{margin:6px -10px;padding:12px 10px;border-radius:6px;
-  background:linear-gradient(90deg,rgba(242,200,110,.11),rgba(242,200,110,.02) 70%);box-shadow:inset 0 0 0 1px rgba(242,200,110,.38)}
-.tr-strates .tr-strate.front .tr-vignette{box-shadow:0 0 0 1.5px var(--x-or),0 0 16px rgba(242,200,110,.35)}
-.tr-strates .tr-strate.front .tr-infos>small em{color:var(--x-or)}
-.tr-strates .tr-ferme{display:flex;align-items:center;gap:6px}
-.tr-strates .tr-infos>small.tr-ferme .ico{width:14px;height:14px;flex-shrink:0;color:var(--x-doux)}

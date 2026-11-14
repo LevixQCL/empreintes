@@ -34,13 +34,6 @@
 .fuyard .ico{width:12px;height:12px}
 .ennemi-art.provisoire{filter:hue-rotate(150deg) saturate(1.3) brightness(.85)}
 
-/* ---------- la Tour : étoiles et Vestiges de chaque Strate ---------- */
-.tr-etoiles{display:inline-flex;gap:1px;color:#F2D58C}
-.tr-contenu .tr-etoiles .ico{width:14px;height:14px}
-.tr-vestiges{display:inline-flex;align-items:center;gap:5px;min-height:28px;padding:0 9px;border-radius:14px;font:inherit;font-size:12.5px;font-weight:600;
-  color:#7FE3D6;background:rgba(127,227,214,.08);border:1px solid rgba(127,227,214,.35);cursor:pointer}
-.tr-vestiges .ico{color:#7FE3D6}
-.tr-vestiges.complet{background:rgba(127,227,214,.18);border-color:#7FE3D6}
 .tr-etoiles-total{display:flex;align-items:center;gap:6px;margin:4px 0 10px;font-size:13px;color:var(--ink-dim,#93A3B8)}
 .tr-etoiles-total .ico{width:15px;height:15px;color:#F2D58C}
 .tr-etoiles-total b{color:#F2D58C;font-weight:600}

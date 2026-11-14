@@ -1,0 +1,146 @@
+/* OSSYRA — la liste des Strates de la Tour (refonte du 14 novembre 2026, Bryan : « ça fait encore site web »).
+   Chaque Strate est un étage peint : son illustration sur toute la carte, un voile de verre fumé côté texte,
+   le puits de l'ascenseur qui relie les étages, la profondeur gravée dans une capsule de cristal.
+   Le front brille d'or, les étages vaincus restent sobres, la roche à creuser est sombre et scellée.
+   Même disposition qu'avant : boutons sous le texte sur téléphone, à droite quand la liste a la place. */
+
+.tr-strates{display:grid;gap:12px;container-type:inline-size}
+.tr-strates .titre-bloc{font-size:12px;color:var(--x-glace)}
+.tr-strates ol{position:relative;display:grid;gap:10px;max-width:820px;margin:0;padding:0;list-style:none}
+
+/* le puits : un fil de lumière qui traverse tous les étages, de la Tour à la roche */
+.tr-strates ol::before{content:"";position:absolute;left:31px;top:0;bottom:24px;width:2px;margin-left:-1px;z-index:1;pointer-events:none;
+  background:linear-gradient(rgba(205,239,255,.75),rgba(127,212,255,.45) 70%,rgba(242,200,110,.35));box-shadow:0 0 10px rgba(120,210,255,.45)}
+
+/* ---------- un étage ---------- */
+.tr-strate{position:relative;isolation:isolate;overflow:hidden;display:block;min-height:136px;padding:16px 16px 14px 62px;border-radius:14px;
+  background:#090D1B;
+  box-shadow:0 0 0 1px rgba(160,210,255,.16),inset 0 1px 0 rgba(255,255,255,.09),0 14px 30px rgba(0,0,0,.45)}
+/* l'arête de glace : un liseré clair en haut, comme une lame de verre posée sur la peinture */
+.tr-strate::after{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.07),transparent 26%);box-shadow:inset 0 0 0 1px rgba(205,239,255,.06)}
+
+/* la peinture de la Strate, sous un voile sombre côté texte */
+.tr-vignette{position:absolute;inset:0;z-index:-1;display:block;width:auto;aspect-ratio:auto;border-radius:0;overflow:hidden;background:radial-gradient(circle at 70% 40%,#1D2440,#080B16 75%)}
+.tr-vignette img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 55%;transform:scale(1.03);
+  transition:transform .6s ease}
+.tr-vignette::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(6,9,19,.97) 0%,rgba(6,9,19,.86) 38%,rgba(6,9,19,.42) 72%,rgba(6,9,19,.18) 100%),
+    linear-gradient(180deg,rgba(6,9,19,.35),transparent 35%,transparent 60%,rgba(6,9,19,.75))}
+@media (hover:hover){ .tr-strate:hover .tr-vignette img{transform:scale(1.07)} }
+
+/* la profondeur, gravée dans une capsule de cristal posée sur le puits */
+.tr-vignette b{position:absolute;left:31px;top:17px;z-index:4;transform:translateX(-50%);display:grid;place-items:center;min-width:40px;height:26px;padding:0 7px;
+  border-radius:13px;font-family:var(--mono);font-size:13.5px;font-weight:700;letter-spacing:.02em;color:#DDF3FF;text-shadow:0 0 8px rgba(127,212,255,.6);
+  background:linear-gradient(180deg,rgba(38,56,88,.96),rgba(10,15,30,.96));
+  box-shadow:0 0 0 1px rgba(160,210,255,.55),inset 0 1px 0 rgba(255,255,255,.25),0 0 14px rgba(120,200,255,.3),0 4px 10px rgba(0,0,0,.5)}
+
+/* ---------- le texte ---------- */
+.tr-infos{position:relative;z-index:3;display:grid;gap:6px;min-width:0}
+.tr-infos strong{font-family:var(--display);font-weight:400;font-size:21px;line-height:1.12;letter-spacing:.01em;color:#F8F4EC;
+  text-shadow:0 2px 10px rgba(0,0,0,.9)}
+.tr-infos>small{display:flex;flex-wrap:wrap;align-items:center;gap:2px 5px;margin-top:-2px;font-family:var(--mono);font-size:12px;font-weight:500;
+  letter-spacing:.03em;line-height:1.4;color:rgba(205,225,245,.75);text-shadow:0 1px 4px #000}
+.tr-infos>small .ico{width:13px;height:13px;color:var(--x-vert);filter:drop-shadow(0 0 4px rgba(120,230,170,.5))}
+.tr-infos>small em{font-style:normal;color:var(--x-or)}
+
+/* la Strate remuée du jour : un liseré d'or, pas une ligne de plus en vrac */
+.tr-infos>small.tr-remuee{justify-self:start;gap:6px;padding:3px 10px 3px 8px;border-radius:999px;letter-spacing:.05em;text-transform:none;font-family:inherit;font-size:12.5px;
+  color:#F6D995;background:linear-gradient(90deg,rgba(242,200,110,.2),rgba(242,200,110,.05));box-shadow:inset 0 0 0 1px rgba(242,200,110,.4)}
+.tr-infos>small.tr-remuee .ico{width:13px;height:13px;color:#F2D58C;filter:none}
+
+/* ---------- ce que la Strate garde : une barre de verre ---------- */
+.tr-contenu{justify-self:start;display:flex;flex-wrap:wrap;align-items:center;gap:6px 0;max-width:100%;margin-top:4px;padding:4px;border-radius:12px;
+  font-size:12.5px;color:#C9D6E6;
+  background:rgba(8,13,26,.62);-webkit-backdrop-filter:blur(8px) saturate(1.2);backdrop-filter:blur(8px) saturate(1.2);
+  box-shadow:inset 0 0 0 1px rgba(205,239,255,.13),inset 0 1px 0 rgba(255,255,255,.06)}
+.tr-contenu>*{display:inline-flex;align-items:center;gap:5px;min-height:28px;padding:0 8px;min-width:0}
+.tr-contenu>*+*{box-shadow:-1px 0 0 rgba(205,239,255,.12)}
+.tr-contenu .ico{width:13px;height:13px;flex-shrink:0}
+.tr-etoiles{gap:1px;color:#F2D58C}
+.tr-contenu .tr-etoiles .ico{width:14px;height:14px;filter:drop-shadow(0 0 3px rgba(242,213,140,.45))}
+.tr-contenu .tr-vestiges{margin:0 3px;padding:0 9px;border:0;border-radius:9px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;box-shadow:none;
+  color:#8FEBDF;background:linear-gradient(180deg,rgba(127,227,214,.16),rgba(127,227,214,.06));outline:1px solid rgba(127,227,214,.38);outline-offset:-1px;
+  transition:background .2s ease,outline-color .2s ease}
+.tr-contenu .tr-vestiges+*{box-shadow:none}
+.tr-vestiges .ico{color:#7FE3D6}
+.tr-vestiges:hover{background:rgba(127,227,214,.22);outline-color:#7FE3D6}
+.tr-vestiges.complet{background:linear-gradient(180deg,rgba(127,227,214,.32),rgba(127,227,214,.14));outline-color:#7FE3D6;color:#E4FFFB}
+.tr-quete .ico{color:#F2D58C}
+.tr-quete b{font-weight:500;color:#E9EEF5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr-quete.finie b{color:#9EE6B4}
+.tr-points{display:inline-flex;gap:3px;margin-left:2px}
+.tr-points i{width:6px;height:6px;border-radius:50%;box-shadow:inset 0 0 0 1.2px rgba(242,213,140,.6)}
+.tr-points i.ok{background:#F2D58C;box-shadow:0 0 5px rgba(242,213,140,.7)}
+.tr-quete.finie .tr-points i{background:#9EE6B4;box-shadow:none}
+.tr-haltes{color:#AFC2D8}
+.tr-haltes .ico{color:#CDEFFF}
+
+/* ---------- les boutons ---------- */
+.tr-actions{position:relative;z-index:3;display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tr-strates .tr-actions .btn{min-height:44px;padding:0 16px;border-radius:12px;font-size:14px}
+
+/* ---------- le front : l'étage qui attend, cerclé d'or ---------- */
+.tr-strate.front{min-height:150px;padding-top:20px;
+  box-shadow:0 0 0 1.5px rgba(242,200,110,.85),0 0 26px rgba(242,200,110,.22),inset 0 1px 0 rgba(255,240,200,.25),0 16px 34px rgba(0,0,0,.5)}
+.tr-strate.front .tr-vignette::after{
+  background:linear-gradient(90deg,rgba(14,10,6,.95) 0%,rgba(14,10,6,.8) 38%,rgba(14,10,6,.3) 74%,rgba(14,10,6,.08) 100%),
+    linear-gradient(180deg,rgba(14,10,6,.25),transparent 35%,transparent 60%,rgba(14,10,6,.7)),
+    radial-gradient(ellipse at 0% 0%,rgba(242,200,110,.22),transparent 55%)}
+.tr-strate.front .tr-vignette b{top:21px;color:#2A1A04;text-shadow:none;background:linear-gradient(180deg,#FBEAB4,#D4A54E);
+  box-shadow:0 0 0 1px rgba(255,236,190,.8),inset 0 1px 0 rgba(255,255,255,.6),0 0 18px rgba(242,200,110,.7),0 4px 10px rgba(0,0,0,.5)}
+.tr-strate.front .tr-infos strong{font-size:24px}
+/* un reflet d'or passe lentement sur l'étage du front */
+.tr-strate.front::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,228,160,.13) 50%,transparent 60%);background-size:250% 100%;
+  animation:tr-reflet 6s ease-in-out infinite}
+@keyframes tr-reflet{0%,55%{background-position:120% 0}100%{background-position:-120% 0}}
+@media (prefers-reduced-motion:reduce){ .tr-strate.front::before{animation:none;display:none} }
+
+/* ---------- la roche à creuser : scellée, sombre, l'or seulement quand elle est prête ---------- */
+.tr-strate.roche{min-height:0;padding-top:16px;padding-bottom:16px;
+  background:radial-gradient(ellipse at 20% 0%,rgba(242,200,110,.07),transparent 60%),
+    repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 2px,transparent 2px 9px),linear-gradient(180deg,#17110B,#0C0906);
+  box-shadow:0 0 0 1px rgba(242,200,110,.2),inset 0 1px 0 rgba(255,230,180,.08),inset 0 -20px 40px rgba(0,0,0,.5),0 14px 30px rgba(0,0,0,.45)}
+.tr-strate.roche .tr-vignette{background:none}
+.tr-strate.roche .tr-vignette::after{display:none}
+.tr-strate.roche .tr-vignette b{color:rgba(242,213,140,.75);text-shadow:none;background:linear-gradient(180deg,#2A2015,#120D08);
+  box-shadow:0 0 0 1px rgba(242,200,110,.35),inset 0 1px 0 rgba(255,230,180,.15),0 4px 10px rgba(0,0,0,.5)}
+.tr-strate.roche .tr-infos strong{color:#E8DCC4}
+.tr-strate.roche.prete{box-shadow:0 0 0 1.5px var(--x-or),0 0 24px rgba(242,200,110,.3),0 14px 30px rgba(0,0,0,.45)}
+.tr-strate.roche.prete .tr-vignette b{color:#2A1A04;background:linear-gradient(180deg,#FBEAB4,#D4A54E)}
+.tr-strates .tr-ferme{display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:.02em;font-family:inherit;font-size:13px}
+.tr-strates .tr-infos>small.tr-ferme .ico{width:14px;height:14px;flex-shrink:0;color:rgba(242,213,140,.6);filter:none}
+.tr-creuseurs{font-size:13.5px;color:var(--x-txt)}
+.tr-creuseurs b{font-family:var(--mono);font-size:18px;color:var(--x-or)}
+.tr-jauge{height:5px;max-width:320px;border-radius:3px;background:rgba(242,200,110,.12);box-shadow:inset 0 0 0 1px rgba(242,200,110,.15);overflow:hidden}
+.tr-jauge i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#D4A54E,#F8E3A6);box-shadow:0 0 8px rgba(242,200,110,.6)}
+.tr-infos>small.tr-loge{color:var(--x-or);text-transform:none;letter-spacing:.02em;font-family:inherit;font-size:13px}
+
+/* ---------- la Tour au-dessus du puits (téléphone) ---------- */
+.tr-sommet{position:relative;height:118px;overflow:hidden;border-radius:14px;box-shadow:0 0 0 1px rgba(160,210,255,.16),0 14px 30px rgba(0,0,0,.45)}
+.tr-sommet img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 36%}
+.tr-sommet::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(6,9,19,.85))}
+.tr-sommet span{position:absolute;left:52px;bottom:12px;z-index:4;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#F6F2EA;text-shadow:0 1px 6px #000}
+@media (min-width:1100px){ .tr-sommet{display:none} }
+
+/* ---------- quand la liste a la place (PC, tablette) : les boutons à droite, centrés sur l'étage ---------- */
+@container (min-width:560px){
+  .tr-strates .tr-strate:not(.roche) .tr-infos{grid-template-columns:minmax(0,1fr) auto;column-gap:18px;align-items:center}
+  .tr-strates .tr-strate:not(.roche) .tr-infos>:not(.tr-actions){grid-column:1}
+  .tr-strates .tr-actions{grid-column:2;grid-row:1 / span 3;align-self:center;flex-wrap:nowrap;margin:0}
+  .tr-strates .tr-strate:not(.roche) .tr-infos>.tr-contenu{grid-column:1 / -1}
+  .tr-strate{padding-left:66px}
+}
+
+/* ---------- téléphone : les étages déjà vaincus restent fins, dépliés d'un toucher (10 novembre 2026) ---------- */
+.tr-deplier{display:none}
+@media (max-width:1099px){
+  .tr-strates .tr-strate.fin:not(.ouvert){min-height:0;padding-top:16px;padding-bottom:14px}
+  .tr-strates .tr-strate.fin:not(.ouvert) :is(.tr-contenu,.tr-actions){display:none}
+  .tr-strates .tr-strate.fin:not(.ouvert) .tr-vignette img{object-position:60% 50%}
+  .tr-deplier{display:block;position:absolute;inset:0 0 auto 0;height:72px;z-index:5;padding:0;border:0;background:none;cursor:pointer}
+  .tr-deplier::after{content:"";position:absolute;right:20px;top:28px;width:9px;height:9px;border-right:2px solid var(--x-glace);border-bottom:2px solid var(--x-glace);
+    transform:rotate(45deg);filter:drop-shadow(0 1px 3px #000)}
+  .tr-deplier[aria-expanded="true"]::after{top:32px;transform:rotate(-135deg)}
+}
