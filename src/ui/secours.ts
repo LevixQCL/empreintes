@@ -36,53 +36,50 @@ function main(famille: string): string {
   return `<i class="mur-main" style="--x:${(k % 8) * (100 / 7)}%;--y:${Math.floor(k / 8) * 20}%" aria-hidden="true"></i>`;
 }
 
-/** Le quartier noyé en cours : ses quatre familles, la main éclairée quand elle est rentrée, la prochaine en or */
+/** Le quartier noyé en cours : ses familles en petites mains, éclairées quand elles sont rentrées, la prochaine en or */
 function mainsDuSecteur(j: Jeu, s: SecteurBasses, prochaine: string | null): string {
   const faites = s.lieux.filter((l) => lieuFait(j, l.id)).length;
-  return `<div class="sc-mains" aria-label="${tr`${echap(s.nom)} : ${faites} familles secourues sur ${s.lieux.length}`}"><span class="sc-secteur">${echap(s.nom)}<small>${faites} / ${s.lieux.length}</small></span><ol>`
-    + s.lieux.map((l) => `<li class="${lieuFait(j, l.id) ? 'faite' : l.id === prochaine ? 'prochaine' : ''}">${main(l.famille)}</li>`).join('')
-    + `</ol></div>`;
+  return `<span class="sc-mains" role="img" aria-label="${tr`${echap(s.nom)} : ${faites} familles secourues sur ${s.lieux.length}`}">`
+    + s.lieux.map((l) => `<i class="${lieuFait(j, l.id) ? 'faite' : l.id === prochaine ? 'prochaine' : ''}">${main(l.famille)}</i>`).join('')
+    + `</span>`;
 }
 
 /** Le lieu peint : sa hauteur sur le flanc de la digue (Lavoirs en haut, Palier tout en bas) cadre l'image des Basses */
 const vue = (l: LieuBasses) => `<span class="sc-vue" style="--h:${Math.round(l.hauteur * 100)}%" aria-hidden="true"></span>`;
 
-/** La carte des secours, en tête des missions en mer (vide tant que les secours ne partent pas, ou quand tout le monde est rentré) */
+/** La carte des secours, en tête des missions en mer (vide tant que les secours ne partent pas, ou quand tout le monde est rentré).
+ *  14 novembre 2026 (retour de Luc : la grande carte cachait les destinations du jour, on croyait les missions bloquées) :
+ *  un bandeau peint d'une ligne, la main de la famille à gauche, le bouton d'or à droite ; le choix du Porteur se déplie dessous. */
 export function blocSecours(e: EcranDistrict): string {
   const j = e.j;
   if (!bassesOuvertes(j)) return '';
   const { faites, total } = famillesDesBasses(j);
   const x = bassesDe(j).expedition;
-  const tete = `<h3 class="titre-bloc sc-titre">${ICO.porteurs}${tr`Famille à secourir`}<b class="mur-compte">${faites} / ${total}</b></h3>`;
-  // la planche des mains et le flanc peint, une fois pour tout le bloc (12 novembre 2026 : la carte devient une image)
+  const compte = `<span class="sc-sur">${ICO.porteurs}${tr`Famille à secourir`}<b>${faites} / ${total}</b></span>`;
   const decor = `style="--planche:url(${planchEmpreintes});--flanc:url(${flancBasses})"`;
   if (x) {
     const lieu = lieuBassesDef(x.lieu)!;
-    return `<section class="sc-bloc" ${decor}>${tete}<div class="sc-carte en-mer">${vue(lieu)}`
-      + `<span class="sc-legende"><small>${tr`En mer · ${decompte(x.fin, e.now, tr('retour dans '))}`}</small><strong>${echap(lieu.nom)}</strong></span>`
-      + `<div class="bs-expe">${avatar(x.porteur, 44)}<span><strong>${tr`${echap(porteurDef(x.porteur).nom)} est parti secourir une famille`}</strong>`
-      + `<span class="jauge">${jaugeTemps(x.debut, x.fin, e.now)}</span></span></div></div></section>`;
+    return `<section class="sc-bloc" ${decor} aria-label="${tr`Famille à secourir`}"><div class="sc-carte en-mer">${vue(lieu)}`
+      + `<span class="sc-tete">${avatar(x.porteur, 48)}</span>`
+      + `<span class="sc-texte">${compte}<strong>${echap(lieu.nom)}</strong>`
+      + `<small class="sc-meta">${tr`${echap(porteurDef(x.porteur).nom)} est en mer · ${decompte(x.fin, e.now, tr('retour dans '))}`}</small>`
+      + `<span class="jauge">${jaugeTemps(x.debut, x.fin, e.now)}</span></span></div></section>`;
   }
   const s = prochainSecours(j);
   if (!s) {
     const suite = secteurSuivant(j);
-    // tout le flanc est vide : plus rien à montrer
     if (!suite) return '';
-    return `<section class="sc-bloc" ${decor}>${tete}<p class="sc-note">${tr`Toutes les familles à portée de barque sont rentrées. D’autres attendent plus bas sur le flanc de la digue : vaincs le gardien de la Strate −${suite.strate}.`}</p></section>`;
+    return `<section class="sc-bloc sc-attente" ${decor}><p class="sc-note">${compte}<span>${tr`Toutes les familles à portée de barque sont rentrées. D’autres attendent plus bas sur le flanc de la digue : vaincs le gardien de la Strate −${suite.strate}.`}</span></p></section>`;
   }
   const ouvert = e.bassesLieu === s.lieu.id;
-  // ce que la barque rapporte, en pastilles : la durée, la famille (sa main), du minerai et de l'XP
-  const gains = `<span class="sc-gains">`
-    + `<span class="sc-gain">${ICO.chrono}${tr`${BASSES.heures} h`}</span>`
-    + `<span class="sc-gain famille">${main(s.lieu.famille)}${tr`la famille`}</span>`
-    + `<span class="sc-gain">${icone('composants')}${tr`minerai`}</span>`
-    + `<span class="sc-gain">${ICO.monter}${tr`XP`}</span></span>`;
-  return `<section class="sc-bloc" ${decor}>${tete}${mainsDuSecteur(j, s.secteur, s.lieu.id)}`
+  return `<section class="sc-bloc" ${decor} aria-label="${tr`Famille à secourir`}">`
     + `<div class="bs-lieu sc-carte${ouvert ? ' ouvert' : ''}">`
     + `<button type="button" class="sc-lieu" data-action="basses-lieu" data-id="${s.lieu.id}" aria-expanded="${ouvert}">${vue(s.lieu)}`
-    + `<span class="sc-legende"><small>${tr`${echap(s.secteur.nom)} · flanc de la digue`}</small><strong>${echap(s.lieu.nom)}</strong></span>`
-    + gains
-    + `<span class="sc-envoyer">${ICO.porteurs}${ouvert ? tr('Choisis qui y va') : tr('Envoyer un Porteur')}</span></button>`
+    + `<span class="sc-tete">${main(s.lieu.famille)}</span>`
+    + `<span class="sc-texte">${compte}<strong>${echap(s.lieu.nom)}</strong>`
+    + `<span class="sc-meta">${mainsDuSecteur(j, s.secteur, s.lieu.id)}<span class="sc-gain">${ICO.chrono}${tr`${BASSES.heures} h`}</span>`
+    + `<span class="sc-gain">${icone('composants')}</span><span class="sc-gain">${ICO.monter}${tr`XP`}</span></span></span>`
+    + `<span class="sc-envoyer">${ouvert ? ICO.fermer : ICO.porteurs}<b>${ouvert ? tr('Fermer') : tr('Envoyer')}</b></span></button>`
     + (ouvert ? choixPorteur(j, e) : '')
     + `</div></section>`;
 }

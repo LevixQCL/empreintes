@@ -22,12 +22,8 @@
    "en": "Family to rescue"
   },
   {
-   "fr": "En mer · {0}",
-   "en": ""
-  },
-  {
-   "fr": "{0} est parti secourir une famille",
-   "en": "{0} is out rescuing a family"
+   "fr": "{0} est en mer · {1}",
+   "en": "{0} is at sea · {1}"
   },
   {
    "fr": "Toutes les familles à portée de barque sont rentrées. D’autres attendent plus bas sur le flanc de la digue : vaincs le gardien de la Strate −{0}.",
@@ -38,23 +34,7 @@
    "en": ""
   },
   {
-   "fr": "la famille",
-   "en": ""
-  },
-  {
    "fr": "XP",
-   "en": ""
-  },
-  {
-   "fr": "{0} · flanc de la digue",
-   "en": ""
-  },
-  {
-   "fr": "Choisis qui y va",
-   "en": ""
-  },
-  {
-   "fr": "Envoyer un Porteur",
    "en": ""
   }
  ]

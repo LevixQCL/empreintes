@@ -20,61 +20,56 @@ html #app .pl-volets .seg.attend::after{content:"";position:absolute;top:7px;rig
   box-shadow:0 0 0 2px rgba(8,16,26,.9),0 0 10px rgba(242,213,140,.8);animation:pl-attend 1.8s ease-in-out infinite}
 @keyframes pl-attend{50%{transform:scale(.7);opacity:.6}}
 
-/* ---------- la famille à secourir ---------- */
-html #app .sc-bloc{gap:10px;padding:12px;border-radius:18px}
-/* les quatre mains du quartier noyé : éclairées quand la famille est rentrée */
-.sc-mains{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px}
-.sc-secteur{display:grid;gap:1px;font-size:13px;font-weight:600;color:#CDEFFF}
-.sc-secteur small{font:600 12px/1 var(--mono);color:#93A3B8}
-.sc-mains ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,44px));justify-content:end;gap:6px}
-.sc-mains li .mur-main{filter:grayscale(1) brightness(.3) contrast(1.1);box-shadow:inset 0 0 0 1px rgba(205,239,255,.1)}
-.sc-mains li.faite .mur-main{filter:brightness(1.15) saturate(1.1);box-shadow:inset 0 0 0 1.5px rgba(95,163,216,.75),0 2px 6px rgba(0,0,0,.45)}
-.sc-mains li.prochaine .mur-main{filter:grayscale(.6) brightness(.6);box-shadow:inset 0 0 0 1.5px #F2D58C,0 0 12px rgba(242,213,140,.45);animation:pl-attend 2.4s ease-in-out infinite}
-
-/* la carte illustrée : le lieu sur le flanc de la digue, ses gains, le bouton d'or */
-.sc-carte{display:grid;gap:0;border-radius:16px;overflow:hidden;background:rgba(6,12,22,.6);box-shadow:inset 0 0 0 1px rgba(205,239,255,.16)}
-.sc-carte.ouvert{box-shadow:inset 0 0 0 2px #F2D58C,0 0 16px rgba(242,213,140,.2)}
-.sc-lieu{position:relative;display:grid;grid-template-rows:auto auto auto;width:100%;padding:0;border:none;text-align:left;cursor:pointer;color:#fff;background:none}
-.sc-vue{grid-area:1/1;display:block;height:132px;background:var(--flanc) 50% var(--h)/100% auto no-repeat,#10202E}
-.sc-vue::after{content:"";display:block;height:100%;background:linear-gradient(180deg,rgba(6,12,22,0) 35%,rgba(6,12,22,.9) 100%)}
-.sc-legende{grid-area:1/1;align-self:end;display:grid;gap:1px;padding:10px 12px;min-width:0}
-.sc-legende small{font:600 12px/1.2 var(--mono);letter-spacing:.06em;color:#9FD8FF;text-shadow:0 1px 4px #000}
-.sc-legende strong{font-family:var(--display);font-weight:400;font-size:21px;line-height:1.1;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.9)}
-.sc-gains{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px 0}
-.sc-gain{display:inline-flex;align-items:center;gap:5px;min-height:28px;padding:3px 10px 3px 6px;border-radius:999px;font-size:13px;font-weight:600;color:#E4ECF5;
-  background:rgba(205,239,255,.07);box-shadow:inset 0 0 0 1px rgba(205,239,255,.16)}
-.sc-gain .ico{width:18px;height:18px;color:#9FD8FF}
-.sc-gain .ico.peinte{width:22px;height:22px;margin:-2px 0}
-.sc-gain.famille{color:#F2D58C;box-shadow:inset 0 0 0 1px rgba(242,213,140,.45);background:rgba(242,213,140,.08)}
-.sc-gain.famille .mur-main{width:20px;border-radius:5px;filter:brightness(1.15)}
-.sc-envoyer{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;margin:10px 12px 12px;border-radius:12px;font-weight:700;font-size:15px;color:#2a1d05;
-  background:linear-gradient(180deg,#F6DC96,#D8B465);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 4px 14px rgba(216,180,101,.3)}
-.sc-envoyer .ico{width:18px;height:18px}
-.sc-carte.ouvert .sc-envoyer{color:#F2D58C;background:rgba(242,213,140,.1);box-shadow:inset 0 0 0 1px rgba(242,213,140,.5)}
+/* ---------- la famille à secourir ----------
+   14 novembre 2026 (Luc : la grande carte cachait les destinations, on croyait les missions bloquées) :
+   un bandeau peint d'une ligne, la main de la famille en médaillon, le bouton d'or ; le choix du Porteur se déplie dessous. */
+html #app .sc-bloc{gap:0;margin:0 0 12px;padding:0;border-radius:16px;background:none;box-shadow:none}
+.sc-carte{position:relative;display:grid;border-radius:16px;overflow:hidden;isolation:isolate;background:#0B1824;
+  box-shadow:inset 0 0 0 1px rgba(242,213,140,.4),0 6px 18px rgba(0,0,0,.35)}
+.sc-carte.ouvert{box-shadow:inset 0 0 0 2px #F2D58C,0 0 16px rgba(242,213,140,.22)}
+.sc-vue{position:absolute;inset:0;z-index:-1;display:block;background:var(--flanc) 50% var(--h)/cover no-repeat,#10202E}
+.sc-vue::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,12,22,.2) 0,rgba(6,12,22,.62) 40%,rgba(6,12,22,.7) 75%,rgba(6,12,22,.45) 100%)}
+.sc-lieu,.sc-carte.en-mer{display:grid;grid-template-columns:56px minmax(0,1fr) auto;align-items:center;gap:12px;min-height:92px;padding:10px 12px}
+.sc-lieu{position:relative;width:100%;border:none;text-align:left;cursor:pointer;color:#fff;background:none}
+.sc-carte.en-mer{grid-template-columns:52px minmax(0,1fr)}
+/* la main de la famille, en médaillon d'or qui respire */
+.sc-tete{display:grid;place-items:center;width:56px}
+.sc-tete .mur-main{width:52px;border-radius:12px;filter:brightness(1.12) saturate(1.1);box-shadow:0 0 0 2px #F2D58C,0 0 16px rgba(242,213,140,.5);animation:pl-attend 2.6s ease-in-out infinite}
+.sc-texte{display:grid;gap:3px;min-width:0}
+.sc-sur{display:flex;align-items:center;gap:5px;font:600 12px/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#F2D58C;text-shadow:0 1px 4px #000}
+.sc-sur .ico{width:14px;height:14px}
+.sc-sur b{margin-left:2px;color:#CDEFFF;font-weight:600}
+.sc-texte strong{font-family:var(--display);font-weight:400;font-size:18px;line-height:1.1;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.9);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sc-meta{display:flex;flex-wrap:nowrap;align-items:center;gap:5px;font-size:12px;color:#B8C7D8}
+.sc-mains{display:inline-flex;gap:3px;margin-right:2px}
+.sc-mains i{display:block;width:14px}
+.sc-mains .mur-main{border-radius:4px;filter:grayscale(1) brightness(.35);box-shadow:inset 0 0 0 1px rgba(205,239,255,.15)}
+.sc-mains i.faite .mur-main{filter:brightness(1.15);box-shadow:inset 0 0 0 1px rgba(95,163,216,.8)}
+.sc-mains i.prochaine .mur-main{filter:grayscale(.5) brightness(.75);box-shadow:inset 0 0 0 1.5px #F2D58C}
+.sc-gain{display:inline-flex;align-items:center;gap:3px;min-height:22px;padding:1px 6px 1px 3px;white-space:nowrap;border-radius:999px;font-size:12px;font-weight:600;color:#E4ECF5;
+  background:rgba(205,239,255,.08);box-shadow:inset 0 0 0 1px rgba(205,239,255,.16)}
+.sc-gain .ico{width:15px;height:15px;color:#9FD8FF}
+.sc-gain .ico.peinte{width:18px;height:18px;margin:-2px 0}
+/* le bouton d'or : rond, à droite, toujours sous le pouce */
+.sc-envoyer{display:grid;justify-items:center;align-content:center;gap:2px;width:64px;min-height:60px;border-radius:14px;font-size:12px;font-weight:700;color:#2a1d05;
+  background:linear-gradient(180deg,#F6DC96,#D8B465);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 4px 14px rgba(216,180,101,.35)}
+.sc-envoyer .ico{width:22px;height:22px}
+.sc-carte.ouvert .sc-envoyer{color:#F2D58C;background:rgba(8,16,26,.7);box-shadow:inset 0 0 0 1px rgba(242,213,140,.5)}
 @media (hover:hover){.sc-lieu:hover .sc-envoyer{filter:brightness(1.06)}}
-.sc-lieu:active .sc-envoyer{transform:scale(.98)}
-html #app .sc-carte .bs-choix{margin:0 12px 12px;padding:0;border:none}
-/* en mer : la même image, le Porteur et sa jauge dessous */
-.sc-carte.en-mer{grid-template-columns:1fr}
-.sc-carte.en-mer .sc-vue,.sc-carte.en-mer .sc-legende{grid-row:1}
-.sc-carte.en-mer .bs-expe{padding:10px 12px 12px}
+.sc-lieu:active .sc-envoyer{transform:scale(.96)}
+html #app .sc-carte .bs-choix{margin:0;padding:10px 12px 12px;border:none;background:rgba(6,12,22,.88)}
+.sc-carte.en-mer .jauge{margin-top:3px}
+/* tout le monde rentré : une note sur fond peint */
+.sc-attente .sc-note{display:grid;gap:4px;margin:0;padding:12px 14px;border-radius:16px;background:rgba(6,12,22,.7);box-shadow:inset 0 0 0 1px rgba(205,239,255,.16)}
+@media (prefers-reduced-motion: reduce){ .sc-tete .mur-main{animation:none} }
+@media (min-width:900px){
+  .sc-lieu,.sc-carte.en-mer{min-height:104px;padding:12px 16px}
+  .sc-envoyer{width:auto;min-width:150px;min-height:48px;grid-auto-flow:column;gap:8px;font-size:15px}
+  .sc-texte strong{font-size:21px}
+}
 
 /* les destinations un peu plus hautes sur téléphone : l'image respire */
 html #app .ds-lieu{min-height:136px}
-
-/* sur PC : l'image à gauche, à sa taille, le reste à droite (sinon le flanc peint est agrandi au flou) */
-@media (min-width:900px){
-  .sc-lieu{grid-template-columns:300px minmax(0,1fr);grid-template-rows:1fr auto auto}
-  .sc-vue{grid-area:1/1/4/2;height:auto;min-height:176px}
-  .sc-vue::after{background:linear-gradient(90deg,rgba(6,12,22,0) 70%,rgba(6,12,22,.6) 100%)}
-  .sc-legende{grid-area:1/2;padding:14px 16px 0}
-  .sc-gains{grid-area:2/2;padding:10px 16px 0}
-  .sc-envoyer{grid-area:3/2;justify-self:start;min-width:260px;margin:12px 16px 14px}
-  .sc-carte.en-mer{grid-template-columns:300px minmax(0,1fr)}
-  .sc-carte.en-mer .sc-vue{grid-area:1/1/3/2}
-  .sc-carte.en-mer .sc-legende{grid-area:1/2}
-  .sc-carte.en-mer .bs-expe{grid-area:2/2;padding:10px 16px 14px}
-}
 
 /* ---------- les jauges : barques de la fouille, creuseurs des naufragés ---------- */
 html #app .ds-crans{gap:6px}
